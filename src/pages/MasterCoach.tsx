@@ -16,9 +16,6 @@ import {
 } from 'lucide-react';
 
 const MasterCoach = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark" style={{ '--color-brand-accent': '#39D4A1' } as React.CSSProperties}>
@@ -33,22 +30,7 @@ const MasterCoach = () => {
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-brand-dark/80 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-white hover:text-brand-accent transition-colors">
-            <ArrowLeft size={20} />
-            <span className="font-medium">Voltar para Home</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-sm leading-none tracking-tight text-white">INSTITUTO</span>
-              <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
-            </div>
-          </div>
-        </div>
-      </nav>
+
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 relative overflow-hidden min-h-screen flex flex-col justify-center">
@@ -193,21 +175,6 @@ const MasterCoach = () => {
         <CourseReviews courseId="master-coach" />
       </section>
 
-      {/* Footer */}
-      <footer className="bg-brand-dark py-12 border-t border-white/10 text-center text-brand-platinum/60 text-sm">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-8 text-xs md:text-sm">
-            <a href="mailto:contato@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">contato@institutobrunosena.com.br</a>
-            <a href="mailto:parcerias@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">parcerias@institutobrunosena.com.br</a>
-            <a href="https://wa.me/5511987355750" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">+55 (11) 98735-5750</a>
-            <a href="https://www.instagram.com/brunosenaoficial/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">Instagram</a>
-          </div>
-          <p className="mb-4">© {new Date().getFullYear()} IBSDH. Todos os direitos reservados.</p>
-          <p className="max-w-2xl mx-auto text-xs opacity-50">
-            A Programação Neurolinguística (PNL), Coaching e a Hipnoterapia são abordagens educacionais e de desenvolvimento pessoal. Não substituem tratamento médico ou psiquiátrico.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };

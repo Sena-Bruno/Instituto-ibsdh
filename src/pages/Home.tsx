@@ -42,97 +42,6 @@ import { cn } from '../lib/utils';
 
 // --- Components ---
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-
-      // Scroll Spy Logic
-      const sections = ['sena', 'cursos', 'in-company', 'ebooks', 'sobre-mentor', 'depoimentos', 'contato'];
-      const scrollPosition = window.scrollY + 100; // offset
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element && 
-            element.offsetTop <= scrollPosition && 
-            (element.offsetTop + element.offsetHeight) > scrollPosition) {
-          setActiveSection(section);
-        }
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navLinks = [
-    { name: 'Tecnologia SENA', href: '#sena' },
-    { name: 'Cursos', href: '#cursos' },
-    { name: 'Para Empresas', href: '#in-company' },
-    { name: 'Depoimentos', href: '#depoimentos' },
-    { name: 'Sobre', href: '#sobre-mentor' },
-  ];
-
-  return (
-    <nav className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
-      isScrolled ? "bg-brand-dark/90 backdrop-blur-md border-white/10 py-3" : "bg-transparent border-transparent py-6"
-    )}>
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <div className="flex items-center gap-10">
-          <div className="flex items-center gap-2">
-            <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-12 h-12 object-contain"  />
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-lg leading-none tracking-tight text-white">INSTITUTO</span>
-              <span className="font-display font-light text-xs tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
-            </div>
-          </div>
-          
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-brand-platinum">
-            {navLinks.map(link => (
-              <a 
-                key={link.name} 
-                href={link.href} 
-                className={`transition-colors ${activeSection === link.href.substring(1) ? 'text-brand-accent font-bold' : 'hover:text-brand-accent'}`}
-              >
-                {link.name}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 sm:gap-4">
-          <a href="#cursos" className="hidden sm:block px-6 py-2.5 bg-brand-accent text-brand-dark rounded-full font-bold text-sm hover:opacity-90 transition-all shadow-[0_0_15px_rgba(229,195,101,0.2)]">
-            Matricule-se
-          </a>
-          <button className="md:hidden p-2 text-white hover:bg-white/5 rounded-lg transition-colors" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X /> : <Menu />}
-          </button>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="absolute top-full left-0 right-0 bg-brand-dark border-b border-white/10 p-6 flex flex-col gap-4 md:hidden overflow-hidden"
-          >
-            {navLinks.map(link => (
-              <a key={link.name} href={link.href} className="text-lg font-medium" onClick={() => setIsMobileMenuOpen(false)}>{link.name}</a>
-            ))}
-            <hr className="border-white/10 my-2" />
-            <a href="#cursos" className="w-full py-4 text-center bg-brand-accent text-brand-dark rounded-xl font-bold shadow-[0_0_15px_rgba(229,195,101,0.2)]" onClick={() => setIsMobileMenuOpen(false)}>Matricule-se Agora</a>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
-  );
-};
 
 const Hero = () => {
   return (
@@ -1215,69 +1124,6 @@ const WhatsAppContact = () => {
   );
 };
 
-const Footer = () => {
-  return (
-    <footer className="pt-20 pb-12 bg-brand-dark border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-12">
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-8">
-              <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-12 h-12 object-contain"  />
-              <span className="font-display font-bold text-xl tracking-tight text-white">INSTITUTO BRUNO SENA</span>
-            </div>
-            <p className="text-brand-platinum max-w-sm mb-8 leading-relaxed">
-              Transformando vidas através do conhecimento profundo da mente humana. Junte-se a nós na jornada do autoconhecimento.
-            </p>
-            <div className="flex gap-4">
-              <a href="https://www.instagram.com/brunosenaoficial/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-brand-accent hover:text-brand-dark transition-all border border-white/10"><Instagram size={20} /></a>
-            </div>
-          </div>
-          
-          <div>
-            <h4 className="font-bold mb-8 text-sm uppercase tracking-widest text-white/40">Links Úteis</h4>
-            <ul className="space-y-4 text-brand-platinum">
-              <li><a href="#cursos" className="hover:text-brand-accent transition-colors">Cursos</a></li>
-              <li><a href="#sobre" className="hover:text-brand-accent transition-colors">Sobre Nós</a></li>
-              <li><a href="#depoimentos" className="hover:text-brand-accent transition-colors">Depoimentos</a></li>
-              <li><a href="#" className="hover:text-brand-accent transition-colors">Política de Privacidade</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold mb-8 text-sm uppercase tracking-widest text-white/40">Contato</h4>
-            <ul className="space-y-4 text-brand-platinum">
-              <li><a href="mailto:contato@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">contato@institutobrunosena.com.br</a></li>
-              <li><a href="mailto:parcerias@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">parcerias@institutobrunosena.com.br</a></li>
-              <li><a href="https://wa.me/5511987355750" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">+55 (11) 98735-5750</a></li>
-              <li>São Paulo, SP</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="pt-12 border-t border-white/5 flex flex-col gap-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-white/30 text-xs">
-            <p>© 2026 Instituto Bruno Sena. Todos os direitos reservados.</p>
-            <div className="flex items-center gap-2">
-              Desenvolvido com <Heart size={12} className="text-brand-accent fill-brand-accent" /> para evolução humana.
-            </div>
-          </div>
-          
-          <div className="text-[10px] leading-relaxed text-white/20 text-justify border-t border-white/5 pt-8">
-            <p className="mb-2">
-              <strong>AVISO LEGAL E DE RESPONSABILIDADE:</strong> O IBSDH atua com foco estrito em educação emocional, treinamento mental e desenvolvimento humano. Nossas formações, palestras e técnicas (incluindo PNL e Hipnoterapia) <strong>NÃO</strong> são práticas médicas e <strong>NÃO</strong> substituem, sob nenhuma hipótese, diagnósticos, tratamentos médicos, psiquiátricos ou acompanhamento psicológico por profissionais devidamente habilitados pelos conselhos regionais de saúde. Se você possui condições clínicas preexistentes, procure a orientação do seu médico.
-            </p>
-            <p className="mb-2">
-              Todos os cursos e certificados estão de acordo com a respectiva lei que rege os cursos livres no Brasil (Lei nº 9.394/96 - Diretrizes e Bases da Educação Nacional).
-            </p>
-            <p>
-              CNPJ: 64.646.469/0001-85
-            </p>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-};
 
 // --- Main App ---
 
@@ -1413,7 +1259,6 @@ export default function App() {
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-      <Navbar />
       <main>
         <Hero />
         <Partners />
@@ -1444,7 +1289,6 @@ export default function App() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

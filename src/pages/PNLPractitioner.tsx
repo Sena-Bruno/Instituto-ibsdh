@@ -24,9 +24,6 @@ import { courses } from '../config/courses';
 const PNLPractitioner = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans" style={{ '--color-brand-accent': '#5C9CFA' } as React.CSSProperties}>
@@ -41,22 +38,7 @@ const PNLPractitioner = () => {
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-      {/* Navbar Minimal */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-brand-dark/90 backdrop-blur-md border-b border-white/10 py-4">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-white hover:text-brand-accent transition-colors">
-            <ArrowLeft size={20} />
-            <span className="font-bold text-sm uppercase tracking-wider">Voltar</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-sm leading-none tracking-tight text-white">INSTITUTO</span>
-              <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
-            </div>
-          </div>
-        </div>
-      </nav>
+
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 relative overflow-hidden">
@@ -979,29 +961,6 @@ const PNLPractitioner = () => {
         <CourseReviews courseId="pnl-practitioner" />
       </section>
 
-      {/* Footer Minimal */}
-      <footer className="py-12 border-t border-white/10 text-center text-brand-platinum/60 text-sm bg-brand-dark">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-8 text-xs md:text-sm">
-            <a href="mailto:contato@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">contato@institutobrunosena.com.br</a>
-            <a href="mailto:parcerias@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">parcerias@institutobrunosena.com.br</a>
-            <a href="https://wa.me/5511987355750" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">+55 (11) 98735-5750</a>
-            <a href="https://www.instagram.com/brunosenaoficial/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">Instagram</a>
-          </div>
-          <p className="mb-4">© {new Date().getFullYear()} Instituto Bruno Sena. Todos os direitos reservados.</p>
-          <div className="text-[10px] leading-relaxed text-white/20 text-justify">
-            <p className="mb-2">
-              <strong>AVISO LEGAL E DE RESPONSABILIDADE:</strong> O IBSDH atua com foco estrito em educação emocional, treinamento mental e desenvolvimento humano. Nossas formações, palestras e técnicas (incluindo PNL e Hipnoterapia) <strong>NÃO</strong> são práticas médicas e <strong>NÃO</strong> substituem, sob nenhuma hipótese, diagnósticos, tratamentos médicos, psiquiátricos ou acompanhamento psicológico por profissionais devidamente habilitados pelos conselhos regionais de saúde. Se você possui condições clínicas preexistentes, procure a orientação do seu médico.
-            </p>
-            <p className="mb-2">
-              Todos os cursos e certificados estão de acordo com a respectiva lei que rege os cursos livres no Brasil (Lei nº 9.394/96 - Diretrizes e Bases da Educação Nacional).
-            </p>
-            <p>
-              CNPJ: 64.646.469/0001-85
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
