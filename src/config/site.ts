@@ -30,6 +30,18 @@ export const site = {
     instagramHandle: '@brunosenaoficial',
   },
 
+  /**
+   * Plataforma que processa os pagamentos, citada no texto de compra
+   * segura, na Política de Privacidade e nos Termos de Uso.
+   *
+   * Hoje é a Kiwify — é para lá que apontam todos os links de checkout em
+   * `courses.ts`. Há intenção de migrar para a Hotmart. Quando isso
+   * acontecer, troque este nome E os `checkout` de cada curso: o nome
+   * citado no texto e o destino dos botões precisam contar a mesma
+   * história, senão quem compra lê uma plataforma e cai em outra.
+   */
+  paymentPlatform: 'Kiwify',
+
   legalDisclaimer:
     'A Programação Neurolinguística (PNL), o Coaching e a Hipnoterapia são abordagens educacionais e de desenvolvimento pessoal. Não substituem tratamento médico ou psiquiátrico.',
 } as const;

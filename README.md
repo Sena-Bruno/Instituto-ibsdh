@@ -68,6 +68,19 @@ firebase deploy --only firestore:rules,firestore:indexes
 O índice composto em `firestore.indexes.json` é obrigatório: sem ele a
 consulta de avaliações falha e a lista fica vazia para sempre.
 
+### Migrar a plataforma de pagamento
+
+Hoje as vendas passam pela Kiwify; a migração para a Hotmart está prevista.
+São dois pontos, e os dois precisam mudar juntos:
+
+1. `paymentPlatform` em `src/config/site.ts` — o nome citado no texto de
+   compra segura, na Política de Privacidade e nos Termos.
+2. `checkout` de cada curso em `src/config/courses.ts` — o destino real dos
+   botões.
+
+Se só um dos dois mudar, o site anuncia uma plataforma e leva o comprador
+para outra.
+
 ## Pendências conhecidas
 
 - **Capas dos cursos.** Seis imagens se perderam na exportação original do

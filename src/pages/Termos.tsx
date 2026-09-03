@@ -50,7 +50,8 @@ export default function Termos() {
               3. Compras, prazos e reembolso
             </h2>
             <p>
-              Os pagamentos são processados pela Hotmart, sujeitos aos termos dela. Nos
+              Os pagamentos são processados pela {site.paymentPlatform}, sujeitos aos termos
+              dela. Nos
               termos do Código de Defesa do Consumidor, você pode desistir da compra em
               até 7 dias corridos a contar do acesso, com devolução integral do valor.
             </p>

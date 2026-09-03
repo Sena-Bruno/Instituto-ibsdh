@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import CourseImage from '../components/CourseImage';
+import { site } from '../config/site';
 import { Link } from 'react-router-dom';
 import { 
   ChevronRight, 
@@ -788,7 +789,7 @@ const SecuritySection = () => {
         </div>
         <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-4">Pagamento 100% Seguro</h2>
         <p className="text-brand-platinum max-w-2xl mx-auto mb-10 leading-relaxed">
-          Seu investimento está protegido. Todos os pagamentos são processados pela <strong className="text-white">Hotmart</strong>, a maior plataforma de cursos online da América Latina. Os dados do seu cartão são tratados no ambiente seguro dela — nós não os recebemos nem armazenamos.
+          Seu investimento está protegido. Todos os pagamentos são processados pela <strong className="text-white">{site.paymentPlatform}</strong>, plataforma especializada em cursos online. Os dados do seu cartão são tratados no ambiente seguro dela — nós não os recebemos nem armazenamos.
         </p>
         
         {/* Formas de pagamento. Antes eram 6 imagens buscadas de
@@ -796,7 +797,7 @@ const SecuritySection = () => {
             podia sumir a qualquer momento e ainda adicionava 6 conexões
             externas ao carregamento. Agora é texto, servido pelo próprio site. */}
         <ul className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-          {['Hotmart', 'Pix', 'Visa', 'Mastercard', 'Elo', 'American Express', 'Boleto'].map((meio) => (
+          {[site.paymentPlatform, 'Pix', 'Visa', 'Mastercard', 'Elo', 'American Express', 'Boleto'].map((meio) => (
             <li
               key={meio}
               className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-medium text-brand-platinum"
