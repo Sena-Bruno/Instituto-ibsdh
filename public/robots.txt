@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://institutobrunosena.com.br/sitemap.xml

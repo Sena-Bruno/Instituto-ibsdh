@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-brand-dark: #09090B;
+  --color-brand-surface: #18181B;
+  --color-brand-accent: #E5C365;
+  --color-brand-blue: #5C9CFA;
+  --color-brand-emerald: #39D4A1;
+  --color-brand-purple: #B67FF1;
+  --color-brand-warm: #F9814D;
+  --color-brand-platinum: #A1A1AA;
+  --color-brand-muted: #27272A;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-dark text-brand-platinum font-sans antialiased selection:bg-brand-accent selection:text-brand-dark;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-white font-display tracking-tight;
+  }
+}
+
+.grid-overlay {
+  background-size: 100px 100px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.text-gradient-gold {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#F9E29C] via-[#E5C365] to-[#C8A23B];
+}
+
+.text-gradient-blue {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#9EC7FE] via-[#5C9CFA] to-[#2B70DA];
+}
+
+.text-gradient-purple {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D6B5FC] via-[#B67FF1] to-[#8A42D6];
+}
+
+.text-gradient-emerald {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#82F2CE] via-[#39D4A1] to-[#12A374];
+}
+
+.text-gradient-warm {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#FBC796] via-[#F9814D] to-[#DC5418];
+}
+
+.btn-primary {
+  @apply px-8 py-4 bg-brand-accent text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(229,195,101,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
+}
+
+.btn-blue {
+  @apply px-8 py-4 bg-brand-blue text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(92,156,250,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
+}
+
+.btn-purple {
+  @apply px-8 py-4 bg-brand-purple text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(182,127,241,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
+}
+
+.btn-emerald {
+  @apply px-8 py-4 bg-brand-emerald text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(57,212,161,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
+}
+
+.btn-warm {
+  @apply px-8 py-4 bg-brand-warm text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(249,129,77,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
+}
+
+.btn-outline {
+  @apply px-8 py-4 bg-transparent text-white border border-white/20 rounded-full font-bold transition-all transform hover:bg-white hover:text-brand-dark active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+

@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: course_reviews
+    // Document ID: auto-generated
+    // Fields:
+    //   - courseId: string (required) - The ID of the course being reviewed
+    //   - userId: string (required) - The ID of the user who left the review
+    //   - userName: string (required) - The display name of the user
+    //   - userPhoto: string (optional) - The URL of the user's profile photo
+    //   - rating: number (required) - The rating given by the user, from 1 to 5
+    //   - comment: string (required) - The text content of the review
+    //   - createdAt: timestamp (required) - The time the review was created
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    function uidUnchanged() {
+      return !('userId' in request.resource.data) || request.resource.data.userId == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('userId' in request.resource.data) || request.resource.data.userId == resource.data.userId;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    function isValidStringLength(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+        request.resource.data[field].size() >= minLen &&
+        request.resource.data[field].size() <= maxLen;
+    }
+
+    function isValidOptionalString(field, minLen, maxLen) {
+      return !(field in request.resource.data) ||
+             (request.resource.data[field] is string &&
+              request.resource.data[field].size() >= minLen &&
+              request.resource.data[field].size() <= maxLen);
+    }
+
+    // Domain Validators
+    function isValidCourseReview(data) {
+      return hasOnlyAllowedFields(['courseId', 'userId', 'userName', 'userPhoto', 'rating', 'comment', 'createdAt']) &&
+             data.courseId is string && data.courseId.size() > 0 && data.courseId.size() < 100 &&
+             data.userId is string && data.userId.size() > 0 && data.userId.size() < 100 &&
+             data.userName is string && data.userName.size() > 0 && data.userName.size() < 100 &&
+             (!('userPhoto' in data) || (data.userPhoto is string && data.userPhoto.size() < 500)) &&
+             data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+             data.comment is string && data.comment.size() > 0 && data.comment.size() <= 2000 &&
+             data.createdAt is timestamp;
+    }
+
+    match /course_reviews/{reviewId} {
+      // Anyone can read reviews
+      allow read: if true;
+      
+      // Only authenticated users can create reviews, and they must be the author
+      allow create: if isAuthenticated() && 
+                    isValidCourseReview(request.resource.data) && 
+                    uidUnchanged();
+                    
+      // Only the author can update their review, and they can't change the author ID or creation date
+      allow update: if isDocOwner() && 
+                    isValidCourseReview(request.resource.data) && 
+                    uidNotModified() &&
+                    areImmutableFieldsUnchanged(['createdAt', 'userId', 'courseId']);
+                    
+      // Only the author can delete their review
+      allow delete: if isDocOwner();
+    }
+  }
+}
