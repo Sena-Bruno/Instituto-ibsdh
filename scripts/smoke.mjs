@@ -57,8 +57,12 @@ for (const route of routes) {
   const deadCtas = await page.evaluate(() =>
     [...document.querySelectorAll('button')]
       .filter((b) => {
+        // Acordeões e alternadores têm aria-expanded/aria-controls: são
+        // controles legítimos sem href, não CTAs de compra quebrados.
+        if (b.hasAttribute('aria-expanded') || b.hasAttribute('aria-controls')) return false;
+        if (b.closest('form')) return false;
         const t = (b.textContent || '').toLowerCase();
-        return /comprar|garantir|quero|matricular|vaga|inscrever/.test(t) && !b.closest('form');
+        return /comprar|garantir|matricular|quero (me |acessar|dominar)|minha vaga|inscrever/.test(t);
       })
       .map((b) => b.textContent.trim().slice(0, 50)),
   );

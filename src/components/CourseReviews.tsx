@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { db, auth, loginWithGoogle } from '../firebase';
+import { db, auth, loginWithGoogle, logout } from '../firebase';
 import { Star, Trash2, UserCircle2, LogIn } from 'lucide-react';
 
 interface Review {
@@ -21,6 +21,12 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Sem estes dois, a lista aparecia como "Ainda não há avaliações"
+  // enquanto a consulta estava em andamento, e uma falha do Firestore
+  // ficava só no console — o visitante via um vazio permanente.
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
@@ -42,10 +48,16 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
         ...doc.data()
       })) as Review[];
       setReviews(fetchedReviews);
+      setIsLoading(false);
+      setLoadError(false);
     }, (error) => {
-      console.error("Error fetching reviews:", error);
+      console.error('Erro ao carregar avaliações:', error);
+      setIsLoading(false);
+      setLoadError(true);
     });
 
+    return () => unsubscribe();
+    setIsLoading(true);
     return () => unsubscribe();
   }, [courseId]);
 
@@ -54,6 +66,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
     if (!user || !newComment.trim()) return;
 
     setIsSubmitting(true);
+    setSubmitError('');
     try {
       await addDoc(collection(db, 'course_reviews'), {
         courseId,
@@ -67,8 +80,8 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
       setNewComment('');
       setNewRating(5);
     } catch (error) {
-      console.error("Error adding review:", error);
-      alert("Erro ao enviar avaliação. Tente novamente.");
+      console.error('Erro ao enviar avaliação:', error);
+      setSubmitError('Não foi possível enviar sua avaliação. Tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -110,19 +123,31 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               ) : (
                 <UserCircle2 className="w-12 h-12 text-brand-platinum" />
               )}
-              <div>
-                <p className="text-white font-medium">{user.displayName}</p>
+              <div className="flex-1">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <p className="text-white font-medium">{user.displayName}</p>
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="text-xs text-brand-platinum hover:text-brand-accent transition-colors underline"
+                  >
+                    Sair
+                  </button>
+                </div>
                 <div className="flex gap-1 mt-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
                       onClick={() => setNewRating(star)}
-                      className="focus:outline-none transition-transform hover:scale-110"
+                      aria-label={`Avaliar com ${star} ${star === 1 ? 'estrela' : 'estrelas'}`}
+                      aria-pressed={star === newRating}
+                      className="rounded transition-transform hover:scale-110"
                     >
                       <Star
                         size={20}
-                        className={star <= newRating ? "text-brand-accent fill-brand-accent" : "text-white/40"}
+                        aria-hidden="true"
+                        className={star <= newRating ? 'text-brand-accent fill-brand-accent' : 'text-white/40'}
                       />
                     </button>
                   ))}
@@ -137,6 +162,11 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               required
               maxLength={2000}
             />
+            {submitError && (
+              <p role="alert" className="text-brand-danger text-sm mb-4">
+                {submitError}
+              </p>
+            )}
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -164,7 +194,22 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
 
       {/* Reviews List */}
       <div className="space-y-6">
-        {reviews.length === 0 ? (
+        {isLoading ? (
+          <p
+            role="status"
+            aria-live="polite"
+            className="text-center text-brand-platinum py-8 bg-white/5 rounded-2xl border border-white/5"
+          >
+            Carregando avaliações…
+          </p>
+        ) : loadError ? (
+          <p
+            role="alert"
+            className="text-center text-brand-danger py-8 bg-white/5 rounded-2xl border border-white/5"
+          >
+            Não foi possível carregar as avaliações agora. Recarregue a página para tentar de novo.
+          </p>
+        ) : reviews.length === 0 ? (
           <p className="text-center text-brand-platinum py-8 bg-white/5 rounded-2xl border border-white/5">
             Ainda não há avaliações para esta formação. Seja o primeiro a avaliar!
           </p>

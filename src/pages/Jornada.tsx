@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React from 'react';
 import { Helmet } from '@dr.pogodin/react-helmet';
+import Faq from '../components/Faq';
 import { CourseReviews } from '../components/CourseReviews';
 import { 
   CheckCircle2, 
   Award, 
   ChevronRight,
-  ChevronDown,
   ShieldCheck,
   Star,
   ArrowRight
@@ -14,11 +13,7 @@ import {
 
 const Jornada = () => {
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
 
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark" style={{ '--color-brand-accent': '#F9814D' } as React.CSSProperties}>
@@ -359,7 +354,7 @@ const Jornada = () => {
           </div>
           
           <div className="space-y-4">
-            {[
+            <Faq items={[
               {
                 q: "Posso começar pelo Master ou Hipnoterapia sem Practitioner?",
                 a: "Avaliação SENA obrigatória. Se sua base de PNL for sólida, pode. Se não for, Practitioner sistematiza."
@@ -376,33 +371,7 @@ const Jornada = () => {
                 q: "Trilogia vale a pena vs. combos separados?",
                 a: "Se quer os três, sim. Economia de R$ 338 + bônus exclusivos. Se só quer PNL, Combo A é melhor. Se só quer terapia breve, Combo B é melhor."
               }
-            ].map((faq, i) => (
-              <div 
-                key={i}
-                className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-colors hover:bg-white/10 cursor-pointer"
-                onClick={() => toggleFaq(i)}
-              >
-                <div className="p-6 flex items-center justify-between">
-                  <h3 className="font-bold text-white pr-8">{faq.q}</h3>
-                  <ChevronDown 
-                    className={`text-brand-accent transition-transform shrink-0 ${openFaq === i ? 'rotate-180' : ''}`} 
-                    size={20} 
-                  />
-                </div>
-                <AnimatePresence>
-                  {openFaq === i && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-6 text-brand-platinum/80"
-                    >
-                      {faq.a}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+            ] as const} />
           </div>
         </div>
       </section>

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React from 'react';
 import { Helmet } from '@dr.pogodin/react-helmet';
+import Faq from '../components/Faq';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
@@ -35,11 +35,7 @@ interface Module {
 
 const Hipnoterapia = () => {
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
 
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark" style={{ '--color-brand-accent': '#B67FF1' } as React.CSSProperties}>
@@ -450,7 +446,7 @@ const Hipnoterapia = () => {
           </div>
           
           <div className="space-y-4">
-            {[
+            <Faq items={[
               {
                 q: "Posso fazer sem PNL Practitioner?",
                 a: "Avaliação de entrada obrigatória. Hipnoterapia exige base de leitura de padrões e comunicação. Se não tem, comece pelo Practitioner."
@@ -467,33 +463,7 @@ const Hipnoterapia = () => {
                 q: "E se eu não atingir 7/10 no Exame 44?",
                 a: "3 tentativas incluídas. SENA dá feedback detalhado entre tentativas."
               }
-            ].map((faq, i) => (
-              <div 
-                key={i}
-                className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-colors hover:bg-white/10 cursor-pointer"
-                onClick={() => toggleFaq(i)}
-              >
-                <div className="p-6 flex items-center justify-between">
-                  <h3 className="font-bold text-white pr-8">{faq.q}</h3>
-                  <ChevronDown 
-                    className={`text-brand-accent transition-transform shrink-0 ${openFaq === i ? 'rotate-180' : ''}`} 
-                    size={20} 
-                  />
-                </div>
-                <AnimatePresence>
-                  {openFaq === i && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-6 text-brand-platinum/80"
-                    >
-                      {faq.a}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+            ] as const} />
           </div>
         </div>
       </section>
