@@ -20,12 +20,13 @@ const MasterCoach = () => {
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark" style={{ '--color-brand-accent': '#39D4A1' } as React.CSSProperties}>
       <Helmet>
-        <title>Formação Master Coach | Instituto SENA</title>
+        <link rel="canonical" href="https://institutobrunosena.com.br/master-coach" />
+        <title>Formação Master Coach | Instituto Bruno Sena</title>
         <meta name="description" content="Torne-se um Master Coach de excelência. Aprenda ferramentas poderosas de liderança, gestão e desenvolvimento humano para transformar vidas e negócios." />
-        <meta name="keywords" content="curso de master coach online, Master Coach, Coaching, Liderança, Desenvolvimento Pessoal, Gestão, Instituto SENA" />
-        <meta property="og:title" content="Formação Master Coach | Instituto SENA" />
+        <meta name="keywords" content="curso de master coach online, Master Coach, Coaching, Liderança, Desenvolvimento Pessoal, Gestão, Instituto Bruno Sena" />
+        <meta property="og:title" content="Formação Master Coach | Instituto Bruno Sena" />
         <meta property="og:description" content="Torne-se um Master Coach de excelência. Aprenda ferramentas poderosas de liderança e gestão." />
-        <meta property="og:image" content="https://institutobrunosena.com.br/master-coach-capa.png" />
+        <meta property="og:image" content="https://institutobrunosena.com.br/og-image.png" />
         <meta property="og:url" content="https://institutobrunosena.com.br/master-coach" />
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />

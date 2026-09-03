@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Helmet } from '@dr.pogodin/react-helmet';
+import CourseImage from '../components/CourseImage';
 import { Link } from 'react-router-dom';
 import { 
   ChevronRight, 
@@ -67,7 +68,7 @@ const Hero = () => {
           
           <h1 className="font-display text-5xl sm:text-6xl md:text-[80px] font-medium tracking-tighter mb-8 leading-[0.9] text-white">
             Domine as Ferramentas que <br />
-            <span className="text-white/40 italic font-light">Reprogramam</span> Vidas.
+            <span className="text-white/70 italic font-light">Reprogramam</span> Vidas.
           </h1>
           
           <p className="text-lg md:text-xl text-brand-platinum max-w-xl mb-12 leading-relaxed font-light">
@@ -93,13 +94,18 @@ const Hero = () => {
             transition={{ duration: 1, ease: "easeOut" }}
             className="relative w-[85%] sm:w-[400px] h-[90%] z-20"
           >
-            <img 
-              src="/brunosena.jpg" 
-              className="w-full h-full object-cover object-top mask-image-bottom drop-shadow-[0_0_30px_rgba(229,195,101,0.3)]" 
-              style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' }}
-              alt="Bruno Sena" 
-               
+            {/* Elemento LCP da home: carrega com prioridade alta e tem
+                dimensões declaradas para não deslocar o layout. */}
+            <img
+              src="/brunosena.webp"
+              alt="Bruno Sena, fundador do Instituto"
+              width={900}
+              height={1206}
               loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-full object-cover object-top drop-shadow-[0_0_30px_rgba(229,195,101,0.3)]"
+              style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' }}
             />
           </motion.div>
 
@@ -111,7 +117,13 @@ const Hero = () => {
           >
             <div className="flex gap-3 sm:gap-4 items-center">
               <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
-                <img src="/card-flutuante.png" className="w-full h-full object-contain drop-shadow-md" alt="Hipnoterapia"  />
+                <CourseImage
+                  src={undefined}
+                  alt="Hipnoterapia Clínica"
+                  title="Hipnose"
+                  className="rounded-2xl"
+                  accentClassName="from-brand-purple/40 to-brand-purple/10"
+                />
               </div>
               <div>
                 <p className="text-[8px] sm:text-[10px] text-brand-accent font-bold uppercase tracking-wider mb-1">Módulo Prático</p>
@@ -368,7 +380,8 @@ const Courses = () => {
       price: 'R$ 297,00',
       installments: '12x de R$ 29,82',
       icon: <Brain className="text-brand-blue" size={32} />,
-      img: '/capa-practitioner.png',
+      img: undefined,
+      coverGradient: 'from-brand-blue/30 to-brand-dark',
       kiwify: 'https://pay.kiwify.com.br/DkL4e3J',
       link: '/pnl-practitioner',
       popular: true,
@@ -384,7 +397,8 @@ const Courses = () => {
       price: 'R$ 997,00',
       installments: '12x de R$ 100,10',
       icon: <Target className="text-brand-accent" size={32} />,
-      img: '/capa-master-pnl.png',
+      img: undefined,
+      coverGradient: 'from-brand-accent/30 to-brand-dark',
       kiwify: 'https://pay.kiwify.com.br/T8wW0tA',
       link: '/master-pnl',
       advanced: true,
@@ -400,7 +414,8 @@ const Courses = () => {
       price: 'R$ 397,00',
       installments: '12x de R$ 39,86',
       icon: <Sparkles className="text-brand-purple" size={32} />,
-      img: '/capa-hipnoterapia.png',
+      img: undefined,
+      coverGradient: 'from-brand-purple/30 to-brand-dark',
       kiwify: 'https://pay.kiwify.com.br/A5i1o7D',
       link: '/hipnoterapia',
       colorText: 'text-brand-purple',
@@ -415,7 +430,8 @@ const Courses = () => {
       price: 'Em breve',
       installments: 'Em breve',
       icon: <Target className="text-brand-emerald" size={32} />,
-      img: '/master-coach-capa.png',
+      img: undefined,
+      coverGradient: 'from-brand-emerald/30 to-brand-dark',
       kiwify: '#',
       link: '/master-coach',
       comingSoon: true,
@@ -454,11 +470,12 @@ const Courses = () => {
                 <div className="absolute -inset-0.5 bg-gradient-to-br from-brand-accent/20 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
               )}
               <div className="relative aspect-video overflow-hidden">
-                <img 
-                  src={course.img} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                  alt={course.title}
-                  
+                <CourseImage
+                  src={course.img}
+                  alt={`Capa da formação ${course.title}`}
+                  title={course.title}
+                  accentClassName={course.coverGradient}
+                  imgClassName="transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute top-4 left-4 p-2.5 bg-brand-dark/80 backdrop-blur-md rounded-xl border border-white/10">
                   {React.cloneElement(course.icon as React.ReactElement, { size: 24 })}
@@ -703,7 +720,13 @@ const CertificatesSection = () => {
              <div className="order-2 lg:order-1 relative group cursor-pointer">
                <div className="absolute inset-0 bg-gradient-to-tr from-brand-accent/20 to-brand-blue/20 blur-[80px] rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
                <div className="relative z-10 p-2 rounded-[36px] bg-gradient-to-br from-white/10 to-transparent border border-white/10 backdrop-blur-sm transition-transform duration-700 group-hover:scale-[1.02] group-hover:-rotate-1">
-                 <img src="/nlpea-practitioner.png" alt="Certificado Internacional NLPEA" className="w-full h-auto object-contain rounded-[32px] shadow-2xl" loading="lazy" />
+                 <CourseImage
+                   src={undefined}
+                   alt="Certificado Internacional NLPEA"
+                   title="Certificado Internacional NLPEA"
+                   className="aspect-[4/3] rounded-[32px] shadow-2xl"
+                   accentClassName="from-brand-blue/30 to-brand-dark"
+                 />
                  <div className="absolute inset-0 rounded-[32px] ring-1 ring-inset ring-white/10 pointer-events-none" />
                </div>
              </div>
@@ -772,34 +795,23 @@ const SecuritySection = () => {
         </div>
         <h2 className="font-display text-2xl md:text-3xl font-bold text-white mb-4">Pagamento 100% Seguro</h2>
         <p className="text-brand-platinum max-w-2xl mx-auto mb-10 leading-relaxed">
-          Seu investimento está protegido. Todos os pagamentos são processados pela <strong className="text-white">Hotmart</strong>, a maior e mais segura plataforma de cursos online da América Latina. Seus dados são criptografados e mantidos em sigilo absoluto.
+          Seu investimento está protegido. Todos os pagamentos são processados pela <strong className="text-white">Kiwify</strong>, plataforma especializada em cursos online. Os dados do seu cartão são tratados no ambiente seguro dela — nós não os recebemos nem armazenamos.
         </p>
         
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 opacity-70 hover:opacity-100 transition-all duration-500">
-          {/* Hotmart Logo & Divider */}
-          <div className="flex items-center gap-6 md:gap-8">
-            <img 
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Hotmart_logo.svg/1200px-Hotmart_logo.svg.png" 
-              alt="Hotmart" 
-              className="h-7 md:h-9 object-contain brightness-0 invert" 
-               
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-            <div className="w-px h-8 bg-white/20 hidden sm:block" />
-          </div>
-          
-          {/* Credit Cards */}
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-            <img src="https://cdn.simpleicons.org/visa/white" alt="Visa" className="h-6 md:h-8 object-contain"  />
-            <img src="https://cdn.simpleicons.org/mastercard/white" alt="Mastercard" className="h-6 md:h-8 object-contain"  />
-            <img src="https://cdn.simpleicons.org/americanexpress/white" alt="American Express" className="h-6 md:h-8 object-contain"  />
-            <img src="https://cdn.simpleicons.org/paypal/white" alt="PayPal" className="h-6 md:h-8 object-contain"  />
-            <img src="https://cdn.simpleicons.org/pix/white" alt="Pix" className="h-6 md:h-8 object-contain"  />
-          </div>
-        </div>
+        {/* Formas de pagamento. Antes eram 6 imagens buscadas de
+            cdn.simpleicons.org e do Wikimedia — hotlink de terceiros que
+            podia sumir a qualquer momento e ainda adicionava 6 conexões
+            externas ao carregamento. Agora é texto, servido pelo próprio site. */}
+        <ul className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+          {['Kiwify', 'Pix', 'Visa', 'Mastercard', 'Elo', 'American Express', 'Boleto'].map((meio) => (
+            <li
+              key={meio}
+              className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-medium text-brand-platinum"
+            >
+              {meio}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -898,12 +910,12 @@ const Ebooks = () => {
     {
       title: 'O Despertar da Mente: Introdução à Reprogramação Mental',
       price: 'R$ 27',
-      img: '/mockuppnl.png'
+      img: '/mockuppnl.webp'
     },
     {
       title: 'Hipnose no Dia a Dia: Técnicas que Você Pode Usar Hoje',
       price: 'R$ 27',
-      img: '/mockuphip.png'
+      img: '/mockuphip.webp'
     }
   ];
 
@@ -928,7 +940,7 @@ const Ebooks = () => {
               className="group bg-brand-dark border border-brand-purple/20 rounded-[24px] p-6 hover:border-brand-purple/40 transition-all flex flex-col sm:flex-row gap-6 items-center shadow-[0_4px_30px_rgba(0,0,0,0.2)]"
             >
               <div className="w-40 sm:w-48 h-auto shrink-0 flex items-center justify-center">
-                <img src={ebook.img} className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" alt={ebook.title}  />
+                <img loading="lazy" decoding="async" src={ebook.img} className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" alt={ebook.title}  />
               </div>
               <div className="flex flex-col flex-grow text-center sm:text-left">
                 <h3 className="text-lg font-bold mb-4 leading-tight text-white">{ebook.title}</h3>
@@ -971,8 +983,8 @@ const Mentor = () => {
             className="relative order-1 lg:order-1"
           >
             <div className="rounded-[24px] overflow-hidden border border-white/10 shadow-2xl max-w-lg mx-auto lg:mx-0">
-              <img 
-                src="/brunosena.jpg" 
+              <img loading="lazy" decoding="async" 
+                src="/brunosena.webp" 
                 className="w-full h-auto object-contain" 
                 alt="Bruno Sena"
                 
@@ -1013,11 +1025,12 @@ const Mentor = () => {
               
               <div className="mt-12 p-6 bg-white/5 border border-white/10 rounded-2xl flex flex-col sm:flex-row items-center gap-6">
                 <div className="w-32 sm:w-40 shrink-0">
-                  <img 
-                    src="/nlpea-practitioner.png" 
-                    alt="NLPEA Lifetime Member" 
-                    className="w-full h-auto object-contain drop-shadow-lg"
-                    
+                  <CourseImage
+                    src={undefined}
+                    alt="NLPEA Lifetime Member"
+                    title="NLPEA"
+                    className="aspect-square rounded-2xl"
+                    accentClassName="from-brand-blue/30 to-brand-dark"
                   />
                 </div>
                 <div>
@@ -1215,11 +1228,11 @@ const CorporateSolutions = () => {
 
           <div className="relative">
             <div className="aspect-square rounded-[40px] overflow-hidden border border-white/10 relative">
-              <img 
-                src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop" 
-                alt="Treinamento Corporativo" 
-                className="w-full h-full object-cover"
-                
+              <CourseImage
+                src={undefined}
+                alt="Treinamento corporativo in company"
+                title="Treinamentos In Company"
+                accentClassName="from-brand-emerald/30 to-brand-dark"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent opacity-80" />
             </div>
@@ -1227,10 +1240,13 @@ const CorporateSolutions = () => {
             {/* Floating Badge */}
             <div className="absolute -bottom-8 -left-8 bg-brand-surface border border-brand-emerald/20 p-6 rounded-3xl shadow-2xl backdrop-blur-md hidden md:block">
               <div className="flex items-center gap-4 mb-2">
-                <div className="flex -space-x-3">
-                  {[...Array(4)].map((_, i) => (
-                    <div key={i} className="w-10 h-10 rounded-full bg-brand-dark border-2 border-brand-surface overflow-hidden">
-                      <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Avatar" className="w-full h-full object-cover" />
+                <div className="flex -space-x-3" aria-hidden="true">
+                  {['A', 'M', 'R', 'S'].map((inicial) => (
+                    <div
+                      key={inicial}
+                      className="w-10 h-10 rounded-full bg-brand-emerald/20 border-2 border-brand-surface flex items-center justify-center font-bold text-brand-emerald text-sm"
+                    >
+                      {inicial}
                     </div>
                   ))}
                 </div>
@@ -1249,12 +1265,13 @@ export default function App() {
   return (
     <div className="min-h-screen selection:bg-brand-accent selection:text-brand-dark">
       <Helmet>
-        <title>Instituto SENA | Formações em PNL, Hipnose e Coaching</title>
+        <link rel="canonical" href="https://institutobrunosena.com.br/" />
+        <title>Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching</title>
         <meta name="description" content="Transforme sua vida e carreira com as melhores formações em PNL, Hipnoterapia e Master Coach. Aprenda com especialistas e alcance a excelência." />
         <meta name="keywords" content="instituto de PNL, curso de desenvolvimento humano, PNL, Hipnose, Coaching, Master Coach, Hipnoterapia" />
-        <meta property="og:title" content="Instituto SENA | Formações em PNL, Hipnose e Coaching" />
+        <meta property="og:title" content="Instituto Bruno Sena | Formações em PNL, Hipnose e Coaching" />
         <meta property="og:description" content="Transforme sua vida e carreira com as melhores formações em PNL, Hipnoterapia e Master Coach." />
-        <meta property="og:image" content="https://institutobrunosena.com.br/brunosena.jpg" />
+        <meta property="og:image" content="https://institutobrunosena.com.br/brunosena.webp" />
         <meta property="og:url" content="https://institutobrunosena.com.br" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />

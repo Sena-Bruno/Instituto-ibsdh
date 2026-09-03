@@ -32,12 +32,13 @@ const Hipnoterapia = () => {
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark" style={{ '--color-brand-accent': '#B67FF1' } as React.CSSProperties}>
       <Helmet>
-        <title>Formação Hipnoterapia Clínica | Instituto SENA</title>
-        <meta name="description" content="Aprenda Hipnoterapia Clínica e tenha acesso direto ao inconsciente. Domine induções, protocolos terapêuticos e hipnose ericksoniana com o Instituto SENA." />
-        <meta name="keywords" content="curso de hipnoterapia clínica, formação em hipnose, Hipnoterapia Clínica, Hipnose, Transe, Regressão, Instituto SENA" />
-        <meta property="og:title" content="Formação Hipnoterapia Clínica | Instituto SENA" />
+        <link rel="canonical" href="https://institutobrunosena.com.br/hipnoterapia" />
+        <title>Formação Hipnoterapia Clínica | Instituto Bruno Sena</title>
+        <meta name="description" content="Aprenda Hipnoterapia Clínica e tenha acesso direto ao inconsciente. Domine induções, protocolos terapêuticos e hipnose ericksoniana com o Instituto Bruno Sena." />
+        <meta name="keywords" content="curso de hipnoterapia clínica, formação em hipnose, Hipnoterapia Clínica, Hipnose, Transe, Regressão, Instituto Bruno Sena" />
+        <meta property="og:title" content="Formação Hipnoterapia Clínica | Instituto Bruno Sena" />
         <meta property="og:description" content="Aprenda Hipnoterapia Clínica e tenha acesso direto ao inconsciente. Domine induções e protocolos terapêuticos." />
-        <meta property="og:image" content="https://institutobrunosena.com.br/mockuphip.png" />
+        <meta property="og:image" content="https://institutobrunosena.com.br/mockuphip.webp" />
         <meta property="og:url" content="https://institutobrunosena.com.br/hipnoterapia" />
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -279,7 +280,7 @@ const Hipnoterapia = () => {
                       <tbody className="text-brand-platinum text-sm">
                         {mod.lessons.map((lesson, lIdx) => (
                           <tr key={lIdx} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${lesson.isEthic ? 'bg-red-500/5' : ''}`}>
-                            <td className="p-4 text-center font-mono text-brand-platinum/40">{lesson.id}</td>
+                            <td className="p-4 text-center font-mono text-brand-platinum/70">{lesson.id}</td>
                             <td className={`p-4 font-medium ${lesson.isEthic ? 'text-red-400' : lesson.isHighlight ? 'text-white font-bold' : 'text-white'}`}>{lesson.title}</td>
                             <td className={`p-4 ${lesson.isEthic ? 'text-red-400 font-bold' : lesson.isHighlight ? 'text-brand-accent font-bold' : 'text-brand-accent'}`}>{lesson.practice}</td>
                           </tr>

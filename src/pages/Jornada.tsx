@@ -28,12 +28,13 @@ const Jornada = () => {
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark" style={{ '--color-brand-accent': '#F9814D' } as React.CSSProperties}>
       <Helmet>
-        <title>Jornada do Herói | Instituto SENA</title>
+        <link rel="canonical" href="https://institutobrunosena.com.br/jornada" />
+        <title>Jornada do Herói | Instituto Bruno Sena</title>
         <meta name="description" content="Descubra o seu propósito e transforme sua vida com a Jornada do Herói. Um treinamento imersivo de autoconhecimento e desenvolvimento pessoal." />
-        <meta name="keywords" content="formação completa PNL hipnoterapia, trilogia desenvolvimento humano, Jornada do Herói, Autoconhecimento, Desenvolvimento Pessoal, Instituto SENA" />
-        <meta property="og:title" content="Jornada do Herói | Instituto SENA" />
+        <meta name="keywords" content="formação completa PNL hipnoterapia, trilogia desenvolvimento humano, Jornada do Herói, Autoconhecimento, Desenvolvimento Pessoal, Instituto Bruno Sena" />
+        <meta property="og:title" content="Jornada do Herói | Instituto Bruno Sena" />
         <meta property="og:description" content="Descubra o seu propósito e transforme sua vida com a Jornada do Herói." />
-        <meta property="og:image" content="https://institutobrunosena.com.br/mockuppnl.png" />
+        <meta property="og:image" content="https://institutobrunosena.com.br/mockuppnl.webp" />
         <meta property="og:url" content="https://institutobrunosena.com.br/jornada" />
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -116,7 +117,7 @@ const Jornada = () => {
               <p className="text-brand-platinum/60 text-sm mb-6">P+H</p>
               
               <div className="mb-6">
-                <div className="text-brand-platinum/40 line-through text-sm mb-1">R$ 694</div>
+                <div className="text-brand-platinum/70 line-through text-sm mb-1">R$ 694</div>
                 <div className="text-3xl font-bold text-white mb-1">R$ 597</div>
                 <div className="text-brand-platinum/60 text-sm mb-2">ou 12x R$ 50</div>
                 <div className="inline-block px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">Economia de R$ 97</div>
@@ -155,7 +156,7 @@ const Jornada = () => {
               <p className="text-brand-platinum/60 text-sm mb-6">P+M</p>
               
               <div className="mb-6">
-                <div className="text-brand-platinum/40 line-through text-sm mb-1">R$ 1.294</div>
+                <div className="text-brand-platinum/70 line-through text-sm mb-1">R$ 1.294</div>
                 <div className="text-3xl font-bold text-brand-accent mb-1">R$ 1.097</div>
                 <div className="text-brand-platinum/60 text-sm mb-2">ou 12x R$ 91</div>
                 <div className="inline-block px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">Economia de R$ 197</div>
@@ -190,7 +191,7 @@ const Jornada = () => {
               <p className="text-brand-platinum/60 text-sm mb-6">P+M+H</p>
               
               <div className="mb-6">
-                <div className="text-brand-platinum/40 line-through text-sm mb-1">R$ 1.691</div>
+                <div className="text-brand-platinum/70 line-through text-sm mb-1">R$ 1.691</div>
                 <div className="text-3xl font-bold text-white mb-1">R$ 1.353</div>
                 <div className="text-brand-platinum/60 text-sm mb-2">ou 12x R$ 113</div>
                 <div className="inline-block px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">Economia de R$ 338 (20% off)</div>
@@ -344,7 +345,7 @@ const Jornada = () => {
 
       {/* Garantia em todos os níveis */}
       <section className="py-24 bg-brand-accent text-brand-dark relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5 mix-blend-overlay" />
+        <div className="absolute inset-0 textura-carbono opacity-5 mix-blend-overlay" />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShieldCheck className="mx-auto mb-6" size={64} />
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">

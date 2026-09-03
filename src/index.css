@@ -1,10 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+/* As fontes são carregadas por <link> no index.html, que não bloqueia a
+   renderização. O @import que existia aqui buscava exatamente a mesma URL
+   uma segunda vez e ainda anulava o preload do HTML. */
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  
+
   --color-brand-dark: #09090B;
   --color-brand-surface: #18181B;
   --color-brand-accent: #E5C365;
@@ -14,22 +16,86 @@
   --color-brand-warm: #F9814D;
   --color-brand-platinum: #A1A1AA;
   --color-brand-muted: #27272A;
+
+  /* Faltava um tom secundário: Home.tsx usava from-brand-secondary/40 no
+     card final de CTA, mas o token nunca existiu — o gradiente saía do nada. */
+  --color-brand-secondary: #1F1F27;
+
+  /* Cores de estado. O site usava text-red-400 e text-green-400 crus da
+     paleta do Tailwind, fora do sistema da marca. */
+  --color-brand-danger: #F87171;
+  --color-brand-success: #4ADE80;
 }
 
 @layer base {
   body {
     @apply bg-brand-dark text-brand-platinum font-sans antialiased selection:bg-brand-accent selection:text-brand-dark;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     @apply text-white font-display tracking-tight;
   }
+
+  /* Foco visível em toda a navegação por teclado. O site não tinha nenhuma
+     regra de focus-visible, e três botões aplicavam focus:outline-none sem
+     repor nada — quem navega por Tab não enxergava onde estava. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Rolagem suave para as âncoras internas (#cursos, #checkout). */
+  html {
+    scroll-behavior: smooth;
+    /* Compensa o cabeçalho fixo, que antes cobria o topo da seção alvo. */
+    scroll-padding-top: 6rem;
+  }
+}
+
+/* Respeita quem pede menos movimento no sistema. O site é pesado em
+   animações e tinha um marquee em laço infinito sem nenhuma proteção. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Conteúdo visível só para leitores de tela (link "pular para o conteúdo"). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 .grid-overlay {
   background-size: 100px 100px;
   background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Substitui a textura que era buscada de transparenttextures.com — um
+   hotlink de terceiro que podia sumir a qualquer momento. */
+.textura-carbono {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 4px);
+  background-size: 6px 6px;
 }
 
 .text-gradient-gold {
@@ -52,28 +118,41 @@
   @apply bg-clip-text text-transparent bg-gradient-to-r from-[#FBC796] via-[#F9814D] to-[#DC5418];
 }
 
-.btn-primary {
-  @apply px-8 py-4 bg-brand-accent text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(229,195,101,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
+/* Botões. O brilho agora deriva do token da cor, em vez de repetir valores
+   rgba fixos: o site tinha rgba(242,125,38,…), um laranja legado que não é
+   token nenhum, usado 5 vezes como brilho do accent, e rgba(212,175,55,…),
+   um dourado antigo. Em páginas que trocam o accent por azul ou roxo, o
+   brilho continuava laranja. */
+.btn-primary,
+.btn-blue,
+.btn-purple,
+.btn-emerald,
+.btn-warm,
+.btn-outline {
+  @apply px-8 py-4 rounded-full font-bold transition-all transform
+         hover:scale-[1.02] active:scale-95 flex items-center justify-center
+         gap-2 text-sm uppercase tracking-wider
+         motion-reduce:transform-none motion-reduce:hover:scale-100;
 }
 
-.btn-blue {
-  @apply px-8 py-4 bg-brand-blue text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(92,156,250,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
-}
+.btn-primary { @apply bg-brand-accent text-brand-dark; }
+.btn-primary:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-accent) r g b / 0.3); }
 
-.btn-purple {
-  @apply px-8 py-4 bg-brand-purple text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(182,127,241,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
-}
+.btn-blue { @apply bg-brand-blue text-brand-dark; }
+.btn-blue:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-blue) r g b / 0.3); }
 
-.btn-emerald {
-  @apply px-8 py-4 bg-brand-emerald text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(57,212,161,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
-}
+.btn-purple { @apply bg-brand-purple text-brand-dark; }
+.btn-purple:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-purple) r g b / 0.3); }
 
-.btn-warm {
-  @apply px-8 py-4 bg-brand-warm text-brand-dark rounded-full font-bold transition-all transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(249,129,77,0.3)] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
-}
+.btn-emerald { @apply bg-brand-emerald text-brand-dark; }
+.btn-emerald:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-emerald) r g b / 0.3); }
+
+.btn-warm { @apply bg-brand-warm text-brand-dark; }
+.btn-warm:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-warm) r g b / 0.3); }
 
 .btn-outline {
-  @apply px-8 py-4 bg-transparent text-white border border-white/20 rounded-full font-bold transition-all transform hover:bg-white hover:text-brand-dark active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider;
+  @apply bg-transparent text-white border border-white/20
+         hover:bg-white hover:text-brand-dark;
 }
 
 @keyframes marquee {
@@ -84,4 +163,3 @@
 .animate-marquee {
   animation: marquee 20s linear infinite;
 }
-

@@ -34,12 +34,13 @@ const MasterPNL = () => {
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark">
       <Helmet>
-        <title>Formação Master PNL | Instituto SENA</title>
+        <link rel="canonical" href="https://institutobrunosena.com.br/master-pnl" />
+        <title>Formação Master PNL | Instituto Bruno Sena</title>
         <meta name="description" content="Aprofunde seus conhecimentos em PNL com a Formação Master PNL. Domine a modelagem avançada, intervenções complexas e estruturação de sessões profissionais." />
-        <meta name="keywords" content="master PNL online, PNL avançado certificação, Master PNL, Programação Neurolinguística Avançada, Instituto SENA" />
-        <meta property="og:title" content="Formação Master PNL | Instituto SENA" />
+        <meta name="keywords" content="master PNL online, PNL avançado certificação, Master PNL, Programação Neurolinguística Avançada, Instituto Bruno Sena" />
+        <meta property="og:title" content="Formação Master PNL | Instituto Bruno Sena" />
         <meta property="og:description" content="Aprofunde seus conhecimentos em PNL com a Formação Master PNL. Domine a modelagem avançada e intervenções complexas." />
-        <meta property="og:image" content="https://institutobrunosena.com.br/capa-master-pnl.png" />
+        <meta property="og:image" content="https://institutobrunosena.com.br/og-image.png" />
         <meta property="og:url" content="https://institutobrunosena.com.br/master-pnl" />
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -277,7 +278,7 @@ const MasterPNL = () => {
                     <tbody className="text-brand-platinum text-sm">
                       {mod.lessons.map((lesson, lIdx) => (
                         <tr key={lIdx} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                          <td className="p-4 text-center font-mono text-brand-platinum/40">{lesson.id}</td>
+                          <td className="p-4 text-center font-mono text-brand-platinum/70">{lesson.id}</td>
                           <td className="p-4 font-medium text-white">{lesson.title}</td>
                           <td className="p-4 text-brand-accent">{lesson.practice}</td>
                         </tr>

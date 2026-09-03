@@ -122,7 +122,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                     >
                       <Star
                         size={20}
-                        className={star <= newRating ? "text-brand-accent fill-brand-accent" : "text-white/20"}
+                        className={star <= newRating ? "text-brand-accent fill-brand-accent" : "text-white/40"}
                       />
                     </button>
                   ))}
@@ -133,7 +133,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Compartilhe sua experiência com esta formação..."
-              className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder:text-white/30 focus:outline-none focus:border-brand-accent/50 focus:ring-1 focus:ring-brand-accent/50 resize-none h-28 mb-4 transition-all"
+              className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder:text-white/60 focus:outline-none focus:border-brand-accent/50 focus:ring-1 focus:ring-brand-accent/50 resize-none h-28 mb-4 transition-all"
               required
               maxLength={2000}
             />
@@ -186,12 +186,12 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                           <Star
                             key={i}
                             size={14}
-                            className={i < review.rating ? "text-brand-accent fill-brand-accent" : "text-white/20"}
+                            className={i < review.rating ? "text-brand-accent fill-brand-accent" : "text-white/40"}
                           />
                         ))}
                       </div>
                       {review.createdAt && (
-                        <span className="text-xs text-white/40">
+                        <span className="text-xs text-white/70">
                           {new Date(review.createdAt.toDate()).toLocaleDateString('pt-BR')}
                         </span>
                       )}
@@ -201,7 +201,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                 {user && user.uid === review.userId && (
                   <button
                     onClick={() => handleDelete(review.id)}
-                    className="text-white/30 hover:text-red-400 transition-colors p-2"
+                    className="text-white/60 hover:text-red-400 transition-colors p-2"
                     title="Excluir avaliação"
                   >
                     <Trash2 size={18} />

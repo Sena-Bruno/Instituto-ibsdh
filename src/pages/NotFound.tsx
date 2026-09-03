@@ -7,14 +7,14 @@ const NotFound = () => {
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
       <Helmet>
-        <title>Página não encontrada | Instituto SENA</title>
+        <title>Página não encontrada | Instituto Bruno Sena</title>
         <meta name="robots" content="noindex" />
       </Helmet>
       
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-accent/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
       
       <div className="w-24 h-24 mb-8">
-        <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-full h-full object-contain opacity-50" />
+        <img loading="lazy" decoding="async" src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-full h-full object-contain opacity-50" />
       </div>
       
       <h1 className="font-display text-8xl md:text-9xl font-bold text-white mb-4 drop-shadow-2xl">404</h1>
