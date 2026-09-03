@@ -1,11 +1,6 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
 import { 
   ChevronRight, 
@@ -89,7 +84,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <div className="flex items-center gap-10">
           <div className="flex items-center gap-2">
-            <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-12 h-12 object-contain"  />
+            <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-12 h-12 object-contain"  />
             <div className="flex flex-col">
               <span className="font-display font-bold text-lg leading-none tracking-tight text-white">INSTITUTO</span>
               <span className="font-display font-light text-xs tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
@@ -189,7 +184,7 @@ const Hero = () => {
             transition={{ duration: 1, ease: "easeOut" }}
             className="relative w-[85%] sm:w-[400px] h-[90%] z-20"
           >
-            <img referrerPolicy="no-referrer"  
+            <img 
               src="/brunosena.jpg" 
               className="w-full h-full object-cover object-top mask-image-bottom drop-shadow-[0_0_30px_rgba(229,195,101,0.3)]" 
               style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' }}
@@ -207,7 +202,7 @@ const Hero = () => {
           >
             <div className="flex gap-3 sm:gap-4 items-center">
               <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
-                <img referrerPolicy="no-referrer"  src="/card-flutuante.png" className="w-full h-full object-contain drop-shadow-md" alt="Hipnoterapia"  />
+                <img src="/card-flutuante.png" className="w-full h-full object-contain drop-shadow-md" alt="Hipnoterapia"  />
               </div>
               <div>
                 <p className="text-[8px] sm:text-[10px] text-brand-accent font-bold uppercase tracking-wider mb-1">Módulo Prático</p>
@@ -403,7 +398,7 @@ const SenaSimulator = () => {
 
           <div className="flex-1 relative w-full">
             <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden border border-brand-accent/20 bg-brand-surface shadow-[0_0_50px_rgba(229,195,101,0.15)]">
-              {/* Fake UI mockup of SENA */}
+              {/* Mockup da interface do método SENA */}
               <div className="absolute inset-0 p-6 flex flex-col">
                 <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
                   <div className="flex items-center gap-3">
@@ -550,7 +545,7 @@ const Courses = () => {
                 <div className="absolute -inset-0.5 bg-gradient-to-br from-brand-accent/20 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
               )}
               <div className="relative aspect-video overflow-hidden">
-                <img referrerPolicy="no-referrer"  
+                <img 
                   src={course.img} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                   alt={course.title}
@@ -799,7 +794,7 @@ const CertificatesSection = () => {
              <div className="order-2 lg:order-1 relative group cursor-pointer">
                <div className="absolute inset-0 bg-gradient-to-tr from-brand-accent/20 to-brand-blue/20 blur-[80px] rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
                <div className="relative z-10 p-2 rounded-[36px] bg-gradient-to-br from-white/10 to-transparent border border-white/10 backdrop-blur-sm transition-transform duration-700 group-hover:scale-[1.02] group-hover:-rotate-1">
-                 <img referrerPolicy="no-referrer"  src="/nlpea-practitioner.png" alt="Certificado Internacional NLPEA" className="w-full h-auto object-contain rounded-[32px] shadow-2xl" loading="lazy" />
+                 <img src="/nlpea-practitioner.png" alt="Certificado Internacional NLPEA" className="w-full h-auto object-contain rounded-[32px] shadow-2xl" loading="lazy" />
                  <div className="absolute inset-0 rounded-[32px] ring-1 ring-inset ring-white/10 pointer-events-none" />
                </div>
              </div>
@@ -847,7 +842,7 @@ const CertificatesSection = () => {
              <div className="relative group cursor-pointer">
                <div className="absolute inset-0 bg-gradient-to-tl from-brand-accent/20 to-brand-emerald/20 blur-[80px] rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
                <div className="relative z-10 p-2 rounded-[36px] bg-gradient-to-bl from-white/10 to-transparent border border-white/10 backdrop-blur-sm transition-transform duration-700 group-hover:scale-[1.02] group-hover:rotate-1">
-                 <img referrerPolicy="no-referrer"  src="/Certificado-IBSDH.webp" alt="Certificado IBSDH" className="w-full h-auto object-contain rounded-[32px] shadow-2xl" loading="lazy" />
+                 <img src="/Certificado-IBSDH.webp" alt="Certificado IBSDH" className="w-full h-auto object-contain rounded-[32px] shadow-2xl" loading="lazy" />
                  <div className="absolute inset-0 rounded-[32px] ring-1 ring-inset ring-white/10 pointer-events-none" />
                </div>
              </div>
@@ -874,7 +869,7 @@ const SecuritySection = () => {
         <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 opacity-70 hover:opacity-100 transition-all duration-500">
           {/* Hotmart Logo & Divider */}
           <div className="flex items-center gap-6 md:gap-8">
-            <img referrerPolicy="no-referrer"  
+            <img 
               src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Hotmart_logo.svg/1200px-Hotmart_logo.svg.png" 
               alt="Hotmart" 
               className="h-7 md:h-9 object-contain brightness-0 invert" 
@@ -889,11 +884,11 @@ const SecuritySection = () => {
           
           {/* Credit Cards */}
           <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-            <img referrerPolicy="no-referrer"  src="https://cdn.simpleicons.org/visa/white" alt="Visa" className="h-6 md:h-8 object-contain"  />
-            <img referrerPolicy="no-referrer"  src="https://cdn.simpleicons.org/mastercard/white" alt="Mastercard" className="h-6 md:h-8 object-contain"  />
-            <img referrerPolicy="no-referrer"  src="https://cdn.simpleicons.org/americanexpress/white" alt="American Express" className="h-6 md:h-8 object-contain"  />
-            <img referrerPolicy="no-referrer"  src="https://cdn.simpleicons.org/paypal/white" alt="PayPal" className="h-6 md:h-8 object-contain"  />
-            <img referrerPolicy="no-referrer"  src="https://cdn.simpleicons.org/pix/white" alt="Pix" className="h-6 md:h-8 object-contain"  />
+            <img src="https://cdn.simpleicons.org/visa/white" alt="Visa" className="h-6 md:h-8 object-contain"  />
+            <img src="https://cdn.simpleicons.org/mastercard/white" alt="Mastercard" className="h-6 md:h-8 object-contain"  />
+            <img src="https://cdn.simpleicons.org/americanexpress/white" alt="American Express" className="h-6 md:h-8 object-contain"  />
+            <img src="https://cdn.simpleicons.org/paypal/white" alt="PayPal" className="h-6 md:h-8 object-contain"  />
+            <img src="https://cdn.simpleicons.org/pix/white" alt="Pix" className="h-6 md:h-8 object-contain"  />
           </div>
         </div>
       </div>
@@ -1024,7 +1019,7 @@ const Ebooks = () => {
               className="group bg-brand-dark border border-brand-purple/20 rounded-[24px] p-6 hover:border-brand-purple/40 transition-all flex flex-col sm:flex-row gap-6 items-center shadow-[0_4px_30px_rgba(0,0,0,0.2)]"
             >
               <div className="w-40 sm:w-48 h-auto shrink-0 flex items-center justify-center">
-                <img referrerPolicy="no-referrer"  src={ebook.img} className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" alt={ebook.title}  />
+                <img src={ebook.img} className="w-full h-auto object-contain group-hover:scale-105 transition-transform duration-500 drop-shadow-2xl" alt={ebook.title}  />
               </div>
               <div className="flex flex-col flex-grow text-center sm:text-left">
                 <h3 className="text-lg font-bold mb-4 leading-tight text-white">{ebook.title}</h3>
@@ -1067,7 +1062,7 @@ const Mentor = () => {
             className="relative order-1 lg:order-1"
           >
             <div className="rounded-[24px] overflow-hidden border border-white/10 shadow-2xl max-w-lg mx-auto lg:mx-0">
-              <img referrerPolicy="no-referrer"  
+              <img 
                 src="/brunosena.jpg" 
                 className="w-full h-auto object-contain" 
                 alt="Bruno Sena"
@@ -1109,7 +1104,7 @@ const Mentor = () => {
               
               <div className="mt-12 p-6 bg-white/5 border border-white/10 rounded-2xl flex flex-col sm:flex-row items-center gap-6">
                 <div className="w-32 sm:w-40 shrink-0">
-                  <img referrerPolicy="no-referrer"  
+                  <img 
                     src="/nlpea-practitioner.png" 
                     alt="NLPEA Lifetime Member" 
                     className="w-full h-auto object-contain drop-shadow-lg"
@@ -1227,7 +1222,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-12">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-8">
-              <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-12 h-12 object-contain"  />
+              <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-12 h-12 object-contain"  />
               <span className="font-display font-bold text-xl tracking-tight text-white">INSTITUTO BRUNO SENA</span>
             </div>
             <p className="text-brand-platinum max-w-sm mb-8 leading-relaxed">
@@ -1374,7 +1369,7 @@ const CorporateSolutions = () => {
 
           <div className="relative">
             <div className="aspect-square rounded-[40px] overflow-hidden border border-white/10 relative">
-              <img referrerPolicy="no-referrer"  
+              <img 
                 src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2070&auto=format&fit=crop" 
                 alt="Treinamento Corporativo" 
                 className="w-full h-full object-cover"
@@ -1389,7 +1384,7 @@ const CorporateSolutions = () => {
                 <div className="flex -space-x-3">
                   {[...Array(4)].map((_, i) => (
                     <div key={i} className="w-10 h-10 rounded-full bg-brand-dark border-2 border-brand-surface overflow-hidden">
-                      <img referrerPolicy="no-referrer"  src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Avatar" className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>

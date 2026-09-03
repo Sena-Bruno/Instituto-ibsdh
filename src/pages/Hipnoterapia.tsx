@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
-import { courses } from '../config/courses';
   ArrowLeft,
   Brain, 
   CheckCircle2, 
@@ -20,6 +19,7 @@ import { courses } from '../config/courses';
   Activity,
   Eye
 } from 'lucide-react';
+import { courses } from '../config/courses';
 
 const Hipnoterapia = () => {
   useEffect(() => {
@@ -53,7 +53,7 @@ const Hipnoterapia = () => {
             <span className="font-medium">Voltar para Home</span>
           </Link>
           <div className="flex items-center gap-2">
-            <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
+            <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
             <div className="flex flex-col">
               <span className="font-display font-bold text-sm leading-none tracking-tight text-white">INSTITUTO</span>
               <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
@@ -354,7 +354,7 @@ const Hipnoterapia = () => {
           <div className="mt-16 flex justify-center">
             <div className="w-full max-w-5xl relative">
               <div className="absolute inset-0 bg-brand-accent/20 blur-[100px] rounded-full" />
-              <img referrerPolicy="no-referrer"  src="/Certificado-IBSDH-hipnoterapia.webp" alt="Certificado de Hipnoterapeuta Clínico" className="w-full h-auto object-contain rounded-[32px] shadow-2xl relative z-10 border border-white/10" loading="lazy" />
+              <img src="/Certificado-IBSDH-hipnoterapia.webp" alt="Certificado de Hipnoterapeuta Clínico" className="w-full h-auto object-contain rounded-[32px] shadow-2xl relative z-10 border border-white/10" loading="lazy" />
             </div>
           </div>
         </div>

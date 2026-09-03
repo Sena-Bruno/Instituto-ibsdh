@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import { 
@@ -49,7 +49,7 @@ const Jornada = () => {
             <span className="font-medium">Voltar para Home</span>
           </Link>
           <div className="flex items-center gap-2">
-            <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
+            <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
             <div className="flex flex-col">
               <span className="font-display font-bold text-sm leading-none tracking-tight text-white">INSTITUTO</span>
               <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">BRUNO SENA</span>

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
-import { courses } from '../config/courses';
   ArrowLeft,
   Brain, 
   CheckCircle2, 
@@ -22,6 +21,7 @@ import { courses } from '../config/courses';
   Zap,
   Star
 } from 'lucide-react';
+import { courses } from '../config/courses';
 
 const MasterPNL = () => {
   useEffect(() => {
@@ -55,7 +55,7 @@ const MasterPNL = () => {
             <span className="font-medium">Voltar para Home</span>
           </Link>
           <div className="flex items-center gap-2">
-            <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
+            <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
             <div className="flex flex-col">
               <span className="font-display font-bold text-sm leading-none tracking-tight text-white">INSTITUTO</span>
               <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
@@ -336,7 +336,7 @@ const MasterPNL = () => {
                 <div className="text-sm font-mono text-brand-accent relative z-10">Valor de mercado: Elite</div>
               </div>
               <div className="w-full relative z-10">
-                <img referrerPolicy="no-referrer"  src="/Certificado-IBSDH.webp" alt="Certificado Master PNL" className="w-full h-auto object-contain rounded-2xl shadow-2xl border border-white/10" loading="lazy" />
+                <img src="/Certificado-IBSDH.webp" alt="Certificado Master PNL" className="w-full h-auto object-contain rounded-2xl shadow-2xl border border-white/10" loading="lazy" />
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import Home from './pages/Home';
 import PNLPractitioner from './pages/PNLPractitioner';
 import MasterPNL from './pages/MasterPNL';

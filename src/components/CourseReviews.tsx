@@ -106,7 +106,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
           <form onSubmit={handleSubmit}>
             <div className="flex items-center gap-4 mb-6">
               {user.photoURL ? (
-                <img referrerPolicy="no-referrer"  src={user.photoURL} alt={user.displayName || ''} className="w-12 h-12 rounded-full border border-white/20"  />
+                <img src={user.photoURL} alt={user.displayName || ''} className="w-12 h-12 rounded-full border border-white/20"  />
               ) : (
                 <UserCircle2 className="w-12 h-12 text-brand-platinum" />
               )}
@@ -174,7 +174,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-4">
                   {review.userPhoto ? (
-                    <img referrerPolicy="no-referrer"  src={review.userPhoto} alt={review.userName} className="w-10 h-10 rounded-full border border-white/20"  />
+                    <img src={review.userPhoto} alt={review.userName} className="w-10 h-10 rounded-full border border-white/20"  />
                   ) : (
                     <UserCircle2 className="w-10 h-10 text-brand-platinum" />
                   )}

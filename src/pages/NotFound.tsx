@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Home } from 'lucide-react';
 
@@ -14,7 +14,7 @@ const NotFound = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-accent/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
       
       <div className="w-24 h-24 mb-8">
-        <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-full h-full object-contain opacity-50" />
+        <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-full h-full object-contain opacity-50" />
       </div>
       
       <h1 className="font-display text-8xl md:text-9xl font-bold text-white mb-4 drop-shadow-2xl">404</h1>

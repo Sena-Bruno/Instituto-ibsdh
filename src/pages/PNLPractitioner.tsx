@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
-import { courses } from '../config/courses';
   ArrowLeft,
   Brain, 
   CheckCircle2, 
@@ -20,6 +19,7 @@ import { courses } from '../config/courses';
   Play,
   ShieldCheck
 } from 'lucide-react';
+import { courses } from '../config/courses';
 
 const PNLPractitioner = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -49,7 +49,7 @@ const PNLPractitioner = () => {
             <span className="font-bold text-sm uppercase tracking-wider">Voltar</span>
           </Link>
           <div className="flex items-center gap-2">
-            <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
+            <img src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
             <div className="flex flex-col">
               <span className="font-display font-bold text-sm leading-none tracking-tight text-white">INSTITUTO</span>
               <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
@@ -104,7 +104,7 @@ const PNLPractitioner = () => {
               className="relative"
             >
               <div className="aspect-video rounded-[32px] overflow-hidden border border-white/10 shadow-2xl relative group cursor-pointer">
-                <img referrerPolicy="no-referrer"  
+                <img 
                   src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1200" 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                   alt="Aula Prática PNL"
@@ -684,7 +684,7 @@ const PNLPractitioner = () => {
                     </div>
                   </div>
                   <div className="w-full">
-                    <img referrerPolicy="no-referrer"  src="/Certificado-IBSDH-practitioner.webp" alt="Certificado PNL Practitioner" className="w-full h-auto object-contain rounded-2xl shadow-2xl border border-white/10" loading="lazy" />
+                    <img src="/Certificado-IBSDH-practitioner.webp" alt="Certificado PNL Practitioner" className="w-full h-auto object-contain rounded-2xl shadow-2xl border border-white/10" loading="lazy" />
                   </div>
                 </div>
               </div>
