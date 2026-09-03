@@ -3,7 +3,7 @@
  *
  * Antes desta configuração os preços estavam espalhados pelo JSX e já se
  * contradiziam: a página do Master PNL anunciava R$ 997 no topo e R$ 397 no
- * checkout (bloco copiado da Hipnoterapia). Os links da Kiwify apareciam
+ * checkout (bloco copiado da Hipnoterapia). Os links de checkout apareciam
  * três vezes cada, e o do Practitioner ainda apontava para uma URL de
  * exemplo que nunca foi trocada pelo link real.
  *
@@ -28,7 +28,7 @@ export interface Course {
   installment?: string;
   /** 12x com juros do cartão — usado nos cards da home */
   installmentWithFees?: string;
-  /** URL de checkout da Kiwify */
+  /** URL de checkout da plataforma de pagamento */
   checkout?: string;
   /** Curso ainda não lançado: capta lista de espera em vez de vender */
   comingSoon?: boolean;

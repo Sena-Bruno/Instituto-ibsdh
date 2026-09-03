@@ -83,8 +83,8 @@ export default function Privacidade() {
             </h2>
             <p>
               Usamos o Google Firebase (autenticação e banco de dados) como operador
-              de dados e a Kiwify para processar pagamentos. As compras acontecem no
-              ambiente da Kiwify: não recebemos nem armazenamos dados de cartão.
+              de dados e a Hotmart para processar pagamentos. As compras acontecem no
+              ambiente da Hotmart: não recebemos nem armazenamos dados de cartão.
             </p>
           </section>
 
