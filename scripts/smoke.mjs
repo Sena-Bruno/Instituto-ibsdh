@@ -2,11 +2,16 @@
  * Smoke test de navegador para as rotas públicas.
  *
  * Verifica o que quebrou de verdade neste site no passado: CTA de compra
- * sem destino, imagem que não carrega, título de página ausente e erro
- * de console. Rode com o preview no ar:
+ * sem destino, imagem que não carrega, título de página duplicado ou
+ * ausente, e erro de console.
  *
+ * O Playwright NÃO é dependência do projeto: ele baixa centenas de MB de
+ * navegadores na instalação, o que só atrasaria o build de produção de um
+ * site estático. Instale sob demanda:
+ *
+ *   npm install --no-save playwright
  *   npm run build && npm run preview &
- *   node scripts/smoke.mjs
+ *   npm run smoke
  */
 import { chromium } from 'playwright';
 import { existsSync } from 'node:fs';

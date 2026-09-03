@@ -21,12 +21,24 @@ npm run dev        # http://localhost:3000
 | `npm run smoke` | Teste de navegador nas rotas públicas (com o preview no ar) |
 
 O `smoke` percorre as 6 rotas públicas e falha se encontrar imagem
-quebrada, CTA de compra sem destino, título ausente ou erro de console:
+quebrada, CTA de compra sem destino, título duplicado ou ausente, ou erro
+de console. O Playwright fica fora das dependências de propósito — ele
+baixa centenas de MB de navegadores na instalação, o que só atrasaria o
+build de produção:
 
 ```bash
+npm install --no-save playwright
 npm run build && npm run preview &
 npm run smoke
 ```
+
+> **Sobre o `react-helmet-async`:** o projeto usa
+> `@dr.pogodin/react-helmet`, e não o pacote original. A versão 2.0.5 do
+> original não declara suporte a React 19 e trava o `npm install` com
+> ERESOLVE; a 3.0.0 instala, mas **injeta um segundo `<title>` em vez de
+> substituir o do `index.html`** — e crawlers usam o primeiro, o que faria
+> todas as páginas perderem o título próprio. Isso foi verificado com o
+> `npm run smoke`. Não troque o pacote sem rodar esse teste.
 
 ## Estrutura
 
