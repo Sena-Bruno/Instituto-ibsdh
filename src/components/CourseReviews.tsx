@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { db, auth, loginWithGoogle } from '../firebase';
+import { db, auth, loginWithGoogle, logout } from '../firebase';
 import { Star, Trash2, UserCircle2, LogIn } from 'lucide-react';
 
 interface Review {
@@ -21,6 +21,12 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Sem estes dois, a lista aparecia como "Ainda não há avaliações"
+  // enquanto a consulta estava em andamento, e uma falha do Firestore
+  // ficava só no console — o visitante via um vazio permanente.
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
@@ -42,10 +48,16 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
         ...doc.data()
       })) as Review[];
       setReviews(fetchedReviews);
+      setIsLoading(false);
+      setLoadError(false);
     }, (error) => {
-      console.error("Error fetching reviews:", error);
+      console.error('Erro ao carregar avaliações:', error);
+      setIsLoading(false);
+      setLoadError(true);
     });
 
+    return () => unsubscribe();
+    setIsLoading(true);
     return () => unsubscribe();
   }, [courseId]);
 
@@ -54,6 +66,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
     if (!user || !newComment.trim()) return;
 
     setIsSubmitting(true);
+    setSubmitError('');
     try {
       await addDoc(collection(db, 'course_reviews'), {
         courseId,
@@ -67,8 +80,8 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
       setNewComment('');
       setNewRating(5);
     } catch (error) {
-      console.error("Error adding review:", error);
-      alert("Erro ao enviar avaliação. Tente novamente.");
+      console.error('Erro ao enviar avaliação:', error);
+      setSubmitError('Não foi possível enviar sua avaliação. Tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -106,23 +119,35 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
           <form onSubmit={handleSubmit}>
             <div className="flex items-center gap-4 mb-6">
               {user.photoURL ? (
-                <img referrerPolicy="no-referrer"  src={user.photoURL} alt={user.displayName || ''} className="w-12 h-12 rounded-full border border-white/20"  />
+                <img src={user.photoURL} alt={user.displayName || ''} className="w-12 h-12 rounded-full border border-white/20"  />
               ) : (
                 <UserCircle2 className="w-12 h-12 text-brand-platinum" />
               )}
-              <div>
-                <p className="text-white font-medium">{user.displayName}</p>
+              <div className="flex-1">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <p className="text-white font-medium">{user.displayName}</p>
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="text-xs text-brand-platinum hover:text-brand-accent transition-colors underline"
+                  >
+                    Sair
+                  </button>
+                </div>
                 <div className="flex gap-1 mt-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
                       onClick={() => setNewRating(star)}
-                      className="focus:outline-none transition-transform hover:scale-110"
+                      aria-label={`Avaliar com ${star} ${star === 1 ? 'estrela' : 'estrelas'}`}
+                      aria-pressed={star === newRating}
+                      className="rounded transition-transform hover:scale-110"
                     >
                       <Star
                         size={20}
-                        className={star <= newRating ? "text-brand-accent fill-brand-accent" : "text-white/20"}
+                        aria-hidden="true"
+                        className={star <= newRating ? 'text-brand-accent fill-brand-accent' : 'text-white/40'}
                       />
                     </button>
                   ))}
@@ -133,10 +158,15 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Compartilhe sua experiência com esta formação..."
-              className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder:text-white/30 focus:outline-none focus:border-brand-accent/50 focus:ring-1 focus:ring-brand-accent/50 resize-none h-28 mb-4 transition-all"
+              className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder:text-white/60 focus:outline-none focus:border-brand-accent/50 focus:ring-1 focus:ring-brand-accent/50 resize-none h-28 mb-4 transition-all"
               required
               maxLength={2000}
             />
+            {submitError && (
+              <p role="alert" className="text-brand-danger text-sm mb-4">
+                {submitError}
+              </p>
+            )}
             <div className="flex justify-end">
               <button
                 type="submit"
@@ -164,7 +194,22 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
 
       {/* Reviews List */}
       <div className="space-y-6">
-        {reviews.length === 0 ? (
+        {isLoading ? (
+          <p
+            role="status"
+            aria-live="polite"
+            className="text-center text-brand-platinum py-8 bg-white/5 rounded-2xl border border-white/5"
+          >
+            Carregando avaliações…
+          </p>
+        ) : loadError ? (
+          <p
+            role="alert"
+            className="text-center text-brand-danger py-8 bg-white/5 rounded-2xl border border-white/5"
+          >
+            Não foi possível carregar as avaliações agora. Recarregue a página para tentar de novo.
+          </p>
+        ) : reviews.length === 0 ? (
           <p className="text-center text-brand-platinum py-8 bg-white/5 rounded-2xl border border-white/5">
             Ainda não há avaliações para esta formação. Seja o primeiro a avaliar!
           </p>
@@ -174,7 +219,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-4">
                   {review.userPhoto ? (
-                    <img referrerPolicy="no-referrer"  src={review.userPhoto} alt={review.userName} className="w-10 h-10 rounded-full border border-white/20"  />
+                    <img src={review.userPhoto} alt={review.userName} className="w-10 h-10 rounded-full border border-white/20"  />
                   ) : (
                     <UserCircle2 className="w-10 h-10 text-brand-platinum" />
                   )}
@@ -186,12 +231,12 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                           <Star
                             key={i}
                             size={14}
-                            className={i < review.rating ? "text-brand-accent fill-brand-accent" : "text-white/20"}
+                            className={i < review.rating ? "text-brand-accent fill-brand-accent" : "text-white/40"}
                           />
                         ))}
                       </div>
                       {review.createdAt && (
-                        <span className="text-xs text-white/40">
+                        <span className="text-xs text-white/70">
                           {new Date(review.createdAt.toDate()).toLocaleDateString('pt-BR')}
                         </span>
                       )}
@@ -201,7 +246,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                 {user && user.uid === review.userId && (
                   <button
                     onClick={() => handleDelete(review.id)}
-                    className="text-white/30 hover:text-red-400 transition-colors p-2"
+                    className="text-white/60 hover:text-red-400 transition-colors p-2"
                     title="Excluir avaliação"
                   >
                     <Trash2 size={18} />

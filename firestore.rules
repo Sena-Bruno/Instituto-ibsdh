@@ -2,32 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // ===============================================================
-    // Assumed Data Model
-    // ===============================================================
-    //
-    // Collection: course_reviews
-    // Document ID: auto-generated
-    // Fields:
-    //   - courseId: string (required) - The ID of the course being reviewed
-    //   - userId: string (required) - The ID of the user who left the review
-    //   - userName: string (required) - The display name of the user
-    //   - userPhoto: string (optional) - The URL of the user's profile photo
-    //   - rating: number (required) - The rating given by the user, from 1 to 5
-    //   - comment: string (required) - The text content of the review
-    //   - createdAt: timestamp (required) - The time the review was created
-    //
-    // ===============================================================
-
-    // ===============================================================
     // Helper Functions
     // ===============================================================
     
     function isAuthenticated() {
       return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
     }
 
     function isDocOwner() {
@@ -42,29 +21,12 @@ service cloud.firestore {
       return !('userId' in request.resource.data) || request.resource.data.userId == resource.data.userId;
     }
 
-    function hasRequiredFields(fields) {
-      return request.resource.data.keys().hasAll(fields);
-    }
-
     function hasOnlyAllowedFields(fields) {
       return request.resource.data.keys().hasOnly(fields);
     }
 
     function areImmutableFieldsUnchanged(fields) {
       return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
-    }
-
-    function isValidStringLength(field, minLen, maxLen) {
-      return request.resource.data[field] is string &&
-        request.resource.data[field].size() >= minLen &&
-        request.resource.data[field].size() <= maxLen;
-    }
-
-    function isValidOptionalString(field, minLen, maxLen) {
-      return !(field in request.resource.data) ||
-             (request.resource.data[field] is string &&
-              request.resource.data[field].size() >= minLen &&
-              request.resource.data[field].size() <= maxLen);
     }
 
     // Domain Validators
@@ -96,6 +58,26 @@ service cloud.firestore {
                     
       // Only the author can delete their review
       allow delete: if isDocOwner();
+    }
+
+    // Lista de espera de cursos ainda não lançados.
+    // Qualquer visitante pode se cadastrar, mas a lista NUNCA pode ser lida
+    // publicamente: são dados pessoais (nome e e-mail) sob a LGPD.
+    // A leitura acontece só pelo console do Firebase ou pelo Admin SDK,
+    // que ignoram estas regras.
+    function isValidWaitlistEntry(data) {
+      return hasOnlyAllowedFields(['name', 'email', 'courseId', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.email is string && data.email.size() > 3 && data.email.size() <= 200 &&
+             data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
+             data.courseId is string && data.courseId.size() > 0 && data.courseId.size() < 100 &&
+             data.createdAt is timestamp;
+    }
+
+    match /waitlist/{entryId} {
+      allow read: if false;
+      allow create: if isValidWaitlistEntry(request.resource.data);
+      allow update, delete: if false;
     }
   }
 }

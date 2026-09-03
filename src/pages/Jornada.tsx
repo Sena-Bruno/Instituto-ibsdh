@@ -1,62 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Helmet } from '@dr.pogodin/react-helmet';
+import Faq from '../components/Faq';
 import { CourseReviews } from '../components/CourseReviews';
 import { 
-  ArrowLeft,
-  Brain, 
   CheckCircle2, 
   Award, 
-  Target,
-  Sparkles,
   ChevronRight,
-  ChevronDown,
   ShieldCheck,
   Star,
   ArrowRight
 } from 'lucide-react';
 
 const Jornada = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
 
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark" style={{ '--color-brand-accent': '#F9814D' } as React.CSSProperties}>
       <Helmet>
-        <title>Jornada do Herói | Instituto SENA</title>
+        <link rel="canonical" href="https://institutobrunosena.com.br/jornada" />
+        <title>Jornada do Herói | Instituto Bruno Sena</title>
         <meta name="description" content="Descubra o seu propósito e transforme sua vida com a Jornada do Herói. Um treinamento imersivo de autoconhecimento e desenvolvimento pessoal." />
-        <meta name="keywords" content="formação completa PNL hipnoterapia, trilogia desenvolvimento humano, Jornada do Herói, Autoconhecimento, Desenvolvimento Pessoal, Instituto SENA" />
-        <meta property="og:title" content="Jornada do Herói | Instituto SENA" />
+        <meta name="keywords" content="formação completa PNL hipnoterapia, trilogia desenvolvimento humano, Jornada do Herói, Autoconhecimento, Desenvolvimento Pessoal, Instituto Bruno Sena" />
+        <meta property="og:title" content="Jornada do Herói | Instituto Bruno Sena" />
         <meta property="og:description" content="Descubra o seu propósito e transforme sua vida com a Jornada do Herói." />
-        <meta property="og:image" content="https://institutobrunosena.com.br/mockuppnl.png" />
+        <meta property="og:image" content="https://institutobrunosena.com.br/mockuppnl.webp" />
         <meta property="og:url" content="https://institutobrunosena.com.br/jornada" />
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-brand-dark/80 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-white hover:text-brand-accent transition-colors">
-            <ArrowLeft size={20} />
-            <span className="font-medium">Voltar para Home</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-sm leading-none tracking-tight text-white">INSTITUTO</span>
-              <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 relative overflow-hidden">
@@ -134,7 +106,7 @@ const Jornada = () => {
               <p className="text-brand-platinum/60 text-sm mb-6">P+H</p>
               
               <div className="mb-6">
-                <div className="text-brand-platinum/40 line-through text-sm mb-1">R$ 694</div>
+                <div className="text-brand-platinum/70 line-through text-sm mb-1">R$ 694</div>
                 <div className="text-3xl font-bold text-white mb-1">R$ 597</div>
                 <div className="text-brand-platinum/60 text-sm mb-2">ou 12x R$ 50</div>
                 <div className="inline-block px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">Economia de R$ 97</div>
@@ -173,7 +145,7 @@ const Jornada = () => {
               <p className="text-brand-platinum/60 text-sm mb-6">P+M</p>
               
               <div className="mb-6">
-                <div className="text-brand-platinum/40 line-through text-sm mb-1">R$ 1.294</div>
+                <div className="text-brand-platinum/70 line-through text-sm mb-1">R$ 1.294</div>
                 <div className="text-3xl font-bold text-brand-accent mb-1">R$ 1.097</div>
                 <div className="text-brand-platinum/60 text-sm mb-2">ou 12x R$ 91</div>
                 <div className="inline-block px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">Economia de R$ 197</div>
@@ -208,7 +180,7 @@ const Jornada = () => {
               <p className="text-brand-platinum/60 text-sm mb-6">P+M+H</p>
               
               <div className="mb-6">
-                <div className="text-brand-platinum/40 line-through text-sm mb-1">R$ 1.691</div>
+                <div className="text-brand-platinum/70 line-through text-sm mb-1">R$ 1.691</div>
                 <div className="text-3xl font-bold text-white mb-1">R$ 1.353</div>
                 <div className="text-brand-platinum/60 text-sm mb-2">ou 12x R$ 113</div>
                 <div className="inline-block px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">Economia de R$ 338 (20% off)</div>
@@ -362,7 +334,7 @@ const Jornada = () => {
 
       {/* Garantia em todos os níveis */}
       <section className="py-24 bg-brand-accent text-brand-dark relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5 mix-blend-overlay" />
+        <div className="absolute inset-0 textura-carbono opacity-5 mix-blend-overlay" />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           <ShieldCheck className="mx-auto mb-6" size={64} />
           <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
@@ -382,7 +354,7 @@ const Jornada = () => {
           </div>
           
           <div className="space-y-4">
-            {[
+            <Faq items={[
               {
                 q: "Posso começar pelo Master ou Hipnoterapia sem Practitioner?",
                 a: "Avaliação SENA obrigatória. Se sua base de PNL for sólida, pode. Se não for, Practitioner sistematiza."
@@ -399,33 +371,7 @@ const Jornada = () => {
                 q: "Trilogia vale a pena vs. combos separados?",
                 a: "Se quer os três, sim. Economia de R$ 338 + bônus exclusivos. Se só quer PNL, Combo A é melhor. Se só quer terapia breve, Combo B é melhor."
               }
-            ].map((faq, i) => (
-              <div 
-                key={i}
-                className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-colors hover:bg-white/10 cursor-pointer"
-                onClick={() => toggleFaq(i)}
-              >
-                <div className="p-6 flex items-center justify-between">
-                  <h3 className="font-bold text-white pr-8">{faq.q}</h3>
-                  <ChevronDown 
-                    className={`text-brand-accent transition-transform shrink-0 ${openFaq === i ? 'rotate-180' : ''}`} 
-                    size={20} 
-                  />
-                </div>
-                <AnimatePresence>
-                  {openFaq === i && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-6 text-brand-platinum/80"
-                    >
-                      {faq.a}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+            ] as const} />
           </div>
         </div>
       </section>
@@ -489,42 +435,8 @@ const Jornada = () => {
         <CourseReviews courseId="jornada" />
       </section>
 
-      {/* Footer */}
-      <footer className="bg-brand-dark py-12 border-t border-white/10 text-center text-brand-platinum/60 text-sm">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-8 text-xs md:text-sm">
-            <a href="mailto:contato@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">contato@institutobrunosena.com.br</a>
-            <a href="mailto:parcerias@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">parcerias@institutobrunosena.com.br</a>
-            <a href="https://wa.me/5511987355750" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">+55 (11) 98735-5750</a>
-            <a href="https://www.instagram.com/brunosenaoficial/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">Instagram</a>
-          </div>
-          <p className="mb-4">© {new Date().getFullYear()} IBSDH. Todos os direitos reservados.</p>
-          <p className="max-w-2xl mx-auto text-xs opacity-50">
-            A Programação Neurolinguística (PNL) e a Hipnoterapia são abordagens educacionais e de desenvolvimento pessoal. Não substituem tratamento médico ou psiquiátrico.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };
-
-// Missing ArrowDown icon component
-const ArrowDown = ({ className, size }: { className?: string, size?: number }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size || 24} 
-    height={size || 24} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <line x1="12" y1="5" x2="12" y2="19"></line>
-    <polyline points="19 12 12 19 5 12"></polyline>
-  </svg>
-);
 
 export default Jornada;

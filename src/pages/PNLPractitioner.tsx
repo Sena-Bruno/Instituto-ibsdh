@@ -1,61 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@dr.pogodin/react-helmet';
+import CourseImage from '../components/CourseImage';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
-  ArrowLeft,
   Brain, 
   CheckCircle2, 
   Award, 
   Users2, 
   MonitorPlay,
   Briefcase,
-  Building2,
   Heart,
   ChevronRight,
   ChevronDown,
   Play,
   ShieldCheck
 } from 'lucide-react';
+import { courses } from '../config/courses';
 
 const PNLPractitioner = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans" style={{ '--color-brand-accent': '#5C9CFA' } as React.CSSProperties}>
       <Helmet>
-        <title>Formação PNL Practitioner | Instituto SENA</title>
+        <link rel="canonical" href="https://institutobrunosena.com.br/pnl-practitioner" />
+        <title>Formação PNL Practitioner | Instituto Bruno Sena</title>
         <meta name="description" content="Aprenda a reprogramar sua mente e a de outras pessoas com a Formação PNL Practitioner. Domine a comunicação inconsciente e técnicas de intervenção rápida." />
         <meta name="keywords" content="curso de PNL online, PNL practitioner certificado, Programação Neurolinguística, Reprogramação Mental" />
-        <meta property="og:title" content="Formação PNL Practitioner | Instituto SENA" />
+        <meta property="og:title" content="Formação PNL Practitioner | Instituto Bruno Sena" />
         <meta property="og:description" content="Aprenda a reprogramar sua mente e a de outras pessoas com a Formação PNL Practitioner." />
-        <meta property="og:image" content="https://institutobrunosena.com.br/brunosena.jpg" />
+        <meta property="og:image" content="https://institutobrunosena.com.br/brunosena.webp" />
         <meta property="og:url" content="https://institutobrunosena.com.br/pnl-practitioner" />
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-      {/* Navbar Minimal */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-brand-dark/90 backdrop-blur-md border-b border-white/10 py-4">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-white hover:text-brand-accent transition-colors">
-            <ArrowLeft size={20} />
-            <span className="font-bold text-sm uppercase tracking-wider">Voltar</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-sm leading-none tracking-tight text-white">INSTITUTO</span>
-              <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
-            </div>
-          </div>
-        </div>
-      </nav>
+
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 relative overflow-hidden">
@@ -103,11 +86,11 @@ const PNLPractitioner = () => {
               className="relative"
             >
               <div className="aspect-video rounded-[32px] overflow-hidden border border-white/10 shadow-2xl relative group cursor-pointer">
-                <img referrerPolicy="no-referrer"  
-                  src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1200" 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                  alt="Aula Prática PNL"
-                  
+                <CourseImage
+                  src={undefined}
+                  alt="Formação PNL Practitioner"
+                  title="PNL Practitioner"
+                  accentClassName="from-brand-blue/30 to-brand-dark"
                 />
                 <div className="absolute inset-0 bg-brand-dark/40 flex items-center justify-center group-hover:bg-brand-dark/20 transition-colors">
                   <div className="w-20 h-20 bg-brand-accent rounded-full flex items-center justify-center pl-2 shadow-[0_0_40px_rgba(92,156,250,0.5)] transform group-hover:scale-110 transition-transform">
@@ -249,43 +232,43 @@ const PNLPractitioner = () => {
                   </thead>
                   <tbody className="text-brand-platinum text-sm">
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">1</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">1</td>
                       <td className="p-4 font-medium text-white">A História da PNL</td>
                       <td className="p-4">Bandler, Grinder, Satir, Perls e Erickson. Nascimento da modelagem</td>
                       <td className="p-4 text-brand-accent">Quiz de fixação metodológica</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">2</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">2</td>
                       <td className="p-4 font-medium text-white">Modelagem: O Coração da PNL</td>
                       <td className="p-4">Diferença entre imitar e modelar excelência</td>
                       <td className="p-4 text-brand-accent">Identificação de padrões em vídeos</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">3</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">3</td>
                       <td className="p-4 font-medium text-white">Mente Consciente vs. Inconsciente</td>
                       <td className="p-4">Capacidades, limites, neuroplasticidade</td>
                       <td className="p-4 text-brand-accent">Simulação de explicações diferentes</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">4</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">4</td>
                       <td className="p-4 font-medium text-white">O Fator Crítico</td>
                       <td className="p-4">"Porteiro" da mente, mecanismos de resistência</td>
                       <td className="p-4 text-brand-accent">Simulação de resistência do paciente</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">5</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">5</td>
                       <td className="p-4 font-medium text-white">Omissão, Distorção, Generalização</td>
                       <td className="p-4">3 filtros da percepção humana</td>
                       <td className="p-4 text-brand-accent">Identificação em pensamentos próprios</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">6</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">6</td>
                       <td className="p-4 font-medium text-white">O Mapa Não é o Território</td>
                       <td className="p-4">Distinção clínica: realidade vs. percepção</td>
                       <td className="p-4 text-brand-accent">Aplicação de pressupostos em situações</td>
                     </tr>
                     <tr className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">7</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">7</td>
                       <td className="p-4 font-medium text-white">Os 13 Pressupostos da PNL</td>
                       <td className="p-4">Crenças operacionais da excelência (5 essenciais)</td>
                       <td className="p-4 text-brand-accent">Quiz + aplicação prática</td>
@@ -313,31 +296,31 @@ const PNLPractitioner = () => {
                   </thead>
                   <tbody className="text-brand-platinum text-sm">
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">8</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">8</td>
                       <td className="p-4 font-medium text-white">VAKOG: Os 5 Canais</td>
                       <td className="p-4">Visual, Auditivo, Cinestésico, Olfativo, Gustativo</td>
                       <td className="p-4 text-brand-accent">Teste de perfil representacional próprio</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">9</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">9</td>
                       <td className="p-4 font-medium text-white">Pistas de Acesso Ocular</td>
                       <td className="p-4">Mapa neurológico dos movimentos oculares de Bandler</td>
                       <td className="p-4 text-brand-accent">Análise de vídeos com feedback</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">10</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">10</td>
                       <td className="p-4 font-medium text-white">Predicados e Linguagem</td>
                       <td className="p-4">Palavras que revelam sistemas preferidos</td>
                       <td className="p-4 text-brand-accent">Caça a predicados em textos complexos</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">11</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">11</td>
                       <td className="p-4 font-medium text-white">Rapport Básico</td>
                       <td className="p-4">Espelhamento físico e acompanhamento fisiológico</td>
                       <td className="p-4 text-brand-accent">Avaliação de espelhamento (vídeo)</td>
                     </tr>
                     <tr className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">12</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">12</td>
                       <td className="p-4 font-medium text-white">Rapport Avançado</td>
                       <td className="p-4">Micro-sincronias, espelhamento cruzado, ritmo respiratório</td>
                       <td className="p-4 text-brand-accent">Simulação com 3 perfis (V, A, C)</td>
@@ -365,31 +348,31 @@ const PNLPractitioner = () => {
                   </thead>
                   <tbody className="text-brand-platinum text-sm">
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">13</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">13</td>
                       <td className="p-4 font-medium text-white">Estrutura Superficial vs. Profunda</td>
                       <td className="p-4">O que foi dito vs. o que foi subconscientemente vivido</td>
                       <td className="p-4 text-brand-accent">Análise clínica de frases</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">14</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">14</td>
                       <td className="p-4 font-medium text-white">Metamodelo (Parte 1: Omissões)</td>
                       <td className="p-4">Nominalizações, verbos não especificados, comparativos</td>
                       <td className="p-4 text-brand-accent">Desmonte de frases ambíguas</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">15</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">15</td>
                       <td className="p-4 font-medium text-white">Metamodelo (Parte 2: Distorções)</td>
                       <td className="p-4">Leitura de mente, equivalência complexa, causa-efeito</td>
                       <td className="p-4 text-brand-accent">Desmonte de crenças simuladas</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">16</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">16</td>
                       <td className="p-4 font-medium text-white">Metamodelo (Parte 3: Generalizações)</td>
                       <td className="p-4">Universalizações, modalidades operacionais</td>
                       <td className="p-4 text-brand-accent">Diálogo imersivo de 30 min</td>
                     </tr>
                     <tr className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">17</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">17</td>
                       <td className="p-4 font-medium text-white">Integração do Metamodelo</td>
                       <td className="p-4">Fluência conversacional sem parecer interrogatório</td>
                       <td className="p-4 text-brand-accent">Feedback instantâneo do SENA</td>
@@ -417,43 +400,43 @@ const PNLPractitioner = () => {
                   </thead>
                   <tbody className="text-brand-platinum text-sm">
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">18</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">18</td>
                       <td className="p-4 font-medium text-white">B.V.O. (Bem-Formulado)</td>
                       <td className="p-4">Sintaxe de metas que a neurologia aceita executar</td>
                       <td className="p-4 text-brand-accent">Formulação de meta pessoal validada</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">19</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">19</td>
                       <td className="p-4 font-medium text-white">Fisiologia e Estado</td>
                       <td className="p-4">Postura do corpo cria e mantém emoções bioquímicas</td>
                       <td className="p-4 text-brand-accent">Auto-regulação guiada</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">20</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">20</td>
                       <td className="p-4 font-medium text-white">Ancoragem Clássica</td>
                       <td className="p-4">Estímulo-resposta, gatilhos físicos de alto recurso</td>
                       <td className="p-4 text-brand-accent">Auto-ancoragem guiada passo a passo</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">21</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">21</td>
                       <td className="p-4 font-medium text-white">Colapso de Âncoras</td>
                       <td className="p-4">Destruição de gatilhos emocionais negativos</td>
                       <td className="p-4 text-brand-accent">Resolução teórica de âncora negativa</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">22</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">22</td>
                       <td className="p-4 font-medium text-white">Empilhamento e Cadeias</td>
                       <td className="p-4">Soma progressiva de recursos para estados de pico</td>
                       <td className="p-4 text-brand-accent">Criação de cadeia pessoal</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">23</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">23</td>
                       <td className="p-4 font-medium text-white">Círculo de Excelência</td>
                       <td className="p-4">Campo espacial de alto desempenho</td>
                       <td className="p-4 text-brand-accent">Prática gravada com feedback</td>
                     </tr>
                     <tr className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">24</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">24</td>
                       <td className="p-4 font-medium text-white">Posições Perceptivas</td>
                       <td className="p-4">1ª, 2ª, 3ª posição para resolução de conflitos</td>
                       <td className="p-4 text-brand-accent">Mudança de posição guiada</td>
@@ -481,49 +464,49 @@ const PNLPractitioner = () => {
                   </thead>
                   <tbody className="text-brand-platinum text-sm">
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">25</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">25</td>
                       <td className="p-4 font-medium text-white">O Que São Submodalidades</td>
                       <td className="p-4">Qualidades sensoriais internas (brilho, volume, temperatura)</td>
                       <td className="p-4 text-brand-accent">Mapeamento de memórias</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">26</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">26</td>
                       <td className="p-4 font-medium text-white">Descoberta e Mapeamento</td>
                       <td className="p-4">Como o cérebro codifica prazer vs. dor</td>
                       <td className="p-4 text-brand-accent">Exercício de análise</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">27</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">27</td>
                       <td className="p-4 font-medium text-white">Análise Contrastiva</td>
                       <td className="p-4">Estrutura neurológica de duas experiências distintas</td>
                       <td className="p-4 text-brand-accent">Análise contrastiva guiada</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">28</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">28</td>
                       <td className="p-4 font-medium text-white">Pattern Interrupt</td>
                       <td className="p-4">Quebra e interrupção de padrões mentais automáticos</td>
                       <td className="p-4 text-brand-accent">Interrupção de padrão de ansiedade</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">29</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">29</td>
                       <td className="p-4 font-medium text-white">Swish Pattern VISUAL</td>
                       <td className="p-4">Substituição imediata de imagens para mudança de hábitos</td>
                       <td className="p-4 text-brand-accent">Prática validada</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">30</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">30</td>
                       <td className="p-4 font-medium text-white">Swish Pattern AUDITIVO</td>
                       <td className="p-4">Adaptação para processamento sonoro</td>
                       <td className="p-4 text-brand-accent">Prática validada</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">31</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">31</td>
                       <td className="p-4 font-medium text-white">Swish Pattern CINESTÉSICO</td>
                       <td className="p-4">Adaptação para processamento corporal/emocional</td>
                       <td className="p-4 text-brand-accent">Prática validada</td>
                     </tr>
                     <tr className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">32</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">32</td>
                       <td className="p-4 font-medium text-white">Ponte ao Futuro</td>
                       <td className="p-4">Teste ecológico e instalação de mudanças na linha do tempo</td>
                       <td className="p-4 text-brand-accent">Visualização + teste</td>
@@ -551,37 +534,37 @@ const PNLPractitioner = () => {
                   </thead>
                   <tbody className="text-brand-platinum text-sm">
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">33</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">33</td>
                       <td className="p-4 font-medium text-white">Níveis Neurológicos (Dilts)</td>
                       <td className="p-4">Alinhamento de Ambiente, Comportamento, Capacidade, Crença, Identidade, Missão</td>
                       <td className="p-4 text-brand-accent">Intervenção em desalinhamento</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">34</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">34</td>
                       <td className="p-4 font-medium text-white">Cura Rápida de Fobias</td>
                       <td className="p-4">Protocolo de dissociação dupla (Visual-Cinestésico)</td>
                       <td className="p-4 text-brand-accent">Simulação (3 níveis de dificuldade)</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">35</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">35</td>
                       <td className="p-4 font-medium text-white">Segurança em Técnicas Fortes</td>
                       <td className="p-4">Contraindicações, limites éticos, momento de encaminhar</td>
                       <td className="p-4 text-brand-accent font-bold">Quiz obrigatório 100%</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">36</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">36</td>
                       <td className="p-4 font-medium text-white">Integração de Partes</td>
                       <td className="p-4">Resolução de autossabotagem e conflitos internos severos</td>
                       <td className="p-4 text-brand-accent">Simulação de parte conflitante</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">37</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">37</td>
                       <td className="p-4 font-medium text-white">Estratégia de Criatividade Disney</td>
                       <td className="p-4">Fluxo Sonhador-Realista-Crítico</td>
                       <td className="p-4 text-brand-accent">Aplicação em projeto pessoal</td>
                     </tr>
                     <tr className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">38</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">38</td>
                       <td className="p-4 font-medium text-white">Combinação de Técnicas</td>
                       <td className="p-4">Decisão clínica: qual ferramenta usar</td>
                       <td className="p-4 text-brand-accent">Estudo de casos com SENA</td>
@@ -609,37 +592,37 @@ const PNLPractitioner = () => {
                   </thead>
                   <tbody className="text-brand-platinum text-sm">
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">39</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">39</td>
                       <td className="p-4 font-medium text-white">Estrutura de Sessão Completa</td>
                       <td className="p-4">Abertura, investigação (anamnese), intervenção, fechamento</td>
                       <td className="p-4 text-brand-accent">Script completo fornecido</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">40</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">40</td>
                       <td className="p-4 font-medium text-white">Anamnese com PNL</td>
                       <td className="p-4">Histórico clínico usando Metamodelo e Calibração</td>
                       <td className="p-4 text-brand-accent">Simulação com 3 históricos médicos</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">41</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">41</td>
                       <td className="p-4 font-medium text-white">Ética e Posicionamento</td>
                       <td className="p-4">O que a PNL é e o que não é à luz do mercado</td>
                       <td className="p-4 text-brand-accent">Casos-teste de ética profissional</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">42</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">42</td>
                       <td className="p-4 font-medium text-white">Do Gratuito ao Pago</td>
                       <td className="p-4">Primeiras provas sociais, precificação inicial, contratos</td>
                       <td className="p-4 text-brand-accent">Cálculo de precificação base</td>
                     </tr>
                     <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">43</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">43</td>
                       <td className="p-4 font-medium text-white">Atendimento Online</td>
                       <td className="p-4">Adaptações de segurança para PNL via vídeo</td>
                       <td className="p-4 text-brand-accent">Checklist técnico</td>
                     </tr>
                     <tr className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 text-center font-mono text-brand-platinum/40">44</td>
+                      <td className="p-4 text-center font-mono text-brand-platinum/70">44</td>
                       <td className="p-4 font-medium text-white">O Exame de Competência</td>
                       <td className="p-4">Avaliação final da capacidade técnica do Reprogramador</td>
                       <td className="p-4 text-brand-accent font-bold">Avaliação SENA (nota mínima 7/10)</td>
@@ -683,7 +666,7 @@ const PNLPractitioner = () => {
                     </div>
                   </div>
                   <div className="w-full">
-                    <img referrerPolicy="no-referrer"  src="/Certificado-IBSDH-practitioner.webp" alt="Certificado PNL Practitioner" className="w-full h-auto object-contain rounded-2xl shadow-2xl border border-white/10" loading="lazy" />
+                    <img src="/Certificado-IBSDH-practitioner.webp" alt="Certificado PNL Practitioner" className="w-full h-auto object-contain rounded-2xl shadow-2xl border border-white/10" loading="lazy" />
                   </div>
                 </div>
               </div>
@@ -907,7 +890,7 @@ const PNLPractitioner = () => {
 
       {/* Pricing / CTA */}
       <section id="matricula" className="py-24 bg-brand-dark relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5 mix-blend-overlay" />
+        <div className="absolute inset-0 textura-carbono opacity-5 mix-blend-overlay" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-accent/10 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
@@ -947,7 +930,7 @@ const PNLPractitioner = () => {
             </div>
 
             <a 
-              href="https://pay.kiwify.com.br/example-pnl" 
+              href={courses.pnlPractitioner.checkout} 
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full py-6 bg-gradient-to-r from-brand-accent to-[#B8860B] text-brand-dark rounded-2xl font-bold text-xl uppercase tracking-wider hover:shadow-[0_0_40px_rgba(92,156,250,0.4)] transition-all transform hover:scale-[1.02] active:scale-95"
@@ -978,29 +961,6 @@ const PNLPractitioner = () => {
         <CourseReviews courseId="pnl-practitioner" />
       </section>
 
-      {/* Footer Minimal */}
-      <footer className="py-12 border-t border-white/10 text-center text-brand-platinum/60 text-sm bg-brand-dark">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-8 text-xs md:text-sm">
-            <a href="mailto:contato@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">contato@institutobrunosena.com.br</a>
-            <a href="mailto:parcerias@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">parcerias@institutobrunosena.com.br</a>
-            <a href="https://wa.me/5511987355750" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">+55 (11) 98735-5750</a>
-            <a href="https://www.instagram.com/brunosenaoficial/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">Instagram</a>
-          </div>
-          <p className="mb-4">© {new Date().getFullYear()} Instituto Bruno Sena. Todos os direitos reservados.</p>
-          <div className="text-[10px] leading-relaxed text-white/20 text-justify">
-            <p className="mb-2">
-              <strong>AVISO LEGAL E DE RESPONSABILIDADE:</strong> O IBSDH atua com foco estrito em educação emocional, treinamento mental e desenvolvimento humano. Nossas formações, palestras e técnicas (incluindo PNL e Hipnoterapia) <strong>NÃO</strong> são práticas médicas e <strong>NÃO</strong> substituem, sob nenhuma hipótese, diagnósticos, tratamentos médicos, psiquiátricos ou acompanhamento psicológico por profissionais devidamente habilitados pelos conselhos regionais de saúde. Se você possui condições clínicas preexistentes, procure a orientação do seu médico.
-            </p>
-            <p className="mb-2">
-              Todos os cursos e certificados estão de acordo com a respectiva lei que rege os cursos livres no Brasil (Lei nº 9.394/96 - Diretrizes e Bases da Educação Nacional).
-            </p>
-            <p>
-              CNPJ: 64.646.469/0001-85
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

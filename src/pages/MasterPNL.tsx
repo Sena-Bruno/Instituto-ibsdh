@@ -1,67 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from '@dr.pogodin/react-helmet';
+import Faq from '../components/Faq';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
-  ArrowLeft,
   Brain, 
   CheckCircle2, 
   Award, 
   Users2, 
-  MonitorPlay,
   Briefcase,
-  Building2,
-  Heart,
   ChevronRight,
   ChevronDown,
-  Play,
   ShieldCheck,
   Zap,
   Star
 } from 'lucide-react';
+import { courses } from '../config/courses';
 
 const MasterPNL = () => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaq(openFaq === index ? null : index);
-  };
 
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark">
       <Helmet>
-        <title>Formação Master PNL | Instituto SENA</title>
+        <link rel="canonical" href="https://institutobrunosena.com.br/master-pnl" />
+        <title>Formação Master PNL | Instituto Bruno Sena</title>
         <meta name="description" content="Aprofunde seus conhecimentos em PNL com a Formação Master PNL. Domine a modelagem avançada, intervenções complexas e estruturação de sessões profissionais." />
-        <meta name="keywords" content="master PNL online, PNL avançado certificação, Master PNL, Programação Neurolinguística Avançada, Instituto SENA" />
-        <meta property="og:title" content="Formação Master PNL | Instituto SENA" />
+        <meta name="keywords" content="master PNL online, PNL avançado certificação, Master PNL, Programação Neurolinguística Avançada, Instituto Bruno Sena" />
+        <meta property="og:title" content="Formação Master PNL | Instituto Bruno Sena" />
         <meta property="og:description" content="Aprofunde seus conhecimentos em PNL com a Formação Master PNL. Domine a modelagem avançada e intervenções complexas." />
-        <meta property="og:image" content="https://institutobrunosena.com.br/capa-master-pnl.png" />
+        <meta property="og:image" content="https://institutobrunosena.com.br/og-image.png" />
         <meta property="og:url" content="https://institutobrunosena.com.br/master-pnl" />
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-brand-dark/80 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-white hover:text-brand-accent transition-colors">
-            <ArrowLeft size={20} />
-            <span className="font-medium">Voltar para Home</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <img referrerPolicy="no-referrer"  src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-8 h-8 object-contain"  />
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-sm leading-none tracking-tight text-white">INSTITUTO</span>
-              <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">BRUNO SENA</span>
-            </div>
-          </div>
-        </div>
-      </nav>
+
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 relative overflow-hidden">
@@ -294,7 +268,7 @@ const MasterPNL = () => {
                     <tbody className="text-brand-platinum text-sm">
                       {mod.lessons.map((lesson, lIdx) => (
                         <tr key={lIdx} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                          <td className="p-4 text-center font-mono text-brand-platinum/40">{lesson.id}</td>
+                          <td className="p-4 text-center font-mono text-brand-platinum/70">{lesson.id}</td>
                           <td className="p-4 font-medium text-white">{lesson.title}</td>
                           <td className="p-4 text-brand-accent">{lesson.practice}</td>
                         </tr>
@@ -335,7 +309,7 @@ const MasterPNL = () => {
                 <div className="text-sm font-mono text-brand-accent relative z-10">Valor de mercado: Elite</div>
               </div>
               <div className="w-full relative z-10">
-                <img referrerPolicy="no-referrer"  src="/Certificado-IBSDH.webp" alt="Certificado Master PNL" className="w-full h-auto object-contain rounded-2xl shadow-2xl border border-white/10" loading="lazy" />
+                <img src="/Certificado-IBSDH.webp" alt="Certificado Master PNL" className="w-full h-auto object-contain rounded-2xl shadow-2xl border border-white/10" loading="lazy" />
               </div>
             </div>
           </div>
@@ -418,16 +392,21 @@ const MasterPNL = () => {
             </div>
             <div className="bg-brand-dark text-white p-8 md:p-10 rounded-[40px] shadow-2xl">
               <div className="text-center mb-8">
-                <div className="text-brand-platinum/60 line-through mb-2">De R$ 1.997,00</div>
+                <div className="text-brand-platinum/60 line-through mb-2">De {courses.masterPnl.priceFrom}</div>
                 <div className="text-5xl font-bold text-white mb-2">
-                  12x R$ 32,50
+                  12x {courses.masterPnl.installment}
                 </div>
-                <div className="text-brand-accent">ou R$ 397 à vista</div>
+                <div className="text-brand-accent">ou {courses.masterPnl.price} à vista</div>
               </div>
               
-              <button className="w-full bg-brand-accent text-brand-dark py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform mb-4">
+              <a
+                href={courses.masterPnl.checkout}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full text-center bg-brand-accent text-brand-dark py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform mb-4"
+              >
                 Garantir Minha Vaga
-              </button>
+              </a>
               
               <div className="flex items-center justify-center gap-2 text-sm text-brand-platinum/60 mb-6">
                 <ShieldCheck size={16} />
@@ -451,7 +430,7 @@ const MasterPNL = () => {
           </div>
           
           <div className="space-y-4">
-            {[
+            <Faq items={[
               {
                 q: "Preciso ter feito o Practitioner com vocês?",
                 a: "Não obrigatoriamente. Se você tem formação Practitioner por outra instituição e domina os fundamentos (Rapport, VAKOG, Metamodelo, Ancoragem), você conseguirá acompanhar. O SENA Avançado testará esses conhecimentos na prática."
@@ -468,33 +447,7 @@ const MasterPNL = () => {
                 q: "O Master ensina hipnose clínica?",
                 a: "Ensinamos a Linguagem Hipnótica (Modelo Milton) aplicada à conversação e mudança de crenças. Não é um curso de hipnose de palco ou hipnoterapia clássica, mas sim o uso da estrutura da hipnose na comunicação diária e terapêutica."
               }
-            ].map((faq, i) => (
-              <div 
-                key={i}
-                className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-colors hover:bg-white/10 cursor-pointer"
-                onClick={() => toggleFaq(i)}
-              >
-                <div className="p-6 flex items-center justify-between">
-                  <h3 className="font-bold text-white pr-8">{faq.q}</h3>
-                  <ChevronDown 
-                    className={`text-brand-accent transition-transform shrink-0 ${openFaq === i ? 'rotate-180' : ''}`} 
-                    size={20} 
-                  />
-                </div>
-                <AnimatePresence>
-                  {openFaq === i && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-6 text-brand-platinum/80"
-                    >
-                      {faq.a}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+            ] as const} />
           </div>
         </div>
       </section>
@@ -571,21 +524,6 @@ const MasterPNL = () => {
         <CourseReviews courseId="master-pnl" />
       </section>
 
-      {/* Footer */}
-      <footer className="bg-brand-dark py-12 border-t border-white/10 text-center text-brand-platinum/60 text-sm">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-8 text-xs md:text-sm">
-            <a href="mailto:contato@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">contato@institutobrunosena.com.br</a>
-            <a href="mailto:parcerias@institutobrunosena.com.br" className="hover:text-brand-accent transition-colors">parcerias@institutobrunosena.com.br</a>
-            <a href="https://wa.me/5511987355750" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">+55 (11) 98735-5750</a>
-            <a href="https://www.instagram.com/brunosenaoficial/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-accent transition-colors">Instagram</a>
-          </div>
-          <p className="mb-4">© {new Date().getFullYear()} IBSDH. Todos os direitos reservados.</p>
-          <p className="max-w-2xl mx-auto text-xs opacity-50">
-            A Programação Neurolinguística (PNL) é uma abordagem educacional e de desenvolvimento pessoal. Não substitui tratamento médico ou psiquiátrico.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };

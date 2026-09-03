@@ -1,32 +1,61 @@
-import React from 'react';
+import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
-import Home from './pages/Home';
-import PNLPractitioner from './pages/PNLPractitioner';
-import MasterPNL from './pages/MasterPNL';
-import Hipnoterapia from './pages/Hipnoterapia';
-import Jornada from './pages/Jornada';
-import MasterCoach from './pages/MasterCoach';
-import NotFound from './pages/NotFound';
-import FixedWhatsApp from './components/FixedWhatsApp';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
+import Layout from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
+import { routes } from './config/site';
 
-function App() {
+// Cada rota vira um chunk próprio. Antes, as 7 páginas (≈4.400 linhas,
+// só a home com 1.455) eram importadas estaticamente e iam todas no
+// mesmo bundle inicial.
+const Home = lazy(() => import('./pages/Home'));
+const PNLPractitioner = lazy(() => import('./pages/PNLPractitioner'));
+const MasterPNL = lazy(() => import('./pages/MasterPNL'));
+const Hipnoterapia = lazy(() => import('./pages/Hipnoterapia'));
+const Jornada = lazy(() => import('./pages/Jornada'));
+const MasterCoach = lazy(() => import('./pages/MasterCoach'));
+const Privacidade = lazy(() => import('./pages/Privacidade'));
+const Termos = lazy(() => import('./pages/Termos'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+
+function PageLoader() {
   return (
-    <HelmetProvider>
-      <Router>
-        <FixedWhatsApp />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/pnl-practitioner" element={<PNLPractitioner />} />
-          <Route path="/master-pnl" element={<MasterPNL />} />
-          <Route path="/hipnoterapia" element={<Hipnoterapia />} />
-          <Route path="/jornada" element={<Jornada />} />
-          <Route path="/master-coach" element={<MasterCoach />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </HelmetProvider>
+    <div
+      className="min-h-[60vh] flex items-center justify-center"
+      role="status"
+      aria-live="polite"
+    >
+      <span className="sr-only">Carregando página…</span>
+      <span
+        aria-hidden="true"
+        className="w-8 h-8 rounded-full border-2 border-white/15 border-t-brand-accent animate-spin motion-reduce:animate-none"
+      />
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <HelmetProvider>
+      <ErrorBoundary>
+        <Router>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route element={<Layout />}>
+                <Route path={routes.home} element={<Home />} />
+                <Route path={routes.pnlPractitioner} element={<PNLPractitioner />} />
+                <Route path={routes.masterPnl} element={<MasterPNL />} />
+                <Route path={routes.hipnoterapia} element={<Hipnoterapia />} />
+                <Route path={routes.jornada} element={<Jornada />} />
+                <Route path={routes.masterCoach} element={<MasterCoach />} />
+                <Route path={routes.privacidade} element={<Privacidade />} />
+                <Route path={routes.termos} element={<Termos />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </Suspense>
+        </Router>
+      </ErrorBoundary>
+    </HelmetProvider>
+  );
+}
