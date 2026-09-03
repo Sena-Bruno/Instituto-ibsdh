@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
+import { courses } from '../config/courses';
   ArrowLeft,
   Brain, 
   CheckCircle2, 
@@ -423,9 +424,14 @@ const Hipnoterapia = () => {
                 <div className="text-brand-accent">ou R$ 397 à vista</div>
               </div>
               
-              <button className="w-full bg-brand-accent text-brand-dark py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform mb-4">
+              <a
+                href={courses.hipnoterapia.checkout}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full text-center bg-brand-accent text-brand-dark py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform mb-4"
+              >
                 Quero acessar o inconsciente com segurança
-              </button>
+              </a>
               
               <div className="flex items-center justify-center gap-2 text-sm text-brand-platinum/60 mb-6">
                 <ShieldCheck size={16} />

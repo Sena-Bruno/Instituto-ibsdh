@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
+import { courses } from '../config/courses';
   ArrowLeft,
   Brain, 
   CheckCircle2, 
@@ -418,16 +419,21 @@ const MasterPNL = () => {
             </div>
             <div className="bg-brand-dark text-white p-8 md:p-10 rounded-[40px] shadow-2xl">
               <div className="text-center mb-8">
-                <div className="text-brand-platinum/60 line-through mb-2">De R$ 1.997,00</div>
+                <div className="text-brand-platinum/60 line-through mb-2">De {courses.masterPnl.priceFrom}</div>
                 <div className="text-5xl font-bold text-white mb-2">
-                  12x R$ 32,50
+                  12x {courses.masterPnl.installment}
                 </div>
-                <div className="text-brand-accent">ou R$ 397 à vista</div>
+                <div className="text-brand-accent">ou {courses.masterPnl.price} à vista</div>
               </div>
               
-              <button className="w-full bg-brand-accent text-brand-dark py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform mb-4">
+              <a
+                href={courses.masterPnl.checkout}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full text-center bg-brand-accent text-brand-dark py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform mb-4"
+              >
                 Garantir Minha Vaga
-              </button>
+              </a>
               
               <div className="flex items-center justify-center gap-2 text-sm text-brand-platinum/60 mb-6">
                 <ShieldCheck size={16} />

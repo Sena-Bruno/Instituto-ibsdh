@@ -3,6 +3,8 @@ import { motion } from 'motion/react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
+import WaitlistForm from '../components/WaitlistForm';
+import { courses } from '../config/courses';
 import { 
   ArrowLeft,
   Target, 
@@ -10,7 +12,6 @@ import {
   Users2,
   TrendingUp,
   Clock,
-  MessageCircle,
   CheckCircle2
 } from 'lucide-react';
 
@@ -96,37 +97,7 @@ const MasterCoach = () => {
             transition={{ delay: 0.4 }}
             className="max-w-md mx-auto bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm"
           >
-            <h3 className="text-2xl font-bold text-white mb-4">Entre para a Lista de Espera</h3>
-            <p className="text-brand-platinum/70 mb-6 text-sm">
-              Seja o primeiro a saber quando abrirmos as vagas e garanta <strong>desconto exclusivo</strong> de lançamento.
-            </p>
-            <form 
-              onSubmit={(e) => {
-                e.preventDefault();
-                alert('Você foi adicionado à lista de espera com sucesso!');
-                e.currentTarget.reset();
-              }}
-              className="flex flex-col gap-3"
-            >
-              <input 
-                type="text" 
-                placeholder="Seu nome" 
-                required
-                className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-brand-platinum/50 focus:outline-none focus:border-brand-accent transition-colors"
-              />
-              <input 
-                type="email" 
-                placeholder="Seu melhor e-mail" 
-                required
-                className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-brand-platinum/50 focus:outline-none focus:border-brand-accent transition-colors"
-              />
-              <button 
-                type="submit"
-                className="w-full bg-brand-accent text-brand-dark font-bold py-3 px-4 rounded-xl hover:scale-105 transition-all mt-2"
-              >
-                Quero notificação prioritária
-              </button>
-            </form>
+            <WaitlistForm courseId={courses.masterCoach.slug} />
           </motion.div>
         </div>
       </section>

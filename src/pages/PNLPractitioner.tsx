@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
+import { courses } from '../config/courses';
   ArrowLeft,
   Brain, 
   CheckCircle2, 
@@ -947,7 +948,7 @@ const PNLPractitioner = () => {
             </div>
 
             <a 
-              href="https://pay.kiwify.com.br/example-pnl" 
+              href={courses.pnlPractitioner.checkout} 
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full py-6 bg-gradient-to-r from-brand-accent to-[#B8860B] text-brand-dark rounded-2xl font-bold text-xl uppercase tracking-wider hover:shadow-[0_0_40px_rgba(92,156,250,0.4)] transition-all transform hover:scale-[1.02] active:scale-95"
