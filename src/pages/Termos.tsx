@@ -1,4 +1,3 @@
-import React from 'react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { site } from '../config/site';
 

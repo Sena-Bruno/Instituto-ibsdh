@@ -1,12 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import WaitlistForm from '../components/WaitlistForm';
 import { courses } from '../config/courses';
 import { 
-  ArrowLeft,
   Target, 
   Briefcase,
   Users2,

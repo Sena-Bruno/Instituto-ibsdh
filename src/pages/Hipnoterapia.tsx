@@ -1,25 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
-  ArrowLeft,
-  Brain, 
   CheckCircle2, 
   Award, 
-  Users2, 
   Briefcase,
   ChevronRight,
   ChevronDown,
   ShieldCheck,
   AlertTriangle,
-  Sparkles,
-  Activity,
   Eye
 } from 'lucide-react';
 import { courses } from '../config/courses';
+
+interface Lesson {
+  id: string;
+  title: string;
+  practice: string;
+  /** Aula do bloco de ética: destacada em vermelho na ementa */
+  isEthic?: boolean;
+  /** Aula de destaque: realçada na ementa */
+  isHighlight?: boolean;
+}
+
+interface Module {
+  title: string;
+  /** Descrição opcional exibida abaixo do título do módulo */
+  desc?: string;
+  lessons: Lesson[];
+}
 
 const Hipnoterapia = () => {
 
@@ -197,7 +209,7 @@ const Hipnoterapia = () => {
           </div>
 
           <div className="space-y-6">
-            {[
+            {([
               {
                 title: "MÓDULO 1: FUNDAMENTOS DO TRANSE (14h)",
                 lessons: [
@@ -258,7 +270,7 @@ const Hipnoterapia = () => {
                   { id: "44", title: "EXAME FINAL", practice: "SENA como cliente complexo → nota mínima 7/10", isHighlight: true }
                 ]
               }
-            ].map((mod, idx) => (
+            ] as Module[]).map((mod, idx) => (
               <details key={idx} className="bg-brand-dark border border-white/10 rounded-[32px] overflow-hidden group" open={idx === 0}>
                 <summary className="bg-white/5 p-6 border-b border-white/10 cursor-pointer flex justify-between items-center list-none [&::-webkit-details-marker]:hidden">
                   <div>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { whatsappLink, whatsappMessages } from '../config/site';
 
 const FixedWhatsApp = () => {

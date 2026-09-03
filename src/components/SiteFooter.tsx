@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { site, routes, whatsappLink } from '../config/site';
 import { courses } from '../config/courses';

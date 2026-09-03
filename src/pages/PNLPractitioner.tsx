@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import CourseImage from '../components/CourseImage';
@@ -6,14 +6,12 @@ import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import SenaExplanation from '../components/SenaExplanation';
 import { 
-  ArrowLeft,
   Brain, 
   CheckCircle2, 
   Award, 
   Users2, 
   MonitorPlay,
   Briefcase,
-  Building2,
   Heart,
   ChevronRight,
   ChevronDown,

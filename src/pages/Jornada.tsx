@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import { 
-  ArrowLeft,
-  Brain, 
   CheckCircle2, 
   Award, 
-  Target,
-  Sparkles,
   ChevronRight,
   ChevronDown,
   ShieldCheck,
@@ -39,7 +34,6 @@ const Jornada = () => {
         <meta property="og:type" content="course" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
-
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 relative overflow-hidden">
@@ -475,24 +469,5 @@ const Jornada = () => {
     </div>
   );
 };
-
-// Missing ArrowDown icon component
-const ArrowDown = ({ className, size }: { className?: string, size?: number }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size || 24} 
-    height={size || 24} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <line x1="12" y1="5" x2="12" y2="19"></line>
-    <polyline points="19 12 12 19 5 12"></polyline>
-  </svg>
-);
 
 export default Jornada;

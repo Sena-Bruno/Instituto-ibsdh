@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import CourseImage from '../components/CourseImage';
 import { Link } from 'react-router-dom';
 import { 
   ChevronRight, 
-  ChevronLeft,
-  Play, 
   Brain, 
   Target, 
   Sparkles, 
   CheckCircle2, 
   Star,
-  Menu,
-  X,
   Instagram,
   ArrowRight,
   ShieldCheck,
@@ -23,12 +19,9 @@ import {
   Lock,
   Globe,
   Award,
-  BookOpen,
   Download,
   Zap,
   Clock,
-  Heart,
-  Quote,
   User,
   Briefcase,
   Building2,
@@ -478,7 +471,7 @@ const Courses = () => {
                   imgClassName="transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute top-4 left-4 p-2.5 bg-brand-dark/80 backdrop-blur-md rounded-xl border border-white/10">
-                  {React.cloneElement(course.icon as React.ReactElement, { size: 24 })}
+                  {React.cloneElement(course.icon as React.ReactElement<{ size?: number }>, { size: 24 })}
                 </div>
               </div>
               
@@ -1168,7 +1161,7 @@ const Partners = () => {
           {partners.map((partner, i) => (
             <div key={i} className="flex items-center gap-4">
               <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10">
-                {React.cloneElement(partner.icon as React.ReactElement, { className: "text-brand-accent" })}
+                {React.cloneElement(partner.icon as React.ReactElement<{ className?: string }>, { className: "text-brand-accent" })}
               </div>
               <span className="font-display font-bold text-2xl tracking-tighter text-white">{partner.name}</span>
             </div>

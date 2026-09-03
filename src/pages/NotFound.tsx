@@ -1,7 +1,6 @@
-import React from 'react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Home } from 'lucide-react';
+import { Home } from 'lucide-react';
 
 const NotFound = () => {
   return (
