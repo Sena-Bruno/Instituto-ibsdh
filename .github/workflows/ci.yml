@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Um PR que recebe vários pushes seguidos não precisa rodar tudo em
+# paralelo: cancela a execução anterior e roda só a mais recente.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualidade:
+    name: Tipos, lint e build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # npm ci em vez de install: respeita o package-lock e falha se ele
+      # estiver fora de sincronia com o package.json — que foi exatamente
+      # o tipo de problema que quebrou um deploy antes.
+      - run: npm ci
+
+      - name: Checagem de tipos
+        run: npx tsc --noEmit && npx tsc --noEmit -p tsconfig.node.json
+
+      - name: Lint e formatação
+        run: npx biome check
+
+      - name: Código e dependências mortas
+        run: npx knip --no-config-hints
+
+      - name: Build
+        run: npm run build
+
+      - name: Guardar o build para o teste de navegador
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+
+  navegador:
+    name: Teste de navegador
+    needs: qualidade
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      # Instalado só aqui, e não como dependência do projeto: o Playwright
+      # baixa centenas de MB de navegadores, o que atrasaria todo build de
+      # produção sem servir para nada lá.
+      - name: Instalar Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Servir o build e rodar o teste
+        run: |
+          npx vite preview --port 4173 --host 127.0.0.1 &
+          # Espera o servidor responder, sem depender de outro pacote só
+          # para isso. Desiste em 60s para não travar o job.
+          for i in $(seq 60); do
+            curl -sf -o /dev/null http://127.0.0.1:4173/ && break
+            sleep 1
+          done
+          curl -sf -o /dev/null http://127.0.0.1:4173/ || { echo "servidor não subiu"; exit 1; }
+          SMOKE_URL=http://127.0.0.1:4173 node scripts/smoke.mjs
