@@ -39,6 +39,8 @@ export default function SiteHeader() {
   }, []);
 
   // Fecha o menu ao trocar de rota, senão ele fica aberto sobre a página nova.
+  // pathname é gatilho, não valor lido: é a troca de rota que fecha o menu.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: gatilho intencional
   useEffect(() => setIsMenuOpen(false), [pathname]);
 
   // Esc fecha o menu — um menu em tela cheia sem saída pelo teclado prende o usuário.

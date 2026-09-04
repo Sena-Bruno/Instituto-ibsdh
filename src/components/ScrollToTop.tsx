@@ -13,6 +13,9 @@ import { useLocation } from 'react-router-dom';
 export default function ScrollToTop() {
   const { pathname, hash } = useLocation();
 
+  // pathname não é lido no corpo: está na lista de propósito, como gatilho.
+  // É a troca de rota que precisa disparar o retorno ao topo.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: gatilho intencional
   useEffect(() => {
     if (hash) {
       const target = document.querySelector(hash);

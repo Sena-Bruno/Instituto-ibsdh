@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 import { Copy, Download, LogIn, Loader2, ShieldAlert } from 'lucide-react';
 import { auth, db, loginWithGoogle, logout } from '../firebase';
 import { isAdmin } from '../config/admin';
@@ -66,20 +66,21 @@ export default function Admin() {
   }, [allowed]);
 
   const csv = useMemo(() => {
-    const escape = (v: string) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const aspas = (v: string) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const rows = leads.map((l) =>
       [
-        escape(l.name),
-        escape(l.email),
-        escape(l.courseId),
-        escape(l.createdAt ? l.createdAt.toDate().toLocaleString('pt-BR') : ''),
+        aspas(l.name),
+        aspas(l.email),
+        aspas(l.courseId),
+        aspas(l.createdAt ? l.createdAt.toDate().toLocaleString('pt-BR') : ''),
       ].join(','),
     );
     return ['nome,email,curso,data', ...rows].join('\n');
   }, [leads]);
 
   const csvHref = useMemo(
-    () => `data:text/csv;charset=utf-8,${encodeURIComponent('﻿' + csv)}`,
+    // O BOM faz o Excel abrir o arquivo com a acentuação correta.
+    () => `data:text/csv;charset=utf-8,${encodeURIComponent(`\ufeff${csv}`)}`,
     [csv],
   );
 

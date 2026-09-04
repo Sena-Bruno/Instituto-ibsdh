@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import CourseImage from '../components/CourseImage';
@@ -753,7 +754,8 @@ const PNLPractitioner = () => {
               { q: "E se eu não gostar do SENA?", a: "A garantia de 7 dias cobre todo o curso, incluindo a experiência com o SENA. Se não achar que agrega valor, devolvemos seu dinheiro." }
             ].map((faq, idx) => (
               <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden transition-all hover:border-brand-accent/30">
-                <button 
+                <button
+                  type="button"
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                   className="w-full flex items-center justify-between p-6 text-left"
                 >

@@ -526,7 +526,8 @@ const Courses = () => {
                               Detalhes
                             </Link>
                           ) : (
-                            <button 
+                            <button
+                              type="button"
                               className="py-3 bg-white/5 border border-white/10 hover:border-white/20 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider"
                             >
                               Detalhes
@@ -939,7 +940,7 @@ const Ebooks = () => {
               <div className="flex flex-col flex-grow text-center sm:text-left">
                 <h3 className="text-lg font-bold mb-4 leading-tight text-white">{ebook.title}</h3>
                 <p className="text-brand-purple font-bold text-2xl mb-6">{ebook.price}</p>
-                <button className="w-full py-3 bg-brand-purple/10 text-brand-purple border border-brand-purple/20 hover:bg-brand-purple hover:text-white rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider mt-auto">
+                <button type="button" className="w-full py-3 bg-brand-purple/10 text-brand-purple border border-brand-purple/20 hover:bg-brand-purple hover:text-white rounded-lg font-bold transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider mt-auto">
                   <Download size={16} /> Baixar agora
                 </button>
               </div>
@@ -1076,7 +1077,8 @@ const FAQ = () => {
         <div className="space-y-4">
           {faqs.map((faq, i) => (
             <div key={i} className="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
-              <button 
+              <button
+                type="button"
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 className="w-full p-6 text-left flex items-center justify-between hover:bg-white/5 transition-colors"
               >

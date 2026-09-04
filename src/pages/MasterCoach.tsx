@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { motion } from 'motion/react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { CourseReviews } from '../components/CourseReviews';

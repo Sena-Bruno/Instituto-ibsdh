@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 import { db, auth, loginWithGoogle, logout } from '../firebase';
 import { Star, Trash2, UserCircle2, LogIn } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -16,7 +17,8 @@ interface Review {
   userPhoto?: string;
   rating: number;
   comment: string;
-  createdAt: any;
+  /** Timestamp do Firestore; ausente até o servidor gravar o valor. */
+  createdAt?: { toDate: () => Date };
 }
 
 export const CourseReviews = ({ courseId }: { courseId: string }) => {
@@ -43,6 +45,10 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
   }, []);
 
   useEffect(() => {
+    // Ao trocar de curso, volta ao estado de carregamento: sem isto a
+    // lista do curso anterior ficaria visível até a nova consulta chegar.
+    setIsLoading(true);
+
     const q = query(
       collection(db, 'course_reviews'),
       where('courseId', '==', courseId),
@@ -63,8 +69,6 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
       setLoadError(true);
     });
 
-    return () => unsubscribe();
-    setIsLoading(true);
     return () => unsubscribe();
   }, [courseId]);
 
@@ -189,6 +193,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
             <h4 className="text-xl text-white font-medium mb-3">Já fez esta formação?</h4>
             <p className="text-brand-platinum mb-6">Faça login para compartilhar sua experiência com outros alunos.</p>
             <button
+              type="button"
               onClick={loginWithGoogle}
               className="inline-flex items-center gap-2 bg-white text-brand-dark px-6 py-3 rounded-full font-bold hover:bg-brand-platinum transition-colors"
             >
@@ -264,6 +269,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                 </div>
                 {user && user.uid === review.userId && (
                   <button
+                    type="button"
                     onClick={() => handleDelete(review.id)}
                     className="text-white/60 hover:text-red-400 transition-colors p-2"
                     title="Excluir avaliação"

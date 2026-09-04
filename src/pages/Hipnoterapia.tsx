@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { Helmet } from '@dr.pogodin/react-helmet';
 import Faq from '../components/Faq';
 import { Link } from 'react-router-dom';
