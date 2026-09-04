@@ -1,4 +1,4 @@
-import type { Transition, Variants } from 'motion/react';
+import type { Variants } from 'motion/react';
 
 /**
  * Sistema de movimento do site.
@@ -35,14 +35,6 @@ export const duration = {
   slow: 0.5,
 } as const;
 
-/** Mola sem repique. Repique chama atenção para o movimento, que é
- *  justamente o que se quer evitar em conteúdo de venda. */
-export const spring: Transition = {
-  type: 'spring',
-  duration: 0.45,
-  bounce: 0,
-};
-
 /**
  * Entrada de conteúdo ao entrar na área visível.
  * Deslocamento curto e desfoque leve: sugere profundidade sem que a
@@ -56,13 +48,6 @@ export const revealUp: Variants = {
     filter: 'blur(0px)',
     transition: { duration: duration.base, ease: ease.out },
   },
-};
-
-/** Igual ao revealUp, sem deslocamento — para elementos que já estão
- *  no lugar certo e só precisam surgir. */
-export const fadeIn: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: duration.base, ease: ease.out } },
 };
 
 /**
@@ -102,11 +87,3 @@ export const pageTransition: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: duration.fast, ease: ease.out } },
   exit: { opacity: 0, transition: { duration: duration.instant, ease: ease.in } },
 };
-
-/** Configuração padrão de `whileInView`: anima uma vez só, e dispara
- *  um pouco antes de o elemento encostar na borda da tela. */
-export const inView = {
-  once: true,
-  amount: 0.2,
-  margin: '0px 0px -80px 0px',
-} as const;
