@@ -5,6 +5,8 @@ import { onAuthStateChanged, User } from 'firebase/auth';
 import { Copy, Download, LogIn, Loader2, ShieldAlert } from 'lucide-react';
 import { auth, db, loginWithGoogle, logout } from '../firebase';
 import { isAdmin } from '../config/admin';
+import { SkeletonRow } from '../components/Skeleton';
+import { useDelayedFlag } from '../lib/useDelayedFlag';
 
 interface Lead {
   id: string;
@@ -41,6 +43,7 @@ export default function Admin() {
   );
 
   const allowed = isAdmin(user?.uid);
+  const showSkeleton = useDelayedFlag(loadingLeads);
 
   useEffect(() => {
     if (!allowed) return;
@@ -173,10 +176,22 @@ export default function Admin() {
             )}
 
             {loadingLeads ? (
-              <p className="text-brand-platinum flex items-center gap-2" role="status">
-                <Loader2 className="animate-spin" size={18} aria-hidden="true" />
-                Carregando cadastros…
-              </p>
+              showSkeleton && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="overflow-x-auto rounded-2xl border border-white/10"
+                >
+                  <span className="sr-only">Carregando cadastros…</span>
+                  <table className="w-full">
+                    <tbody>
+                      {Array.from({ length: 4 }, (_, i) => (
+                        <SkeletonRow key={i} />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )
             ) : leads.length === 0 ? (
               <p className="text-brand-platinum bg-white/5 rounded-2xl p-8 text-center">
                 Nenhum cadastro ainda.

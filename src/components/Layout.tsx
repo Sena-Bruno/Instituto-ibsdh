@@ -1,4 +1,6 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
+import { motion } from 'motion/react';
+import { pageTransition } from '../lib/motion';
 import SiteHeader from './SiteHeader';
 import SiteFooter from './SiteFooter';
 import FixedWhatsApp from './FixedWhatsApp';
@@ -9,6 +11,8 @@ import ScrollToTop from './ScrollToTop';
  * e retorno ao topo na troca de rota.
  */
 export default function Layout() {
+  const { pathname } = useLocation();
+
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans">
       <ScrollToTop />
@@ -19,9 +23,21 @@ export default function Layout() {
         Pular para o conteúdo
       </a>
       <SiteHeader />
-      <main id="conteudo">
+      {/*
+        A `key` no pathname refaz o bloco a cada rota, então a página nova
+        entra com uma subida curta em vez de trocar num corte seco.
+        Bem contido de propósito: navegar é frequente, e animação longa
+        aqui vira imposto cobrado em toda troca de página.
+      */}
+      <motion.main
+        id="conteudo"
+        key={pathname}
+        variants={pageTransition}
+        initial="hidden"
+        animate="visible"
+      >
         <Outlet />
-      </main>
+      </motion.main>
       <SiteFooter />
       <FixedWhatsApp />
     </div>

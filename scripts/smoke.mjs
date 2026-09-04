@@ -89,6 +89,50 @@ for (const route of routes) {
 // Ruído de ambiente, não defeito do site: rede restrita bloqueia recursos
 // de terceiros e o backend do Firestore.
 const environmental = /ERR_CONNECTION|ERR_NAME_NOT_RESOLVED|ERR_INTERNET|Could not reach Cloud Firestore|offline mode|net::ERR_/i;
+
+// --- Movimento ---
+// Verifica o que é fácil regredir sem ninguém notar: o painel que volta a
+// abrir num corte seco, e a preferência de menos movimento sendo ignorada
+// pelas animações em JavaScript (que a regra de CSS não alcança).
+{
+  const p2 = await browser.newPage();
+  await p2.goto(base + '/hipnoterapia', { waitUntil: 'domcontentloaded' });
+  await p2.waitForSelector('h1', { timeout: 20000 });
+  await p2.waitForTimeout(700);
+
+  const faq = p2.locator('button[aria-controls^="faq-painel"]').first();
+  await faq.click();
+  await p2.waitForTimeout(120);
+  const meio = await p2.locator('#faq-painel-0').boundingBox();
+  await p2.waitForTimeout(500);
+  const fim = await p2.locator('#faq-painel-0').boundingBox();
+  const abriuAnimado = !!(meio && fim && meio.height < fim.height);
+
+  await faq.click();
+  await p2.waitForTimeout(450);
+  const saiuDoDom = (await p2.locator('#faq-painel-0').count()) === 0;
+
+  console.log('\n=== movimento ===');
+  console.log(`  FAQ abre com altura animada: ${abriuAnimado ? 'sim' : 'NÃO'}`);
+  console.log(`  FAQ sai do DOM ao fechar: ${saiuDoDom ? 'sim' : 'NÃO'}`);
+  if (!abriuAnimado) failures++;
+  if (!saiuDoDom) failures++;
+  await p2.close();
+
+  const ctx = await browser.newContext({ reducedMotion: 'reduce' });
+  const p3 = await ctx.newPage();
+  await p3.goto(base + '/hipnoterapia', { waitUntil: 'domcontentloaded' });
+  await p3.waitForSelector('h1', { timeout: 20000 });
+  await p3.waitForTimeout(700);
+  await p3.locator('button[aria-controls^="faq-painel"]').first().click();
+  await p3.waitForTimeout(60);
+  const bx = await p3.locator('#faq-painel-0').boundingBox();
+  const instantaneo = !!(bx && bx.height > 20);
+  console.log(`  reduced-motion abre sem animação: ${instantaneo ? 'sim' : 'NÃO'}`);
+  if (!instantaneo) failures++;
+  await ctx.close();
+}
+
 const unique = [...new Set(consoleErrors)].filter((e) => !environmental.test(e));
 console.log(`\n=== erros de console: ${unique.length} ===`);
 unique.slice(0, 10).forEach((e) => console.log(`  ${e}`));

@@ -40,6 +40,34 @@ npm run smoke
 > todas as páginas perderem o título próprio. Isso foi verificado com o
 > `npm run smoke`. Não troque o pacote sem rodar esse teste.
 
+## Movimento
+
+`src/lib/motion.ts` guarda durações, curvas e variantes — pelo mesmo motivo
+de preços e contatos: valor repetido no JSX diverge com o tempo.
+
+As escolhas seguem
+[design-motion-principles](https://github.com/kylezantos/design-motion-principles),
+com a lente indicada para site de marketing: polimento sutil na faixa de
+200–500ms, e movimento rápido ou nenhum em navegação e formulários, que
+são de uso frequente. A regra que decide caso a caso: **a melhor animação
+é a que passa despercebida** — se o visitante repara na animação em vez do
+conteúdo, ela está grande demais para uma página que precisa vender.
+
+Dois pontos que é fácil quebrar sem perceber, e por isso o `npm run smoke`
+verifica:
+
+- **Saída também anima.** Um painel que entra suave e some num corte seco
+  passa impressão de falha. Todo bloco condicional fica dentro de
+  `AnimatePresence`.
+- **`prefers-reduced-motion` vale para o site inteiro.** A regra em
+  `index.css` cobre transições de CSS, mas o Motion anima por JavaScript e
+  passaria por cima dela — quem garante o resto é o `MotionConfig
+  reducedMotion="user"` em `App.tsx`.
+
+Indicadores de carregamento usam `useDelayedFlag`, que só os exibe depois
+de 220ms: numa conexão boa a resposta chega antes disso, e um skeleton que
+aparece e some incomoda mais do que a espera.
+
 ## Estrutura
 
 ```
