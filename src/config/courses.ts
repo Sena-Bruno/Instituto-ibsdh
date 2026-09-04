@@ -85,5 +85,3 @@ export const courses = {
     checkout: 'https://pay.kiwify.com.br/9y9r0kY',
   },
 } satisfies Record<string, Course>;
-
-export type CourseKey = keyof typeof courses;

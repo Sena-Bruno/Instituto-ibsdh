@@ -1,10 +1,10 @@
-import { Outlet, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { pageTransition } from '../lib/motion';
-import SiteHeader from './SiteHeader';
-import SiteFooter from './SiteFooter';
 import FixedWhatsApp from './FixedWhatsApp';
 import ScrollToTop from './ScrollToTop';
+import SiteFooter from './SiteFooter';
+import SiteHeader from './SiteHeader';
 
 /**
  * Moldura comum a todas as páginas: cabeçalho, rodapé, botão do WhatsApp

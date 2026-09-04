@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 import { collapse, duration, ease } from '../lib/motion';
+import { cn } from '../lib/utils';
 
 export interface FaqItem {
   q: string;

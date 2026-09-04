@@ -1,5 +1,6 @@
-import React from 'react';
 import { AlertTriangle } from 'lucide-react';
+import React from 'react';
+import { captureException } from '../lib/sentry';
 
 /**
  * Impede que um erro em uma página derrube o site inteiro.
@@ -17,6 +18,9 @@ export default class ErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     console.error('Erro não tratado na interface:', error, info);
+    // Sem isto, o erro que derruba a página fica só no console de quem
+    // não vai reportar nada — justamente o mais importante de saber.
+    captureException(error, { extra: { componentStack: info.componentStack } });
   }
 
   render() {
@@ -25,7 +29,11 @@ export default class ErrorBoundary extends React.Component<
     return (
       <div className="min-h-screen flex items-center justify-center bg-brand-dark px-6 text-center">
         <div className="max-w-md">
-          <AlertTriangle className="text-brand-accent mx-auto mb-6" size={48} aria-hidden="true" />
+          <AlertTriangle
+            className="text-brand-accent mx-auto mb-6"
+            size={48}
+            aria-hidden="true"
+          />
           <h1 className="font-display text-3xl font-bold text-white mb-4">
             Algo saiu do previsto
           </h1>

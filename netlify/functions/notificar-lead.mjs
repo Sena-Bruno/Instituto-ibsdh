@@ -38,9 +38,15 @@ export default async (request) => {
   // Só os três campos esperados, com limite de tamanho. O destinatário
   // nunca vem do pedido: é sempre NOTIFY_EMAIL, então este endpoint não
   // pode ser usado para enviar e-mail a terceiros.
-  const name = String(payload?.name ?? '').trim().slice(0, 100);
-  const email = String(payload?.email ?? '').trim().slice(0, 200);
-  const courseId = String(payload?.courseId ?? '').trim().slice(0, 100);
+  const name = String(payload?.name ?? '')
+    .trim()
+    .slice(0, 100);
+  const email = String(payload?.email ?? '')
+    .trim()
+    .slice(0, 200);
+  const courseId = String(payload?.courseId ?? '')
+    .trim()
+    .slice(0, 100);
 
   if (!name || !email || !courseId || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return new Response('Dados inválidos', { status: 400 });

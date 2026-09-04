@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { CheckCircle2, Loader2 } from 'lucide-react';
+import type React from 'react';
+import { useState } from 'react';
 import { db } from '../firebase';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
@@ -61,16 +62,12 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
 
   if (status === 'success') {
     return (
-      <div
-        className="text-center py-4"
-        role="status"
-        aria-live="polite"
-      >
+      <div className="text-center py-4" role="status" aria-live="polite">
         <CheckCircle2 className="text-brand-accent mx-auto mb-4" size={48} />
         <h3 className="text-2xl font-bold text-white mb-2">Cadastro confirmado!</h3>
         <p className="text-brand-platinum/80 text-sm">
-          Você está na lista de espera. Avisaremos por e-mail assim que as vagas
-          abrirem — com o desconto exclusivo de lançamento garantido.
+          Você está na lista de espera. Avisaremos por e-mail assim que as vagas abrirem — com o
+          desconto exclusivo de lançamento garantido.
         </p>
       </div>
     );
@@ -126,11 +123,7 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
         </div>
 
         {status === 'error' && (
-          <p
-            id="waitlist-error"
-            role="alert"
-            className="text-red-400 text-sm text-left"
-          >
+          <p id="waitlist-error" role="alert" className="text-red-400 text-sm text-left">
             {error}
           </p>
         )}

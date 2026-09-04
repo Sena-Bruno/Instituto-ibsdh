@@ -15,7 +15,7 @@
  *
  *   firebase deploy --only firestore:rules
  */
-export const ADMIN_UIDS: readonly string[] = [
+const ADMIN_UIDS: readonly string[] = [
   // 'cole-aqui-o-uid-mostrado-na-tela',
 ];
 

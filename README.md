@@ -17,7 +17,9 @@ npm run dev        # http://localhost:3000
 | `npm run dev` | Servidor de desenvolvimento |
 | `npm run build` | Build de produção em `dist/` |
 | `npm run preview` | Serve o build para conferência |
-| `npm run lint` | Checagem de tipos do app e da configuração de build |
+| `npm run lint` | Tipos + Biome (o que o CI roda) |
+| `npm run check:fix` | Corrige lint e formatação automaticamente |
+| `npm run knip` | Procura código e dependências sem uso |
 | `npm run smoke` | Teste de navegador nas rotas públicas (com o preview no ar) |
 
 O `smoke` percorre as 6 rotas públicas e falha se encontrar imagem
@@ -67,6 +69,28 @@ verifica:
 Indicadores de carregamento usam `useDelayedFlag`, que só os exibe depois
 de 220ms: numa conexão boa a resposta chega antes disso, e um skeleton que
 aparece e some incomoda mais do que a espera.
+
+## Qualidade e monitoramento
+
+**CI** (`.github/workflows/ci.yml`) roda em todo PR: tipos, Biome, Knip,
+build e o teste de navegador sobre o build real. Usa `npm ci`, que falha se
+o `package-lock.json` sair de sincronia com o `package.json` — o tipo exato
+de problema que já quebrou um deploy aqui.
+
+**Biome** cobre lint e formatação num binário só. As decisões de regra
+estão em [BIOME.md](./BIOME.md), com o motivo de cada uma.
+
+**Knip** encontra código e dependências sem uso. O `playwright` fica em
+`ignoreDependencies` de propósito: é instalado sob demanda para o teste de
+fumaça e não pode entrar no `package.json`, senão todo build de produção
+baixaria centenas de MB de navegadores.
+
+**Sentry** reporta erros de produção — antes, um erro só chegava até o
+instituto se algum visitante avisasse. É opcional: sem `VITE_SENTRY_DSN`
+definido, o Vite elimina o SDK inteiro no build e o custo é zero. Quando
+ativo, o SDK (490 kB) **só é baixado se um erro acontecer** — quem navega
+sem problema nunca paga por ele. Configure `VITE_SENTRY_DSN` em
+*Netlify → Site settings → Environment variables*.
 
 ## Estrutura
 

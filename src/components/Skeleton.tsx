@@ -14,13 +14,7 @@ import { cn } from '../lib/utils';
  * prefers-reduced-motion pela regra global em index.css.
  */
 
-export function Skeleton({
-  className,
-  style,
-}: {
-  className?: string;
-  style?: CSSProperties;
-}) {
+function Skeleton({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
     <div
       aria-hidden="true"

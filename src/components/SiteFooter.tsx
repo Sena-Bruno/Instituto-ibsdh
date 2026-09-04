@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { site, routes, whatsappLink } from '../config/site';
 import { courses } from '../config/courses';
+import { routes, site, whatsappLink } from '../config/site';
 
 /**
  * Rodapé único do site.
@@ -50,10 +50,7 @@ export default function SiteFooter() {
             <ul className="space-y-3">
               {Object.values(courses).map((course) => (
                 <li key={course.route}>
-                  <Link
-                    to={course.route}
-                    className="hover:text-brand-accent transition-colors"
-                  >
+                  <Link to={course.route} className="hover:text-brand-accent transition-colors">
                     {course.title}
                   </Link>
                 </li>
@@ -109,7 +106,10 @@ export default function SiteFooter() {
         <div className="border-t border-white/10 pt-8 text-center space-y-4">
           <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs">
             <li>
-              <Link to={routes.privacidade} className="hover:text-brand-accent transition-colors">
+              <Link
+                to={routes.privacidade}
+                className="hover:text-brand-accent transition-colors"
+              >
                 Política de Privacidade
               </Link>
             </li>

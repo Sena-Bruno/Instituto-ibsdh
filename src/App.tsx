@@ -1,9 +1,9 @@
-import { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { MotionConfig } from 'motion/react';
-import Layout from './components/Layout';
+import { lazy, Suspense } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
+import Layout from './components/Layout';
 import { SkeletonPage } from './components/Skeleton';
 import { routes } from './config/site';
 

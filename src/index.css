@@ -7,24 +7,24 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
 
-  --color-brand-dark: #09090B;
-  --color-brand-surface: #18181B;
-  --color-brand-accent: #E5C365;
-  --color-brand-blue: #5C9CFA;
-  --color-brand-emerald: #39D4A1;
-  --color-brand-purple: #B67FF1;
-  --color-brand-warm: #F9814D;
-  --color-brand-platinum: #A1A1AA;
-  --color-brand-muted: #27272A;
+  --color-brand-dark: #09090b;
+  --color-brand-surface: #18181b;
+  --color-brand-accent: #e5c365;
+  --color-brand-blue: #5c9cfa;
+  --color-brand-emerald: #39d4a1;
+  --color-brand-purple: #b67ff1;
+  --color-brand-warm: #f9814d;
+  --color-brand-platinum: #a1a1aa;
+  --color-brand-muted: #27272a;
 
   /* Faltava um tom secundário: Home.tsx usava from-brand-secondary/40 no
      card final de CTA, mas o token nunca existiu — o gradiente saía do nada. */
-  --color-brand-secondary: #1F1F27;
+  --color-brand-secondary: #1f1f27;
 
   /* Cores de estado. O site usava text-red-400 e text-green-400 crus da
      paleta do Tailwind, fora do sistema da marca. */
-  --color-brand-danger: #F87171;
-  --color-brand-success: #4ADE80;
+  --color-brand-danger: #f87171;
+  --color-brand-success: #4ade80;
 }
 
 @layer base {
@@ -32,7 +32,12 @@
     @apply bg-brand-dark text-brand-platinum font-sans antialiased selection:bg-brand-accent selection:text-brand-dark;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply text-white font-display tracking-tight;
   }
 
@@ -85,7 +90,8 @@
 
 .grid-overlay {
   background-size: 100px 100px;
-  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
@@ -129,35 +135,55 @@
 .btn-emerald,
 .btn-warm,
 .btn-outline {
-  @apply px-8 py-4 rounded-full font-bold transition-all transform
-         hover:scale-[1.02] active:scale-95 flex items-center justify-center
-         gap-2 text-sm uppercase tracking-wider
-         motion-reduce:transform-none motion-reduce:hover:scale-100;
+  @apply px-8 py-4 rounded-full font-bold transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider motion-reduce:transform-none motion-reduce:hover:scale-100;
 }
 
-.btn-primary { @apply bg-brand-accent text-brand-dark; }
-.btn-primary:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-accent) r g b / 0.3); }
+.btn-primary {
+  @apply bg-brand-accent text-brand-dark;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 30px rgb(from var(--color-brand-accent) r g b / 0.3);
+}
 
-.btn-blue { @apply bg-brand-blue text-brand-dark; }
-.btn-blue:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-blue) r g b / 0.3); }
+.btn-blue {
+  @apply bg-brand-blue text-brand-dark;
+}
+.btn-blue:hover {
+  box-shadow: 0 0 30px rgb(from var(--color-brand-blue) r g b / 0.3);
+}
 
-.btn-purple { @apply bg-brand-purple text-brand-dark; }
-.btn-purple:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-purple) r g b / 0.3); }
+.btn-purple {
+  @apply bg-brand-purple text-brand-dark;
+}
+.btn-purple:hover {
+  box-shadow: 0 0 30px rgb(from var(--color-brand-purple) r g b / 0.3);
+}
 
-.btn-emerald { @apply bg-brand-emerald text-brand-dark; }
-.btn-emerald:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-emerald) r g b / 0.3); }
+.btn-emerald {
+  @apply bg-brand-emerald text-brand-dark;
+}
+.btn-emerald:hover {
+  box-shadow: 0 0 30px rgb(from var(--color-brand-emerald) r g b / 0.3);
+}
 
-.btn-warm { @apply bg-brand-warm text-brand-dark; }
-.btn-warm:hover { box-shadow: 0 0 30px rgb(from var(--color-brand-warm) r g b / 0.3); }
+.btn-warm {
+  @apply bg-brand-warm text-brand-dark;
+}
+.btn-warm:hover {
+  box-shadow: 0 0 30px rgb(from var(--color-brand-warm) r g b / 0.3);
+}
 
 .btn-outline {
-  @apply bg-transparent text-white border border-white/20
-         hover:bg-white hover:text-brand-dark;
+  @apply bg-transparent text-white border border-white/20 hover:bg-white hover:text-brand-dark;
 }
 
 @keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .animate-marquee {
