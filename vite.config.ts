@@ -19,6 +19,10 @@ export default defineConfig({
         manualChunks: {
           firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
           vendor: ['react', 'react-dom', 'react-router-dom'],
+          // O Sentry NÃO entra aqui de propósito: nomeá-lo em manualChunks
+          // força o pacote inteiro para dentro do chunk e anula o
+          // tree-shaking. Deixando o Rollup criar o chunk a partir do
+          // import dinâmico, só o que é usado entra.
         },
       },
     },
