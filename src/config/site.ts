@@ -75,4 +75,5 @@ export const routes = {
   masterCoach: '/master-coach',
   privacidade: '/privacidade',
   termos: '/termos',
+  admin: '/admin',
 } as const;

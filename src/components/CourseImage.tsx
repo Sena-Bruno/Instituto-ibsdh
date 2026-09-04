@@ -37,6 +37,17 @@ export default function CourseImage({
   accentClassName?: string;
 }) {
   const [failed, setFailed] = useState(!src);
+  const [loaded, setLoaded] = useState(false);
+
+  /**
+   * Uma imagem já em cache pode terminar de carregar antes de o React
+   * ligar o onLoad — o evento se perde e a imagem ficaria invisível para
+   * sempre. Este ref confere `complete` assim que o elemento existe,
+   * cobrindo esse caso ao voltar para uma página já visitada.
+   */
+  const imgRef = (node: HTMLImageElement | null) => {
+    if (node?.complete && node.naturalWidth > 0) setLoaded(true);
+  };
 
   if (failed) {
     return (
@@ -57,15 +68,34 @@ export default function CourseImage({
   }
 
   return (
-    <img
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      loading={loading}
-      decoding="async"
-      onError={() => setFailed(true)}
-      className={cn('w-full h-full object-cover', imgClassName, className)}
-    />
+    // A imagem entra sobre um fundo do tom da marca em vez de aparecer
+    // de uma vez sobre o vazio. Com lazy loading, o "pipocar" acontece
+    // no meio da rolagem, bem no campo de visão de quem lê.
+    <div className={cn('relative w-full h-full overflow-hidden', className)}>
+      <div
+        aria-hidden="true"
+        className={cn(
+          'absolute inset-0 bg-gradient-to-br transition-opacity duration-500',
+          accentClassName,
+          loaded ? 'opacity-0' : 'opacity-100 animate-pulse',
+        )}
+      />
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={loading}
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        onError={() => setFailed(true)}
+        className={cn(
+          'relative w-full h-full object-cover transition-opacity duration-500 ease-out motion-reduce:transition-none',
+          loaded ? 'opacity-100' : 'opacity-0',
+          imgClassName,
+        )}
+      />
+    </div>
   );
 }

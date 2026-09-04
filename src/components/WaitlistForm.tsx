@@ -26,13 +26,27 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
     setStatus('submitting');
     setError('');
 
+    const lead = {
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      courseId,
+    };
+
     try {
       await addDoc(collection(db, 'waitlist'), {
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        courseId,
+        ...lead,
         createdAt: serverTimestamp(),
       });
+
+      // Aviso por e-mail é acessório: o cadastro já está salvo. Uma falha
+      // aqui não pode virar erro na tela nem fazer o visitante tentar de
+      // novo, o que criaria um cadastro duplicado.
+      fetch('/.netlify/functions/notificar-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(lead),
+      }).catch((err) => console.error('Falha ao notificar por e-mail:', err));
+
       setStatus('success');
       setName('');
       setEmail('');

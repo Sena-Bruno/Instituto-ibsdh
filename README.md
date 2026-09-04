@@ -40,6 +40,34 @@ npm run smoke
 > todas as páginas perderem o título próprio. Isso foi verificado com o
 > `npm run smoke`. Não troque o pacote sem rodar esse teste.
 
+## Movimento
+
+`src/lib/motion.ts` guarda durações, curvas e variantes — pelo mesmo motivo
+de preços e contatos: valor repetido no JSX diverge com o tempo.
+
+As escolhas seguem
+[design-motion-principles](https://github.com/kylezantos/design-motion-principles),
+com a lente indicada para site de marketing: polimento sutil na faixa de
+200–500ms, e movimento rápido ou nenhum em navegação e formulários, que
+são de uso frequente. A regra que decide caso a caso: **a melhor animação
+é a que passa despercebida** — se o visitante repara na animação em vez do
+conteúdo, ela está grande demais para uma página que precisa vender.
+
+Dois pontos que é fácil quebrar sem perceber, e por isso o `npm run smoke`
+verifica:
+
+- **Saída também anima.** Um painel que entra suave e some num corte seco
+  passa impressão de falha. Todo bloco condicional fica dentro de
+  `AnimatePresence`.
+- **`prefers-reduced-motion` vale para o site inteiro.** A regra em
+  `index.css` cobre transições de CSS, mas o Motion anima por JavaScript e
+  passaria por cima dela — quem garante o resto é o `MotionConfig
+  reducedMotion="user"` em `App.tsx`.
+
+Indicadores de carregamento usam `useDelayedFlag`, que só os exibe depois
+de 220ms: numa conexão boa a resposta chega antes disso, e um skeleton que
+aparece e some incomoda mais do que a espera.
+
 ## Estrutura
 
 ```
@@ -79,6 +107,62 @@ firebase deploy --only firestore:rules,firestore:indexes
 
 O índice composto em `firestore.indexes.json` é obrigatório: sem ele a
 consulta de avaliações falha e a lista fica vazia para sempre.
+
+## Lista de espera e avaliações
+
+### Ver os cadastros
+
+A página `/admin` mostra quem entrou na lista de espera, com exportação em
+CSV. A coleção `waitlist` é **fechada para leitura pública** — são dados
+pessoais sob a LGPD — então o acesso precisa ser liberado para a sua conta:
+
+1. Acesse `/admin` e entre com a conta Google que vai administrar.
+2. A página informa que a conta não tem acesso e mostra o seu **UID**.
+3. Cole esse UID em **dois lugares**:
+   - `ADMIN_UIDS` em `src/config/admin.ts` (controla a interface)
+   - a função `isAdmin()` em `firestore.rules` (é o que realmente protege
+     os dados)
+4. Publique as regras:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Só o passo 3 na interface não libera nada: sem a regra, o Firestore recusa
+a leitura — que é justamente o comportamento desejado.
+
+### Destravar as avaliações de curso
+
+As avaliações consultam `where('courseId') + orderBy('createdAt')`, o que
+exige um índice composto. Sem ele a consulta falha e a lista fica presa em
+"Ainda não há avaliações" para sempre — sem erro visível para quem acessa.
+
+O índice já está declarado em `firestore.indexes.json`. Publique com:
+
+```bash
+firebase deploy --only firestore:indexes
+```
+
+A criação leva alguns minutos. O andamento aparece no console do Firebase,
+em Firestore → Índices.
+
+### Aviso por e-mail de novo cadastro
+
+`netlify/functions/notificar-lead.mjs` envia um e-mail quando alguém entra
+na lista. É opcional: **sem configurar, o site funciona normalmente e o
+cadastro continua sendo salvo** — apenas o aviso não é enviado.
+
+Para ativar, crie uma conta no [Resend](https://resend.com) e defina três
+variáveis em *Netlify → Site settings → Environment variables*:
+
+| Variável | Valor |
+| --- | --- |
+| `RESEND_API_KEY` | a chave da API |
+| `NOTIFY_EMAIL` | endereço que recebe o aviso |
+| `NOTIFY_FROM` | remetente verificado no Resend |
+
+O destinatário nunca vem do formulário — é sempre `NOTIFY_EMAIL` —, então
+o endereço não pode ser usado para disparar e-mail a terceiros.
 
 ### Migrar a plataforma de pagamento
 

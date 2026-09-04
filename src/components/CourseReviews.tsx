@@ -3,6 +3,10 @@ import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp,
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { db, auth, loginWithGoogle, logout } from '../firebase';
 import { Star, Trash2, UserCircle2, LogIn } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { SkeletonReview } from './Skeleton';
+import { useDelayedFlag } from '../lib/useDelayedFlag';
+import { revealUp, staggerContainer } from '../lib/motion';
 
 interface Review {
   id: string;
@@ -27,6 +31,9 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  // Numa conexão boa a consulta volta em ~150ms; mostrar e esconder o
+  // skeleton nesse intervalo incomoda mais do que a espera.
+  const showSkeleton = useDelayedFlag(isLoading);
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
@@ -195,13 +202,13 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
       {/* Reviews List */}
       <div className="space-y-6">
         {isLoading ? (
-          <p
-            role="status"
-            aria-live="polite"
-            className="text-center text-brand-platinum py-8 bg-white/5 rounded-2xl border border-white/5"
-          >
-            Carregando avaliações…
-          </p>
+          showSkeleton && (
+            <div role="status" aria-live="polite" className="space-y-6">
+              <span className="sr-only">Carregando avaliações…</span>
+              <SkeletonReview />
+              <SkeletonReview />
+            </div>
+          )
         ) : loadError ? (
           <p
             role="alert"
@@ -214,8 +221,20 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
             Ainda não há avaliações para esta formação. Seja o primeiro a avaliar!
           </p>
         ) : (
-          reviews.map((review) => (
-            <div key={review.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 transition-all hover:bg-white/10">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
+            <AnimatePresence initial={false}>
+          {reviews.map((review) => (
+            <motion.div
+              key={review.id}
+              layout
+              variants={revealUp}
+              exit={{ opacity: 0, scale: 0.97 }}
+              className="bg-white/5 border border-white/10 rounded-2xl p-6 transition-colors hover:bg-white/10">
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-4">
                   {review.userPhoto ? (
@@ -256,8 +275,10 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               <p className="text-brand-platinum leading-relaxed whitespace-pre-wrap">
                 {review.comment}
               </p>
-            </div>
-          ))
+            </motion.div>
+          ))}
+            </AnimatePresence>
+          </motion.div>
         )}
       </div>
     </div>

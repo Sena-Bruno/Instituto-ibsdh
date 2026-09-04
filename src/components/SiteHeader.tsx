@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { routes } from '../config/site';
 import { courses } from '../config/courses';
+import { collapse, duration, ease } from '../lib/motion';
 
 /**
  * Cabeçalho único do site.
@@ -114,16 +116,32 @@ export default function SiteHeader() {
             aria-controls="menu-mobile"
             className="lg:hidden p-2 text-white hover:bg-white/5 rounded-lg transition-colors"
           >
-            {isMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+            <motion.span
+              key={isMenuOpen ? 'fechar' : 'abrir'}
+              initial={{ opacity: 0, rotate: -90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              transition={{ duration: duration.instant, ease: ease.out }}
+              className="block"
+            >
+              {isMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+            </motion.span>
           </button>
         </div>
       </nav>
 
-      <div
-        id="menu-mobile"
-        hidden={!isMenuOpen}
-        className="lg:hidden absolute top-full left-0 right-0 bg-brand-dark border-b border-white/10 p-6 flex flex-col gap-4"
-      >
+      {/* O menu usava o atributo `hidden`: abria e fechava sem transição
+          nenhuma. Agora desce ao abrir e recolhe ao fechar. */}
+      <AnimatePresence initial={false}>
+        {isMenuOpen && (
+          <motion.div
+            id="menu-mobile"
+            variants={collapse}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="lg:hidden absolute top-full left-0 right-0 bg-brand-dark border-b border-white/10 overflow-hidden"
+          >
+            <div className="p-6 flex flex-col gap-4">
         {courseLinks.map((link) => (
           <Link
             key={link.to}
@@ -138,13 +156,16 @@ export default function SiteHeader() {
           </Link>
         ))}
         <hr className="border-white/10 my-1" />
-        <Link
-          to={routes.home}
-          className="w-full py-4 text-center bg-brand-accent text-brand-dark rounded-xl font-bold"
-        >
-          Matricule-se Agora
-        </Link>
-      </div>
+              <Link
+                to={routes.home}
+                className="w-full py-4 text-center bg-brand-accent text-brand-dark rounded-xl font-bold"
+              >
+                Matricule-se Agora
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

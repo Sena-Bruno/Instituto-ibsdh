@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { collapse, duration, ease } from '../lib/motion';
 
 export interface FaqItem {
   q: string;
@@ -48,26 +50,38 @@ export default function Faq({
                 className="w-full p-6 flex items-center justify-between gap-4 text-left font-bold text-white"
               >
                 <span>{item.q}</span>
-                <ChevronDown
+                <motion.span
                   aria-hidden="true"
-                  className={cn(
-                    'shrink-0 text-brand-accent transition-transform duration-300',
-                    isOpen && 'rotate-180',
-                  )}
-                  size={20}
-                />
+                  animate={{ rotate: isOpen ? 180 : 0 }}
+                  transition={{ duration: duration.fast, ease: ease.out }}
+                  className="shrink-0 text-brand-accent"
+                >
+                  <ChevronDown size={20} />
+                </motion.span>
               </button>
             </h3>
 
-            <div
-              id={panelId}
-              role="region"
-              aria-labelledby={buttonId}
-              hidden={!isOpen}
-              className="px-6 pb-6 text-brand-platinum/80 leading-relaxed"
-            >
-              {item.a}
-            </div>
+            {/* AnimatePresence dá saída ao painel: sem ele, fechar era um
+                corte seco enquanto abrir era animado — assimetria que faz o
+                fechamento parecer falha. */}
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  id={panelId}
+                  role="region"
+                  aria-labelledby={buttonId}
+                  variants={collapse}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  className="overflow-hidden"
+                >
+                  <div className="px-6 pb-6 text-brand-platinum/80 leading-relaxed">
+                    {item.a}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         );
       })}
