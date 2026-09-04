@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+# Painel interno da lista de espera: dados pessoais, fora do índice.
+Disallow: /admin
+
 Sitemap: https://institutobrunosena.com.br/sitemap.xml

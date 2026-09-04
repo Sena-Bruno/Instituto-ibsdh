@@ -80,6 +80,62 @@ firebase deploy --only firestore:rules,firestore:indexes
 O índice composto em `firestore.indexes.json` é obrigatório: sem ele a
 consulta de avaliações falha e a lista fica vazia para sempre.
 
+## Lista de espera e avaliações
+
+### Ver os cadastros
+
+A página `/admin` mostra quem entrou na lista de espera, com exportação em
+CSV. A coleção `waitlist` é **fechada para leitura pública** — são dados
+pessoais sob a LGPD — então o acesso precisa ser liberado para a sua conta:
+
+1. Acesse `/admin` e entre com a conta Google que vai administrar.
+2. A página informa que a conta não tem acesso e mostra o seu **UID**.
+3. Cole esse UID em **dois lugares**:
+   - `ADMIN_UIDS` em `src/config/admin.ts` (controla a interface)
+   - a função `isAdmin()` em `firestore.rules` (é o que realmente protege
+     os dados)
+4. Publique as regras:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Só o passo 3 na interface não libera nada: sem a regra, o Firestore recusa
+a leitura — que é justamente o comportamento desejado.
+
+### Destravar as avaliações de curso
+
+As avaliações consultam `where('courseId') + orderBy('createdAt')`, o que
+exige um índice composto. Sem ele a consulta falha e a lista fica presa em
+"Ainda não há avaliações" para sempre — sem erro visível para quem acessa.
+
+O índice já está declarado em `firestore.indexes.json`. Publique com:
+
+```bash
+firebase deploy --only firestore:indexes
+```
+
+A criação leva alguns minutos. O andamento aparece no console do Firebase,
+em Firestore → Índices.
+
+### Aviso por e-mail de novo cadastro
+
+`netlify/functions/notificar-lead.mjs` envia um e-mail quando alguém entra
+na lista. É opcional: **sem configurar, o site funciona normalmente e o
+cadastro continua sendo salvo** — apenas o aviso não é enviado.
+
+Para ativar, crie uma conta no [Resend](https://resend.com) e defina três
+variáveis em *Netlify → Site settings → Environment variables*:
+
+| Variável | Valor |
+| --- | --- |
+| `RESEND_API_KEY` | a chave da API |
+| `NOTIFY_EMAIL` | endereço que recebe o aviso |
+| `NOTIFY_FROM` | remetente verificado no Resend |
+
+O destinatário nunca vem do formulário — é sempre `NOTIFY_EMAIL` —, então
+o endereço não pode ser usado para disparar e-mail a terceiros.
+
 ### Migrar a plataforma de pagamento
 
 Hoje as vendas passam pela Kiwify; a migração para a Hotmart está prevista.

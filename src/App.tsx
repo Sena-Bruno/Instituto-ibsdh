@@ -16,6 +16,7 @@ const Jornada = lazy(() => import('./pages/Jornada'));
 const MasterCoach = lazy(() => import('./pages/MasterCoach'));
 const Privacidade = lazy(() => import('./pages/Privacidade'));
 const Termos = lazy(() => import('./pages/Termos'));
+const Admin = lazy(() => import('./pages/Admin'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 function PageLoader() {
@@ -50,6 +51,7 @@ export default function App() {
                 <Route path={routes.masterCoach} element={<MasterCoach />} />
                 <Route path={routes.privacidade} element={<Privacidade />} />
                 <Route path={routes.termos} element={<Termos />} />
+                <Route path={routes.admin} element={<Admin />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>

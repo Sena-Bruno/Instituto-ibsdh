@@ -74,9 +74,25 @@ service cloud.firestore {
              data.createdAt is timestamp;
     }
 
+    // Quem pode ler a lista de espera em /admin.
+    //
+    // Esta lista é a que realmente protege os dados — a de
+    // src/config/admin.ts só controla o que a interface mostra. As duas
+    // precisam ter os mesmos UID.
+    //
+    // Para descobrir seu UID: acesse /admin, entre com o Google e a
+    // página mostra o identificador na tela.
+    function isAdmin() {
+      return isAuthenticated() && request.auth.uid in [
+        // 'cole-aqui-o-uid-mostrado-na-tela',
+      ];
+    }
+
     match /waitlist/{entryId} {
-      allow read: if false;
+      // Leitura restrita: nome e e-mail são dados pessoais sob a LGPD.
+      allow read: if isAdmin();
       allow create: if isValidWaitlistEntry(request.resource.data);
+      // Ninguém edita nem apaga pelo site; use o console do Firebase.
       allow update, delete: if false;
     }
   }
