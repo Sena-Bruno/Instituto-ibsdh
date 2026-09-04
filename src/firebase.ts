@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import firebaseConfig from '../firebase-config.json';
 
@@ -13,7 +13,7 @@ export const loginWithGoogle = async () => {
   try {
     await signInWithPopup(auth, googleProvider);
   } catch (error) {
-    console.error("Error signing in with Google:", error);
+    console.error('Error signing in with Google:', error);
   }
 };
 
@@ -21,6 +21,6 @@ export const logout = async () => {
   try {
     await signOut(auth);
   } catch (error) {
-    console.error("Error signing out:", error);
+    console.error('Error signing out:', error);
   }
 };

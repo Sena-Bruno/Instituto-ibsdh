@@ -1,11 +1,11 @@
+import { Menu, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'motion/react';
-import { Menu, X } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { routes } from '../config/site';
 import { courses } from '../config/courses';
+import { routes } from '../config/site';
 import { collapse, duration, ease } from '../lib/motion';
+import { cn } from '../lib/utils';
 
 /**
  * Cabeçalho único do site.
@@ -144,20 +144,20 @@ export default function SiteHeader() {
             className="lg:hidden absolute top-full left-0 right-0 bg-brand-dark border-b border-white/10 overflow-hidden"
           >
             <div className="p-6 flex flex-col gap-4">
-        {courseLinks.map((link) => (
-          <Link
-            key={link.to}
-            to={link.to}
-            aria-current={pathname === link.to ? 'page' : undefined}
-            className={cn(
-              'text-lg font-medium transition-colors hover:text-brand-accent',
-              pathname === link.to ? 'text-brand-accent' : 'text-white',
-            )}
-          >
-            {link.label}
-          </Link>
-        ))}
-        <hr className="border-white/10 my-1" />
+              {courseLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  aria-current={pathname === link.to ? 'page' : undefined}
+                  className={cn(
+                    'text-lg font-medium transition-colors hover:text-brand-accent',
+                    pathname === link.to ? 'text-brand-accent' : 'text-white',
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <hr className="border-white/10 my-1" />
               <Link
                 to={routes.home}
                 className="w-full py-4 text-center bg-brand-accent text-brand-dark rounded-xl font-bold"

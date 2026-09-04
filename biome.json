@@ -35,34 +35,24 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "a11y": {
-        "recommended": true
-      },
+      "preset": "recommended",
       "correctness": {
-        "recommended": true,
         "useExhaustiveDependencies": "warn"
       },
       "suspicious": {
-        "recommended": true,
         "noConsole": {
           "level": "warn",
           "options": {
-            "allow": [
-              "error",
-              "warn"
-            ]
+            "allow": ["error", "warn"]
           }
         },
         "noArrayIndexKey": "off"
       },
       "style": {
-        "recommended": true,
         "noNonNullAssertion": "off",
         "useNamingConvention": "off"
       },
       "complexity": {
-        "recommended": true,
         "noImportantStyles": "off"
       }
     }
@@ -76,10 +66,7 @@
   },
   "overrides": [
     {
-      "includes": [
-        "scripts/**",
-        "netlify/**"
-      ],
+      "includes": ["scripts/**", "netlify/**"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -88,5 +75,10 @@
         }
       }
     }
-  ]
+  ],
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  }
 }

@@ -61,8 +61,7 @@ export const whatsappMessages = {
   general: 'Olá! Gostaria de saber mais sobre as formações do Instituto Bruno Sena.',
   enrollment:
     'Olá! Gostaria de saber mais sobre as formações e como posso garantir minha vaga.',
-  inCompany:
-    'Olá! Gostaria de saber mais sobre os Treinamentos Corporativos (In Company).',
+  inCompany: 'Olá! Gostaria de saber mais sobre os Treinamentos Corporativos (In Company).',
 } as const;
 
 /** Rotas internas, para evitar strings soltas nos links de navegação. */

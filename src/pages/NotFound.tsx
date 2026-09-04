@@ -1,6 +1,6 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { Link } from 'react-router-dom';
 import { Home } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const NotFound = () => {
   return (
@@ -9,20 +9,29 @@ const NotFound = () => {
         <title>Página não encontrada | Instituto Bruno Sena</title>
         <meta name="robots" content="noindex" />
       </Helmet>
-      
+
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-accent/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
-      
+
       <div className="w-24 h-24 mb-8">
-        <img loading="lazy" decoding="async" src="/logo-do-instituto.svg" alt="Instituto Bruno Sena" className="w-full h-full object-contain opacity-50" />
+        <img
+          loading="lazy"
+          decoding="async"
+          src="/logo-do-instituto.svg"
+          alt="Instituto Bruno Sena"
+          className="w-full h-full object-contain opacity-50"
+        />
       </div>
-      
-      <h1 className="font-display text-8xl md:text-9xl font-bold text-white mb-4 drop-shadow-2xl">404</h1>
+
+      <h1 className="font-display text-8xl md:text-9xl font-bold text-white mb-4 drop-shadow-2xl">
+        404
+      </h1>
       <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Página não encontrada</h2>
       <p className="text-brand-platinum/80 max-w-md mb-12 text-lg">
-        A página que você está procurando não existe ou foi movida. Volte para a página inicial para continuar sua jornada.
+        A página que você está procurando não existe ou foi movida. Volte para a página inicial
+        para continuar sua jornada.
       </p>
-      
-      <Link 
+
+      <Link
         to="/"
         className="inline-flex items-center gap-2 bg-brand-accent text-brand-dark px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-all shadow-[0_0_30px_rgba(212,175,55,0.3)]"
       >

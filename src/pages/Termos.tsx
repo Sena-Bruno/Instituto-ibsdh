@@ -24,13 +24,11 @@ export default function Termos() {
 
         <div className="space-y-8 text-brand-platinum/85 leading-relaxed">
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
-              1. Objeto
-            </h2>
+            <h2 className="font-display text-2xl font-bold text-white mb-3">1. Objeto</h2>
             <p>
-              Este site apresenta as formações do {site.legalName} e permite o
-              cadastro em listas de espera e a publicação de avaliações. Ao usá-lo,
-              você concorda com estas condições.
+              Este site apresenta as formações do {site.legalName} e permite o cadastro em
+              listas de espera e a publicação de avaliações. Ao usá-lo, você concorda com estas
+              condições.
             </p>
           </section>
 
@@ -40,8 +38,8 @@ export default function Termos() {
             </h2>
             <p>{site.legalDisclaimer}</p>
             <p className="mt-3">
-              Os conteúdos têm caráter educacional. Resultados individuais dependem da
-              dedicação e do contexto de cada aluno, e não são garantidos.
+              Os conteúdos têm caráter educacional. Resultados individuais dependem da dedicação
+              e do contexto de cada aluno, e não são garantidos.
             </p>
           </section>
 
@@ -51,9 +49,8 @@ export default function Termos() {
             </h2>
             <p>
               Os pagamentos são processados pela {site.paymentPlatform}, sujeitos aos termos
-              dela. Nos
-              termos do Código de Defesa do Consumidor, você pode desistir da compra em
-              até 7 dias corridos a contar do acesso, com devolução integral do valor.
+              dela. Nos termos do Código de Defesa do Consumidor, você pode desistir da compra
+              em até 7 dias corridos a contar do acesso, com devolução integral do valor.
             </p>
           </section>
 
@@ -62,9 +59,9 @@ export default function Termos() {
               4. Propriedade intelectual
             </h2>
             <p>
-              Todo o material das formações — aulas, apostilas, marca e método — é
-              protegido por direito autoral. O acesso é pessoal e intransferível;
-              reproduzir ou distribuir o conteúdo sem autorização é proibido.
+              Todo o material das formações — aulas, apostilas, marca e método — é protegido por
+              direito autoral. O acesso é pessoal e intransferível; reproduzir ou distribuir o
+              conteúdo sem autorização é proibido.
             </p>
           </section>
 
@@ -73,18 +70,19 @@ export default function Termos() {
               5. Conduta nas avaliações
             </h2>
             <p>
-              As avaliações são de responsabilidade de quem as publica. Removemos
-              conteúdo ilegal, ofensivo, de spam ou que viole direitos de terceiros.
+              As avaliações são de responsabilidade de quem as publica. Removemos conteúdo
+              ilegal, ofensivo, de spam ou que viole direitos de terceiros.
             </p>
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
-              6. Contato
-            </h2>
+            <h2 className="font-display text-2xl font-bold text-white mb-3">6. Contato</h2>
             <p>
               Dúvidas sobre estes termos:{' '}
-              <a href={`mailto:${site.email.contact}`} className="text-brand-accent hover:underline">
+              <a
+                href={`mailto:${site.email.contact}`}
+                className="text-brand-accent hover:underline"
+              >
                 {site.email.contact}
               </a>
               .

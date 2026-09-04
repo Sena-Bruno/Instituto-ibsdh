@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { onAuthStateChanged, type User } from 'firebase/auth';
-import { Copy, Download, LogIn, Loader2, ShieldAlert } from 'lucide-react';
-import { auth, db, loginWithGoogle, logout } from '../firebase';
-import { isAdmin } from '../config/admin';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { Copy, Download, Loader2, LogIn, ShieldAlert } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { SkeletonRow } from '../components/Skeleton';
+import { isAdmin } from '../config/admin';
+import { auth, db, loginWithGoogle, logout } from '../firebase';
 import { useDelayedFlag } from '../lib/useDelayedFlag';
 
 interface Lead {
@@ -126,8 +126,8 @@ export default function Admin() {
               <code className="text-brand-accent">ADMIN_UIDS</code> em{' '}
               <code className="text-brand-accent">src/config/admin.ts</code> e também em{' '}
               <code className="text-brand-accent">firestore.rules</code>. Depois publique as
-              regras com <code className="text-brand-accent">firebase deploy --only
-              firestore:rules</code>.
+              regras com{' '}
+              <code className="text-brand-accent">firebase deploy --only firestore:rules</code>.
             </p>
             <div className="flex flex-wrap items-center gap-3 mb-6">
               <code className="bg-brand-dark border border-white/10 rounded-lg px-4 py-2 text-sm text-white break-all">
@@ -142,7 +142,11 @@ export default function Admin() {
                 {copied ? 'Copiado!' : 'Copiar'}
               </button>
             </div>
-            <button type="button" onClick={logout} className="text-sm text-brand-platinum underline">
+            <button
+              type="button"
+              onClick={logout}
+              className="text-sm text-brand-platinum underline"
+            >
               Sair desta conta
             </button>
           </div>
@@ -164,7 +168,11 @@ export default function Admin() {
                     Baixar CSV
                   </a>
                 )}
-                <button type="button" onClick={logout} className="text-sm text-brand-platinum underline">
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="text-sm text-brand-platinum underline"
+                >
                   Sair
                 </button>
               </div>
@@ -203,10 +211,18 @@ export default function Admin() {
                   <caption className="sr-only">Cadastros na lista de espera</caption>
                   <thead className="bg-white/5 text-white">
                     <tr>
-                      <th scope="col" className="p-4 font-bold">Nome</th>
-                      <th scope="col" className="p-4 font-bold">E-mail</th>
-                      <th scope="col" className="p-4 font-bold">Curso</th>
-                      <th scope="col" className="p-4 font-bold">Data</th>
+                      <th scope="col" className="p-4 font-bold">
+                        Nome
+                      </th>
+                      <th scope="col" className="p-4 font-bold">
+                        E-mail
+                      </th>
+                      <th scope="col" className="p-4 font-bold">
+                        Curso
+                      </th>
+                      <th scope="col" className="p-4 font-bold">
+                        Data
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="text-brand-platinum">
