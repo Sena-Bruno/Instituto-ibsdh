@@ -5,11 +5,13 @@ import Ementa from '../components/Ementa';
 import Faq from '../components/Faq';
 import PaginaCurso, { Comparativo, ListaItens, SecaoCurso } from '../components/PaginaCurso';
 import SenaExplanation from '../components/SenaExplanation';
-import { courses } from '../config/courses';
+import { corDoCurso, courses } from '../config/courses';
 import { contarAulas, curriculoPnlPractitioner, somarCarga } from '../config/curriculos';
 import { routes, site } from '../config/site';
 
 const curso = courses.pnlPractitioner;
+/* A cor da página vem do eixo do curso, nunca do curso em si. */
+const cor = corDoCurso(curso);
 const aulas = contarAulas(curriculoPnlPractitioner);
 const horas = somarCarga(curriculoPnlPractitioner);
 
@@ -120,7 +122,7 @@ export default function PNLPractitioner() {
 
       <PaginaCurso
         curso={curso}
-        cor="blue"
+        cor={cor}
         trilha={[
           { rotulo: 'PNL Practitioner', atual: true },
           { rotulo: 'Hipnoterapia Clínica', para: routes.hipnoterapia },
@@ -155,14 +157,14 @@ export default function PNLPractitioner() {
         ]}
       >
         <SecaoCurso
-          cor="blue"
+          cor={cor}
           sobretitulo="Competências"
           titulo={`Em ${curriculoPnlPractitioner.length} módulos, você sai apto a:`}
         >
-          <ListaItens cor="blue" itens={competencias} />
+          <ListaItens cor={cor} itens={competencias} />
 
-          <div className="bloco-accent mt-8 p-6">
-            <p className="rotulo-accent mb-3">E o mais importante</p>
+          <div className="faixa-accent mt-8 p-6">
+            <p className="sobretitulo mb-3 text-brand-accent">E o mais importante</p>
             <p className="text-[15px] leading-relaxed">
               Você não apenas “aprende” — você <strong className="text-white">pratica</strong>.
               O SENA simula situações reais para você treinar quantas vezes quiser, com
@@ -171,12 +173,12 @@ export default function PNLPractitioner() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso cor="blue" sobretitulo="Para quem é" titulo="Este curso é para você que:">
+        <SecaoCurso cor={cor} sobretitulo="Para quem é" titulo="Este curso é para você que:">
           <div className="grid gap-8 sm:grid-cols-2">
             <div>
-              <p className="rotulo mb-4">Uso pessoal</p>
+              <p className="sobretitulo mb-4 text-brand-quiet">Uso pessoal</p>
               <ListaItens
-                cor="blue"
+                cor={cor}
                 itens={[
                   { titulo: 'Quer parar de sabotar os próprios objetivos' },
                   { titulo: 'Deseja melhorar relacionamentos e comunicação' },
@@ -186,9 +188,9 @@ export default function PNLPractitioner() {
               />
             </div>
             <div>
-              <p className="rotulo mb-4">Uso profissional</p>
+              <p className="sobretitulo mb-4 text-brand-quiet">Uso profissional</p>
               <ListaItens
-                cor="blue"
+                cor={cor}
                 itens={[
                   { titulo: 'É terapeuta e quer somar PNL à caixa de ferramentas' },
                   { titulo: 'É coach e precisa de resultado mais rápido' },
@@ -206,7 +208,7 @@ export default function PNLPractitioner() {
         </SecaoCurso>
 
         <SecaoCurso
-          cor="blue"
+          cor={cor}
           sobretitulo="Ementa"
           id="ementa"
           titulo={`${horas} horas. ${aulas} aulas. Sem enchimento.`}
@@ -215,23 +217,23 @@ export default function PNLPractitioner() {
             Cada módulo inclui demonstração em vídeo e prática no SENA, conforme a ementa
             oficial IBSDH.
           </p>
-          <Ementa cor="blue" modulos={curriculoPnlPractitioner} />
+          <Ementa cor={cor} modulos={curriculoPnlPractitioner} />
         </SecaoCurso>
 
-        <SecaoCurso cor="blue" sobretitulo="Aplicação" titulo="Onde você pode aplicar">
+        <SecaoCurso cor={cor} sobretitulo="Aplicação" titulo="Onde você pode aplicar">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {aplicacoes.map((grupo) => (
               <div key={grupo.rotulo}>
-                <p className="rotulo mb-4">{grupo.rotulo}</p>
-                <ListaItens cor="blue" itens={grupo.itens.map((titulo) => ({ titulo }))} />
+                <p className="sobretitulo mb-4 text-brand-quiet">{grupo.rotulo}</p>
+                <ListaItens cor={cor} itens={grupo.itens.map((titulo) => ({ titulo }))} />
               </div>
             ))}
           </div>
         </SecaoCurso>
 
-        <SecaoCurso cor="blue" sobretitulo="Incluso" titulo="O que vem junto">
+        <SecaoCurso cor={cor} sobretitulo="Incluso" titulo="O que vem junto">
           <ListaItens
-            cor="blue"
+            cor={cor}
             itens={[
               { titulo: 'Apostila completa em PDF, conforme a ementa oficial IBSDH' },
               { titulo: `Biblioteca de demonstrações práticas das ${aulas} aulas` },
@@ -246,12 +248,12 @@ export default function PNLPractitioner() {
         </SecaoCurso>
 
         <SecaoCurso
-          cor="blue"
+          cor={cor}
           sobretitulo="Comparação"
           titulo="Mesma profundidade. Sem a barreira de preço."
         >
           <Comparativo
-            cor="blue"
+            cor={cor}
             legenda="Comparação entre cursos presenciais tradicionais e a formação do IBSDH"
             colunas={['Cursos tradicionais', 'IBSDH']}
             linhas={[
@@ -291,7 +293,7 @@ export default function PNLPractitioner() {
         </SecaoCurso>
 
         <SecaoCurso
-          cor="blue"
+          cor={cor}
           sobretitulo="Garantia"
           titulo="Você não arrisca nada. Exceto continuar do jeito que está."
         >
@@ -308,15 +310,15 @@ export default function PNLPractitioner() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso cor="blue" sobretitulo="Perguntas" titulo="Dúvidas frequentes">
+        <SecaoCurso cor={cor} sobretitulo="Perguntas" titulo="Dúvidas frequentes">
           <Faq items={perguntas} />
         </SecaoCurso>
 
-        <SecaoCurso cor="blue" sobretitulo="Método">
+        <SecaoCurso cor={cor} sobretitulo="Método">
           <SenaExplanation />
         </SecaoCurso>
 
-        <SecaoCurso cor="blue" sobretitulo="Avaliações">
+        <SecaoCurso cor={cor} sobretitulo="Avaliações">
           <CourseReviews courseId={curso.slug} />
         </SecaoCurso>
       </PaginaCurso>

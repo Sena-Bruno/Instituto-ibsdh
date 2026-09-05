@@ -18,7 +18,7 @@ export default function Termos() {
         <h1 className="mb-4 font-display text-4xl leading-tight font-semibold tracking-tight text-white md:text-5xl">
           Termos de Uso
         </h1>
-        <p className="rotulo mb-12">
+        <p className="sobretitulo mb-12 text-brand-quiet">
           Última atualização: {new Date().toLocaleDateString('pt-BR')}
         </p>
 

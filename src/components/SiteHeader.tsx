@@ -1,9 +1,10 @@
-import { Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { courses } from '../config/courses';
+import { cursosDoEixo, eixosComCurso } from '../config/courses';
 import { routes, site } from '../config/site';
+import { paletas } from '../lib/cores';
 import { collapse, duration, ease } from '../lib/motion';
 import { cn } from '../lib/utils';
 
@@ -13,23 +14,33 @@ import { cn } from '../lib/utils';
  * Antes, cada uma das 5 páginas de curso repetia o mesmo <nav> (4 delas
  * byte a byte) e esse nav só oferecia "Voltar para Home" — não havia como
  * ir de um curso para outro pela navegação, e /master-coach era alcançável
- * por um único link em todo o site. Agora os cursos ficam sempre a um
- * clique de distância, de qualquer página.
+ * por um único link em todo o site.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE OS CURSOS NÃO FICAM MAIS SOLTOS NA BARRA                     │
+ * │                                                                       │
+ * │  O catálogo do instituto vai crescer muito além dos cinco cursos de   │
+ * │  hoje. Cinco links soltos na barra cabem; vinte, não — e pela lei de  │
+ * │  Hick o tempo de decisão cresce com o número de opções visíveis ao    │
+ * │  mesmo tempo.                                                         │
+ * │                                                                       │
+ * │  Então a barra tem um item só, "Formações", que abre um painel        │
+ * │  agrupado por eixo. Troca "escolha entre 20" por "escolha entre 4,    │
+ * │  depois entre 5" — e o painel é montado a partir de                   │
+ * │  `config/courses.ts`, então curso novo aparece nele sozinho.          │
+ * │                                                                       │
+ * │  O painel abre no clique, não no passar do mouse: menu que abre por   │
+ * │  hover dispara sem intenção e é inoperável em tela de toque.          │
+ * └───────────────────────────────────────────────────────────────────────┘
  */
-
-const courseLinks = [
-  { label: courses.pnlPractitioner.title, to: courses.pnlPractitioner.route },
-  { label: courses.masterPnl.title, to: courses.masterPnl.route },
-  { label: courses.hipnoterapia.title, to: courses.hipnoterapia.route },
-  { label: courses.masterCoach.title, to: courses.masterCoach.route },
-  { label: courses.trilogia.title, to: courses.trilogia.route },
-];
-
 export default function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPainelOpen, setIsPainelOpen] = useState(false);
+  const painelRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const isHome = pathname === routes.home;
+  const eixos = eixosComCurso();
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 20);
@@ -38,18 +49,38 @@ export default function SiteHeader() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Fecha o menu ao trocar de rota, senão ele fica aberto sobre a página nova.
-  // pathname é gatilho, não valor lido: é a troca de rota que fecha o menu.
+  // Fecha tudo ao trocar de rota, senão o menu fica aberto sobre a página nova.
+  // pathname é gatilho, não valor lido: é a troca de rota que fecha.
   // biome-ignore lint/correctness/useExhaustiveDependencies: gatilho intencional
-  useEffect(() => setIsMenuOpen(false), [pathname]);
-
-  // Esc fecha o menu — um menu em tela cheia sem saída pelo teclado prende o usuário.
   useEffect(() => {
-    if (!isMenuOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setIsMenuOpen(false);
+    setIsMenuOpen(false);
+    setIsPainelOpen(false);
+  }, [pathname]);
+
+  // Esc fecha — um painel sem saída pelo teclado prende quem navega por Tab.
+  useEffect(() => {
+    if (!isMenuOpen && !isPainelOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setIsMenuOpen(false);
+      setIsPainelOpen(false);
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [isMenuOpen]);
+  }, [isMenuOpen, isPainelOpen]);
+
+  // Clique fora fecha o painel. Sem isso ele fica aberto enquanto a pessoa
+  // tenta interagir com a página atrás dele.
+  useEffect(() => {
+    if (!isPainelOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (!painelRef.current?.contains(e.target as Node)) setIsPainelOpen(false);
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [isPainelOpen]);
+
+  const emCurso = pathname !== routes.home && pathname !== routes.formacoes;
 
   return (
     // Transparente sobre o hero e sólido depois de rolar: o hero tem brilho
@@ -57,7 +88,7 @@ export default function SiteHeader() {
     <header
       className={cn(
         'fixed top-0 right-0 left-0 z-50 transition-all duration-300',
-        isScrolled || !isHome
+        isScrolled || !isHome || isPainelOpen
           ? 'border-b border-white/10 bg-brand-dark/85 py-3 backdrop-blur-xl'
           : 'border-b border-transparent py-5',
       )}
@@ -88,26 +119,49 @@ export default function SiteHeader() {
           </span>
         </Link>
 
-        <ul className="hidden items-center gap-6 text-[13.5px] text-brand-platinum lg:flex">
-          {courseLinks.map((link) => (
-            <li key={link.to}>
-              <Link
-                to={link.to}
-                aria-current={pathname === link.to ? 'page' : undefined}
+        <div ref={painelRef} className="hidden lg:block">
+          <ul className="flex items-center gap-7 text-[14px] text-brand-platinum">
+            <li>
+              <button
+                type="button"
+                onClick={() => setIsPainelOpen((open) => !open)}
+                aria-expanded={isPainelOpen}
+                aria-controls="painel-formacoes"
                 className={cn(
-                  'transition-colors hover:text-white',
-                  pathname === link.to && 'font-semibold text-brand-accent',
+                  'flex items-center gap-1.5 transition-colors hover:text-white',
+                  (emCurso || pathname === routes.formacoes) && 'font-semibold text-white',
                 )}
               >
-                {link.label}
+                Formações
+                <motion.span
+                  aria-hidden="true"
+                  animate={{ rotate: isPainelOpen ? 180 : 0 }}
+                  transition={{ duration: duration.fast, ease: ease.out }}
+                  className="block"
+                >
+                  <ChevronDown size={16} />
+                </motion.span>
+              </button>
+            </li>
+            <li>
+              <Link to={`${routes.home}#sena`} className="transition-colors hover:text-white">
+                O SENA
               </Link>
             </li>
-          ))}
-        </ul>
+            <li>
+              <Link
+                to={`${routes.home}#sobre-mentor`}
+                className="transition-colors hover:text-white"
+              >
+                O instituto
+              </Link>
+            </li>
+          </ul>
+        </div>
 
         <div className="flex items-center gap-2">
           <Link
-            to={isHome ? '#cursos' : routes.home}
+            to={routes.formacoes}
             className="hidden rounded-full bg-gradient-to-br from-brand-accent-light to-brand-accent px-6 py-2.5 text-[13.5px] font-bold text-brand-dark shadow-[0_6px_20px_rgba(229,195,101,0.28)] transition-transform hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 sm:block"
           >
             Matricule-se
@@ -133,8 +187,60 @@ export default function SiteHeader() {
         </div>
       </nav>
 
-      {/* O menu usava o atributo `hidden`: abria e fechava sem transição
-          nenhuma. Agora desce ao abrir e recolhe ao fechar. */}
+      {/* Painel de formações, agrupado por eixo. Ganha colunas conforme o
+          instituto ganha eixos, sem virar uma lista de vinte links. */}
+      <AnimatePresence initial={false}>
+        {isPainelOpen && (
+          <motion.div
+            id="painel-formacoes"
+            variants={collapse}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="absolute top-full right-0 left-0 hidden overflow-hidden border-b border-white/10 bg-brand-dark shadow-[0_18px_50px_rgba(0,0,0,0.55)] lg:block"
+          >
+            <div className="mx-auto max-w-7xl px-6 py-9">
+              <div className="grid gap-8 md:grid-cols-4">
+                {eixos.map((eixo) => (
+                  <div key={eixo.id}>
+                    <p className={cn('sobretitulo mb-4', paletas[eixo.cor].texto)}>
+                      {eixo.nome}
+                    </p>
+                    <ul className="space-y-1">
+                      {cursosDoEixo(eixo.id).map((curso) => (
+                        <li key={curso.route}>
+                          <Link
+                            to={curso.route}
+                            aria-current={pathname === curso.route ? 'page' : undefined}
+                            className={cn(
+                              'block rounded-xl px-3 py-2.5 transition-colors hover:bg-white/5',
+                              pathname === curso.route ? 'text-white' : 'text-brand-platinum',
+                            )}
+                          >
+                            <span className="block text-[14px] font-medium">{curso.title}</span>
+                            <span className="mt-0.5 block text-[12.5px] text-brand-quiet">
+                              {curso.situacao === 'emBreve' ? 'Em breve' : curso.price}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+
+              <Link
+                to={routes.formacoes}
+                className="mt-7 inline-flex border-t border-white/10 pt-6 text-[14px] font-semibold text-brand-accent transition-colors hover:text-brand-accent-light"
+              >
+                Ver o catálogo completo →
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Menu do celular: a mesma lista, empilhada e agrupada. */}
       <AnimatePresence initial={false}>
         {isMenuOpen && (
           <motion.div
@@ -143,31 +249,37 @@ export default function SiteHeader() {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="absolute top-full right-0 left-0 overflow-hidden border-b border-white/10 bg-brand-dark/95 backdrop-blur-xl lg:hidden"
+            className="absolute top-full right-0 left-0 max-h-[75vh] overflow-y-auto border-b border-white/10 bg-brand-dark shadow-[0_18px_50px_rgba(0,0,0,0.55)] lg:hidden"
           >
-            <div className="flex flex-col px-6 pt-2 pb-6">
-              {courseLinks.map((link, i) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  aria-current={pathname === link.to ? 'page' : undefined}
-                  className={cn(
-                    'flex items-baseline gap-4 border-b border-white/8 py-4 transition-colors hover:text-brand-accent',
-                    pathname === link.to ? 'text-brand-accent' : 'text-white',
-                  )}
-                >
-                  <span className="font-display text-[12px] font-bold text-white/25">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span className="text-[16px] font-medium">{link.label}</span>
-                </Link>
+            <div className="flex flex-col px-6 pt-4 pb-7">
+              {eixos.map((eixo) => (
+                <div key={eixo.id} className="mb-5">
+                  <p className={cn('sobretitulo mb-2', paletas[eixo.cor].texto)}>{eixo.nome}</p>
+                  {cursosDoEixo(eixo.id).map((curso) => (
+                    <Link
+                      key={curso.route}
+                      to={curso.route}
+                      aria-current={pathname === curso.route ? 'page' : undefined}
+                      className={cn(
+                        'flex items-baseline justify-between gap-4 border-b border-white/[0.07] py-3.5 transition-colors',
+                        pathname === curso.route ? 'text-brand-accent' : 'text-white',
+                      )}
+                    >
+                      <span className="text-[15.5px] font-medium">{curso.title}</span>
+                      <span className="shrink-0 text-[12.5px] text-brand-quiet">
+                        {curso.situacao === 'emBreve' ? 'Em breve' : curso.price}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
               ))}
+
               <Link
-                to={routes.home}
-                className="btn-primary mt-6 w-full"
+                to={routes.formacoes}
+                className="btn-primary w-full"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Matrícula
+                Ver o catálogo completo
               </Link>
             </div>
           </motion.div>

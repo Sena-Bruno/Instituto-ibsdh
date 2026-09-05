@@ -15,6 +15,7 @@ import {
   User,
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import CardCurso from '../components/CardCurso';
 import CourseImage from '../components/CourseImage';
@@ -22,8 +23,8 @@ import Faq from '../components/Faq';
 import Numeros from '../components/Numeros';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
-import { courses } from '../config/courses';
-import { site, whatsappLink, whatsappMessages } from '../config/site';
+import { courses, cursosDoEixo, eixosComCurso, listaCursos } from '../config/courses';
+import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
 import { duration, ease } from '../lib/motion';
 
@@ -105,26 +106,29 @@ function Hero() {
             </div>
           </motion.div>
 
-          {/* A pilha de cores é a legenda visual do site: quem chega já
-              aprende que azul é Practitioner, roxo é Hipnoterapia e dourado
-              é Master, antes de rolar até os cards. */}
+          {/* A pilha de cores é a legenda visual do site: quem chega aprende
+              que azul é PNL, roxo é Hipnoterapia e verde é Coaching antes de
+              rolar até os cards. A cor pertence ao eixo, não ao curso — com
+              vinte formações, uma cor por curso viraria decoreba. */}
           <div className="flex flex-col gap-3">
-            {[
-              { nivel: 'Nível 01', curso: courses.pnlPractitioner, cor: 'blue' as const },
-              { nivel: 'Nível 02', curso: courses.hipnoterapia, cor: 'purple' as const },
-              { nivel: 'Nível 03', curso: courses.masterPnl, cor: 'accent' as const },
-            ].map(({ nivel, curso, cor }) => (
-              <Link
-                key={curso.route}
-                to={curso.route}
-                className={`rounded-[20px] border bg-gradient-to-br px-6 py-5 transition-colors ${paletas[cor].borda} ${paletas[cor].bordaHover} ${paletas[cor].capa}`}
-              >
-                <span className={`sobretitulo block ${paletas[cor].texto}`}>{nivel}</span>
-                <span className="mt-1.5 block font-display text-lg font-bold text-white">
-                  {curso.title}
-                </span>
-              </Link>
-            ))}
+            {eixosComCurso()
+              .slice(0, 3)
+              .map((eixo) => {
+                const p = paletas[eixo.cor];
+                return (
+                  <Link
+                    key={eixo.id}
+                    to={`${routes.formacoes}#${eixo.id}`}
+                    className={`rounded-[20px] border bg-gradient-to-br px-6 py-5 transition-colors ${p.borda} ${p.bordaHover} ${p.capa}`}
+                  >
+                    <span className={`sobretitulo block ${p.texto}`}>{eixo.nome}</span>
+                    <span className="mt-1.5 block text-[13.5px] leading-snug">
+                      {cursosDoEixo(eixo.id).length}{' '}
+                      {cursosDoEixo(eixo.id).length === 1 ? 'formação' : 'formações'}
+                    </span>
+                  </Link>
+                );
+              })}
           </div>
         </div>
       </div>
@@ -286,40 +290,27 @@ function ParaQuem() {
 
 /* ── Cursos ───────────────────────────────────────────────────────────────── */
 
-const vitrine = [
-  {
-    curso: courses.pnlPractitioner,
-    cor: 'blue' as const,
-    icone: <Brain size={22} aria-hidden="true" />,
-    selo: 'Mais popular',
-    resumo:
-      'A base que torna todo o resto mais fácil. Comunicação inconsciente, ancoragem emocional e reformulação de crenças.',
-  },
-  {
-    curso: courses.hipnoterapia,
-    cor: 'purple' as const,
-    icone: <Sparkles size={22} aria-hidden="true" />,
-    selo: 'Requer o nível 01',
-    resumo:
-      'Induções, profundização de transe, protocolos terapêuticos e regressão — com quatro módulos de ética e limites.',
-  },
-  {
-    curso: courses.masterPnl,
-    cor: 'accent' as const,
-    icone: <Target size={22} aria-hidden="true" />,
-    selo: 'Avançado',
-    resumo:
-      'Modelagem, metaprogramas, Sleight of Mouth e Modelo Milton. Para quem quer ser referência, não só competente.',
-    destaque: true,
-  },
-  {
-    curso: courses.masterCoach,
-    cor: 'emerald' as const,
-    icone: <Award size={22} aria-hidden="true" />,
-    selo: 'Lançamento em breve',
-    resumo: 'Coaching executivo, abordagem sistêmica e estruturação de negócio de alto valor.',
-  },
-];
+/**
+ * Os ícones de cada curso na vitrine.
+ *
+ * Ficam aqui, e não em `config/courses.ts`, porque aquele arquivo é de
+ * dados e não deve importar JSX. Curso sem ícone cai no card sem ícone,
+ * que continua legível.
+ */
+const icones: Record<string, ReactNode> = {
+  pnl: <Brain size={22} aria-hidden="true" />,
+  hipno: <Sparkles size={22} aria-hidden="true" />,
+  master: <Target size={22} aria-hidden="true" />,
+  'master-coach': <Award size={22} aria-hidden="true" />,
+  trilogia: <Award size={22} aria-hidden="true" />,
+};
+
+/**
+ * A home mostra só os cursos marcados como destaque, não o catálogo todo.
+ * Com vinte formações, uma vitrine completa aqui vira parede — o resto
+ * vive em /formacoes, agrupado por eixo.
+ */
+const vitrine = listaCursos.filter((curso) => curso.destaque);
 
 function Cursos() {
   return (
@@ -333,18 +324,19 @@ function Cursos() {
       </Cabecalho>
 
       <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {vitrine.map((item, i) => (
-          <Revela key={item.curso.route} atraso={i * 0.07} className="h-full">
-            <CardCurso
-              curso={item.curso}
-              cor={item.cor}
-              icone={item.icone}
-              selo={item.selo}
-              resumo={item.resumo}
-              destaque={item.destaque}
-            />
+        {vitrine.map((curso, i) => (
+          <Revela key={curso.route} atraso={i * 0.07} className="h-full">
+            <CardCurso curso={curso} icone={icones[curso.id]} />
           </Revela>
         ))}
+      </div>
+
+      {/* O caminho para o catálogo completo. Hoje leva a cinco cursos;
+          quando forem vinte, é por aqui que eles são encontrados. */}
+      <div className="mt-10 text-center">
+        <Link to={routes.formacoes} className="btn-outline">
+          Ver todas as formações <ArrowRight size={17} aria-hidden="true" />
+        </Link>
       </div>
 
       {/* A Trilogia */}
