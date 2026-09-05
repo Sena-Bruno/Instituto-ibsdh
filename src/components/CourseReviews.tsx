@@ -127,7 +127,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
       : 0;
 
   return (
-    <div className="w-full max-w-4xl mx-auto py-16 px-6">
+    <div className="w-full">
       <div className="flex items-center justify-between mb-8">
         <h3 className="font-display text-2xl font-semibold text-white md:text-[28px]">
           Avaliações de Alunos
