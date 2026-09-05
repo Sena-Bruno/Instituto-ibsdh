@@ -77,7 +77,10 @@ export default function Secao({
               </div>
             </div>
           )}
-          <div>{children}</div>
+          {/* min-w-0 pelo mesmo motivo de PaginaCurso: item de grid não
+              encolhe abaixo do conteúdo, e uma tabela larga aqui dentro
+              empurraria a página inteira. */}
+          <div className="min-w-0">{children}</div>
         </div>
       </div>
     </section>

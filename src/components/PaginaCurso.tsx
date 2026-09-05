@@ -111,9 +111,14 @@ export default function PaginaCurso({
           Em telas estreitas a coluna de compra vem primeiro, para que o
           preço não fique enterrado sob a página inteira. */}
       <div className="mx-auto max-w-7xl px-6 py-14 md:py-16">
+        {/* `min-w-0` nos dois filhos não é decoração: item de grid tem
+            min-width:auto por padrão e não encolhe abaixo do próprio
+            conteúdo. Sem isso, a tabela mais larga da ementa empurrava a
+            coluna inteira e a página ganhava 194px de rolagem horizontal no
+            celular — apesar de a tabela já estar dentro de overflow-x-auto. */}
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_336px] lg:gap-16">
-          <div className="order-2 lg:order-1">{children}</div>
-          <div className="order-1 lg:order-2">
+          <div className="order-2 min-w-0 lg:order-1">{children}</div>
+          <div className="order-1 min-w-0 lg:order-2">
             <RailCompra curso={curso} acao={acao} especificacoes={especificacoes} />
           </div>
         </div>
