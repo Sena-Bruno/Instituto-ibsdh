@@ -11,6 +11,7 @@ import { routes } from './config/site';
 // só a home com 1.455) eram importadas estaticamente e iam todas no
 // mesmo bundle inicial.
 const Home = lazy(() => import('./pages/Home'));
+const Formacoes = lazy(() => import('./pages/Formacoes'));
 const PNLPractitioner = lazy(() => import('./pages/PNLPractitioner'));
 const MasterPNL = lazy(() => import('./pages/MasterPNL'));
 const Hipnoterapia = lazy(() => import('./pages/Hipnoterapia'));
@@ -54,6 +55,7 @@ export default function App() {
               <Routes>
                 <Route element={<Layout />}>
                   <Route path={routes.home} element={<Home />} />
+                  <Route path={routes.formacoes} element={<Formacoes />} />
                   <Route path={routes.pnlPractitioner} element={<PNLPractitioner />} />
                   <Route path={routes.masterPnl} element={<MasterPNL />} />
                   <Route path={routes.hipnoterapia} element={<Hipnoterapia />} />

@@ -1,18 +1,21 @@
 /**
- * O sistema de cor por formação.
+ * A paleta do sistema de cor.
  *
- * A ideia central da direção escolhida: cada formação tem uma cor, e a cor
- * é orientação, não enfeite. Azul é Practitioner, roxo é Hipnoterapia,
- * dourado é Master PNL, verde é Master Coach. A mesma cor aparece no card da
- * home, no botão de matrícula, no brilho de fundo da página e na barra do
- * certificado — quem navega aprende a cor e passa a se localizar por ela.
+ * A cor pertence ao EIXO de formação, não ao curso — ver `config/eixos.ts`
+ * para o porquê. Quem navega aprende a cor do eixo e passa a se localizar
+ * por ela: card da home, botão de matrícula, brilho de fundo da página,
+ * barra do rail de compra.
  *
  * As classes ficam escritas por extenso, e não montadas por template, porque
  * o Tailwind varre o código em busca de nomes de classe literais: uma string
  * como `text-brand-${cor}` some do CSS final e a cor não aparece no site.
+ *
+ * São cinco cores de propósito. Acima de seis campos de cor o olho deixa de
+ * distinguir com confiança, então a paleta é um limite deliberado: se os
+ * eixos passarem disso, o certo é agrupar eixos, não inventar cor nova.
  */
 
-export type NomeCor = 'blue' | 'purple' | 'accent' | 'emerald';
+export type NomeCor = 'blue' | 'purple' | 'accent' | 'emerald' | 'warm';
 
 export interface Paleta {
   /** Texto na cor da formação */
@@ -73,5 +76,15 @@ export const paletas: Record<NomeCor, Paleta> = {
     capa: 'from-brand-emerald/45 to-brand-emerald/5',
     tenue: 'bg-brand-emerald/10',
     brilho: 'rgb(57 212 161 / 20%)',
+  },
+  warm: {
+    texto: 'text-brand-warm',
+    fundo: 'bg-brand-warm',
+    botao: 'btn-warm',
+    borda: 'border-brand-warm/25',
+    bordaHover: 'hover:border-brand-warm/55',
+    capa: 'from-brand-warm/45 to-brand-warm/5',
+    tenue: 'bg-brand-warm/10',
+    brilho: 'rgb(249 129 77 / 20%)',
   },
 };

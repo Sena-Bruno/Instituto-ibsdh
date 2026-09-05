@@ -156,6 +156,7 @@
 .btn-blue,
 .btn-purple,
 .btn-emerald,
+.btn-warm,
 .btn-outline,
 .btn-ghost {
   @apply inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-[15.5px] font-bold transition-all duration-200 motion-reduce:transform-none;
@@ -194,6 +195,14 @@
   transform: translateY(-2px);
 }
 
+.btn-warm {
+  @apply bg-brand-warm text-brand-dark;
+  box-shadow: 0 8px 26px rgb(249 129 77 / 26%);
+}
+.btn-warm:hover {
+  transform: translateY(-2px);
+}
+
 .btn-outline {
   @apply border border-white/20 bg-white/[0.03] text-white hover:border-white/45 hover:bg-white/[0.07];
 }
@@ -207,7 +216,8 @@
   .btn-primary:hover,
   .btn-blue:hover,
   .btn-purple:hover,
-  .btn-emerald:hover {
+  .btn-emerald:hover,
+  .btn-warm:hover {
     transform: none;
   }
 }

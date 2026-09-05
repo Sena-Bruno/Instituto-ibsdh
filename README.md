@@ -153,7 +153,8 @@ src/
 | Arquivo | O que guarda |
 |---|---|
 | `site.ts` | Contatos, redes, plataforma de pagamento, aviso legal, rotas |
-| `courses.ts` | Preços, links de checkout e os pacotes da Jornada |
+| `eixos.ts` | Os eixos de formação e a cor de cada um |
+| `courses.ts` | O catálogo: preço, checkout, eixo, situação e os pacotes |
 | `curriculos.ts` | As ementas das três formações, módulo e aula |
 | `sena.ts` | O conteúdo clínico da demonstração do SENA na home |
 | `admin.ts` | Quem enxerga o painel de cadastros |
@@ -165,6 +166,54 @@ Agora existe um lugar só.
 
 Cabeçalho e rodapé vêm de `components/Layout.tsx`, aplicado como rota-pai
 em `App.tsx`. Páginas novas entram como `<Route>` filha e herdam tudo.
+
+## Como o catálogo cresce
+
+O IBSDH é um instituto de desenvolvimento humano: o catálogo não para em
+PNL, hipnoterapia e coaching. O site foi montado para absorver isso sem
+refatoração.
+
+### Adicionar um curso
+
+Acrescente uma entrada em `src/config/courses.ts` com o eixo e a rota. Ele
+passa a aparecer **sozinho** em todas estas superfícies:
+
+- o catálogo em `/formacoes`, dentro do eixo dele;
+- o painel "Formações" do cabeçalho, no desktop e no celular;
+- o rodapé, agrupado por eixo;
+- a página 404, que lista as formações para quem errou o endereço;
+- a vitrine da home, **se** você marcar `destaque: true`.
+
+Só a página do curso em si precisa ser criada à mão — e só porque o texto de
+venda de cada formação é diferente. Copie uma das existentes: elas usam o
+mesmo `PaginaCurso` e derivam a cor do eixo com `corDoCurso(curso)`.
+
+Lembre de acrescentar a rota em `src/App.tsx`, em `routes` (`site.ts`) e no
+`public/sitemap.xml`.
+
+### Adicionar um eixo
+
+Acrescente uma entrada em `src/config/eixos.ts` com nome, descrição, cor e
+ordem. Catálogo, cabeçalho, rodapé e home passam a exibi-lo assim que o
+primeiro curso apontar para ele — um eixo sem curso não aparece, porque eixo
+anunciado e vazio é promessa que a página não cumpre.
+
+**Se a paleta acabar, agrupe eixos em vez de inventar uma sexta cor.** Acima
+de seis campos de cor o olho deixa de distinguir com confiança, e a cor
+passa de pista de reconhecimento a tabela para decorar.
+
+### Os princípios que sustentam essas escolhas
+
+| Princípio | Onde aparece |
+|---|---|
+| **Lei de Hick** — o tempo de decisão cresce com o número de opções visíveis | A barra tem um item "Formações", não vinte links soltos. Agrupar troca "escolha entre 20" por "escolha entre 4, depois entre 5". |
+| **Reconhecimento em vez de memorização** | A cor pertence ao eixo, não ao curso: quatro cores são pista, vinte são decoreba. |
+| **Divulgação progressiva** | Home mostra destaques → catálogo mostra tudo, agrupado → página do curso mostra o detalhe. |
+| **Visibilidade do estado do sistema** | Cada curso declara `situacao`: aberto, em breve ou encerrado. A interface diz em que pé está, em vez de deixar descobrir clicando. |
+| **Consistência** | Um `CardCurso` só, alimentado por dados. Home, catálogo e 404 não têm como discordar entre si. |
+
+O menu abre no clique, não no passar do mouse: menu por hover dispara sem
+intenção e é inoperável em tela de toque.
 
 ## Deploy
 

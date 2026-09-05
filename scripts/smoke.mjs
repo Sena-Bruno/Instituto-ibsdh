@@ -20,6 +20,7 @@ import { chromium } from 'playwright';
 const base = process.env.SMOKE_URL || 'http://localhost:4173';
 const routes = [
   '/',
+  '/formacoes',
   '/pnl-practitioner',
   '/master-pnl',
   '/hipnoterapia',

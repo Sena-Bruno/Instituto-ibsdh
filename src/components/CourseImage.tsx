@@ -14,11 +14,9 @@ import { cn } from '../lib/utils';
  * Serve também como proteção permanente: se um arquivo sumir do servidor,
  * o layout continua íntegro.
  *
- * A reserva era um bloco em gradiente com o nome em tipo grande, e por isso
- * chamava mais atenção que uma foto de verdade chamaria — uma ausência
- * ganhando destaque. Na Direção B ela é uma placa técnica: hachura, régua e
- * rótulo em mono. Fica claro que falta um arquivo, sem competir com o
- * conteúdo ao redor.
+ * A reserva é um campo de cor discreto com o nome do curso, não uma imagem
+ * falsa: fica claro que falta um arquivo, sem competir com o conteúdo ao
+ * redor nem chamar mais atenção do que a foto real chamaria.
  */
 export default function CourseImage({
   src,

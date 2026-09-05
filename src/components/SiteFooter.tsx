@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { courses } from '../config/courses';
+import { cursosDoEixo, eixosComCurso } from '../config/courses';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 
 /**
@@ -45,22 +45,39 @@ export default function SiteFooter() {
             <p className="max-w-xs text-[13.5px] leading-relaxed">{site.description}</p>
           </div>
 
+          {/* Agrupado por eixo, como no cabeçalho e no catálogo: com vinte
+              cursos, uma coluna de vinte links no rodapé é ilegível. */}
           <nav aria-labelledby="rodape-formacoes">
             <h2 id="rodape-formacoes" className="sobretitulo mb-5 text-brand-accent">
               Formações
             </h2>
-            <ul>
-              {Object.values(courses).map((course) => (
-                <li key={course.route} className="border-b border-white/[0.07]">
-                  <Link
-                    to={course.route}
-                    className="block py-2.5 text-[13.5px] transition-colors hover:text-brand-accent"
-                  >
-                    {course.title}
-                  </Link>
-                </li>
+            <div className="space-y-5">
+              {eixosComCurso().map((eixo) => (
+                <div key={eixo.id}>
+                  <p className="mb-1.5 text-[12px] font-semibold text-brand-quiet">
+                    {eixo.nome}
+                  </p>
+                  <ul>
+                    {cursosDoEixo(eixo.id).map((curso) => (
+                      <li key={curso.route}>
+                        <Link
+                          to={curso.route}
+                          className="block py-1.5 text-[13.5px] transition-colors hover:text-brand-accent"
+                        >
+                          {curso.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+              <Link
+                to={routes.formacoes}
+                className="inline-block pt-1 text-[13.5px] font-semibold text-brand-accent transition-colors hover:text-brand-accent-light"
+              >
+                Ver o catálogo completo →
+              </Link>
+            </div>
           </nav>
 
           <div>

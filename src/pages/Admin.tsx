@@ -108,7 +108,7 @@ export default function Admin() {
             Verificando acesso…
           </p>
         ) : !user ? (
-          <div className="bloco p-8 text-center">
+          <div className="cartao p-8 text-center">
             <p className="text-brand-platinum mb-6">
               Entre com a conta Google autorizada para ver os cadastros.
             </p>

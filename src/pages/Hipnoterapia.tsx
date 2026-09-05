@@ -5,11 +5,13 @@ import Ementa from '../components/Ementa';
 import Faq from '../components/Faq';
 import PaginaCurso, { Comparativo, ListaItens, SecaoCurso } from '../components/PaginaCurso';
 import SenaExplanation from '../components/SenaExplanation';
-import { courses } from '../config/courses';
+import { corDoCurso, courses } from '../config/courses';
 import { contarAulas, curriculoHipnoterapia, somarCarga } from '../config/curriculos';
 import { routes, site } from '../config/site';
 
 const curso = courses.hipnoterapia;
+/* A cor da página vem do eixo do curso, nunca do curso em si. */
+const cor = corDoCurso(curso);
 const aulas = contarAulas(curriculoHipnoterapia);
 const horas = somarCarga(curriculoHipnoterapia);
 
@@ -86,7 +88,7 @@ export default function Hipnoterapia() {
 
       <PaginaCurso
         curso={curso}
-        cor="purple"
+        cor={cor}
         trilha={[
           { rotulo: 'PNL Practitioner', para: routes.pnlPractitioner },
           { rotulo: 'Hipnoterapia Clínica', atual: true },
@@ -124,7 +126,7 @@ export default function Hipnoterapia() {
         ]}
       >
         <SecaoCurso
-          cor="purple"
+          cor={cor}
           sobretitulo="O problema"
           titulo="Você sabe que a mente tem poder. Mas não sabe acessar."
         >
@@ -155,14 +157,14 @@ export default function Hipnoterapia() {
         </SecaoCurso>
 
         <SecaoCurso
-          cor="purple"
+          cor={cor}
           sobretitulo="Competências"
           titulo={`Em ${curriculoHipnoterapia.length} módulos, você se torna capaz de:`}
         >
-          <ListaItens cor="purple" itens={competencias} />
+          <ListaItens cor={cor} itens={competencias} />
 
           <div className="mt-8 border border-brand-danger/35 bg-brand-danger/[0.06] p-6">
-            <p className="rotulo mb-3 text-brand-danger">E o mais importante</p>
+            <p className="sobretitulo mb-3 text-brand-danger">E o mais importante</p>
             <p className="text-[15px] leading-relaxed">
               Você aprende{' '}
               <strong className="text-brand-danger">quando NÃO usar hipnose</strong>.
@@ -172,12 +174,12 @@ export default function Hipnoterapia() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso cor="purple" sobretitulo="Para quem é" titulo="Este curso é para você que:">
+        <SecaoCurso cor={cor} sobretitulo="Para quem é" titulo="Este curso é para você que:">
           <div className="grid gap-8 sm:grid-cols-2">
             <div>
-              <p className="rotulo mb-4">Terapeutas e coaches</p>
+              <p className="sobretitulo mb-4 text-brand-quiet">Terapeutas e coaches</p>
               <ListaItens
-                cor="purple"
+                cor={cor}
                 itens={[
                   { titulo: 'Adiciona ferramenta de acesso direto ao inconsciente' },
                   {
@@ -189,9 +191,9 @@ export default function Hipnoterapia() {
               />
             </div>
             <div>
-              <p className="rotulo mb-4">Uso pessoal e desenvolvimento</p>
+              <p className="sobretitulo mb-4 text-brand-quiet">Uso pessoal e desenvolvimento</p>
               <ListaItens
-                cor="purple"
+                cor={cor}
                 itens={[
                   { titulo: 'Busca autodomínio profundo: auto-hipnose, regulação emocional' },
                   { titulo: 'Quer entender a própria mente em nível inconsciente' },
@@ -203,21 +205,21 @@ export default function Hipnoterapia() {
         </SecaoCurso>
 
         <SecaoCurso
-          cor="purple"
+          cor={cor}
           sobretitulo="Ementa"
           id="ementa"
           titulo={`${horas} horas. ${aulas} aulas. Ética em primeiro lugar.`}
         >
-          <Ementa cor="purple" modulos={curriculoHipnoterapia} />
+          <Ementa cor={cor} modulos={curriculoHipnoterapia} />
         </SecaoCurso>
 
         <SecaoCurso
-          cor="purple"
+          cor={cor}
           sobretitulo="Certificação"
           titulo="Dois níveis. Um significa competência real."
         >
           <Comparativo
-            cor="purple"
+            cor={cor}
             legenda="Comparação entre o certificado de conclusão e o de hipnoterapeuta clínico"
             colunas={['Certificado de conclusão', 'Certificado de hipnoterapeuta clínico']}
             linhas={[
@@ -249,7 +251,7 @@ export default function Hipnoterapia() {
         </SecaoCurso>
 
         <SecaoCurso
-          cor="purple"
+          cor={cor}
           sobretitulo="Comparação"
           id="comparativo"
           titulo="PNL ou hipnoterapia?"
@@ -260,7 +262,7 @@ export default function Hipnoterapia() {
           </p>
 
           <Comparativo
-            cor="purple"
+            cor={cor}
             legenda="Comparação entre PNL e Hipnoterapia Clínica"
             colunas={['PNL (Practitioner / Master)', 'Hipnoterapia Clínica']}
             linhas={[
@@ -299,7 +301,7 @@ export default function Hipnoterapia() {
 
             <div className="grid gap-8 sm:grid-cols-2">
               <div>
-                <p className="rotulo mb-3">Exemplo: fobia de avião</p>
+                <p className="sobretitulo mb-3">Exemplo: fobia de avião</p>
                 <ul className="space-y-2 text-[13.5px] leading-relaxed">
                   <li>
                     <strong className="text-white">PNL:</strong> análise da crença “aviões
@@ -315,7 +317,7 @@ export default function Hipnoterapia() {
                 </ul>
               </div>
               <div>
-                <p className="rotulo mb-3">Exemplo: insônia</p>
+                <p className="sobretitulo mb-3">Exemplo: insônia</p>
                 <ul className="space-y-2 text-[13.5px] leading-relaxed">
                   <li>
                     <strong className="text-white">Hipnoterapia:</strong> indução noturna,
@@ -337,7 +339,7 @@ export default function Hipnoterapia() {
                 “PNL é a língua que falo com a mente consciente. Hipnoterapia é a língua que
                 falo com a mente inconsciente. Fluente em ambas, sou bilíngue da transformação.”
               </blockquote>
-              <figcaption className="rotulo mt-3">Bruno Sena</figcaption>
+              <figcaption className="sobretitulo mt-3">Bruno Sena</figcaption>
             </figure>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
@@ -351,15 +353,15 @@ export default function Hipnoterapia() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso cor="purple" sobretitulo="Perguntas" titulo="Dúvidas frequentes">
+        <SecaoCurso cor={cor} sobretitulo="Perguntas" titulo="Dúvidas frequentes">
           <Faq items={perguntas} />
         </SecaoCurso>
 
-        <SecaoCurso cor="purple" sobretitulo="Método">
+        <SecaoCurso cor={cor} sobretitulo="Método">
           <SenaExplanation />
         </SecaoCurso>
 
-        <SecaoCurso cor="purple" sobretitulo="Avaliações">
+        <SecaoCurso cor={cor} sobretitulo="Avaliações">
           <CourseReviews courseId={curso.slug} />
         </SecaoCurso>
       </PaginaCurso>

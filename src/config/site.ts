@@ -74,6 +74,8 @@ export const whatsappMessages = {
 /** Rotas internas, para evitar strings soltas nos links de navegação. */
 export const routes = {
   home: '/',
+  /** O catálogo completo. Toda superfície que lista cursos aponta para cá. */
+  formacoes: '/formacoes',
   pnlPractitioner: '/pnl-practitioner',
   masterPnl: '/master-pnl',
   hipnoterapia: '/hipnoterapia',

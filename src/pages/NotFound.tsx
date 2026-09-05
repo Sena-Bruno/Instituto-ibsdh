@@ -1,7 +1,8 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
-import { courses } from '../config/courses';
+import { corDoCurso, listaCursos } from '../config/courses';
 import { routes, whatsappLink, whatsappMessages } from '../config/site';
+import { paletas } from '../lib/cores';
 
 /**
  * A página de erro 404.
@@ -29,21 +30,23 @@ export default function NotFound() {
       </p>
 
       <nav aria-label="Formações do instituto" className="mt-10">
-        {Object.values(courses).map((course) => (
+        {listaCursos.map((course) => (
           <Link
             key={course.route}
             to={course.route}
             className="mb-2.5 flex items-baseline justify-between gap-4 rounded-[16px] border border-white/10 bg-brand-surface px-5 py-4 transition-colors hover:border-white/25"
           >
             <span className="text-[16px] font-semibold text-white">{course.title}</span>
-            <span className="font-semibold text-brand-accent">{course.price}</span>
+            <span className={`shrink-0 font-semibold ${paletas[corDoCurso(course)].texto}`}>
+              {course.situacao === 'emBreve' ? 'Em breve' : course.price}
+            </span>
           </Link>
         ))}
       </nav>
 
       <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-        <Link to={routes.home} className="btn-primary">
-          Ir para a página inicial
+        <Link to={routes.formacoes} className="btn-primary">
+          Ver todas as formações
         </Link>
         <a
           href={whatsappLink(whatsappMessages.general)}
