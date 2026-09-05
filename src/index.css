@@ -3,12 +3,31 @@
    uma segunda vez e ainda anulava o preload do HTML. */
 @import "tailwindcss";
 
+/* ============================================================================
+   DIREÇÃO B — "CLÍNICO"
+
+   A tese: o mercado brasileiro de PNL usa inteiro a estética de lançamento
+   (gradiente, orbe de blur, card arredondado, brilho no botão). Parecer uma
+   instituição — e não um infoproduto — é hoje o que mais destoa, e é o que
+   sustenta o próprio texto do site: "não formamos amadores".
+
+   Em consequência, três regras que valem para toda a base:
+
+   1. ZERO DECORAÇÃO. Não existe orbe de blur, gradiente ornamental nem brilho
+      de botão. O que estrutura a página é a grade, exposta.
+   2. CANTO RETO. Raio zero em tudo. A única exceção é o indicador de foco,
+      que ganha 2px só para não encostar na letra.
+   3. TRÊS VOZES, UMA FAMÍLIA. IBM Plex Serif no display, Sans no texto
+      corrido, Mono nos rótulos e nos números. Cada voz tem um trabalho.
+   ========================================================================= */
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
 
   --color-brand-dark: #09090b;
-  --color-brand-surface: #18181b;
+  --color-brand-surface: #0f0f12;
   --color-brand-accent: #e5c365;
   --color-brand-blue: #5c9cfa;
   --color-brand-emerald: #39d4a1;
@@ -16,15 +35,32 @@
   --color-brand-warm: #f9814d;
   --color-brand-platinum: #a1a1aa;
   --color-brand-muted: #27272a;
-
-  /* Faltava um tom secundário: Home.tsx usava from-brand-secondary/40 no
-     card final de CTA, mas o token nunca existiu — o gradiente saía do nada. */
   --color-brand-secondary: #1f1f27;
 
-  /* Cores de estado. O site usava text-red-400 e text-green-400 crus da
-     paleta do Tailwind, fora do sistema da marca. */
+  /* Tom dos rótulos e do texto secundário. O artboard usava #71717a, que dá
+     4,1:1 sobre o fundo — abaixo do mínimo 4,5:1 do WCAG AA para texto
+     pequeno, justamente onde os rótulos em mono são de 11px. Este tom dá
+     4,9:1 e passa. O site antes usava brand-platinum/60, que dá 3,4:1. */
+  --color-brand-quiet: #7d7d87;
+
   --color-brand-danger: #f87171;
   --color-brand-success: #4ade80;
+
+  /* A régua da instituição: a mesma medida governa a grade de fundo, o recuo
+     da numeração das seções e o alinhamento das tabelas. */
+  --medida-grade: 100px;
+
+  /* Canto reto em todo o sistema. Declarado como token para que qualquer
+     rounded-* do Tailwind que sobre em algum canto do código resolva em 0,
+     em vez de reintroduzir a estética de card. */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
 }
 
 @layer base {
@@ -35,10 +71,14 @@
   h1,
   h2,
   h3,
-  h4,
+  h4 {
+    @apply text-white font-display font-semibold tracking-tight;
+    text-wrap: pretty;
+  }
+
   h5,
   h6 {
-    @apply text-white font-display tracking-tight;
+    @apply text-white font-sans font-semibold tracking-tight;
   }
 
   /* Foco visível em toda a navegação por teclado. O site não tinha nenhuma
@@ -47,7 +87,7 @@
   :focus-visible {
     outline: 2px solid var(--color-brand-accent);
     outline-offset: 3px;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 
   /* Rolagem suave para as âncoras internas (#cursos, #checkout). */
@@ -88,93 +128,110 @@
   border-width: 0;
 }
 
-.grid-overlay {
-  background-size: 100px 100px;
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+/* ── A grade ────────────────────────────────────────────────────────────────
+   Substitui os 33 orbes de blur que o site tinha. O problema deles não era
+   feiura: era que toda seção recebia o mesmo brilho de fundo, então todas
+   pareciam igualmente importantes e nenhuma ficava na memória. A grade não
+   compete por atenção — ela mede. */
+.grade {
+  background-image: linear-gradient(90deg, rgb(255 255 255 / 4.5%) 1px, transparent 1px);
+  background-size: var(--medida-grade) 100%;
 }
 
-/* Substitui a textura que era buscada de transparenttextures.com — um
-   hotlink de terceiro que podia sumir a qualquer momento. */
-.textura-carbono {
-  background-image:
-    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 4px),
-    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 4px);
-  background-size: 6px 6px;
+/* Nas telas estreitas a grade de 100px fica densa demais e brigar com o
+   texto; ela dobra de medida. */
+@media (max-width: 640px) {
+  .grade {
+    background-size: calc(var(--medida-grade) * 2) 100%;
+  }
 }
 
-.text-gradient-gold {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#F9E29C] via-[#E5C365] to-[#C8A23B];
+/* Hachura: a marcação de "área sem conteúdo" de prancha técnica. Usada na
+   reserva das imagens que ainda não voltaram, e substitui a textura que era
+   buscada de transparenttextures.com — um hotlink de terceiro que podia
+   sumir a qualquer momento. */
+.hachura {
+  background-color: rgb(255 255 255 / 2.5%);
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgb(255 255 255 / 3.5%) 0 1px,
+    transparent 1px 7px
+  );
 }
 
-.text-gradient-blue {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#9EC7FE] via-[#5C9CFA] to-[#2B70DA];
+/* ── Rótulo em mono ─────────────────────────────────────────────────────────
+   O "§ 01 — FORMAÇÃO" e todo rótulo de coluna, campo e dado. É a voz que
+   diz "isto é um documento". */
+.rotulo {
+  @apply font-mono text-[11px] uppercase tracking-[0.08em] text-brand-quiet;
 }
 
-.text-gradient-purple {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D6B5FC] via-[#B67FF1] to-[#8A42D6];
+.rotulo-accent {
+  @apply font-mono text-[11px] uppercase tracking-[0.08em] text-brand-accent;
 }
 
-.text-gradient-emerald {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#82F2CE] via-[#39D4A1] to-[#12A374];
+/* Dado tabular: números que precisam alinhar em coluna. */
+.dado {
+  @apply font-mono tabular-nums;
 }
 
-.text-gradient-warm {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#FBC796] via-[#F9814D] to-[#DC5418];
-}
-
-/* Botões. O brilho agora deriva do token da cor, em vez de repetir valores
-   rgba fixos: o site tinha rgba(242,125,38,…), um laranja legado que não é
-   token nenhum, usado 5 vezes como brilho do accent, e rgba(212,175,55,…),
-   um dourado antigo. Em páginas que trocam o accent por azul ou roxo, o
-   brilho continuava laranja. */
+/* ── Botões ────────────────────────────────────────────────────────────────
+   Retângulos. Sem raio, sem brilho, sem escala no hover. O site antes tinha
+   pílulas com box-shadow de 30px e transform: scale(1.02) — a assinatura
+   visual de página de lançamento. O feedback aqui é de contraste, não de
+   efeito especial. */
 .btn-primary,
 .btn-blue,
 .btn-purple,
 .btn-emerald,
 .btn-warm,
-.btn-outline {
-  @apply px-8 py-4 rounded-full font-bold transition-all transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 text-sm uppercase tracking-wider motion-reduce:transform-none motion-reduce:hover:scale-100;
+.btn-outline,
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 px-7 py-4 text-[15px] font-semibold transition-colors duration-150;
 }
 
 .btn-primary {
-  @apply bg-brand-accent text-brand-dark;
-}
-.btn-primary:hover {
-  box-shadow: 0 0 30px rgb(from var(--color-brand-accent) r g b / 0.3);
+  @apply bg-brand-accent text-brand-dark hover:bg-[#f0d488];
 }
 
 .btn-blue {
-  @apply bg-brand-blue text-brand-dark;
-}
-.btn-blue:hover {
-  box-shadow: 0 0 30px rgb(from var(--color-brand-blue) r g b / 0.3);
+  @apply bg-brand-blue text-brand-dark hover:bg-[#84b5fc];
 }
 
 .btn-purple {
-  @apply bg-brand-purple text-brand-dark;
-}
-.btn-purple:hover {
-  box-shadow: 0 0 30px rgb(from var(--color-brand-purple) r g b / 0.3);
+  @apply bg-brand-purple text-brand-dark hover:bg-[#c9a0f5];
 }
 
 .btn-emerald {
-  @apply bg-brand-emerald text-brand-dark;
-}
-.btn-emerald:hover {
-  box-shadow: 0 0 30px rgb(from var(--color-brand-emerald) r g b / 0.3);
+  @apply bg-brand-emerald text-brand-dark hover:bg-[#66e0ba];
 }
 
 .btn-warm {
-  @apply bg-brand-warm text-brand-dark;
-}
-.btn-warm:hover {
-  box-shadow: 0 0 30px rgb(from var(--color-brand-warm) r g b / 0.3);
+  @apply bg-brand-warm text-brand-dark hover:bg-[#fba377];
 }
 
 .btn-outline {
-  @apply bg-transparent text-white border border-white/20 hover:bg-white hover:text-brand-dark;
+  @apply border border-white/25 bg-transparent text-white hover:border-white/60 hover:bg-white/5;
+}
+
+/* Ação terciária: texto com régua embaixo, sem caixa. */
+.btn-ghost {
+  @apply border-b border-brand-accent/40 px-0 py-1 text-brand-accent hover:border-brand-accent;
+}
+
+/* ── Superfícies ───────────────────────────────────────────────────────────
+   Um bloco é delimitado por linha, não por raio nem por sombra. */
+.bloco {
+  @apply border border-white/12 bg-white/[0.025];
+}
+
+.bloco-accent {
+  @apply border border-brand-accent/30 bg-brand-accent/[0.06];
+}
+
+/* Linha de tabela: o padrão que substitui o grid de cards. */
+.linha {
+  @apply border-b border-white/8;
 }
 
 @keyframes marquee {

@@ -115,7 +115,6 @@ const PNLPractitioner = () => {
                   src={undefined}
                   alt="Formação PNL Practitioner"
                   title="PNL Practitioner"
-                  accentClassName="from-brand-blue/30 to-brand-dark"
                 />
                 <div className="absolute inset-0 bg-brand-dark/40 flex items-center justify-center group-hover:bg-brand-dark/20 transition-colors">
                   <div className="w-20 h-20 bg-brand-accent rounded-full flex items-center justify-center pl-2 shadow-[0_0_40px_rgba(92,156,250,0.5)] transform group-hover:scale-110 transition-transform">
