@@ -29,13 +29,23 @@
   --color-brand-surface: #121219;
   --color-brand-elevated: #16161f;
 
-  --color-brand-accent: #e5c365;
-  /* O tom claro do dourado, usado no topo dos gradientes de botão e título. */
-  --color-brand-accent-light: #f2dfa8;
-  --color-brand-blue: #5c9cfa;
-  --color-brand-purple: #b67ff1;
-  --color-brand-emerald: #39d4a1;
-  --color-brand-warm: #f9814d;
+  /* ── As cores dos eixos ───────────────────────────────────────────────
+     Foram baixadas de saturação. Os tons anteriores (#5c9cfa, #b67ff1,
+     #39d4a1) eram claros e muito saturados; sobre um fundo quase preto isso
+     lê como néon, e néon lê como produto de tecnologia — não como
+     instituto. Estes são os mesmos matizes, mais profundos e mais
+     acinzentados: continuam distinguíveis entre si e passam a parecer cor
+     escolhida, não cor de tela acesa.
+
+     Todos passam o mínimo 4,5:1 do WCAG AA sobre o fundo: azul 6,3:1,
+     roxo 5,8:1, verde 7,0:1. */
+  --color-brand-accent: #dcb765;
+  /* O tom claro do dourado, usado no topo dos gradientes de botão. */
+  --color-brand-accent-light: #eed69b;
+  --color-brand-blue: #6d94c4;
+  --color-brand-purple: #9d7fb8;
+  --color-brand-emerald: #5aa88a;
+  --color-brand-warm: #d9784f;
 
   /* Texto. Ambos passam no mínimo 4,5:1 do WCAG AA sobre o fundo:
      platinum dá 8,5:1 e quiet dá 5,8:1. Para "apagar" um texto, troque o
@@ -126,10 +136,14 @@
   @apply font-display text-xl leading-tight font-bold tracking-[-0.02em] text-white;
 }
 
-/* Palavra em gradiente, no título. Usada uma vez por página, no máximo:
-   se aparecer em todo título, deixa de destacar. */
+/* Palavra em destaque no título.
+   Era um gradiente de dourado para roxo — dois matizes diferentes atravessando
+   a frase. Gradiente multicolorido em texto é a assinatura visual de produto
+   de tecnologia, e foi apontado como a parte que mais destoava. Agora é o
+   dourado da marca, com uma variação suave dentro do mesmo matiz: destaca a
+   palavra sem parecer efeito. */
 .texto-gradiente {
-  @apply bg-gradient-to-r from-brand-accent-light via-brand-accent to-brand-purple bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-brand-accent-light to-brand-accent bg-clip-text text-transparent;
 }
 
 /* Rótulo pequeno acima do título da seção. */
@@ -141,12 +155,15 @@
    O orbe voltou, mas com regra: ele herda a cor da seção via --brilho e só
    entra onde a seção tem dono de cor. Antes eram 33 orbes idênticos, um por
    seção, e como tudo brilhava igual nada se destacava. */
+/* O brilho perdeu força: a opacidade caiu quase pela metade em `cores.ts` e
+   o desfoque aumentou. Ele passa a ser uma variação de fundo que se percebe
+   sem se notar, em vez de um facho de cor. */
 .brilho {
   position: absolute;
   border-radius: 9999px;
   pointer-events: none;
-  background: radial-gradient(circle, var(--brilho, rgb(229 195 101 / 22%)), transparent 68%);
-  filter: blur(70px);
+  background: radial-gradient(circle, var(--brilho, rgb(220 183 101 / 13%)), transparent 70%);
+  filter: blur(90px);
 }
 
 /* ── Botões ────────────────────────────────────────────────────────────────
@@ -164,16 +181,16 @@
 
 .btn-primary {
   @apply bg-gradient-to-br from-brand-accent-light to-brand-accent text-brand-dark;
-  box-shadow: 0 8px 26px rgb(229 195 101 / 28%);
+  box-shadow: 0 8px 24px rgb(220 183 101 / 20%);
 }
 .btn-primary:hover {
-  box-shadow: 0 12px 34px rgb(229 195 101 / 42%);
+  box-shadow: 0 12px 30px rgb(220 183 101 / 30%);
   transform: translateY(-2px);
 }
 
 .btn-blue {
   @apply bg-brand-blue text-brand-dark;
-  box-shadow: 0 8px 26px rgb(92 156 250 / 26%);
+  box-shadow: 0 8px 24px rgb(109 148 196 / 18%);
 }
 .btn-blue:hover {
   transform: translateY(-2px);
@@ -181,7 +198,7 @@
 
 .btn-purple {
   @apply bg-brand-purple text-brand-dark;
-  box-shadow: 0 8px 26px rgb(182 127 241 / 26%);
+  box-shadow: 0 8px 24px rgb(157 127 184 / 18%);
 }
 .btn-purple:hover {
   transform: translateY(-2px);
@@ -189,7 +206,7 @@
 
 .btn-emerald {
   @apply bg-brand-emerald text-brand-dark;
-  box-shadow: 0 8px 26px rgb(57 212 161 / 26%);
+  box-shadow: 0 8px 24px rgb(90 168 138 / 18%);
 }
 .btn-emerald:hover {
   transform: translateY(-2px);
@@ -197,7 +214,7 @@
 
 .btn-warm {
   @apply bg-brand-warm text-brand-dark;
-  box-shadow: 0 8px 26px rgb(249 129 77 / 26%);
+  box-shadow: 0 8px 24px rgb(217 120 79 / 18%);
 }
 .btn-warm:hover {
   transform: translateY(-2px);

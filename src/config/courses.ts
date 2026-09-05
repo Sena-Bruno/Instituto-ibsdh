@@ -59,6 +59,16 @@ export interface Course {
   situacao: SituacaoCurso;
   /** Uma linha, usada no card e no catálogo */
   resumo: string;
+  /**
+   * Os dados objetivos do curso, exibidos no card.
+   *
+   * Um card de formação sem carga horária nem número de aulas é só uma
+   * promessa com um preço embaixo. Estes três campos são o que separa
+   * "parece um curso sério" de "parece um anúncio".
+   */
+  carga?: string;
+  aulas?: string;
+  certificado?: string;
   /** Aparece na vitrine da home. Sem isto, o curso vive só no catálogo. */
   destaque?: boolean;
   /** Selo curto no card: "Mais popular", "Requer o nível 01"… */
@@ -79,6 +89,9 @@ export const courses = {
   pnlPractitioner: {
     eixo: 'pnl',
     ordem: 1,
+    carga: '100h',
+    aulas: '44 aulas',
+    certificado: 'NLPEA + IBSDH',
     situacao: 'aberto',
     destaque: true,
     selo: 'Mais popular',
@@ -97,6 +110,9 @@ export const courses = {
   masterPnl: {
     eixo: 'pnl',
     ordem: 2,
+    carga: '120h',
+    aulas: '31 aulas',
+    certificado: 'NLPEA + IBSDH',
     situacao: 'aberto',
     destaque: true,
     selo: 'Avançado',
@@ -115,6 +131,9 @@ export const courses = {
   hipnoterapia: {
     eixo: 'hipnoterapia',
     ordem: 1,
+    carga: '100h',
+    aulas: '40 aulas',
+    certificado: 'IBSDH',
     situacao: 'aberto',
     destaque: true,
     selo: 'Requer o Practitioner',
@@ -133,6 +152,7 @@ export const courses = {
   masterCoach: {
     eixo: 'coaching',
     ordem: 1,
+    certificado: 'IBSDH',
     situacao: 'emBreve',
     destaque: true,
     selo: 'Lançamento em breve',
@@ -146,6 +166,9 @@ export const courses = {
   trilogia: {
     eixo: 'jornadas',
     ordem: 1,
+    carga: '320h',
+    aulas: '3 formações',
+    certificado: '3 certificados',
     situacao: 'aberto',
     selo: 'Pacote completo',
     resumo:

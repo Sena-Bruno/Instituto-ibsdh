@@ -157,6 +157,7 @@ src/
 | `courses.ts` | O catálogo: preço, checkout, eixo, situação e os pacotes |
 | `curriculos.ts` | As ementas das três formações, módulo e aula |
 | `sena.ts` | O conteúdo clínico da demonstração do SENA na home |
+| `midia.ts` | Os vídeos do site: boas-vindas no hero e amostra do SENA |
 | `admin.ts` | Quem enxerga o painel de cadastros |
 
 **Antes de editar preço, link de checkout, telefone ou e-mail, olhe em
@@ -307,10 +308,40 @@ São dois pontos, e os dois precisam mudar juntos:
 Se só um dos dois mudar, o site anuncia uma plataforma e leva o comprador
 para outra.
 
+### Publicar os dois vídeos
+
+Os espaços já existem; falta o conteúdo. Tudo se resolve em
+`src/config/midia.ts`, uma linha por vídeo — nenhum componente precisa ser
+tocado:
+
+```ts
+boasVindas: { tipo: 'youtube', id: 'ABC123xyz' },
+amostraSena: { tipo: 'arquivo', src: '/amostra-sena.mp4' },
+```
+
+Do YouTube, copie só o identificador (o que vem depois de `watch?v=`), não a
+URL inteira. Do Vimeo, o número no fim do endereço. Arquivo próprio vai em
+`public/` e é apontado pela rota.
+
+Enquanto os dois estiverem `null`, nada quebra e nada fica com cara de
+buraco: o hero mostra o seu retrato e a seção do SENA mostra só o simulador.
+O espaço não é anunciado antes de existir.
+
+O reprodutor carrega por fachada: a página mostra a imagem e o botão de
+play, e o player de verdade só é montado no clique. Um iframe do YouTube
+custa perto de um megabyte antes de alguém decidir assistir, e esse peso
+cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
+
 ## Pendências conhecidas
 
 ### Precisam de decisão sua
 
+- **Gravar os dois vídeos.** O de boas-vindas é o espaço mais valioso da
+  home: em 60 a 90 segundos, quem você é, por que o instituto existe e o que
+  a pessoa leva ao final. A amostra do SENA é uma gravação de tela de uma
+  sessão real — hoje a seção mostra a demonstração que eu construí, útil
+  para experimentar a mecânica, mas que não é o produto. Com a gravação, a
+  demonstração passa a ser o convite e o vídeo passa a ser a prova.
 - **Revisar o conteúdo clínico do simulador** (`src/config/sena.ts`). As
   três respostas ao paciente cético, e principalmente as três devolutivas,
   são rascunho meu. É a única parte do site que emite julgamento clínico
