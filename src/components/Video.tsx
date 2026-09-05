@@ -107,7 +107,7 @@ export default function VideoPlayer({
         </span>
       </span>
 
-      <span className="absolute right-5 bottom-5 left-5 text-left text-[14.5px] font-semibold text-white">
+      <span className="absolute right-5 bottom-5 left-5 text-left text-[14.5px] font-semibold text-brand-cream">
         {titulo}
       </span>
     </button>

@@ -129,13 +129,13 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-8">
-        <h3 className="font-display text-2xl font-bold text-white md:text-[28px]">
+        <h3 className="font-display text-2xl font-bold text-brand-cream md:text-[28px]">
           Avaliações de Alunos
         </h3>
         {reviews.length > 0 && (
           <div className="flex items-baseline gap-2 border-l border-white/15 pl-4">
             <Star className="text-brand-accent fill-brand-accent" size={20} />
-            <span className="text-white font-bold">{averageRating}</span>
+            <span className="text-brand-cream font-bold">{averageRating}</span>
             <span className="text-brand-platinum text-sm">({reviews.length})</span>
           </div>
         )}
@@ -157,7 +157,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               )}
               <div className="flex-1">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <p className="text-white font-medium">{user.displayName}</p>
+                  <p className="text-brand-cream font-medium">{user.displayName}</p>
                   <button
                     type="button"
                     onClick={logout}
@@ -194,7 +194,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Compartilhe sua experiência com esta formação..."
-              className="mb-4 h-28 w-full resize-none rounded-[14px] border border-white/12 bg-black/40 p-4 text-white transition-colors placeholder:text-white/60 focus:border-brand-accent/60"
+              className="mb-4 h-28 w-full resize-none rounded-[14px] border border-white/12 bg-black/40 p-4 text-brand-cream transition-colors placeholder:text-white/60 focus:border-brand-accent/60"
               required
               maxLength={2000}
             />
@@ -215,7 +215,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
           </form>
         ) : (
           <div className="text-center py-8">
-            <h4 className="text-xl text-white font-medium mb-3">Já fez esta formação?</h4>
+            <h4 className="text-xl text-brand-cream font-medium mb-3">Já fez esta formação?</h4>
             <p className="text-brand-platinum mb-6">
               Faça login para compartilhar sua experiência com outros alunos.
             </p>
@@ -281,7 +281,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                         <UserCircle2 className="h-9 w-9 text-brand-platinum" />
                       )}
                       <div>
-                        <h5 className="text-white font-medium">{review.userName}</h5>
+                        <h5 className="text-brand-cream font-medium">{review.userName}</h5>
                         <div className="flex items-center gap-3 mt-1">
                           <div className="flex gap-0.5">
                             {[...Array(5)].map((_, i) => (

@@ -96,7 +96,7 @@ export default function CardCurso({
             </>
           ) : (
             <>
-              <p className="font-display text-[26px] leading-none font-extrabold text-white">
+              <p className="font-display text-[26px] leading-none font-extrabold text-brand-cream">
                 {curso.installment ? `12x ${curso.installment}` : curso.price}
               </p>
               {curso.installment && (
@@ -117,7 +117,7 @@ export default function CardCurso({
                 </a>
                 <Link
                   to={curso.route}
-                  className="flex items-center justify-center gap-1.5 rounded-full border border-white/15 py-3.5 text-[14px] font-bold text-white transition-colors hover:border-white/40 hover:bg-white/5"
+                  className="flex items-center justify-center gap-1.5 rounded-full border border-white/15 py-3.5 text-[14px] font-bold text-brand-cream transition-colors hover:border-white/40 hover:bg-white/5"
                 >
                   Detalhes
                   <ArrowRight size={15} aria-hidden="true" />

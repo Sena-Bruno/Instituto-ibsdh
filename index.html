@@ -34,12 +34,17 @@
     <!-- Elemento LCP da home. -->
     <link rel="preload" as="image" href="/brunosena.webp" fetchpriority="high" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Outfit no display e Inter no texto. Outfit tem desenho arredondado e
-         aguenta peso 800 em tamanho grande sem endurecer, que é o que a
-         escala do hero pede. -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" />
+    <!-- Oswald no display e Lato no texto.
+
+         Outfit e Inter saíram porque são as fontes padrão de produto de
+         software: o desenho geométrico e a largura uniforme fazem qualquer
+         página parecer painel de aplicativo. Oswald é condensada e pesada,
+         então o título ocupa a largura inteira sem encolher de corpo e lê
+         como algo gravado, não como interface. Lato é humanista e morna,
+         que é o contraponto que o texto corrido precisa para não ficar
+         frio ao lado de um título tão duro. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fontes/oswald-700-lat.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/fontes/lato-400-lat.woff2" crossorigin />
 
     <script type="application/ld+json">
       {

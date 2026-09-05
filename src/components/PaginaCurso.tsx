@@ -1,4 +1,4 @@
-import { ChevronRight } from 'lucide-react';
+import { Award, ChevronRight, Clock, PlayCircle, ShieldCheck } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import type { Course } from '../config/courses';
@@ -59,6 +59,16 @@ export default function PaginaCurso({
 }) {
   const p = paletas[cor];
 
+  /* Os fatos vêm dos campos do curso, não de texto escrito à mão aqui: é o
+     que garante que a página nunca anuncie uma carga horária diferente da
+     que o card da home anuncia. Campo vazio some da lista. */
+  const fatosDoCurso = [
+    { icone: Clock, texto: curso.carga },
+    { icone: PlayCircle, texto: curso.aulas },
+    { icone: Award, texto: curso.certificado && `Certificado ${curso.certificado}` },
+    { icone: ShieldCheck, texto: '7 dias de garantia' },
+  ].filter((f): f is { icone: typeof Clock; texto: string } => Boolean(f.texto));
+
   return (
     <main>
       <section className="relative overflow-hidden pt-28 pb-16 md:pt-32 md:pb-20">
@@ -80,7 +90,7 @@ export default function PaginaCurso({
                   {passo.para && !passo.atual ? (
                     <Link
                       to={passo.para}
-                      className="text-brand-quiet transition-colors hover:text-white"
+                      className="text-brand-quiet transition-colors hover:text-brand-cream"
                     >
                       {passo.rotulo}
                     </Link>
@@ -110,6 +120,26 @@ export default function PaginaCurso({
           <div className="mt-6 max-w-2xl text-[17.5px] leading-relaxed md:text-lg">
             {resumo}
           </div>
+
+          {/* Os fatos da formação, logo abaixo da promessa — o mesmo padrão do
+              hero da home, e o mesmo das cinco referências. Sai tudo de
+              `courses.ts`: carga, aulas e certificado. Um curso sem esses
+              campos preenchidos simplesmente não mostra a linha, em vez de
+              mostrar um espaço vazio ou um traço. */}
+          {fatosDoCurso.length > 0 && (
+            <ul className="mt-8 flex max-w-3xl flex-wrap gap-x-8 gap-y-3">
+              {fatosDoCurso.map((fato) => (
+                <li key={fato.texto} className="fato">
+                  <fato.icone
+                    size={17}
+                    aria-hidden="true"
+                    className={cn('mt-px shrink-0', p.texto)}
+                  />
+                  {fato.texto}
+                </li>
+              ))}
+            </ul>
+          )}
 
           {preRequisito && (
             <div
@@ -161,9 +191,15 @@ export function SecaoCurso({
       id={id}
       className={cn('border-t border-white/8 py-12 first:border-t-0 first:pt-0', className)}
     >
-      <p className={cn('sobretitulo mb-4', paletas[cor].texto)}>{sobretitulo}</p>
+      {/* Mesma régua e mesmo sobretítulo cinza do cabeçalho de seção da home:
+          as páginas de curso e a home passam a marcar começo de assunto do
+          mesmo jeito, que é o que faz o site parecer um só. */}
+      <div className="mb-4 flex items-center gap-3.5">
+        <span aria-hidden="true" className={cn('regua-secao', paletas[cor].fundo)} />
+        <p className="sobretitulo">{sobretitulo}</p>
+      </div>
       {titulo && (
-        <h2 className="mb-6 max-w-2xl font-display text-[27px] leading-tight font-bold tracking-[-0.025em] text-white md:text-[34px]">
+        <h2 className="mb-6 max-w-2xl font-display text-[26px] leading-[1.12] font-bold tracking-[0.01em] text-brand-cream uppercase md:text-[34px]">
           {titulo}
         </h2>
       )}
@@ -194,7 +230,10 @@ export function Comparativo({
             <th scope="col" className="w-1/5 py-4 pr-4">
               <span className="sr-only">Critério</span>
             </th>
-            <th scope="col" className="py-4 pr-4 font-display text-[15px] font-bold text-white">
+            <th
+              scope="col"
+              className="py-4 pr-4 font-display text-[15px] font-bold text-brand-cream"
+            >
               {colunas[0]}
             </th>
             <th
@@ -217,7 +256,7 @@ export function Comparativo({
               <td className="py-4 pr-4 text-[14.5px] leading-snug">{linha.a}</td>
               <td
                 className={cn(
-                  'rounded-lg py-4 pl-5 text-[14.5px] leading-snug text-white',
+                  'rounded-lg py-4 pl-5 text-[14.5px] leading-snug text-brand-cream',
                   p.tenue,
                 )}
               >
@@ -251,7 +290,7 @@ export function ListaItens({
             aria-hidden="true"
           />
           <span>
-            <span className="block font-semibold text-white">{item.titulo}</span>
+            <span className="block font-semibold text-brand-cream">{item.titulo}</span>
             {item.nota && (
               <span className="mt-1 block text-[13.5px] leading-relaxed">{item.nota}</span>
             )}

@@ -27,7 +27,7 @@ interface SecaoProps {
   brilho?: boolean;
   /** Posição do brilho, quando ligado */
   brilhoEm?: 'topo' | 'centro' | 'esquerda' | 'direita';
-  /** Fundo levemente elevado, para alternar o ritmo entre seções */
+  /** Faixa de fundo mais clara, alternando o ritmo entre seções vizinhas */
   elevada?: boolean;
   className?: string;
   children: ReactNode;
@@ -54,7 +54,7 @@ export default function Secao({
       id={id}
       className={cn(
         'relative overflow-hidden border-t border-white/5 py-20 md:py-28',
-        elevada && 'bg-brand-surface/40',
+        elevada && 'bg-brand-band',
         className,
       )}
     >
@@ -97,8 +97,19 @@ export function Cabecalho({
 }) {
   return (
     <div className={cn(centralizado && 'mx-auto text-center', 'max-w-3xl', className)}>
+      {/* A régua colorida antes do sobretítulo.
+          Custa oito pixels e é o que transforma dezesseis seções soltas numa
+          sequência: o olho aprende que aquele traço marca começo de assunto e
+          passa a achar o próximo sem ler. Foi o detalhe mais reaproveitável
+          das referências.
+
+          A cor é a do EIXO da seção — é aqui que a cor de formação continua
+          fazendo trabalho de orientação depois de ter saído dos botões. */}
       {sobretitulo && (
-        <p className={cn('sobretitulo mb-4', paletas[cor].texto)}>{sobretitulo}</p>
+        <div className={cn('mb-4 flex items-center gap-3.5', centralizado && 'justify-center')}>
+          <span aria-hidden="true" className={cn('regua-secao', paletas[cor].fundo)} />
+          <p className="sobretitulo">{sobretitulo}</p>
+        </div>
       )}
       <h2 className="titulo-secao">{titulo}</h2>
       {children && (

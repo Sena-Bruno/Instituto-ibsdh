@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { pageTransition } from '../lib/motion';
+import BarraAviso from './BarraAviso';
 import FixedWhatsApp from './FixedWhatsApp';
 import ScrollToTop from './ScrollToTop';
 import SiteFooter from './SiteFooter';
@@ -22,6 +23,7 @@ export default function Layout() {
       >
         Pular para o conteúdo
       </a>
+      <BarraAviso />
       <SiteHeader />
       {/*
         A `key` no pathname refaz o bloco a cada rota, então a página nova

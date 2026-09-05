@@ -34,7 +34,7 @@ export default function SiteFooter() {
                 className="h-10 w-10 object-contain"
               />
               <span className="flex flex-col leading-none">
-                <span className="font-display text-[15px] font-extrabold tracking-tight text-white">
+                <span className="font-display text-[15px] font-extrabold tracking-tight text-brand-cream">
                   INSTITUTO
                 </span>
                 <span className="mt-0.5 text-[9.5px] font-semibold tracking-[0.2em] text-brand-accent">

@@ -30,7 +30,7 @@ export default function Numeros({ itens, className }: { itens: Numero[]; classNa
     >
       {itens.map((item) => (
         <div key={item.legenda}>
-          <dd className="font-display text-[40px] leading-none font-extrabold tracking-[-0.035em] text-white md:text-[46px]">
+          <dd className="font-display text-[40px] leading-none font-extrabold tracking-[-0.035em] text-brand-cream md:text-[46px]">
             {item.valor}
             {item.sufixo && <span className="text-brand-accent">{item.sufixo}</span>}
           </dd>

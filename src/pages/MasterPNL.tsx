@@ -119,13 +119,14 @@ export default function MasterPNL() {
           <p>
             Do competente ao referência. Para quem já domina o básico e quer as técnicas que
             separam técnicos de estrategistas. No{' '}
-            <strong className="text-white">SENA Avançado</strong> a prática é com casos de alta
-            dificuldade, avaliados por decisão clínica — nota mínima 8/10 para a certificação.
+            <strong className="text-brand-cream">SENA Avançado</strong> a prática é com casos de
+            alta dificuldade, avaliados por decisão clínica — nota mínima 8/10 para a
+            certificação.
           </p>
         }
         preRequisito={
           <>
-            <p className="text-[14.5px] font-semibold text-white">
+            <p className="text-[14.5px] font-semibold text-brand-cream">
               Assume domínio dos fundamentos
             </p>
             <p className="mt-1 text-[13.5px] leading-relaxed">
@@ -309,7 +310,7 @@ export default function MasterPNL() {
                     {dep.iniciais}
                   </span>
                   <span>
-                    <span className="block text-[14px] font-semibold text-white">
+                    <span className="block text-[14px] font-semibold text-brand-cream">
                       {dep.nome}
                     </span>
                     <span className="text-[12px] font-semibold tracking-[0.08em] text-brand-quiet uppercase">

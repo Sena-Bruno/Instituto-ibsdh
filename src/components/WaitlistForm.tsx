@@ -64,7 +64,7 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
     return (
       <div className="py-2" role="status" aria-live="polite">
         <CheckCircle2 className="mb-4 text-brand-accent" size={28} aria-hidden="true" />
-        <h3 className="mb-2 font-display text-xl font-semibold text-white">
+        <h3 className="mb-2 font-display text-xl font-semibold text-brand-cream">
           Cadastro confirmado
         </h3>
         <p className="text-[13.5px] leading-relaxed">
@@ -79,7 +79,7 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
 
   return (
     <>
-      <h3 className="mb-3 font-display text-xl font-semibold text-white">
+      <h3 className="mb-3 font-display text-xl font-semibold text-brand-cream">
         Entre para a lista de espera
       </h3>
       <p className="mb-6 text-[13.5px] leading-relaxed">
@@ -102,7 +102,7 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
             disabled={busy}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-[14px] border border-white/12 bg-brand-dark/60 px-4 py-3.5 text-[14.5px] text-white transition-colors placeholder-brand-quiet focus:border-brand-accent disabled:opacity-60"
+            className="w-full rounded-[14px] border border-white/12 bg-brand-dark/60 px-4 py-3.5 text-[14.5px] text-brand-cream transition-colors placeholder-brand-quiet focus:border-brand-accent disabled:opacity-60"
           />
         </div>
 
@@ -122,7 +122,7 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
             onChange={(e) => setEmail(e.target.value)}
             aria-invalid={status === 'error' || undefined}
             aria-describedby={status === 'error' ? 'waitlist-error' : undefined}
-            className="w-full rounded-[14px] border border-white/12 bg-brand-dark/60 px-4 py-3.5 text-[14.5px] text-white transition-colors placeholder-brand-quiet focus:border-brand-accent disabled:opacity-60"
+            className="w-full rounded-[14px] border border-white/12 bg-brand-dark/60 px-4 py-3.5 text-[14.5px] text-brand-cream transition-colors placeholder-brand-quiet focus:border-brand-accent disabled:opacity-60"
           />
         </div>
 

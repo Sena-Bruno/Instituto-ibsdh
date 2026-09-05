@@ -133,13 +133,13 @@ export default function PNLPractitioner() {
           <p>
             Domine a linguagem da mente e reprograme padrões limitantes, em você ou em qualquer
             pessoa. Sem jargão incompreensível e sem promessa mística — só a técnica, com{' '}
-            <strong className="text-white">prática ilimitada no SENA</strong> desde a primeira
-            aula.
+            <strong className="text-brand-cream">prática ilimitada no SENA</strong> desde a
+            primeira aula.
           </p>
         }
         preRequisito={
           <>
-            <p className="text-[14.5px] font-semibold text-white">Sem pré-requisito</p>
+            <p className="text-[14.5px] font-semibold text-brand-cream">Sem pré-requisito</p>
             <p className="mt-1 text-[13.5px] leading-relaxed">
               É a porta de entrada da trilha, construída para quem começa do zero — e a base que
               a Hipnoterapia e o Master assumem que você tem.
@@ -166,9 +166,10 @@ export default function PNLPractitioner() {
           <div className="faixa-accent mt-8 p-6">
             <p className="sobretitulo mb-3 text-brand-accent">E o mais importante</p>
             <p className="text-[15px] leading-relaxed">
-              Você não apenas “aprende” — você <strong className="text-white">pratica</strong>.
-              O SENA simula situações reais para você treinar quantas vezes quiser, com
-              devolutiva imediata, sem depender de ninguém para servir de cobaia.
+              Você não apenas “aprende” — você{' '}
+              <strong className="text-brand-cream">pratica</strong>. O SENA simula situações
+              reais para você treinar quantas vezes quiser, com devolutiva imediata, sem
+              depender de ninguém para servir de cobaia.
             </p>
           </div>
         </SecaoCurso>
@@ -304,7 +305,7 @@ export default function PNLPractitioner() {
               pessoal ou profissional — devolvemos 100% do seu investimento. Sem perguntas, sem
               burocracia.
             </p>
-            <p className="font-display text-lg text-white">
+            <p className="font-display text-lg text-brand-cream">
               O risco é todo nosso. A transformação pode ser sua.
             </p>
           </div>
