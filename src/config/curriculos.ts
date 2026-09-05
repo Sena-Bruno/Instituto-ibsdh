@@ -31,7 +31,7 @@
  * └───────────────────────────────────────────────────────────────────────┘
  */
 
-export interface Aula {
+interface Aula {
   /** Número da aula, ou faixa como "16-22" quando várias são agrupadas */
   id: string;
   titulo: string;

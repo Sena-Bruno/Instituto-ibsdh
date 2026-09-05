@@ -108,7 +108,7 @@ export default function Admin() {
             Verificando acesso…
           </p>
         ) : !user ? (
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
+          <div className="bloco p-8 text-center">
             <p className="text-brand-platinum mb-6">
               Entre com a conta Google autorizada para ver os cadastros.
             </p>
@@ -118,7 +118,7 @@ export default function Admin() {
             </button>
           </div>
         ) : !allowed ? (
-          <div className="bg-white/5 border border-brand-danger/30 rounded-2xl p-8">
+          <div className="border border-brand-danger/30 bg-brand-danger/[0.05] p-8">
             <ShieldAlert className="text-brand-danger mb-4" size={32} aria-hidden="true" />
             <h2 className="text-xl font-bold text-white mb-3">Esta conta não tem acesso</h2>
             <p className="text-brand-platinum mb-6">
@@ -130,7 +130,7 @@ export default function Admin() {
               <code className="text-brand-accent">firebase deploy --only firestore:rules</code>.
             </p>
             <div className="flex flex-wrap items-center gap-3 mb-6">
-              <code className="bg-brand-dark border border-white/10 rounded-lg px-4 py-2 text-sm text-white break-all">
+              <code className="border border-white/12 bg-brand-dark px-4 py-2 text-sm break-all text-white">
                 {user.uid}
               </code>
               <button
@@ -179,7 +179,10 @@ export default function Admin() {
             </div>
 
             {error && (
-              <p role="alert" className="text-brand-danger bg-white/5 rounded-2xl p-6 mb-6">
+              <p
+                role="alert"
+                className="mb-6 border border-brand-danger/30 bg-brand-danger/[0.05] p-6 text-brand-danger"
+              >
                 {error}
               </p>
             )}
@@ -189,7 +192,7 @@ export default function Admin() {
                 <div
                   role="status"
                   aria-live="polite"
-                  className="overflow-x-auto rounded-2xl border border-white/10"
+                  className="overflow-x-auto border border-white/12"
                 >
                   <span className="sr-only">Carregando cadastros…</span>
                   <table className="w-full">
@@ -202,11 +205,9 @@ export default function Admin() {
                 </div>
               )
             ) : leads.length === 0 ? (
-              <p className="text-brand-platinum bg-white/5 rounded-2xl p-8 text-center">
-                Nenhum cadastro ainda.
-              </p>
+              <p className="border border-white/10 p-8 text-center">Nenhum cadastro ainda.</p>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border border-white/10">
+              <div className="overflow-x-auto border border-white/12">
                 <table className="w-full text-left text-sm">
                   <caption className="sr-only">Cadastros na lista de espera</caption>
                   <thead className="bg-white/5 text-white">

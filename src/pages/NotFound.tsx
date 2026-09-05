@@ -1,45 +1,61 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { courses } from '../config/courses';
+import { routes, whatsappLink, whatsappMessages } from '../config/site';
 
-const NotFound = () => {
+/**
+ * A página de erro 404.
+ *
+ * Era um beco: orbe de blur, um "404" gigante e um único botão de voltar
+ * ao início. Quem cai aqui geralmente errou o endereço de um curso — jogar
+ * essa pessoa na home a obriga a procurar de novo. Agora a página lista as
+ * formações e oferece o WhatsApp, que é onde a dúvida real costuma estar.
+ */
+export default function NotFound() {
   return (
-    <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans flex flex-col items-center justify-center p-6 text-center relative overflow-hidden">
+    <main className="grade mx-auto min-h-[70vh] max-w-3xl px-6 pt-36 pb-24">
       <Helmet>
         <title>Página não encontrada | Instituto Bruno Sena</title>
         <meta name="robots" content="noindex" />
       </Helmet>
 
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-accent/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
+      <p className="rotulo-accent mb-6">Erro 404</p>
 
-      <div className="w-24 h-24 mb-8">
-        <img
-          loading="lazy"
-          decoding="async"
-          src="/logo-do-instituto.svg"
-          alt="Instituto Bruno Sena"
-          className="w-full h-full object-contain opacity-50"
-        />
-      </div>
-
-      <h1 className="font-display text-8xl md:text-9xl font-bold text-white mb-4 drop-shadow-2xl">
-        404
+      <h1 className="font-display text-4xl leading-tight font-semibold tracking-tight text-white md:text-5xl">
+        Esta página não existe.
       </h1>
-      <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Página não encontrada</h2>
-      <p className="text-brand-platinum/80 max-w-md mb-12 text-lg">
-        A página que você está procurando não existe ou foi movida. Volte para a página inicial
-        para continuar sua jornada.
+
+      <p className="mt-5 max-w-xl text-[17px] leading-relaxed">
+        O endereço pode ter mudado, ou o link que você seguiu está incompleto. As formações do
+        instituto estão todas listadas abaixo.
       </p>
 
-      <Link
-        to="/"
-        className="inline-flex items-center gap-2 bg-brand-accent text-brand-dark px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-all shadow-[0_0_30px_rgba(212,175,55,0.3)]"
-      >
-        <Home size={20} />
-        Voltar para o Início
-      </Link>
-    </div>
-  );
-};
+      <nav aria-label="Formações do instituto" className="mt-10 border-t border-white/12">
+        {Object.values(courses).map((course) => (
+          <Link
+            key={course.route}
+            to={course.route}
+            className="flex items-baseline justify-between gap-4 border-b border-white/8 py-4 transition-colors hover:bg-white/[0.03]"
+          >
+            <span className="text-[16px] font-semibold text-white">{course.title}</span>
+            <span className="dado text-[13.5px] text-brand-accent">{course.price}</span>
+          </Link>
+        ))}
+      </nav>
 
-export default NotFound;
+      <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+        <Link to={routes.home} className="btn-primary">
+          Ir para a página inicial
+        </Link>
+        <a
+          href={whatsappLink(whatsappMessages.general)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-outline"
+        >
+          Falar com a coordenação
+        </a>
+      </div>
+    </main>
+  );
+}

@@ -62,10 +62,12 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
 
   if (status === 'success') {
     return (
-      <div className="text-center py-4" role="status" aria-live="polite">
-        <CheckCircle2 className="text-brand-accent mx-auto mb-4" size={48} />
-        <h3 className="text-2xl font-bold text-white mb-2">Cadastro confirmado!</h3>
-        <p className="text-brand-platinum/80 text-sm">
+      <div className="py-2" role="status" aria-live="polite">
+        <CheckCircle2 className="mb-4 text-brand-accent" size={28} aria-hidden="true" />
+        <h3 className="mb-2 font-display text-xl font-semibold text-white">
+          Cadastro confirmado
+        </h3>
+        <p className="text-[13.5px] leading-relaxed">
           Você está na lista de espera. Avisaremos por e-mail assim que as vagas abrirem — com o
           desconto exclusivo de lançamento garantido.
         </p>
@@ -77,8 +79,10 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
 
   return (
     <>
-      <h3 className="text-2xl font-bold text-white mb-4">Entre para a Lista de Espera</h3>
-      <p className="text-brand-platinum/70 mb-6 text-sm">
+      <h3 className="mb-3 font-display text-xl font-semibold text-white">
+        Entre para a lista de espera
+      </h3>
+      <p className="mb-6 text-[13.5px] leading-relaxed">
         Seja o primeiro a saber quando abrirmos as vagas e garanta{' '}
         <strong>desconto exclusivo</strong> de lançamento.
       </p>
@@ -98,7 +102,7 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
             disabled={busy}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-brand-platinum/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent focus:border-brand-accent transition-colors disabled:opacity-60"
+            className="w-full border border-white/12 bg-brand-dark/60 px-4 py-3 text-[14.5px] text-white transition-colors placeholder-brand-quiet focus:border-brand-accent disabled:opacity-60"
           />
         </div>
 
@@ -118,12 +122,16 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
             onChange={(e) => setEmail(e.target.value)}
             aria-invalid={status === 'error' || undefined}
             aria-describedby={status === 'error' ? 'waitlist-error' : undefined}
-            className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-brand-platinum/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent focus:border-brand-accent transition-colors disabled:opacity-60"
+            className="w-full border border-white/12 bg-brand-dark/60 px-4 py-3 text-[14.5px] text-white transition-colors placeholder-brand-quiet focus:border-brand-accent disabled:opacity-60"
           />
         </div>
 
         {status === 'error' && (
-          <p id="waitlist-error" role="alert" className="text-red-400 text-sm text-left">
+          <p
+            id="waitlist-error"
+            role="alert"
+            className="text-left text-[13.5px] text-brand-danger"
+          >
             {error}
           </p>
         )}
@@ -131,7 +139,7 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
         <button
           type="submit"
           disabled={busy}
-          className="w-full bg-brand-accent text-brand-dark font-bold py-3 px-4 rounded-xl hover:scale-105 transition-all mt-2 flex items-center justify-center gap-2 disabled:opacity-60 disabled:hover:scale-100 disabled:cursor-not-allowed"
+          className="btn-primary mt-2 w-full disabled:cursor-not-allowed disabled:opacity-60"
         >
           {busy && <Loader2 className="animate-spin" size={18} aria-hidden="true" />}
           {busy ? 'Enviando…' : 'Quero notificação prioritária'}

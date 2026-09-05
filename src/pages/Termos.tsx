@@ -15,16 +15,16 @@ export default function Termos() {
       </Helmet>
 
       <article className="max-w-3xl mx-auto px-6 pt-36 pb-24">
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+        <h1 className="mb-4 font-display text-4xl leading-tight font-semibold tracking-tight text-white md:text-5xl">
           Termos de Uso
         </h1>
-        <p className="text-brand-platinum/70 mb-12">
+        <p className="rotulo mb-12">
           Última atualização: {new Date().toLocaleDateString('pt-BR')}
         </p>
 
-        <div className="space-y-8 text-brand-platinum/85 leading-relaxed">
+        <div className="space-y-8 leading-relaxed">
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">1. Objeto</h2>
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">1. Objeto</h2>
             <p>
               Este site apresenta as formações do {site.legalName} e permite o cadastro em
               listas de espera e a publicação de avaliações. Ao usá-lo, você concorda com estas
@@ -33,7 +33,7 @@ export default function Termos() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
               2. Natureza das formações
             </h2>
             <p>{site.legalDisclaimer}</p>
@@ -44,7 +44,7 @@ export default function Termos() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
               3. Compras, prazos e reembolso
             </h2>
             <p>
@@ -55,7 +55,7 @@ export default function Termos() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
               4. Propriedade intelectual
             </h2>
             <p>
@@ -66,7 +66,7 @@ export default function Termos() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
               5. Conduta nas avaliações
             </h2>
             <p>
@@ -76,7 +76,7 @@ export default function Termos() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">6. Contato</h2>
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">6. Contato</h2>
             <p>
               Dúvidas sobre estes termos:{' '}
               <a
