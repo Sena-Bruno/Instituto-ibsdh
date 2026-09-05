@@ -82,6 +82,57 @@ export const courses = {
     title: 'Jornada do Herói',
     route: '/jornada',
     price: 'R$ 1.353,00',
+    priceFrom: 'R$ 1.691,00',
+    installment: 'R$ 112,75',
     checkout: 'https://pay.kiwify.com.br/9y9r0kY',
   },
 } satisfies Record<string, Course>;
+
+/**
+ * Os pacotes com dois cursos, oferecidos na página da Jornada.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  ⚠  OS DOIS COMBOS NÃO TÊM CHECKOUT PRÓPRIO — PARA O BRUNO CRIAR      │
+ * │                                                                       │
+ * │  A página anunciava "Combo B (P+H) — R$ 597" e mandava para o link    │
+ * │  A5i1o7D, que é o checkout da Hipnoterapia sozinha, a R$ 397. E       │
+ * │  anunciava "Combo A (P+M) — R$ 1.097" mandando para T8wW0tA, o        │
+ * │  checkout do Master sozinho, a R$ 997.                                │
+ * │                                                                       │
+ * │  Ou seja: o visitante lia o preço do pacote, clicava, e caía numa     │
+ * │  página de pagamento de outro produto por outro valor. Quem                │
+ * │  completasse a compra pagaria por um curso só, achando que levava     │
+ * │  dois — e cobrar a diferença depois é briga garantida.                │
+ * │                                                                       │
+ * │  Enquanto os dois produtos não existirem na Kiwify, o botão dos       │
+ * │  combos leva ao WhatsApp da coordenação em vez de a um checkout       │
+ * │  errado. Assim a oferta continua de pé e ninguém paga o valor         │
+ * │  trocado. Quando você criar os links, basta preencher o `checkout`    │
+ * │  aqui embaixo: a página passa a vender sozinha de novo.               │
+ * │                                                                       │
+ * │  (Practitioner e Trilogia estão corretos e seguem vendendo direto.)   │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+export const combos = {
+  terapiaBreve: {
+    id: 'combo-ph',
+    title: 'Combo Terapia Breve',
+    composicao: 'Practitioner + Hipnoterapia',
+    price: 'R$ 597,00',
+    priceFrom: 'R$ 694,00',
+    economia: 'R$ 97,00',
+    installment: 'R$ 49,75',
+    /** Sem checkout próprio: ver o aviso acima. */
+    checkout: undefined as string | undefined,
+  },
+  pnlCompleto: {
+    id: 'combo-pm',
+    title: 'Combo PNL Completo',
+    composicao: 'Practitioner + Master PNL',
+    price: 'R$ 1.097,00',
+    priceFrom: 'R$ 1.294,00',
+    economia: 'R$ 197,00',
+    installment: 'R$ 91,42',
+    checkout: undefined as string | undefined,
+  },
+} as const;

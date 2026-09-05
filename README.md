@@ -42,6 +42,51 @@ npm run smoke
 > todas as páginas perderem o título próprio. Isso foi verificado com o
 > `npm run smoke`. Não troque o pacote sem rodar esse teste.
 
+## Linguagem visual — Direção B, "Clínico"
+
+O site foi redesenhado sobre uma tese: o mercado brasileiro de PNL usa
+inteiro a estética de lançamento — gradiente, orbe de blur, card
+arredondado, brilho no botão. **Parecer uma instituição, e não um
+infoproduto, é hoje o que mais destoa** — e é o que sustenta o próprio
+texto do site ("não formamos amadores").
+
+Três regras que valem para código novo:
+
+1. **Zero decoração.** Nada de orbe de blur, gradiente ornamental ou brilho
+   de botão. O que estrutura a página é a grade (`.grade`), e ela só entra
+   em seção de peso alto. Se aparecer em todas, volta a ser o problema que
+   os orbes eram: com o mesmo brilho atrás de tudo, tudo parece igualmente
+   importante e nada fica na memória.
+2. **Canto reto.** Os tokens `--radius-*` são zero. `rounded-full` não passa
+   por token — não use.
+3. **Três vozes, uma família.** IBM Plex Serif no display (`font-display`),
+   Sans no texto corrido, Mono nos rótulos e números (`.rotulo`, `.dado`).
+   Caixa alta é voz da mono; título em serifa vai em caixa de sentença.
+
+### Componentes que carregam a linguagem
+
+| Componente | Para quê |
+|---|---|
+| `Secao` | Seção numerada (`§ 02 — MÉTODO`) com peso explícito |
+| `PaginaCurso` / `SecaoCurso` | Página de formação, com a coluna de compra fixa |
+| `Trilha` | Sequência ordenada, quando a ordem é a informação |
+| `Dados` | Atributos comparáveis, separados por régua vertical |
+| `ListaItens` | O que era grid de card com ícone |
+| `Comparativo` | Tabela de duas colunas |
+| `Ementa` | Currículo vindo de `config/curriculos.ts` |
+| `SenaSimulador` | A demonstração interativa do simulador |
+
+O peso das seções é **orçamento apertado, não opção de gosto**: só o SENA é
+`maximo`, e só o hero e a ação final são `alto`. Se tudo virar `alto`, a
+hierarquia se perde de novo.
+
+### Contraste
+
+O token `brand-quiet` (`#7d7d87`) é o tom dos rótulos e do texto
+secundário, a 4,9:1 sobre o fundo — passa no mínimo 4,5:1 do WCAG AA para
+texto pequeno. Ele substituiu `brand-platinum/60`, que dava 3,4:1. Não use
+opacidade para "apagar" texto: escolha o token.
+
 ## Movimento
 
 `src/lib/motion.ts` guarda durações, curvas e variantes — pelo mesmo motivo
@@ -97,9 +142,19 @@ sem problema nunca paga por ele. Configure `VITE_SENTRY_DSN` em
 ```
 src/
   components/     Layout, cabeçalho, rodapé e componentes reutilizados
-  config/         site.ts (contatos) e courses.ts (preços e checkouts)
+  config/         Os dados que o site exibe (ver abaixo)
   pages/          Uma página por rota
 ```
+
+### O que fica em `src/config/`
+
+| Arquivo | O que guarda |
+|---|---|
+| `site.ts` | Contatos, redes, plataforma de pagamento, aviso legal, rotas |
+| `courses.ts` | Preços, links de checkout e os pacotes da Jornada |
+| `curriculos.ts` | As ementas das três formações, módulo e aula |
+| `sena.ts` | O conteúdo clínico da demonstração do SENA na home |
+| `admin.ts` | Quem enxerga o painel de cadastros |
 
 **Antes de editar preço, link de checkout, telefone ou e-mail, olhe em
 `src/config/`.** Esses dados ficavam repetidos pelo JSX — o WhatsApp
@@ -203,12 +258,34 @@ para outra.
 
 ## Pendências conhecidas
 
+### Precisam de decisão sua
+
+- **Revisar o conteúdo clínico do simulador** (`src/config/sena.ts`). As
+  três respostas ao paciente cético, e principalmente as três devolutivas,
+  são rascunho meu. É a única parte do site que emite julgamento clínico
+  ("isto rompe o rapport", "isto está fora de hora") e sai assinada pelo
+  instituto. O texto está separado da marcação justamente para que revisar
+  seja editar prosa.
+- **Duas ementas incompletas** (`src/config/curriculos.ts`). O Master PNL
+  anunciava 48 aulas e publica 31, numeradas de 1 a 31 sem intervalos. A
+  Hipnoterapia anuncia 44 e publica 40 — o módulo 6 tem descrição mas
+  nenhuma aula listada. As páginas agora contam a partir dos dados, então
+  passaram a anunciar o número menor: publicar a menos é melhor do que
+  prometer aula que a página não mostra. O Practitioner fecha certo.
+- **Dois combos sem checkout** (`src/config/courses.ts`). A Jornada vendia
+  "Combo P+H por R$ 597" e "Combo P+M por R$ 1.097" mandando para o
+  checkout dos cursos avulsos, a R$ 397 e R$ 997. Enquanto os produtos não
+  existirem na Kiwify, o botão dos dois leva ao WhatsApp da coordenação.
+  Criando os links, basta preencher o campo `checkout` de cada combo.
+
+### Herdadas do projeto original
+
 - **Capas dos cursos.** Seis imagens se perderam na exportação original do
   projeto: os binários passaram por uma decodificação UTF-8 que destruiu
   cerca de um quinto de cada arquivo, sem recuperação possível. Enquanto os
-  originais não voltam, `components/CourseImage.tsx` exibe uma reserva em
-  gradiente da marca. Para restaurar, basta colocar o arquivo em `public/`
-  e apontar `img` em `courses.ts` / `Home.tsx`.
+  originais não voltam, `components/CourseImage.tsx` exibe uma placa
+  técnica com o nome no lugar. Para restaurar, basta colocar o arquivo em
+  `public/` e apontar o `src` correspondente.
 - **Projeto do Firebase.** O projeto (`gen-lang-client-…`) e o banco
   (`ai-studio-…`) foram criados automaticamente pela ferramenta que gerou o
   projeto. Funcionam e contêm dados reais, mas o domínio de autenticação

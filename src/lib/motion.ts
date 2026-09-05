@@ -37,15 +37,17 @@ export const duration = {
 
 /**
  * Entrada de conteúdo ao entrar na área visível.
- * Deslocamento curto e desfoque leve: sugere profundidade sem que a
- * página pareça "montar" na frente de quem lê.
+ *
+ * Era opacidade + deslocamento + blur(4px). O desfoque saiu junto com o
+ * resto do desfoque decorativo da Direção B: numa página que se apresenta
+ * como documento, texto que entra fora de foco contradiz a premissa. Só
+ * opacidade e um deslocamento curto — o bastante para dar ordem de leitura.
  */
 export const revealUp: Variants = {
-  hidden: { opacity: 0, y: 16, filter: 'blur(4px)' },
+  hidden: { opacity: 0, y: 14 },
   visible: {
     opacity: 1,
     y: 0,
-    filter: 'blur(0px)',
     transition: { duration: duration.base, ease: ease.out },
   },
 };

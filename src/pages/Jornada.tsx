@@ -1,596 +1,381 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { ArrowRight, Award, CheckCircle2, ChevronRight, ShieldCheck, Star } from 'lucide-react';
-import type React from 'react';
+import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import Faq from '../components/Faq';
+import Secao, { SecaoIntro, SecaoTitulo } from '../components/Secao';
+import { combos, courses } from '../config/courses';
+import { routes, site, whatsappLink } from '../config/site';
+import { cn } from '../lib/utils';
 
-const Jornada = () => {
+/**
+ * A escada de valor: os quatro caminhos de compra.
+ *
+ * Dois deles — os combos de dois cursos — não têm produto próprio na
+ * plataforma de pagamento. A página anunciava o preço do pacote e mandava
+ * para o checkout de um curso avulso, por outro valor. Enquanto os links
+ * não existem, o botão desses dois leva à coordenação no WhatsApp; o aviso
+ * completo está em src/config/courses.ts.
+ */
+
+interface Nivel {
+  numero: string;
+  titulo: string;
+  composicao: string;
+  preco: string;
+  precoDe?: string;
+  parcela?: string;
+  economia?: string;
+  inclui: string[];
+  paraQuem: string;
+  resultado: string;
+  acao: string;
+  checkout?: string;
+  destaque?: boolean;
+}
+
+const niveis: Nivel[] = [
+  {
+    numero: '01',
+    titulo: 'Practitioner',
+    composicao: 'A base',
+    preco: courses.pnlPractitioner.price,
+    parcela: courses.pnlPractitioner.installment,
+    inclui: [
+      '44 aulas de fundamentos de PNL',
+      'SENA básico, 5 perfis',
+      'Certificado, nota 7/10',
+    ],
+    paraQuem: 'Nunca estudou PNL, ou tem conhecimento fragmentado.',
+    resultado: 'Competência em reprogramação mental. Sessões de R$ 100 a R$ 250.',
+    acao: 'Começar aqui',
+    checkout: courses.pnlPractitioner.checkout,
+  },
+  {
+    numero: '02',
+    titulo: combos.terapiaBreve.title,
+    composicao: combos.terapiaBreve.composicao,
+    preco: combos.terapiaBreve.price,
+    precoDe: combos.terapiaBreve.priceFrom,
+    parcela: combos.terapiaBreve.installment,
+    economia: combos.terapiaBreve.economia,
+    inclui: [
+      'Tudo do Practitioner',
+      'Hipnoterapia Clínica completa',
+      'SENA e SENA Hipno',
+      'Dois certificados',
+    ],
+    paraQuem:
+      'Quer atender rápido, com resultado imediato, sem precisar de modelagem estratégica.',
+    resultado: 'Terapia breve eficaz. Sessões de R$ 150 a R$ 350.',
+    acao: 'Quero resultado rápido',
+    checkout: combos.terapiaBreve.checkout,
+  },
+  {
+    numero: '03',
+    titulo: combos.pnlCompleto.title,
+    composicao: combos.pnlCompleto.composicao,
+    preco: combos.pnlCompleto.price,
+    precoDe: combos.pnlCompleto.priceFrom,
+    parcela: combos.pnlCompleto.installment,
+    economia: combos.pnlCompleto.economia,
+    inclui: [
+      'Tudo do Practitioner',
+      'Master PNL completo',
+      'SENA básico e SENA Avançado',
+      'Dois certificados, notas 7/10 e 8/10',
+    ],
+    paraQuem: 'Quer excelência em PNL, do técnico ao estrategista. Não quer hipnose agora.',
+    resultado: 'Referência em PNL. Sessões de R$ 300 a R$ 600.',
+    acao: 'Quero dominar PNL',
+    checkout: combos.pnlCompleto.checkout,
+  },
+  {
+    numero: '04',
+    titulo: 'Trilogia Premium',
+    composicao: 'Practitioner + Hipnoterapia + Master PNL',
+    preco: courses.trilogia.price,
+    precoDe: courses.trilogia.priceFrom,
+    parcela: courses.trilogia.installment,
+    economia: 'R$ 338,00',
+    inclui: [
+      'As três formações completas',
+      'SENA básico, Avançado e Hipno',
+      'Três certificados',
+      'Acesso vitalício a tudo',
+    ],
+    paraQuem: 'Quer a carreira inteira construída, sem escolher entre PNL e hipnose.',
+    resultado: 'Referência de mercado, com as três credenciais.',
+    acao: 'Quero dominar tudo',
+    checkout: courses.trilogia.checkout,
+    destaque: true,
+  },
+];
+
+const perguntas = [
+  {
+    q: 'Posso começar pelo Master ou pela Hipnoterapia sem o Practitioner?',
+    a: 'A avaliação de entrada no SENA é obrigatória. Se sua base de PNL for sólida, pode. Se não for, o Practitioner sistematiza o que está fragmentado.',
+  },
+  {
+    q: 'Se eu comprar o Practitioner agora, posso fazer upgrade depois?',
+    a: 'Sim. Você paga apenas a diferença do pacote, descontando o que já pagou. Exemplo: comprou o Practitioner por R$ 297 e quer o combo PNL Completo de R$ 1.097 — paga R$ 800.',
+  },
+  {
+    q: 'O combo PNL Completo não inclui hipnose. Perco algo?',
+    a: 'Não, é escolha estratégica. O Master dá uma profundidade em PNL que a Hipnoterapia não dá. Você pode somar a Hipnoterapia depois, por upgrade.',
+  },
+  {
+    q: 'A Trilogia vale a pena, comparada aos combos separados?',
+    a: 'Se você quer os três, sim: são R$ 338 de economia. Se quer só PNL, o combo PNL Completo é melhor. Se quer só terapia breve, o combo Terapia Breve é melhor.',
+  },
+];
+
+export default function Jornada() {
   return (
-    <div
-      className="min-h-screen bg-brand-dark text-brand-platinum font-sans selection:bg-brand-accent selection:text-brand-dark"
-      style={{ '--color-brand-accent': '#F9814D' } as React.CSSProperties}
-    >
+    <>
       <Helmet>
-        <link rel="canonical" href="https://institutobrunosena.com.br/jornada" />
-        <title>Jornada do Herói | Instituto Bruno Sena</title>
+        <link rel="canonical" href={`${site.url}${routes.jornada}`} />
+        <title>Jornada do Herói — pacotes de formação | Instituto Bruno Sena</title>
         <meta
           name="description"
-          content="Descubra o seu propósito e transforme sua vida com a Jornada do Herói. Um treinamento imersivo de autoconhecimento e desenvolvimento pessoal."
+          content="Os quatro caminhos de formação do Instituto Bruno Sena, do Practitioner à Trilogia completa. Compare preço, carga horária e certificados."
         />
         <meta
-          name="keywords"
-          content="formação completa PNL hipnoterapia, trilogia desenvolvimento humano, Jornada do Herói, Autoconhecimento, Desenvolvimento Pessoal, Instituto Bruno Sena"
+          property="og:title"
+          content="Jornada do Herói — pacotes de formação | Instituto Bruno Sena"
         />
-        <meta property="og:title" content="Jornada do Herói | Instituto Bruno Sena" />
         <meta
           property="og:description"
-          content="Descubra o seu propósito e transforme sua vida com a Jornada do Herói."
+          content="Do Practitioner à Trilogia completa. Compare preço, carga horária e certificados."
         />
-        <meta property="og:image" content="https://institutobrunosena.com.br/mockuppnl.webp" />
-        <meta property="og:url" content="https://institutobrunosena.com.br/jornada" />
-        <meta property="og:type" content="course" />
+        <meta property="og:image" content={`${site.url}/og-image.png`} />
+        <meta property="og:url" content={`${site.url}${routes.jornada}`} />
+        <meta property="og:type" content="article" />
         <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-accent/20 rounded-full blur-[120px] -z-10 opacity-50" />
-
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-brand-accent/30 text-brand-accent text-sm font-medium mb-8">
-            <Award size={16} />
-            <span>Escada de Valor IBSDH</span>
+      <main>
+        <section className="grade border-b border-white/8 pt-32 pb-16 md:pt-40 md:pb-20">
+          <div className="mx-auto max-w-7xl px-6">
+            <p className="rotulo-accent mb-6">Escada de valor IBSDH</p>
+            <h1 className="max-w-3xl font-display text-[38px] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl md:text-[56px]">
+              Escolha o seu nível de domínio.
+            </h1>
+            <p className="mt-6 max-w-2xl text-[17px] leading-relaxed md:text-lg">
+              Da base à maestria. Cada degrau constrói o próximo, e o SENA está em todos.
+              Certificação por competência e acesso vitalício em qualquer caminho.
+            </p>
           </div>
+        </section>
 
-          <h1 className="font-display text-5xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
-            Escolha Seu Nível de Domínio
-          </h1>
+        <Secao numero="01" rotulo="Níveis" id="niveis">
+          <SecaoTitulo>Os quatro caminhos</SecaoTitulo>
+          <SecaoIntro>
+            A diferença entre eles não é quanto conteúdo você recebe, e sim que tipo de
+            profissional você sai sendo.
+          </SecaoIntro>
 
-          <p className="text-xl md:text-2xl text-brand-platinum/90 mb-8 leading-relaxed font-light">
-            Da base à maestria. Cada degrau constrói o próximo.
-          </p>
-
-          <p className="text-lg text-brand-platinum/70 mb-12 max-w-3xl mx-auto">
-            Practitioner → Combo → Trilogia. SENA em todos. Certificação por competência. Acesso
-            vitalício.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
-            <a
-              href="#niveis"
-              className="group relative inline-flex items-center justify-center gap-3 bg-brand-accent text-brand-dark px-8 py-4 rounded-full font-bold text-lg transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(242,125,38,0.4)]"
-            >
-              Ver os Níveis
-              <ChevronRight className="group-hover:translate-x-1 transition-transform" />
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Os Níveis (Cards comparativos) */}
-      <section id="niveis" className="py-24 bg-white/5 border-y border-white/10">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-16 text-center">
-            Os Níveis de Domínio
-          </h2>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* NÍVEL 1: PRACTITIONER */}
-            <div className="bg-brand-dark p-8 rounded-[32px] border border-white/10 flex flex-col h-full relative">
-              <div className="absolute -top-4 -left-4 w-10 h-10 bg-brand-dark border border-white/20 rounded-full flex items-center justify-center text-xl">
-                🥉
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Nível 1: Practitioner</h3>
-              <p className="text-brand-platinum/60 text-sm mb-6">A Base</p>
-
-              <div className="mb-6">
-                <div className="text-3xl font-bold text-white mb-1">R$ 297</div>
-                <div className="text-brand-platinum/60 text-sm">ou 12x R$ 25</div>
-              </div>
-
-              <div className="mb-6 flex-1">
-                <p className="font-bold text-white mb-3 text-sm">O que inclui:</p>
-                <ul className="space-y-2 text-sm text-brand-platinum/80 mb-6">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" /> 44
-                    aulas de PNL fundamentos
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    SENA básico (5 perfis)
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    Certificado (nota 7/10)
-                  </li>
-                </ul>
-
-                <p className="text-sm text-brand-platinum/80 mb-4">
-                  <strong className="text-white">Para quem:</strong> Nunca estudou PNL ou tem
-                  conhecimento fragmentado.
-                </p>
-                <p className="text-sm text-brand-platinum/80">
-                  <strong className="text-white">Resultado:</strong> Competência em
-                  reprogramação mental. Sessões de R$100-250.
-                </p>
-              </div>
-
-              <a
-                href="https://pay.kiwify.com.br/DkL4e3J"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full block text-center py-4 rounded-full border border-white/20 text-white font-bold hover:bg-white/5 transition-colors"
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            {niveis.map((nivel) => (
+              <article
+                key={nivel.numero}
+                className={cn('flex flex-col p-7', nivel.destaque ? 'bloco-accent' : 'bloco')}
               >
-                Começar aqui
-              </a>
-            </div>
-
-            {/* NÍVEL 2A: TERAPIA BREVE */}
-            <div className="bg-brand-dark p-8 rounded-[32px] border border-white/10 flex flex-col h-full relative">
-              <div className="absolute -top-4 -left-4 w-10 h-10 bg-brand-dark border border-white/20 rounded-full flex items-center justify-center text-xl">
-                🥈
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Nível 2A: Terapia Breve</h3>
-              <p className="text-brand-platinum/60 text-sm mb-6">P+H</p>
-
-              <div className="mb-6">
-                <div className="text-brand-platinum/70 line-through text-sm mb-1">R$ 694</div>
-                <div className="text-3xl font-bold text-white mb-1">R$ 597</div>
-                <div className="text-brand-platinum/60 text-sm mb-2">ou 12x R$ 50</div>
-                <div className="inline-block px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">
-                  Economia de R$ 97
+                <div className="mb-5 flex items-baseline justify-between gap-4">
+                  <span className="dado text-[13px] text-brand-quiet">{nivel.numero}</span>
+                  <span className="rotulo">{nivel.composicao}</span>
                 </div>
-              </div>
 
-              <div className="mb-6 flex-1">
-                <p className="font-bold text-white mb-3 text-sm">O que inclui:</p>
-                <ul className="space-y-2 text-sm text-brand-platinum/80 mb-6">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    Tudo do Practitioner
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    Hipnoterapia Clínica completa
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    SENA + SENA Hipno
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    Dois certificados
-                  </li>
-                </ul>
+                <h3 className="font-display text-2xl font-semibold text-white">
+                  {nivel.titulo}
+                </h3>
 
-                <p className="text-sm text-brand-platinum/80 mb-4">
-                  <strong className="text-white">Para quem:</strong> Quer atender rápido,
-                  resultado imediato, não precisa de modelagem estratégica.
-                </p>
-                <p className="text-sm text-brand-platinum/80">
-                  <strong className="text-white">Resultado:</strong> Terapia breve eficaz.
-                  Sessões de R$150-350.
-                </p>
-              </div>
-
-              <a
-                href="https://pay.kiwify.com.br/A5i1o7D"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full block text-center py-4 rounded-full border border-white/20 text-white font-bold hover:bg-white/5 transition-colors"
-              >
-                Quero resultado rápido
-              </a>
-            </div>
-
-            {/* NÍVEL 2B: PNL COMPLETO */}
-            <div className="bg-brand-dark p-8 rounded-[32px] border border-brand-accent/50 shadow-[0_0_30px_rgba(242,125,38,0.15)] flex flex-col h-full relative transform md:-translate-y-4">
-              <div className="absolute -top-4 -left-4 w-10 h-10 bg-brand-dark border border-brand-accent/50 rounded-full flex items-center justify-center text-xl">
-                🥇
-              </div>
-              <div className="absolute -top-4 right-4 bg-brand-accent text-brand-dark text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                <Star size={12} fill="currentColor" /> POPULAR
-              </div>
-
-              <h3 className="text-xl font-bold text-white mb-2">Combo A: PNL Completo</h3>
-              <p className="text-brand-platinum/60 text-sm mb-6">P+M</p>
-
-              <div className="mb-6">
-                <div className="text-brand-platinum/70 line-through text-sm mb-1">R$ 1.294</div>
-                <div className="text-3xl font-bold text-brand-accent mb-1">R$ 1.097</div>
-                <div className="text-brand-platinum/60 text-sm mb-2">ou 12x R$ 91</div>
-                <div className="inline-block px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">
-                  Economia de R$ 197
+                <div className="mt-5 border-y border-white/10 py-5">
+                  {nivel.precoDe && (
+                    <p className="text-[13.5px] text-brand-quiet line-through">
+                      De {nivel.precoDe}
+                    </p>
+                  )}
+                  <p className="mt-1 font-display text-[30px] leading-none font-semibold text-white">
+                    {nivel.preco}
+                  </p>
+                  <p className="mt-2 text-[13.5px] text-brand-accent">
+                    {nivel.parcela && <>12x {nivel.parcela}</>}
+                    {nivel.economia && <> · economia de {nivel.economia}</>}
+                  </p>
                 </div>
-              </div>
 
-              <div className="mb-6 flex-1">
-                <p className="font-bold text-white mb-3 text-sm">O que inclui:</p>
-                <ul className="space-y-2 text-sm text-brand-platinum/80 mb-6">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    Tudo do Practitioner
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    Master PNL completo (48 aulas)
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    SENA básico + SENA Avançado
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    Dois certificados (7/10 e 8/10)
-                  </li>
+                <p className="rotulo mt-5 mb-3">Inclui</p>
+                <ul className="mb-5">
+                  {nivel.inclui.map((item) => (
+                    <li key={item} className="border-b border-white/8 py-2.5 text-[13.5px]">
+                      {item}
+                    </li>
+                  ))}
                 </ul>
 
-                <p className="text-sm text-brand-platinum/80 mb-4">
-                  <strong className="text-white">Para quem:</strong> Quer excelência em PNL, do
-                  técnico ao estrategista. Não quer hipnose agora.
-                </p>
-                <p className="text-sm text-brand-platinum/80">
-                  <strong className="text-white">Resultado:</strong> Referência em PNL. Sessões
-                  de R$300-600+.
-                </p>
-              </div>
+                <dl className="mb-6 space-y-3 text-[13.5px] leading-relaxed">
+                  <div>
+                    <dt className="rotulo mb-1">Para quem</dt>
+                    <dd>{nivel.paraQuem}</dd>
+                  </div>
+                  <div>
+                    <dt className="rotulo mb-1">Resultado</dt>
+                    <dd>{nivel.resultado}</dd>
+                  </div>
+                </dl>
 
-              <a
-                href="https://pay.kiwify.com.br/T8wW0tA"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full block text-center py-4 rounded-full bg-brand-accent text-brand-dark font-bold hover:scale-105 transition-transform"
-              >
-                Quero dominar PNL
-              </a>
-            </div>
-
-            {/* NÍVEL 3: TRILOGIA PREMIUM */}
-            <div className="bg-gradient-to-b from-brand-dark to-brand-accent/10 p-8 rounded-[32px] border border-brand-accent/30 flex flex-col h-full relative">
-              <div className="absolute -top-4 -left-4 w-10 h-10 bg-brand-dark border border-brand-accent/30 rounded-full flex items-center justify-center text-xl">
-                💎
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Trilogia Premium</h3>
-              <p className="text-brand-platinum/60 text-sm mb-6">P+M+H</p>
-
-              <div className="mb-6">
-                <div className="text-brand-platinum/70 line-through text-sm mb-1">R$ 1.691</div>
-                <div className="text-3xl font-bold text-white mb-1">R$ 1.353</div>
-                <div className="text-brand-platinum/60 text-sm mb-2">ou 12x R$ 113</div>
-                <div className="inline-block px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-bold">
-                  Economia de R$ 338 (20% off)
+                <div className="mt-auto">
+                  {nivel.checkout ? (
+                    <a
+                      href={nivel.checkout}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn('w-full', nivel.destaque ? 'btn-primary' : 'btn-outline')}
+                    >
+                      {nivel.acao}
+                    </a>
+                  ) : (
+                    // Este pacote ainda não tem produto próprio na plataforma
+                    // de pagamento. Mandar para o checkout de um curso avulso
+                    // cobraria o valor errado — ver o aviso em courses.ts.
+                    <>
+                      <a
+                        href={whatsappLink(
+                          `Olá! Tenho interesse no ${nivel.titulo} (${nivel.composicao}), por ${nivel.preco}. Como faço para fechar?`,
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-outline w-full"
+                      >
+                        {nivel.acao}
+                      </a>
+                      <p className="rotulo mt-3 text-center normal-case">
+                        Matrícula pela coordenação
+                      </p>
+                    </>
+                  )}
                 </div>
-              </div>
-
-              <div className="mb-6 flex-1">
-                <p className="font-bold text-white mb-3 text-sm">O que inclui:</p>
-                <ul className="space-y-2 text-sm text-brand-platinum/80 mb-6">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    Tudo. Practitioner + Master + Hipnoterapia
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" /> 3
-                    certificados
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    SENA básico + Avançado + Hipno
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 size={16} className="text-brand-accent shrink-0 mt-0.5" />{' '}
-                    <strong className="text-white">Bônus:</strong> Mentoria 6m + E-book + Selo
-                    Elite
-                  </li>
-                </ul>
-
-                <p className="text-sm text-brand-platinum/80 mb-4">
-                  <strong className="text-white">Para quem:</strong> Quer carreira séria,
-                  referência de mercado, domínio total da transformação mental.
-                </p>
-                <p className="text-sm text-brand-platinum/80">
-                  <strong className="text-white">Resultado:</strong> Bilíngue da transformação.
-                  Sessões de R$400-800+. Formação de outros profissionais.
-                </p>
-              </div>
-
-              <a
-                href="https://pay.kiwify.com.br/9y9r0kY"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full block text-center py-4 rounded-full border border-brand-accent text-brand-accent font-bold hover:bg-brand-accent/10 transition-colors"
-              >
-                Quero a jornada completa
-              </a>
-            </div>
+              </article>
+            ))}
           </div>
-        </div>
-      </section>
+        </Secao>
 
-      {/* Comparativo Visual */}
-      <section className="py-24">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
-              Comparativo Visual
-            </h2>
-          </div>
+        <Secao numero="02" rotulo="Comparação">
+          <SecaoTitulo>Lado a lado</SecaoTitulo>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[800px] bg-brand-dark rounded-[32px] overflow-hidden border border-white/10">
+          <div className="mt-10 overflow-x-auto">
+            <table className="w-full min-w-[640px] border-collapse text-left">
+              <caption className="sr-only">
+                Comparação entre os quatro caminhos de formação
+              </caption>
               <thead>
-                <tr className="border-b border-white/10 bg-black/20">
-                  <th className="p-6 w-1/5"></th>
-                  <th className="p-6 w-1/5 border-l border-white/10">
-                    <div className="text-lg font-bold text-white mb-1">Practitioner</div>
+                <tr className="border-b border-white/12">
+                  <th scope="col" className="rotulo py-3 pr-4 font-normal">
+                    <span className="sr-only">Critério</span>
                   </th>
-                  <th className="p-6 w-1/5 border-l border-white/10">
-                    <div className="text-lg font-bold text-white mb-1">Combo B (P+H)</div>
-                  </th>
-                  <th className="p-6 w-1/5 border-l border-white/10 bg-brand-accent/5">
-                    <div className="text-lg font-bold text-brand-accent mb-1 flex items-center gap-2">
-                      Combo A (P+M) <Star size={14} fill="currentColor" />
-                    </div>
-                  </th>
-                  <th className="p-6 w-1/5 border-l border-white/10 bg-gradient-to-b from-brand-accent/10 to-transparent">
-                    <div className="text-lg font-bold text-white mb-1">Trilogia</div>
-                  </th>
+                  {niveis.map((nivel) => (
+                    <th
+                      key={nivel.numero}
+                      scope="col"
+                      className={cn(
+                        'py-3 pr-4 text-[14px] font-semibold',
+                        nivel.destaque ? 'text-brand-accent' : 'text-white',
+                      )}
+                    >
+                      {nivel.titulo}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="text-brand-platinum">
-                <tr className="border-b border-white/5">
-                  <td className="p-6 font-medium text-white">Preço</td>
-                  <td className="p-6 border-l border-white/10 font-bold">R$ 297</td>
-                  <td className="p-6 border-l border-white/10 font-bold">R$ 597</td>
-                  <td className="p-6 border-l border-white/10 bg-brand-accent/5 font-bold text-brand-accent">
-                    R$ 1.097
-                  </td>
-                  <td className="p-6 border-l border-white/10 bg-gradient-to-b from-brand-accent/5 to-transparent font-bold">
-                    R$ 1.353
-                  </td>
-                </tr>
-                <tr className="border-b border-white/5">
-                  <td className="p-6 font-medium text-white">Economia</td>
-                  <td className="p-6 border-l border-white/10 text-brand-platinum/50">—</td>
-                  <td className="p-6 border-l border-white/10 text-green-400 font-medium">
-                    R$ 97
-                  </td>
-                  <td className="p-6 border-l border-white/10 bg-brand-accent/5 text-green-400 font-medium">
-                    R$ 197
-                  </td>
-                  <td className="p-6 border-l border-white/10 bg-gradient-to-b from-brand-accent/5 to-transparent text-green-400 font-medium">
-                    R$ 338
-                  </td>
-                </tr>
-                <tr className="border-b border-white/5">
-                  <td className="p-6 font-medium text-white">Horas</td>
-                  <td className="p-6 border-l border-white/10">100h</td>
-                  <td className="p-6 border-l border-white/10">200h</td>
-                  <td className="p-6 border-l border-white/10 bg-brand-accent/5">220h</td>
-                  <td className="p-6 border-l border-white/10 bg-gradient-to-b from-brand-accent/5 to-transparent">
-                    320h
-                  </td>
-                </tr>
-                <tr className="border-b border-white/5">
-                  <td className="p-6 font-medium text-white">SENAs</td>
-                  <td className="p-6 border-l border-white/10">1</td>
-                  <td className="p-6 border-l border-white/10">2</td>
-                  <td className="p-6 border-l border-white/10 bg-brand-accent/5">2</td>
-                  <td className="p-6 border-l border-white/10 bg-gradient-to-b from-brand-accent/5 to-transparent">
-                    3
-                  </td>
-                </tr>
-                <tr className="border-b border-white/5">
-                  <td className="p-6 font-medium text-white">Certificados</td>
-                  <td className="p-6 border-l border-white/10">1</td>
-                  <td className="p-6 border-l border-white/10">2</td>
-                  <td className="p-6 border-l border-white/10 bg-brand-accent/5">2</td>
-                  <td className="p-6 border-l border-white/10 bg-gradient-to-b from-brand-accent/5 to-transparent">
-                    3
-                  </td>
-                </tr>
-                <tr>
-                  <td className="p-6 font-medium text-white">Nível final</td>
-                  <td className="p-6 border-l border-white/10">Competente</td>
-                  <td className="p-6 border-l border-white/10">Terapeuta breve</td>
-                  <td className="p-6 border-l border-white/10 bg-brand-accent/5 font-medium text-brand-accent">
-                    Estrategista PNL
-                  </td>
-                  <td className="p-6 border-l border-white/10 bg-gradient-to-b from-brand-accent/5 to-transparent font-bold text-white">
-                    Referência de mercado
-                  </td>
-                </tr>
+              <tbody>
+                {[
+                  { rotulo: 'Preço', valores: niveis.map((n) => n.preco) },
+                  { rotulo: 'Economia', valores: niveis.map((n) => n.economia ?? '—') },
+                  { rotulo: 'Carga horária', valores: ['100h', '200h', '220h', '320h'] },
+                  { rotulo: 'Simuladores', valores: ['1', '2', '2', '3'] },
+                  { rotulo: 'Certificados', valores: ['1', '2', '2', '3'] },
+                  {
+                    rotulo: 'Nível final',
+                    valores: [
+                      'Competente',
+                      'Terapeuta breve',
+                      'Estrategista em PNL',
+                      'Referência de mercado',
+                    ],
+                  },
+                ].map((linha) => (
+                  <tr key={linha.rotulo} className="border-b border-white/8 align-baseline">
+                    <th scope="row" className="rotulo py-3.5 pr-4 font-normal">
+                      {linha.rotulo}
+                    </th>
+                    {linha.valores.map((valor, i) => (
+                      <td
+                        key={`${linha.rotulo}-${niveis[i].numero}`}
+                        className={cn(
+                          'py-3.5 pr-4 text-[13.5px] leading-snug',
+                          niveis[i].destaque && 'text-white',
+                        )}
+                      >
+                        {valor}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-        </div>
-      </section>
+        </Secao>
 
-      {/* Recomendação do Instituto */}
-      <section className="py-24 bg-white/5 border-y border-white/10">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
-              Recomendação do Instituto
-            </h2>
-            <p className="text-brand-platinum text-lg">Qual é o seu momento atual?</p>
-          </div>
+        <Secao numero="03" rotulo="Recomendação">
+          <SecaoTitulo>Qual é o seu momento?</SecaoTitulo>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-brand-dark p-8 rounded-3xl border border-white/10">
-              <h3 className="text-xl font-bold text-white mb-2">Iniciante?</h3>
-              <div className="flex items-center gap-2 text-brand-accent font-medium mb-4">
-                <ArrowRight size={16} /> Practitioner (R$ 297)
-              </div>
-            </div>
+          <ol className="mt-10 border-t border-white/12">
+            {[
+              { situacao: 'Estou começando do zero', indicacao: niveis[0] },
+              { situacao: 'Já atendo e quero resultado mais rápido', indicacao: niveis[1] },
+              { situacao: 'Quero ser referência em PNL', indicacao: niveis[2] },
+              { situacao: 'Quero a carreira inteira, sem escolher', indicacao: niveis[3] },
+            ].map(({ situacao, indicacao }) => (
+              <li
+                key={situacao}
+                className="grid gap-x-6 gap-y-1 border-b border-white/8 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline"
+              >
+                <span className="text-[15px] text-white">{situacao}</span>
+                <span className="text-[13.5px]">
+                  <span className="text-brand-accent">{indicacao.titulo}</span>
+                  <span className="dado ml-3 text-brand-quiet">{indicacao.preco}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
 
-            <div className="bg-brand-dark p-8 rounded-3xl border border-white/10">
-              <h3 className="text-xl font-bold text-white mb-2">
-                Já atende, quer resultado rápido?
-              </h3>
-              <div className="flex items-center gap-2 text-brand-accent font-medium mb-4">
-                <ArrowRight size={16} /> Combo B Terapia Breve (R$ 597)
-              </div>
-            </div>
-
-            <div className="bg-brand-dark p-8 rounded-3xl border border-brand-accent/50 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-brand-accent text-brand-dark text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-1">
-                <Star size={12} fill="currentColor" /> POPULAR
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">
-                Quer excelência em PNL, referência?
-              </h3>
-              <div className="flex items-center gap-2 text-brand-accent font-medium mb-4 flex-wrap">
-                <ArrowRight size={16} /> Combo A PNL Completo (R$ 1.097)
-              </div>
-            </div>
-
-            <div className="bg-brand-accent/10 p-8 rounded-3xl border border-brand-accent/30 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-brand-accent text-brand-dark text-xs font-bold px-3 py-1 rounded-bl-lg">
-                ELITE
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Quer tudo, carreira máxima?</h3>
-              <div className="flex items-center gap-2 text-brand-accent font-medium mb-4">
-                <ArrowRight size={16} /> Trilogia Premium (R$ 1.353)
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Garantia em todos os níveis */}
-      <section className="py-24 bg-brand-accent text-brand-dark relative overflow-hidden">
-        <div className="absolute inset-0 textura-carbono opacity-5 mix-blend-overlay" />
-        <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
-          <ShieldCheck className="mx-auto mb-6" size={64} />
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
-            Garantia em Todos os Níveis
-          </h2>
-          <p className="text-xl opacity-90 mb-8 font-medium max-w-2xl mx-auto">
-            7 dias de garantia incondicional em qualquer nível. Acesse, teste o SENA, decida se
-            é para você. Risco zero.
+          <p className="mt-8 max-w-2xl text-[14px] leading-relaxed">
+            Em qualquer nível: 7 dias de garantia incondicional. Acesse, teste o SENA e decida
+            se é para você.
           </p>
-        </div>
-      </section>
 
-      {/* FAQ da Escada */}
-      <section className="py-24 bg-brand-dark">
-        <div className="max-w-3xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
-              Perguntas Frequentes
-            </h2>
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+            <Link to={routes.pnlPractitioner} className="btn-outline">
+              Ver o Practitioner em detalhe
+            </Link>
+            <Link to={routes.home} className="btn-outline">
+              Voltar às formações
+            </Link>
           </div>
+        </Secao>
 
-          <div className="space-y-4">
-            <Faq
-              items={
-                [
-                  {
-                    q: 'Posso começar pelo Master ou Hipnoterapia sem Practitioner?',
-                    a: 'Avaliação SENA obrigatória. Se sua base de PNL for sólida, pode. Se não for, Practitioner sistematiza.',
-                  },
-                  {
-                    q: 'Se comprar Practitioner agora, posso upgradar depois?',
-                    a: 'Sim. Você paga apenas a diferença do combo (menos o que já pagou). Ex: comprou P (R$ 297), quer P+M (R$ 1.097), paga R$ 800.',
-                  },
-                  {
-                    q: 'Combo A (P+M) não inclui hipnose. Perde algo?',
-                    a: 'Não. É escolha estratégica. Master dá profundidade em PNL que Hipnoterapia não dá. Você pode fazer Hipno depois (upgrade).',
-                  },
-                  {
-                    q: 'Trilogia vale a pena vs. combos separados?',
-                    a: 'Se quer os três, sim. Economia de R$ 338 + bônus exclusivos. Se só quer PNL, Combo A é melhor. Se só quer terapia breve, Combo B é melhor.',
-                  },
-                ] as const
-              }
-            />
+        <Secao numero="04" rotulo="Perguntas">
+          <SecaoTitulo>Dúvidas frequentes</SecaoTitulo>
+          <div className="mt-10">
+            <Faq items={perguntas} />
           </div>
-        </div>
-      </section>
+        </Secao>
 
-      {/* CTAs Finais */}
-      <section className="py-24 bg-white/5 border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-4">
-              Qual o seu próximo passo?
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="bg-brand-dark p-8 rounded-[32px] border border-white/10 text-center flex flex-col h-full">
-              <h3 className="text-xl font-bold text-white mb-2">Practitioner</h3>
-              <div className="text-2xl font-bold text-white mb-8">R$ 297</div>
-              <div className="mt-auto">
-                <a
-                  href="https://pay.kiwify.com.br/DkL4e3J"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full py-4 rounded-full border border-white/20 text-white font-bold hover:bg-white/5 transition-colors"
-                >
-                  Começar minha jornada
-                </a>
-              </div>
-            </div>
-
-            <div className="bg-brand-dark p-8 rounded-[32px] border border-white/10 text-center flex flex-col h-full">
-              <h3 className="text-xl font-bold text-white mb-2">Combo B (Terapia Breve)</h3>
-              <div className="text-2xl font-bold text-white mb-8">R$ 597</div>
-              <div className="mt-auto">
-                <a
-                  href="https://pay.kiwify.com.br/A5i1o7D"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full py-4 rounded-full border border-white/20 text-white font-bold hover:bg-white/5 transition-colors"
-                >
-                  Quero resultado rápido
-                </a>
-              </div>
-            </div>
-
-            <div className="bg-brand-dark p-8 rounded-[32px] border border-brand-accent/50 text-center flex flex-col h-full relative">
-              <div className="absolute -top-3 right-1/2 translate-x-1/2 bg-brand-accent text-brand-dark text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 whitespace-nowrap">
-                <Star size={12} fill="currentColor" /> POPULAR
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Combo A (PNL Completo)</h3>
-              <div className="text-2xl font-bold text-brand-accent mb-8">R$ 1.097</div>
-              <div className="mt-auto">
-                <a
-                  href="https://pay.kiwify.com.br/T8wW0tA"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full py-4 rounded-full bg-brand-accent text-brand-dark font-bold hover:scale-105 transition-transform"
-                >
-                  Quero excelência em PNL
-                </a>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-b from-brand-dark to-brand-accent/10 p-8 rounded-[32px] border border-brand-accent/30 text-center flex flex-col h-full">
-              <h3 className="text-xl font-bold text-white mb-2">Trilogia Premium</h3>
-              <div className="text-2xl font-bold text-white mb-8">R$ 1.353</div>
-              <div className="mt-auto">
-                <a
-                  href="https://pay.kiwify.com.br/9y9r0kY"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full py-4 rounded-full border border-brand-accent text-brand-accent font-bold hover:bg-brand-accent/10 transition-colors"
-                >
-                  Quero dominar tudo
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Course Reviews */}
-      <section className="bg-brand-dark border-t border-white/5">
-        <CourseReviews courseId="jornada" />
-      </section>
-    </div>
+        <Secao numero="05" rotulo="Avaliações">
+          <CourseReviews courseId={courses.trilogia.slug} />
+        </Secao>
+      </main>
+    </>
   );
-};
-
-export default Jornada;
+}

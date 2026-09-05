@@ -8,11 +8,17 @@ import { cn } from '../lib/utils';
  * binários por uma decodificação UTF-8, que trocou a assinatura PNG e cerca
  * de um quinto de cada arquivo pelo caractere de substituição — dano
  * irreversível. Enquanto os originais não voltam, uma imagem ausente ou
- * quebrada vira um bloco em gradiente da marca com o nome do curso, em vez
- * do ícone de imagem quebrada do navegador.
+ * quebrada vira uma reserva com o nome do curso, em vez do ícone de imagem
+ * quebrada do navegador.
  *
  * Serve também como proteção permanente: se um arquivo sumir do servidor,
  * o layout continua íntegro.
+ *
+ * A reserva era um bloco em gradiente com o nome em tipo grande, e por isso
+ * chamava mais atenção que uma foto de verdade chamaria — uma ausência
+ * ganhando destaque. Na Direção B ela é uma placa técnica: hachura, régua e
+ * rótulo em mono. Fica claro que falta um arquivo, sem competir com o
+ * conteúdo ao redor.
  */
 export default function CourseImage({
   src,
@@ -23,7 +29,6 @@ export default function CourseImage({
   width,
   height,
   loading = 'lazy',
-  accentClassName = 'from-brand-accent/25 to-brand-dark',
 }: {
   src?: string;
   alt: string;
@@ -34,7 +39,6 @@ export default function CourseImage({
   width?: number;
   height?: number;
   loading?: 'lazy' | 'eager';
-  accentClassName?: string;
 }) {
   const [failed, setFailed] = useState(!src);
   const [loaded, setLoaded] = useState(false);
@@ -55,12 +59,12 @@ export default function CourseImage({
         role="img"
         aria-label={alt}
         className={cn(
-          'w-full h-full flex items-center justify-center bg-gradient-to-br p-6 text-center',
-          accentClassName,
+          'hachura flex h-full w-full flex-col items-start justify-end gap-2 border border-white/10 p-5',
           className,
         )}
       >
-        <span className="font-display font-bold text-white/90 text-lg md:text-xl leading-tight drop-shadow">
+        <span className="rotulo">Imagem pendente</span>
+        <span className="text-[15px] leading-tight font-semibold text-white/85">
           {title ?? alt}
         </span>
       </div>
@@ -68,16 +72,15 @@ export default function CourseImage({
   }
 
   return (
-    // A imagem entra sobre um fundo do tom da marca em vez de aparecer
+    // A imagem entra sobre uma reserva do tom da marca em vez de aparecer
     // de uma vez sobre o vazio. Com lazy loading, o "pipocar" acontece
     // no meio da rolagem, bem no campo de visão de quem lê.
-    <div className={cn('relative w-full h-full overflow-hidden', className)}>
+    <div className={cn('relative h-full w-full overflow-hidden', className)}>
       <div
         aria-hidden="true"
         className={cn(
-          'absolute inset-0 bg-gradient-to-br transition-opacity duration-500',
-          accentClassName,
-          loaded ? 'opacity-0' : 'opacity-100 animate-pulse',
+          'hachura absolute inset-0 transition-opacity duration-500',
+          loaded ? 'opacity-0' : 'opacity-100',
         )}
       />
       <img

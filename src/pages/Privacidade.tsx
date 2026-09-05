@@ -21,16 +21,18 @@ export default function Privacidade() {
       </Helmet>
 
       <article className="max-w-3xl mx-auto px-6 pt-36 pb-24 prose-institucional">
-        <h1 className="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+        <h1 className="mb-4 font-display text-4xl leading-tight font-semibold tracking-tight text-white md:text-5xl">
           Política de Privacidade
         </h1>
-        <p className="text-brand-platinum/70 mb-12">
+        <p className="rotulo mb-12">
           Última atualização: {new Date().toLocaleDateString('pt-BR')}
         </p>
 
-        <div className="space-y-8 text-brand-platinum/85 leading-relaxed">
+        <div className="space-y-8 leading-relaxed">
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">1. Quem somos</h2>
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
+              1. Quem somos
+            </h2>
             <p>
               O {site.legalName} ({site.shortName}) é responsável pelo tratamento dos dados
               pessoais coletados neste site. Para qualquer questão relativa a privacidade,
@@ -46,7 +48,7 @@ export default function Privacidade() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
               2. Que dados coletamos
             </h2>
             <ul className="list-disc pl-6 space-y-2">
@@ -67,7 +69,7 @@ export default function Privacidade() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
               3. Para que usamos
             </h2>
             <p>
@@ -79,7 +81,7 @@ export default function Privacidade() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
               4. Com quem compartilhamos
             </h2>
             <p>
@@ -90,7 +92,7 @@ export default function Privacidade() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
               5. Seus direitos
             </h2>
             <p>
@@ -109,7 +111,7 @@ export default function Privacidade() {
           </section>
 
           <section>
-            <h2 className="font-display text-2xl font-bold text-white mb-3">
+            <h2 className="mb-3 font-display text-xl font-semibold text-white">
               6. Retenção e segurança
             </h2>
             <p>

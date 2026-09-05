@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { courses } from '../config/courses';
-import { routes } from '../config/site';
+import { routes, site } from '../config/site';
 import { collapse, duration, ease } from '../lib/motion';
 import { cn } from '../lib/utils';
 
@@ -52,21 +52,22 @@ export default function SiteHeader() {
   }, [isMenuOpen]);
 
   return (
+    // O cabeçalho não é mais transparente sobre o hero: a Direção B trata a
+    // navegação como cabeçalho de documento, sempre presente e sempre com a
+    // régua embaixo. Perdeu o backdrop-blur junto com o resto do desfoque.
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b',
-        isScrolled || !isHome
-          ? 'bg-brand-dark/90 backdrop-blur-md border-white/10 py-3'
-          : 'bg-transparent border-transparent py-5',
+        'fixed top-0 right-0 left-0 z-50 border-b border-white/12 bg-brand-dark transition-[padding] duration-200',
+        isScrolled || !isHome ? 'py-3' : 'py-4',
       )}
     >
       <nav
         aria-label="Navegação principal"
-        className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-6"
+        className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6"
       >
         <Link
           to={routes.home}
-          className="flex items-center gap-2 shrink-0 rounded-lg"
+          className="flex shrink-0 items-center gap-3"
           aria-label="Instituto Bruno Sena — página inicial"
         >
           <img
@@ -74,27 +75,25 @@ export default function SiteHeader() {
             alt=""
             width={48}
             height={48}
-            className="w-11 h-11 object-contain"
+            className="h-10 w-10 object-contain"
           />
-          <span className="flex flex-col">
-            <span className="font-display font-bold text-base leading-none tracking-tight text-white">
-              INSTITUTO
-            </span>
-            <span className="font-display font-light text-[10px] tracking-[0.2em] text-brand-accent">
-              BRUNO SENA
-            </span>
+          <span className="text-[14.5px] leading-none font-bold tracking-tight text-white">
+            INSTITUTO BRUNO SENA
+          </span>
+          <span className="rotulo hidden border-l border-white/15 pl-3 lg:block">
+            {site.shortName}
           </span>
         </Link>
 
-        <ul className="hidden lg:flex items-center gap-6 text-sm font-medium text-brand-platinum">
+        <ul className="hidden items-center gap-6 text-[13.5px] text-brand-platinum lg:flex">
           {courseLinks.map((link) => (
             <li key={link.to}>
               <Link
                 to={link.to}
                 aria-current={pathname === link.to ? 'page' : undefined}
                 className={cn(
-                  'transition-colors hover:text-brand-accent',
-                  pathname === link.to && 'text-brand-accent font-bold',
+                  'border-b border-transparent pb-0.5 transition-colors hover:text-brand-accent',
+                  pathname === link.to && 'border-brand-accent font-semibold text-brand-accent',
                 )}
               >
                 {link.label}
@@ -105,10 +104,10 @@ export default function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <Link
-            to={isHome ? '#cursos' : routes.home}
-            className="hidden sm:block px-5 py-2.5 bg-brand-accent text-brand-dark rounded-full font-bold text-sm hover:opacity-90 transition-opacity"
+            to={isHome ? '#formacoes' : routes.home}
+            className="hidden bg-brand-accent px-5 py-2.5 text-[13.5px] font-semibold text-brand-dark transition-colors hover:bg-[#f0d488] sm:block"
           >
-            Matricule-se
+            Matrícula
           </Link>
           <button
             type="button"
@@ -116,7 +115,7 @@ export default function SiteHeader() {
             aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={isMenuOpen}
             aria-controls="menu-mobile"
-            className="lg:hidden p-2 text-white hover:bg-white/5 rounded-lg transition-colors"
+            className="p-2 text-white transition-colors hover:bg-white/5 lg:hidden"
           >
             <motion.span
               key={isMenuOpen ? 'fechar' : 'abrir'}
@@ -141,28 +140,31 @@ export default function SiteHeader() {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="lg:hidden absolute top-full left-0 right-0 bg-brand-dark border-b border-white/10 overflow-hidden"
+            className="absolute top-full right-0 left-0 overflow-hidden border-b border-white/12 bg-brand-dark lg:hidden"
           >
-            <div className="p-6 flex flex-col gap-4">
-              {courseLinks.map((link) => (
+            <div className="flex flex-col px-6 pt-2 pb-6">
+              {courseLinks.map((link, i) => (
                 <Link
                   key={link.to}
                   to={link.to}
                   aria-current={pathname === link.to ? 'page' : undefined}
                   className={cn(
-                    'text-lg font-medium transition-colors hover:text-brand-accent',
+                    'flex items-baseline gap-4 border-b border-white/8 py-4 transition-colors hover:text-brand-accent',
                     pathname === link.to ? 'text-brand-accent' : 'text-white',
                   )}
                 >
-                  {link.label}
+                  <span className="dado text-[12px] text-brand-quiet">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="text-[16px] font-medium">{link.label}</span>
                 </Link>
               ))}
-              <hr className="border-white/10 my-1" />
               <Link
                 to={routes.home}
-                className="w-full py-4 text-center bg-brand-accent text-brand-dark rounded-xl font-bold"
+                className="btn-primary mt-6 w-full"
+                onClick={() => setIsMenuOpen(false)}
               >
-                Matricule-se Agora
+                Matrícula
               </Link>
             </div>
           </motion.div>
