@@ -23,7 +23,9 @@ import Faq from '../components/Faq';
 import Numeros from '../components/Numeros';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
+import VideoPlayer from '../components/Video';
 import { courses, cursosDoEixo, eixosComCurso, listaCursos } from '../config/courses';
+import { midia } from '../config/midia';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
 import { duration, ease } from '../lib/motion';
@@ -71,7 +73,7 @@ function Hero() {
       />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -80,7 +82,7 @@ function Hero() {
             <p className="selo mb-7 border-white/12 bg-white/5 text-brand-accent">
               <span
                 aria-hidden="true"
-                className="pulso h-1.5 w-1.5 rounded-full bg-brand-emerald shadow-[0_0_10px_#39d4a1]"
+                className="pulso h-1.5 w-1.5 rounded-full bg-brand-emerald"
               />
               Turmas abertas
             </p>
@@ -106,31 +108,66 @@ function Hero() {
             </div>
           </motion.div>
 
-          {/* A pilha de cores é a legenda visual do site: quem chega aprende
-              que azul é PNL, roxo é Hipnoterapia e verde é Coaching antes de
-              rolar até os cards. A cor pertence ao eixo, não ao curso — com
-              vinte formações, uma cor por curso viraria decoreba. */}
-          <div className="flex flex-col gap-3">
-            {eixosComCurso()
-              .slice(0, 3)
-              .map((eixo) => {
-                const p = paletas[eixo.cor];
-                return (
-                  <Link
-                    key={eixo.id}
-                    to={`${routes.formacoes}#${eixo.id}`}
-                    className={`rounded-[20px] border bg-gradient-to-br px-6 py-5 transition-colors ${p.borda} ${p.bordaHover} ${p.capa}`}
-                  >
-                    <span className={`sobretitulo block ${p.texto}`}>{eixo.nome}</span>
-                    <span className="mt-1.5 block text-[13.5px] leading-snug">
-                      {cursosDoEixo(eixo.id).length}{' '}
-                      {cursosDoEixo(eixo.id).length === 1 ? 'formação' : 'formações'}
-                    </span>
-                  </Link>
-                );
-              })}
+          {/* O espaço do vídeo de boas-vindas.
+              Aqui havia três blocos de cor anunciando os eixos — muita área
+              nobre para pouca informação ("2 formações"), e no celular eles
+              empurravam tudo o mais para baixo da dobra.
+              Enquanto não houver vídeo, o retrato ocupa o lugar: é ele que
+              serve de capa quando o vídeo chegar. */}
+          <div className="relative">
+            {midia.boasVindas ? (
+              <VideoPlayer
+                video={midia.boasVindas}
+                titulo="Bruno Sena — boas-vindas ao instituto"
+                posterAlternativo="/brunosena.webp"
+              />
+            ) : (
+              <img
+                src="/brunosena.webp"
+                alt="Bruno Sena, fundador do Instituto"
+                width={900}
+                height={1206}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                className="w-full rounded-[22px] object-cover"
+                style={{
+                  WebkitMaskImage: 'linear-gradient(to bottom, black 78%, transparent 100%)',
+                  maskImage: 'linear-gradient(to bottom, black 78%, transparent 100%)',
+                }}
+              />
+            )}
           </div>
         </div>
+
+        {/* Os eixos continuam apresentados, mas como uma faixa discreta em vez
+            de três blocos coloridos: mesma informação, um quinto da altura. */}
+        <nav aria-label="Eixos de formação" className="mt-14">
+          <ul className="flex flex-wrap items-center gap-x-7 gap-y-3">
+            <li className="text-[13px] font-semibold tracking-[0.1em] text-brand-quiet uppercase">
+              Eixos
+            </li>
+            {eixosComCurso().map((eixo) => (
+              <li key={eixo.id}>
+                <Link
+                  to={`${routes.formacoes}#${eixo.id}`}
+                  className="group flex items-baseline gap-2.5 text-[14.5px] transition-colors hover:text-white"
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`h-1.5 w-1.5 shrink-0 rounded-full ${paletas[eixo.cor].fundo}`}
+                  />
+                  <span className="font-medium text-white/85 group-hover:text-white">
+                    {eixo.nome}
+                  </span>
+                  <span className="text-[13px] text-brand-quiet">
+                    {cursosDoEixo(eixo.id).length}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </section>
   );
@@ -174,8 +211,7 @@ function Sena() {
             }
           >
             O SENA é a plataforma de simulação clínica do instituto: pacientes virtuais com
-            perfil psicológico definido e devolutiva técnica a cada intervenção. Este é um deles
-            — escolha como você responderia.
+            perfil psicológico definido e devolutiva técnica a cada intervenção.
           </Cabecalho>
 
           <div className="mt-9 grid grid-cols-2 gap-3">
@@ -198,9 +234,30 @@ function Sena() {
           </p>
         </div>
 
-        <Revela>
-          <SenaSimulador />
-        </Revela>
+        <div className="flex flex-col gap-8">
+          {/* O espaço da amostra real: uma gravação de tela de uma sessão de
+              verdade. Quando ela existir, é ela que prova — e a demonstração
+              logo abaixo passa a ser o convite para experimentar a mecânica.
+              Enquanto não existir, o simulador segue sozinho, e nada na
+              página anuncia um vídeo que não está lá. */}
+          {midia.amostraSena && (
+            <Revela>
+              <VideoPlayer
+                video={midia.amostraSena}
+                titulo="Uma sessão real no SENA, do início à devolutiva"
+              />
+            </Revela>
+          )}
+
+          <Revela>
+            {midia.amostraSena && (
+              <p className="mb-4 text-[14px] text-brand-quiet">
+                Ou experimente você mesmo, aqui embaixo:
+              </p>
+            )}
+            <SenaSimulador />
+          </Revela>
+        </div>
       </div>
     </Secao>
   );
@@ -298,11 +355,11 @@ function ParaQuem() {
  * que continua legível.
  */
 const icones: Record<string, ReactNode> = {
-  pnl: <Brain size={22} aria-hidden="true" />,
-  hipno: <Sparkles size={22} aria-hidden="true" />,
-  master: <Target size={22} aria-hidden="true" />,
-  'master-coach': <Award size={22} aria-hidden="true" />,
-  trilogia: <Award size={22} aria-hidden="true" />,
+  pnl: <Brain size={17} aria-hidden="true" />,
+  hipno: <Sparkles size={17} aria-hidden="true" />,
+  master: <Target size={17} aria-hidden="true" />,
+  'master-coach': <Award size={17} aria-hidden="true" />,
+  trilogia: <Award size={17} aria-hidden="true" />,
 };
 
 /**
@@ -319,8 +376,8 @@ function Cursos() {
         sobretitulo="Nossas formações"
         titulo="Escolha sua ferramenta de transformação"
       >
-        Cada formação tem uma cor, e ela te acompanha do card até o certificado. Se você está
-        começando, comece pelo Practitioner.
+        Cada eixo tem a sua cor, e ela acompanha você do card até a página do curso. Se está
+        começando, comece pelo Practitioner — é a base que torna todo o resto mais fácil.
       </Cabecalho>
 
       <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
