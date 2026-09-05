@@ -85,9 +85,14 @@ export default function SiteHeader() {
   return (
     // Transparente sobre o hero e sólido depois de rolar: o hero tem brilho
     // atrás, e uma barra opaca por cima cortaria o efeito logo na entrada.
+    //
+    // `sticky`, e não `fixed`. Com `fixed` o cabeçalho saía do fluxo e subia
+    // por cima da barra de aviso, que passava a ser lida por baixo dele.
+    // Grudado, ele começa embaixo da barra, deixa a barra rolar para fora e
+    // só então encosta no topo — que é o comportamento das referências.
     <header
       className={cn(
-        'fixed top-0 right-0 left-0 z-50 transition-all duration-300',
+        'sticky top-0 right-0 left-0 z-50 transition-all duration-300',
         isScrolled || !isHome || isPainelOpen
           ? 'border-b border-white/10 bg-brand-dark/85 py-3 backdrop-blur-xl'
           : 'border-b border-transparent py-5',
@@ -110,7 +115,7 @@ export default function SiteHeader() {
             className="h-10 w-10 object-contain"
           />
           <span className="flex flex-col leading-none">
-            <span className="font-display text-[15px] font-extrabold tracking-tight text-white">
+            <span className="font-display text-[15px] font-extrabold tracking-tight text-brand-cream">
               INSTITUTO
             </span>
             <span className="mt-0.5 text-[9.5px] font-semibold tracking-[0.2em] text-brand-accent">
@@ -128,8 +133,9 @@ export default function SiteHeader() {
                 aria-expanded={isPainelOpen}
                 aria-controls="painel-formacoes"
                 className={cn(
-                  'flex items-center gap-1.5 transition-colors hover:text-white',
-                  (emCurso || pathname === routes.formacoes) && 'font-semibold text-white',
+                  'flex items-center gap-1.5 transition-colors hover:text-brand-cream',
+                  (emCurso || pathname === routes.formacoes) &&
+                    'font-semibold text-brand-cream',
                 )}
               >
                 Formações
@@ -144,14 +150,17 @@ export default function SiteHeader() {
               </button>
             </li>
             <li>
-              <Link to={`${routes.home}#sena`} className="transition-colors hover:text-white">
+              <Link
+                to={`${routes.home}#sena`}
+                className="transition-colors hover:text-brand-cream"
+              >
                 O SENA
               </Link>
             </li>
             <li>
               <Link
                 to={`${routes.home}#sobre-mentor`}
-                className="transition-colors hover:text-white"
+                className="transition-colors hover:text-brand-cream"
               >
                 O instituto
               </Link>
@@ -162,7 +171,7 @@ export default function SiteHeader() {
         <div className="flex items-center gap-2">
           <Link
             to={routes.formacoes}
-            className="hidden rounded-full bg-gradient-to-br from-brand-accent-light to-brand-accent px-6 py-2.5 text-[13.5px] font-bold text-brand-dark shadow-[0_6px_20px_rgba(229,195,101,0.28)] transition-transform hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 sm:block"
+            className="hidden rounded-full bg-brand-accent px-6 py-2.5 font-display text-[13px] font-semibold tracking-[0.06em] text-brand-dark uppercase transition-colors hover:bg-brand-accent-light sm:block"
           >
             Matricule-se
           </Link>
@@ -172,7 +181,7 @@ export default function SiteHeader() {
             aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={isMenuOpen}
             aria-controls="menu-mobile"
-            className="rounded-xl p-2 text-white transition-colors hover:bg-white/5 lg:hidden"
+            className="rounded-xl p-2 text-brand-cream transition-colors hover:bg-white/5 lg:hidden"
           >
             <motion.span
               key={isMenuOpen ? 'fechar' : 'abrir'}
@@ -214,7 +223,9 @@ export default function SiteHeader() {
                             aria-current={pathname === curso.route ? 'page' : undefined}
                             className={cn(
                               'block rounded-xl px-3 py-2.5 transition-colors hover:bg-white/5',
-                              pathname === curso.route ? 'text-white' : 'text-brand-platinum',
+                              pathname === curso.route
+                                ? 'text-brand-cream'
+                                : 'text-brand-platinum',
                             )}
                           >
                             <span className="block text-[14px] font-medium">{curso.title}</span>
@@ -262,7 +273,7 @@ export default function SiteHeader() {
                       aria-current={pathname === curso.route ? 'page' : undefined}
                       className={cn(
                         'flex items-baseline justify-between gap-4 border-b border-white/[0.07] py-3.5 transition-colors',
-                        pathname === curso.route ? 'text-brand-accent' : 'text-white',
+                        pathname === curso.route ? 'text-brand-accent' : 'text-brand-cream',
                       )}
                     >
                       <span className="text-[15.5px] font-medium">{curso.title}</span>

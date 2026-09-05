@@ -36,7 +36,7 @@ export default function NotFound() {
             to={course.route}
             className="mb-2.5 flex items-baseline justify-between gap-4 rounded-[16px] border border-white/10 bg-brand-surface px-5 py-4 transition-colors hover:border-white/25"
           >
-            <span className="text-[16px] font-semibold text-white">{course.title}</span>
+            <span className="text-[16px] font-semibold text-brand-cream">{course.title}</span>
             <span className={`shrink-0 font-semibold ${paletas[corDoCurso(course)].texto}`}>
               {course.situacao === 'emBreve' ? 'Em breve' : course.price}
             </span>

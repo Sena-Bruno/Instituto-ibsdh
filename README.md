@@ -44,35 +44,76 @@ npm run smoke
 
 ## Linguagem visual
 
-O site mistura duas direções apresentadas em tela:
+A referência foram cinco sites de institutos e infoprodutos brasileiros
+apontados pelo Bruno. Comparando com o nosso, três diferenças explicavam
+quase toda a distância — e nenhuma delas era "mais cor" ou "mais efeito".
 
-**De D vem o sistema de cor.** Cada formação tem a sua, e a cor é orientação,
-não enfeite: azul é Practitioner, roxo é Hipnoterapia, dourado é Master PNL,
-verde é Master Coach. A mesma cor aparece no card da home, no botão de
-matrícula, no brilho de fundo da página do curso e na barra do certificado —
-quem navega aprende a cor e passa a se localizar por ela.
+**1. Tipografia com voz.** Os cinco usam um display estreito e pesado em
+caixa alta; a maioria usa Oswald. O título ocupa a largura inteira sem
+encolher de corpo e lê como algo gravado. Nós usávamos Outfit e Inter, as
+duas fontes padrão de produto de software: geométricas, de largura uniforme,
+e fazem qualquer página parecer painel de aplicativo. Hoje é **Oswald** no
+display e **Lato** no texto, servidas do próprio domínio.
 
-**De E vem a escala.** Título grande de verdade, número grande como prova,
-contraste alto. A energia vem de tamanho e contraste, não de encher a tela
-de elementos brilhando.
+**2. Tinta quente sobre fundo frio.** As referências escrevem em branco
+amarelado sobre um fundo quase preto e levemente frio, e é esse contraste de
+temperatura que faz o dourado cantar. Nós escrevíamos em cinza azulado sobre
+fundo azulado: tudo na mesma temperatura, e o dourado sumia. Os fundos
+ficaram como estavam; a tinta esquentou.
+
+**3. Menos cor, não mais.** A referência mais bem resolvida usa um acento só.
+A nossa usava dourado no sobretítulo, no destaque do título, no número, no
+selo e no botão — cinco papéis para a mesma cor, então o botão não se
+destacava de nada.
+
+**A cor por eixo continua sendo orientação.** Azul é PNL, roxo é
+Hipnoterapia, verde é Coaching, dourado são as Jornadas. Ela identifica: a
+régua do card, o ponto do menu, a régua do cabeçalho de seção, o brilho e a
+borda da página do curso.
 
 ### As regras
 
-1. **Brilho tem dono.** A classe `.brilho` herda a cor da seção pela variável
+1. **Dourado é ação.** Quem vê um bloco dourado sabe que clica ali. Enfeite
+   dourado ficou restrito a uma palavra por título (`texto-gradiente`).
+2. **Botão de eixo só onde a cor governa o bloco inteiro** — a página de uma
+   formação, ou uma seção com assunto próprio, como a de In Company. Nunca
+   ao lado de uma ação de compra na home: dois botões coloridos obrigam a
+   pessoa a decidir qual é o principal.
+3. **Toda seção começa igual:** régua colorida, sobretítulo em cinza,
+   título em caixa alta. É o que faz dezesseis seções lerem como uma
+   sequência em vez de dezesseis páginas empilhadas.
+4. **Seções vizinhas alternam o fundo** (`elevada` no `Secao`, que aplica
+   `brand-band`). Sem isso a home é um retângulo escuro de treze mil pixels.
+5. **Entrelinha de título não desce de 1,08.** Em português a caixa alta
+   carrega Ê, Ã, Á e Ô, e o acento precisa do espaço acima das maiúsculas.
+   Com 0,96 o circunflexo de "VOCÊ" batia na linha de cima.
+6. **Brilho tem dono.** A classe `.brilho` herda a cor da seção pela variável
    `--brilho`, e só entra onde a seção tem cor. O site já teve 33 orbes
    idênticos, um por seção — como tudo brilhava igual, nada se destacava.
-2. **Cor vem de `lib/cores.ts`.** As classes ficam escritas por extenso, não
+7. **Cor vem de `lib/cores.ts`.** As classes ficam escritas por extenso, não
    montadas por template: o Tailwind varre o código em busca de nomes
    literais, e uma string como `` `text-brand-${cor}` `` some do CSS final.
-3. **Para apagar um texto, troque o token.** `brand-platinum` (8,5:1) e
-   `brand-quiet` (5,8:1) passam no mínimo 4,5:1 do WCAG AA. Opacidade não —
-   foi assim que o site chegou a ter 37 usos de um tom a 3,4:1.
+8. **Para apagar um texto, troque o token.** `brand-cream` (17,4:1),
+   `brand-platinum` (10,6:1) e `brand-quiet` (6,3:1) passam folgado o mínimo
+   4,5:1 do WCAG AA. Opacidade não — foi assim que o site chegou a ter 37
+   usos de um tom a 3,4:1.
+
+### As fontes
+
+Ficam em `public/fontes/`, declaradas em `src/fontes.css`. Vinham do
+`fonts.googleapis.com`, que custa duas conexões novas antes de qualquer
+texto aparecer e coloca a tipografia na dependência de um terceiro. Só as
+faixas latin e latin-ext foram baixadas — 202 KB no total.
+
+Para atualizar, refaça a busca no Google Fonts e substitua `src/fontes.css`
+inteiro. Não edite à mão.
 
 ### Componentes que carregam a linguagem
 
 | Componente | Para quê |
 |---|---|
-| `Secao` + `Cabecalho` | Seção com sobretítulo, título grande e brilho opcional |
+| `BarraAviso` | A faixa dourada no topo — conteúdo em `site.ts`, chave `aviso` |
+| `Secao` + `Cabecalho` | Seção com régua, sobretítulo, título grande e brilho opcional |
 | `CardCurso` | O card de formação, dono de uma cor |
 | `Numeros` | A faixa de números grandes |
 | `PaginaCurso` / `SecaoCurso` | Página de formação, com a coluna de compra fixa |
@@ -83,11 +124,14 @@ de elementos brilhando.
 
 ### Classes utilitárias
 
-`titulo-hero`, `titulo-secao`, `titulo-card` para a escala tipográfica;
-`sobretitulo` para o rótulo em maiúsculas; `texto-gradiente` para a palavra
-em gradiente (uma por página, no máximo — se aparecer em todo título, deixa
-de destacar); `cartao`, `cartao-vidro`, `faixa-accent`, `selo` para as
-superfícies.
+`titulo-hero` e `titulo-secao` para os títulos em caixa alta; `titulo-card`
+para nome de card, que fica em caixa normal de propósito (caixa alta se lê
+pelo desenho da palavra inteira, o que atrapalha numa lista onde a pessoa
+está comparando nomes); `sobretitulo` para o rótulo cinza; `regua-secao`
+para o traço colorido que abre a seção; `texto-gradiente` para a palavra em
+dourado (uma por título, no máximo — se aparecer em todos, deixa de
+destacar); `fato` para o par ícone/texto das linhas de fatos; `cartao`,
+`cartao-vidro`, `faixa-accent`, `selo` para as superfícies.
 
 ## Movimento
 

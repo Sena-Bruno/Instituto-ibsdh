@@ -65,7 +65,7 @@ export default function Ementa({
                     {modulo.numero}
                   </span>
                   <span className="flex-1">
-                    <span className="block font-display text-[16.5px] font-bold text-white">
+                    <span className="block font-display text-[16.5px] font-bold text-brand-cream">
                       {modulo.titulo}
                     </span>
                     {modulo.resumo && (
@@ -188,7 +188,7 @@ function ListaAulas({ modulo, cor }: { modulo: ModuloCurriculo; cor: NomeCor }) 
               <td
                 className={cn(
                   'py-3 pr-4 text-[13.5px] font-medium',
-                  aula.etica ? 'text-brand-danger' : 'text-white',
+                  aula.etica ? 'text-brand-danger' : 'text-brand-cream',
                 )}
               >
                 {aula.titulo}

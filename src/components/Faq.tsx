@@ -46,7 +46,7 @@ export default function Faq({
                 onClick={() => setOpenIndex(isOpen ? null : i)}
                 className="flex w-full items-center justify-between gap-4 p-6 text-left transition-colors hover:bg-white/[0.03]"
               >
-                <span className="flex-1 font-display text-[16.5px] font-bold text-white">
+                <span className="flex-1 font-display text-[16.5px] font-bold text-brand-cream">
                   {item.q}
                 </span>
                 <motion.span

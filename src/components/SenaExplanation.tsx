@@ -11,7 +11,7 @@
 const SenaExplanation = () => {
   return (
     <div>
-      <h3 className="max-w-2xl font-display text-[26px] leading-tight font-semibold tracking-tight text-white md:text-[30px]">
+      <h3 className="max-w-2xl font-display text-[26px] leading-tight font-semibold tracking-tight text-brand-cream md:text-[30px]">
         Sistema Evolutivo de Neuroaprendizagem Aplicada
       </h3>
 
@@ -46,7 +46,7 @@ const SenaExplanation = () => {
         </p>
       </div>
 
-      <p className="mt-8 border-l-2 border-brand-accent pl-5 font-display text-xl leading-snug text-white">
+      <p className="mt-8 border-l-2 border-brand-accent pl-5 font-display text-xl leading-snug text-brand-cream">
         O SENA não foi criado apenas para testar conhecimento.{' '}
         <span className="text-brand-accent">Foi criado para desenvolver competência.</span>
       </p>

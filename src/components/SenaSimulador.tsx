@@ -39,7 +39,7 @@ export default function SenaSimulador() {
             aria-hidden="true"
             className="pulso h-2 w-2 shrink-0 rounded-full bg-brand-emerald shadow-[0_0_10px_#39d4a1]"
           />
-          <span className="text-[14.5px] font-semibold text-white">Paciente virtual</span>
+          <span className="text-[14.5px] font-semibold text-brand-cream">Paciente virtual</span>
           <span className="border-l border-white/15 pl-3 text-[12px] font-semibold tracking-[0.08em] text-brand-quiet uppercase">
             Perfil: {sena.perfil}
           </span>
@@ -85,7 +85,7 @@ export default function SenaSimulador() {
                   key={resposta.id}
                   type="button"
                   onClick={() => setEscolhida(resposta)}
-                  className="rounded-[14px] border border-white/12 px-4 py-3.5 text-left text-[14.5px] leading-snug text-brand-platinum transition-colors hover:border-brand-accent/50 hover:bg-white/[0.05] hover:text-white"
+                  className="rounded-[14px] border border-white/12 px-4 py-3.5 text-left text-[14.5px] leading-snug text-brand-platinum transition-colors hover:border-brand-accent/50 hover:bg-white/[0.05] hover:text-brand-cream"
                 >
                   {resposta.texto}
                 </button>
@@ -158,7 +158,7 @@ function Fala({
       >
         {quem}
       </p>
-      <p className={cn('text-[15px] leading-relaxed', doVisitante ? 'text-white' : '')}>
+      <p className={cn('text-[15px] leading-relaxed', doVisitante ? 'text-brand-cream' : '')}>
         {children}
       </p>
     </div>

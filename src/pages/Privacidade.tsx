@@ -21,7 +21,7 @@ export default function Privacidade() {
       </Helmet>
 
       <article className="max-w-3xl mx-auto px-6 pt-36 pb-24 prose-institucional">
-        <h1 className="mb-4 font-display text-4xl leading-tight font-semibold tracking-tight text-white md:text-5xl">
+        <h1 className="mb-4 font-display text-4xl leading-tight font-semibold tracking-tight text-brand-cream md:text-5xl">
           Política de Privacidade
         </h1>
         <p className="sobretitulo mb-12 text-brand-quiet">
@@ -30,7 +30,7 @@ export default function Privacidade() {
 
         <div className="space-y-8 leading-relaxed">
           <section>
-            <h2 className="mb-3 font-display text-xl font-semibold text-white">
+            <h2 className="mb-3 font-display text-xl font-semibold text-brand-cream">
               1. Quem somos
             </h2>
             <p>
@@ -48,28 +48,28 @@ export default function Privacidade() {
           </section>
 
           <section>
-            <h2 className="mb-3 font-display text-xl font-semibold text-white">
+            <h2 className="mb-3 font-display text-xl font-semibold text-brand-cream">
               2. Que dados coletamos
             </h2>
             <ul className="list-disc pl-6 space-y-2">
               <li>
-                <strong className="text-white">Lista de espera:</strong> nome e e-mail, quando
-                você se cadastra para ser avisado sobre uma formação.
+                <strong className="text-brand-cream">Lista de espera:</strong> nome e e-mail,
+                quando você se cadastra para ser avisado sobre uma formação.
               </li>
               <li>
-                <strong className="text-white">Avaliações de curso:</strong> ao entrar com sua
-                Conta Google, recebemos seu nome, foto de perfil e um identificador de usuário,
-                associados à avaliação que você publica.
+                <strong className="text-brand-cream">Avaliações de curso:</strong> ao entrar com
+                sua Conta Google, recebemos seu nome, foto de perfil e um identificador de
+                usuário, associados à avaliação que você publica.
               </li>
               <li>
-                <strong className="text-white">Contato:</strong> os dados que você nos envia por
-                e-mail ou WhatsApp.
+                <strong className="text-brand-cream">Contato:</strong> os dados que você nos
+                envia por e-mail ou WhatsApp.
               </li>
             </ul>
           </section>
 
           <section>
-            <h2 className="mb-3 font-display text-xl font-semibold text-white">
+            <h2 className="mb-3 font-display text-xl font-semibold text-brand-cream">
               3. Para que usamos
             </h2>
             <p>
@@ -81,7 +81,7 @@ export default function Privacidade() {
           </section>
 
           <section>
-            <h2 className="mb-3 font-display text-xl font-semibold text-white">
+            <h2 className="mb-3 font-display text-xl font-semibold text-brand-cream">
               4. Com quem compartilhamos
             </h2>
             <p>
@@ -92,7 +92,7 @@ export default function Privacidade() {
           </section>
 
           <section>
-            <h2 className="mb-3 font-display text-xl font-semibold text-white">
+            <h2 className="mb-3 font-display text-xl font-semibold text-brand-cream">
               5. Seus direitos
             </h2>
             <p>
@@ -111,7 +111,7 @@ export default function Privacidade() {
           </section>
 
           <section>
-            <h2 className="mb-3 font-display text-xl font-semibold text-white">
+            <h2 className="mb-3 font-display text-xl font-semibold text-brand-cream">
               6. Retenção e segurança
             </h2>
             <p>

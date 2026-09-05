@@ -34,7 +34,7 @@ export default class ErrorBoundary extends React.Component<
             size={48}
             aria-hidden="true"
           />
-          <h1 className="font-display text-3xl font-bold text-white mb-4">
+          <h1 className="font-display text-3xl font-bold text-brand-cream mb-4">
             Algo saiu do previsto
           </h1>
           <p className="text-brand-platinum/80 mb-8">

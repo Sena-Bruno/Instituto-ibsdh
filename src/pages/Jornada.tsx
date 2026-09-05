@@ -197,7 +197,7 @@ export default function Jornada() {
                   </span>
                 </div>
 
-                <h3 className="font-display text-[26px] font-bold text-white">
+                <h3 className="font-display text-[26px] font-bold text-brand-cream">
                   {nivel.titulo}
                 </h3>
 
@@ -207,7 +207,7 @@ export default function Jornada() {
                       De {nivel.precoDe}
                     </p>
                   )}
-                  <p className="mt-1 font-display text-[32px] leading-none font-extrabold tracking-[-0.02em] text-white">
+                  <p className="mt-1 font-display text-[32px] leading-none font-extrabold tracking-[-0.02em] text-brand-cream">
                     {nivel.preco}
                   </p>
                   <p className="mt-2 text-[13.5px] text-brand-accent">
@@ -294,7 +294,7 @@ export default function Jornada() {
                       scope="col"
                       className={cn(
                         'py-3 pr-4 text-[14px] font-semibold',
-                        nivel.destaque ? 'text-brand-accent' : 'text-white',
+                        nivel.destaque ? 'text-brand-accent' : 'text-brand-cream',
                       )}
                     >
                       {nivel.titulo}
@@ -331,7 +331,7 @@ export default function Jornada() {
                         key={`${linha.rotulo}-${niveis[i].numero}`}
                         className={cn(
                           'py-3.5 pr-4 text-[13.5px] leading-snug',
-                          niveis[i].destaque && 'text-white',
+                          niveis[i].destaque && 'text-brand-cream',
                         )}
                       >
                         {valor}
@@ -358,7 +358,7 @@ export default function Jornada() {
                 key={situacao}
                 className="grid gap-x-6 gap-y-1 border-b border-white/8 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-baseline"
               >
-                <span className="text-[15px] text-white">{situacao}</span>
+                <span className="text-[15px] text-brand-cream">{situacao}</span>
                 <span className="text-[13.5px]">
                   <span className="text-brand-accent">{indicacao.titulo}</span>
                   <span className="ml-3 font-semibold text-brand-quiet">{indicacao.preco}</span>

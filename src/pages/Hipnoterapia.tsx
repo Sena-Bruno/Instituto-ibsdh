@@ -99,13 +99,15 @@ export default function Hipnoterapia() {
         resumo={
           <p>
             Aprenda a induzir transe terapêutico com segurança. Você pratica induções no{' '}
-            <strong className="text-white">SENA Hipno</strong> — com pacientes simulados e
+            <strong className="text-brand-cream">SENA Hipno</strong> — com pacientes simulados e
             devolutiva a cada intervenção — antes de encostar em alguém de verdade.
           </p>
         }
         preRequisito={
           <>
-            <p className="text-[14.5px] font-semibold text-white">Requer o PNL Practitioner</p>
+            <p className="text-[14.5px] font-semibold text-brand-cream">
+              Requer o PNL Practitioner
+            </p>
             <p className="mt-1 text-[13.5px] leading-relaxed">
               Hipnoterapia exige base de comunicação e leitura de padrões. Se você não tem,{' '}
               <Link to={routes.pnlPractitioner} className="text-brand-accent hover:underline">
@@ -133,7 +135,7 @@ export default function Hipnoterapia() {
           <div className="space-y-5 text-[15.5px] leading-relaxed">
             <p>
               Seus clientes — ou você mesmo — repetem padrões que a mente consciente{' '}
-              <strong className="text-white">já entendeu</strong>, mas continua fazendo.
+              <strong className="text-brand-cream">já entendeu</strong>, mas continua fazendo.
             </p>
             <ul className="border-l-2 border-brand-accent/40 pl-5">
               <li className="border-b border-white/8 py-2.5">
@@ -144,14 +146,14 @@ export default function Hipnoterapia() {
               </li>
               <li className="py-2.5">Sabem que “deveriam” relaxar, mas o corpo não obedece</li>
             </ul>
-            <p className="font-display text-xl text-white">
+            <p className="font-display text-xl text-brand-cream">
               O consciente sabe. O inconsciente não cooperou.
             </p>
             <p>
               A hipnoterapia é a ponte. Mas aprender hipnose sem{' '}
-              <strong className="text-white">segurança</strong> é perigoso; sem{' '}
-              <strong className="text-white">prática real</strong> é teatro; sem{' '}
-              <strong className="text-white">ética</strong> é irresponsabilidade.
+              <strong className="text-brand-cream">segurança</strong> é perigoso; sem{' '}
+              <strong className="text-brand-cream">prática real</strong> é teatro; sem{' '}
+              <strong className="text-brand-cream">ética</strong> é irresponsabilidade.
             </p>
           </div>
         </SecaoCurso>
@@ -295,7 +297,7 @@ export default function Hipnoterapia() {
           />
 
           <div className="mt-10 border-t border-white/12 pt-8">
-            <p className="mb-6 font-display text-xl leading-snug text-white italic">
+            <p className="mb-6 font-display text-xl leading-snug text-brand-cream italic">
               “A mágica não está em escolher um. Está em saber quando combinar.”
             </p>
 
@@ -304,12 +306,12 @@ export default function Hipnoterapia() {
                 <p className="sobretitulo mb-3">Exemplo: fobia de avião</p>
                 <ul className="space-y-2 text-[13.5px] leading-relaxed">
                   <li>
-                    <strong className="text-white">PNL:</strong> análise da crença “aviões
+                    <strong className="text-brand-cream">PNL:</strong> análise da crença “aviões
                     caem”, swish pattern para imagem positiva.
                   </li>
                   <li>
-                    <strong className="text-white">Hipnoterapia:</strong> dessensibilização em
-                    transe, ancoragem de calma para o dia do voo.
+                    <strong className="text-brand-cream">Hipnoterapia:</strong>{' '}
+                    dessensibilização em transe, ancoragem de calma para o dia do voo.
                   </li>
                   <li className="text-brand-accent">
                     Resultado: mudança estrutural mais recurso emocional sob demanda.
@@ -320,12 +322,12 @@ export default function Hipnoterapia() {
                 <p className="sobretitulo mb-3">Exemplo: insônia</p>
                 <ul className="space-y-2 text-[13.5px] leading-relaxed">
                   <li>
-                    <strong className="text-white">Hipnoterapia:</strong> indução noturna,
+                    <strong className="text-brand-cream">Hipnoterapia:</strong> indução noturna,
                     higiene do sono.
                   </li>
                   <li>
-                    <strong className="text-white">PNL:</strong> submodalidades da “cama como
-                    lugar de preocupação” para “cama como lugar de sono”.
+                    <strong className="text-brand-cream">PNL:</strong> submodalidades da “cama
+                    como lugar de preocupação” para “cama como lugar de sono”.
                   </li>
                   <li className="text-brand-accent">
                     Resultado: transe para adormecer mais reestruturação do estímulo.

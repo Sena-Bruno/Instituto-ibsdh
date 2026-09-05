@@ -46,7 +46,7 @@ export default function RailCompra({
 
           {curso.installment ? (
             <>
-              <p className="font-display text-[36px] leading-none font-extrabold tracking-[-0.03em] text-white">
+              <p className="font-display text-[36px] leading-none font-extrabold tracking-[-0.03em] text-brand-cream">
                 12x {curso.installment}
               </p>
               <p className={cn('mt-2.5 text-[15px] font-semibold', p.texto)}>
@@ -54,7 +54,7 @@ export default function RailCompra({
               </p>
             </>
           ) : (
-            <p className="font-display text-[34px] leading-none font-extrabold text-white">
+            <p className="font-display text-[34px] leading-none font-extrabold text-brand-cream">
               {curso.price}
             </p>
           )}
@@ -85,7 +85,7 @@ export default function RailCompra({
                 className="flex items-baseline justify-between gap-4 border-b border-white/[0.06] py-3 last:border-b-0"
               >
                 <dt className="text-[13.5px]">{item.rotulo}</dt>
-                <dd className="text-[13.5px] font-semibold text-white">{item.valor}</dd>
+                <dd className="text-[13.5px] font-semibold text-brand-cream">{item.valor}</dd>
               </div>
             ))}
           </dl>

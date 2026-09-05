@@ -1,33 +1,68 @@
-/* As fontes são carregadas por <link> no index.html, que não bloqueia a
-   renderização. O @import que existia aqui buscava exatamente a mesma URL
-   uma segunda vez e ainda anulava o preload do HTML. */
 @import "tailwindcss";
 
+/* As fontes são servidas do próprio domínio — ver o cabeçalho de fontes.css.
+   Os dois arquivos do primeiro texto visível têm preload no index.html. */
+@import "./fontes.css";
+
 /* ============================================================================
-   LINGUAGEM VISUAL — mistura das direções D (Espectro) e E (Pulso)
+   LINGUAGEM VISUAL
 
-   De D vem o SISTEMA DE COR: cada formação tem a sua, e a cor é orientação,
-   não enfeite. Azul é Practitioner, roxo é Hipnoterapia, dourado é Master,
-   verde é Master Coach — do card ao botão, da página ao certificado. Quem
-   navega aprende a cor e passa a se localizar por ela.
+   ── O que mudou nesta revisão, e por quê ────────────────────────────────
+   O Bruno apontou cinco sites de institutos e infoprodutos brasileiros como
+   referência. Comparando com o nosso, três diferenças explicavam quase toda
+   a distância — e nenhuma delas era "mais cor" ou "mais efeito":
 
-   De E vem a ESCALA: título grande de verdade, número grande como prova, e
-   contraste alto. A energia vem de tamanho e contraste, não de encher a
-   tela de elementos brilhando.
+   1. TIPOGRAFIA COM VOZ. Todos os cinco usam um display estreito e pesado
+      (Oswald, na maioria) em caixa alta. O título ocupa a largura inteira
+      sem encolher de corpo e lê como algo gravado. Nós usávamos Outfit e
+      Inter: as duas fontes padrão de produto de software, geométricas e de
+      largura uniforme, que fazem qualquer página parecer painel de
+      aplicativo. Trocamos por Oswald no display e Lato no texto.
 
-   O brilho voltou, mas com uma regra: ele acompanha a cor da seção e existe
-   para dizer onde você está. Uma seção sem dono de cor não recebe brilho.
+   2. TINTA QUENTE SOBRE FUNDO FRIO. As referências escrevem em branco
+      amarelado (#F5F0E8) e cinza morno sobre fundo quase preto e levemente
+      frio. É esse contraste de temperatura que faz o dourado cantar. Nós
+      escrevíamos em cinza azulado sobre fundo azulado: tudo na mesma
+      temperatura, e o dourado sumia no meio. Os fundos ficaram como
+      estavam; a tinta esquentou.
+
+   3. MENOS COR, NÃO MAIS. A referência mais bem resolvida (a Jynx) usa UM
+      acento só. A nossa usava dourado no sobretítulo, no destaque do
+      título, no número, no selo e no botão — cinco papéis para a mesma
+      cor, então o botão não se destacava de nada. Agora o dourado é
+      sobretudo AÇÃO: quem o vê em bloco sabe que clica. Enfeite dourado
+      ficou restrito a uma palavra por título.
+
+   ── O que continua valendo ──────────────────────────────────────────────
+   A cor por EIXO de formação continua sendo orientação, não enfeite: azul
+   é PNL, roxo é Hipnoterapia, verde é Coaching, dourado são as Jornadas.
+   Ela identifica — na régua do card, no ponto do menu, na borda da página
+   — e não vira botão na home, para não competir com a ação.
+
+   A escala continua: título grande de verdade, número grande como prova. A
+   energia vem de tamanho e contraste, não de encher a tela de brilho.
    ========================================================================= */
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Oswald", "Arial Narrow", ui-sans-serif, sans-serif;
 
-  /* O fundo puxa levemente para o azul em vez do cinza neutro: dá
-     profundidade às cores das formações sem clarear a página. */
+  /* O fundo puxa levemente para o azul em vez do cinza neutro. Isso é
+     deliberado e não mudou: fundo frio embaixo de tinta quente é o que dá
+     temperatura à página. Fundo quente com tinta quente vira sépia. */
   --color-brand-dark: #0a0a0f;
   --color-brand-surface: #121219;
   --color-brand-elevated: #16161f;
+
+  /* Faixa intermediária, para alternar o fundo entre seções vizinhas. Sem
+     ela a home é um retângulo escuro de catorze mil pixels e nada indica
+     onde um assunto termina e o outro começa.
+
+     O valor anterior desta faixa (um cinza a 40% de opacidade) dava uma
+     diferença de menos de 1% de luminosidade: existia no código e não na
+     tela. Este é um degrau que se enxerga sem clarear a página, e mantém
+     todo o texto acima de 5,8:1 em cima dele. */
+  --color-brand-band: #131320;
 
   /* ── As cores dos eixos ───────────────────────────────────────────────
      Foram baixadas de saturação. Os tons anteriores (#5c9cfa, #b67ff1,
@@ -47,12 +82,19 @@
   --color-brand-emerald: #5aa88a;
   --color-brand-warm: #d9784f;
 
-  /* Texto. Ambos passam no mínimo 4,5:1 do WCAG AA sobre o fundo:
-     platinum dá 8,5:1 e quiet dá 5,8:1. Para "apagar" um texto, troque o
-     token — nunca use opacidade, que foi como o site chegou a ter 37 usos
-     de um tom a 3,4:1. */
-  --color-brand-platinum: #a9a9b8;
-  --color-brand-quiet: #8a8a99;
+  /* ── Texto ────────────────────────────────────────────────────────────
+     Os três tons saíram do cinza azulado e entraram no cinza morno. Era o
+     ponto 2 da nota lá em cima: fundo frio, tinta quente. O azulado
+     anterior (#a9a9b8, #8a8a99) tinha a mesma temperatura do fundo, o que
+     achatava a página inteira e apagava o dourado.
+
+     Todos passam folgado o mínimo 4,5:1 do WCAG AA sobre o fundo:
+     cream 17,4:1, platinum 10,6:1, quiet 6,3:1. Para "apagar" um texto,
+     troque o token — nunca use opacidade, que foi como o site chegou a ter
+     37 usos de um tom a 3,4:1. */
+  --color-brand-cream: #f5f0e8;
+  --color-brand-platinum: #c5bdb0;
+  --color-brand-quiet: #9a9080;
   --color-brand-muted: #27272f;
   --color-brand-secondary: #1f1f27;
 
@@ -71,7 +113,7 @@
   h4,
   h5,
   h6 {
-    @apply font-display font-bold tracking-tight text-white;
+    @apply font-display font-bold text-brand-cream;
     text-wrap: pretty;
   }
 
@@ -122,33 +164,57 @@
 }
 
 /* ── Tipografia de display ──────────────────────────────────────────────────
-   A escala vem da direção E: o título do hero é grande de verdade, e a
-   diferença entre um h1 e um h2 é visível de longe. */
+   Oswald em caixa alta. A caixa alta não é grito: numa condensada, é o que
+   deixa a linha densa e regular, e é como as cinco referências escrevem
+   manchete. O corpo pôde crescer porque a fonte é estreita — o título do
+   hero passou de 68px para 76px ocupando a MESMA largura que a Outfit
+   ocupava, e agora se lê do outro lado da sala.
+
+   O espacejamento é positivo, não negativo. Condensada em caixa alta com
+   tracking negativo empasta: as hastes verticais encostam.
+
+   ┌─────────────────────────────────────────────────────────────────────┐
+   │  A ENTRELINHA NÃO PODE DESCER DE 1,08 — É ACENTO, NÃO ESTÉTICA      │
+   │                                                                     │
+   │  A primeira versão usava 0,96, que é o que se vê em manchete em     │
+   │  inglês. Em português a caixa alta carrega Ê, Ã, Á, Ô e Ç: o        │
+   │  circunflexo de "VOCÊ" bateu na linha de cima já na primeira frase   │
+   │  do site. Caixa alta acentuada precisa do espaço que o acento ocupa │
+   │  acima da altura das maiúsculas.                                    │
+   └─────────────────────────────────────────────────────────────────────┘ */
 .titulo-hero {
-  @apply font-display text-[42px] leading-[1.02] font-extrabold tracking-[-0.035em] text-white sm:text-[58px] lg:text-[68px];
+  @apply font-display text-[44px] leading-[1.08] font-bold tracking-[0.005em] text-brand-cream uppercase sm:text-[62px] lg:text-[76px];
 }
 
 .titulo-secao {
-  @apply font-display text-[30px] leading-[1.08] font-bold tracking-[-0.03em] text-white sm:text-[38px] md:text-[44px];
+  @apply font-display text-[32px] leading-[1.12] font-bold tracking-[0.01em] text-brand-cream uppercase sm:text-[40px] md:text-[46px];
 }
 
+/* Título de card NÃO entra em caixa alta.
+   Caixa alta se lê por desenho da palavra inteira, o que funciona numa
+   manchete de quatro palavras e atrapalha numa lista de dez cards, onde a
+   pessoa está varrendo e comparando nomes. Aqui a Oswald entra em caixa
+   normal e peso médio. */
 .titulo-card {
-  @apply font-display text-xl leading-tight font-bold tracking-[-0.02em] text-white;
+  @apply font-display text-[21px] leading-[1.15] font-semibold tracking-[0.005em] text-brand-cream;
 }
 
 /* Palavra em destaque no título.
-   Era um gradiente de dourado para roxo — dois matizes diferentes atravessando
-   a frase. Gradiente multicolorido em texto é a assinatura visual de produto
-   de tecnologia, e foi apontado como a parte que mais destoava. Agora é o
-   dourado da marca, com uma variação suave dentro do mesmo matiz: destaca a
-   palavra sem parecer efeito. */
+   Já foi um gradiente de dourado para roxo — dois matizes atravessando a
+   frase, a assinatura visual de produto de tecnologia. Depois virou um
+   gradiente de dourado para dourado, o que é um degradê que ninguém vê.
+   Agora é chapado: é a única licença decorativa que o dourado mantém, e
+   uma cor chapada num título é mais firme do que qualquer degradê. */
 .texto-gradiente {
-  @apply bg-gradient-to-r from-brand-accent-light to-brand-accent bg-clip-text text-transparent;
+  @apply text-brand-accent;
 }
 
-/* Rótulo pequeno acima do título da seção. */
+/* Rótulo pequeno acima do título da seção.
+   Deixou de ser dourado por padrão. Sobretítulo dourado em dezesseis seções
+   é o que fazia o botão dourado não se destacar de nada — quem herda a cor
+   agora é o eixo da seção, ou o cinza morno quando a seção não tem dono. */
 .sobretitulo {
-  @apply text-[11.5px] font-bold tracking-[0.14em] uppercase;
+  @apply font-display text-[12px] font-medium tracking-[0.22em] text-brand-quiet uppercase;
 }
 
 /* ── Brilho ────────────────────────────────────────────────────────────────
@@ -167,8 +233,15 @@
 }
 
 /* ── Botões ────────────────────────────────────────────────────────────────
-   Pílula, com o gradiente e o realce da direção D. O hover levanta em vez
-   de escalar: escala em botão largo distorce o texto. */
+   Chapados, em caixa alta, com espacejamento largo. O gradiente e o halo
+   dourado saíram: botão que brilha lê como anúncio de banner, e era ele que
+   mais destoava do resto quando a página foi comparada com as referências.
+   As cinco usam botão sólido, de uma cor só.
+
+   A caixa alta aqui tem função: o botão passa a ser reconhecível pela forma
+   antes de ser lido, que é o que faz o olho encontrar a ação numa página
+   longa. O hover levanta em vez de escalar — escala em botão largo distorce
+   o texto. */
 .btn-primary,
 .btn-blue,
 .btn-purple,
@@ -176,57 +249,51 @@
 .btn-warm,
 .btn-outline,
 .btn-ghost {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-[15.5px] font-bold transition-all duration-200 motion-reduce:transform-none;
+  @apply inline-flex items-center justify-center gap-2.5 rounded-full px-8 py-4 font-display text-[15px] font-semibold tracking-[0.06em] uppercase transition-all duration-200 motion-reduce:transform-none;
 }
 
 .btn-primary {
-  @apply bg-gradient-to-br from-brand-accent-light to-brand-accent text-brand-dark;
-  box-shadow: 0 8px 24px rgb(220 183 101 / 20%);
+  @apply bg-brand-accent text-brand-dark;
 }
 .btn-primary:hover {
-  box-shadow: 0 12px 30px rgb(220 183 101 / 30%);
+  @apply bg-brand-accent-light;
   transform: translateY(-2px);
 }
 
+/* Os botões por eixo valem onde uma cor governa o bloco inteiro: a página de
+   uma formação, ou uma seção com assunto próprio (a de In Company, por
+   exemplo, que pede orçamento em vez de vender curso).
+
+   O que eles NÃO fazem é aparecer numa ação de compra no meio da home. Ali o
+   dourado é a ação, e um botão colorido ao lado de outro dourado obriga a
+   pessoa a decidir qual dos dois é o principal. */
 .btn-blue {
-  @apply bg-brand-blue text-brand-dark;
-  box-shadow: 0 8px 24px rgb(109 148 196 / 18%);
+  @apply bg-brand-blue text-brand-dark hover:brightness-110;
 }
-.btn-blue:hover {
-  transform: translateY(-2px);
-}
-
 .btn-purple {
-  @apply bg-brand-purple text-brand-dark;
-  box-shadow: 0 8px 24px rgb(157 127 184 / 18%);
+  @apply bg-brand-purple text-brand-dark hover:brightness-110;
 }
-.btn-purple:hover {
-  transform: translateY(-2px);
-}
-
 .btn-emerald {
-  @apply bg-brand-emerald text-brand-dark;
-  box-shadow: 0 8px 24px rgb(90 168 138 / 18%);
+  @apply bg-brand-emerald text-brand-dark hover:brightness-110;
 }
-.btn-emerald:hover {
-  transform: translateY(-2px);
+.btn-warm {
+  @apply bg-brand-warm text-brand-dark hover:brightness-110;
 }
 
-.btn-warm {
-  @apply bg-brand-warm text-brand-dark;
-  box-shadow: 0 8px 24px rgb(217 120 79 / 18%);
-}
+.btn-blue:hover,
+.btn-purple:hover,
+.btn-emerald:hover,
 .btn-warm:hover {
   transform: translateY(-2px);
 }
 
 .btn-outline {
-  @apply border border-white/20 bg-white/[0.03] text-white hover:border-white/45 hover:bg-white/[0.07];
+  @apply border border-white/20 bg-white/[0.03] text-brand-cream hover:border-white/45 hover:bg-white/[0.07];
 }
 
 /* Ação terciária: texto com seta, sem caixa. */
 .btn-ghost {
-  @apply px-0 py-1 text-brand-accent hover:text-brand-accent-light;
+  @apply px-0 py-1 tracking-[0.04em] text-brand-accent hover:text-brand-accent-light;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -257,7 +324,27 @@
 
 /* Selo em pílula: o "Turmas abertas", "Mais popular", "Em breve". */
 .selo {
-  @apply inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[11.5px] font-bold tracking-[0.1em] uppercase;
+  @apply inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-display text-[12px] font-medium tracking-[0.16em] uppercase;
+}
+
+/* ── Fato ──────────────────────────────────────────────────────────────────
+   O par número/legenda que aparece embaixo da manchete: "24 semanas ·
+   ~6 meses", "certificado incluso", "7 dias de garantia".
+
+   Foi a diferença mais concreta entre a nossa home e as referências. Todas
+   colocam quatro ou cinco fatos verificáveis logo abaixo da promessa, antes
+   de qualquer argumento. Sem eles a manchete é só uma frase bonita, e a
+   pessoa precisa rolar meia página para descobrir do que se trata. */
+.fato {
+  @apply flex items-start gap-2.5 text-[13.5px] leading-snug text-brand-platinum;
+}
+
+/* ── Régua do cabeçalho de seção ───────────────────────────────────────────
+   O traço curto colorido antes do sobretítulo. Custa oito pixels e é o que
+   transforma dezesseis seções soltas numa sequência: o olho aprende que
+   aquele traço marca começo de assunto. Copiado, sem cerimônia, da Jynx. */
+.regua-secao {
+  @apply h-px w-8 shrink-0 rounded-full;
 }
 
 @keyframes marquee {

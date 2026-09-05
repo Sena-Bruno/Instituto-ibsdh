@@ -6,10 +6,12 @@ import {
   Briefcase,
   Building2,
   CheckCircle2,
+  Clock,
   Download,
   Globe,
   Instagram,
   Lock,
+  ShieldCheck,
   Sparkles,
   Target,
   User,
@@ -24,7 +26,7 @@ import Numeros from '../components/Numeros';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
 import VideoPlayer from '../components/Video';
-import { courses, cursosDoEixo, eixosComCurso, listaCursos } from '../config/courses';
+import { courses, eixosComCurso, listaCursos } from '../config/courses';
 import { midia } from '../config/midia';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
@@ -58,9 +60,38 @@ import { duration, ease } from '../lib/motion';
 
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
 
+/**
+ * Os fatos da manchete.
+ *
+ * Foi a diferença mais concreta entre esta home e as cinco referências:
+ * todas colocam quatro ou cinco fatos verificáveis logo abaixo da promessa,
+ * antes de qualquer argumento. Sem eles a manchete é uma frase bonita e a
+ * pessoa precisa rolar meia página para descobrir do que se trata.
+ *
+ * A carga horária sai da soma real das formações — se um curso mudar de
+ * carga em `courses.ts`, a linha acompanha sozinha e nunca passa a mentir.
+ */
+function fatosDoHero() {
+  const cargas = listaCursos
+    .map((c) => Number.parseInt(c.carga ?? '', 10))
+    .filter((n) => Number.isFinite(n));
+  const faixa = cargas.length
+    ? `${Math.min(...cargas)}h a ${Math.max(...cargas)}h de formação`
+    : 'Formação completa';
+
+  return [
+    { icone: Clock, texto: faixa },
+    { icone: Award, texto: 'Certificação NLPEA e IBSDH' },
+    { icone: Brain, texto: 'Prática no simulador SENA' },
+    { icone: ShieldCheck, texto: '7 dias de garantia incondicional' },
+  ];
+}
+
 function Hero() {
+  const fatos = fatosDoHero();
+
   return (
-    <section className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-24">
+    <section className="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-24">
       <div
         aria-hidden="true"
         className="brilho -top-48 left-[44%] h-[560px] w-[820px]"
@@ -79,24 +110,55 @@ function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: duration.slow, ease: ease.out }}
           >
-            <p className="selo mb-7 border-white/12 bg-white/5 text-brand-accent">
-              <span
-                aria-hidden="true"
-                className="pulso h-1.5 w-1.5 rounded-full bg-brand-emerald"
-              />
-              Turmas abertas
-            </p>
+            {/* O selo "Turmas abertas" que ficava aqui subiu para a barra de
+                aviso, que é onde esse tipo de recado é lido. Repetido nos dois
+                lugares, ele só empurrava a manchete para baixo.
 
-            <h1 className="titulo-hero max-w-[16ch]">
-              Domine as ferramentas que{' '}
-              <span className="texto-gradiente">reprogramam vidas.</span>
+                As duas frases quebram em blocos, não no fluxo. Deixada a
+                cargo do navegador, a linha partia no meio de "Você pratica"
+                e a metade dourada aparecia dividida entre duas linhas — o
+                destaque só funciona se a frase destacada estiver inteira. */}
+            <h1 className="titulo-hero">
+              <span className="block">Você não só assiste.</span>
+              <span className="texto-gradiente block">Você pratica.</span>
             </h1>
 
+            {/* ┌─────────────────────────────────────────────────────────────┐
+                │  A MANCHETE MUDOU DE PROMESSA — E É REVERSÍVEL EM UMA LINHA │
+                │                                                             │
+                │  Era "Domine as ferramentas que reprogramam vidas". Bonita, │
+                │  e não diz nada que o concorrente não possa escrever igual. │
+                │  As cinco referências abrem com algo específico e conferí-  │
+                │  vel; nenhuma abre com slogan.                              │
+                │                                                             │
+                │  Esta abre pelo que o instituto tem de próprio: aqui se     │
+                │  pratica antes de atender. Serve a PNL e serve a qualquer   │
+                │  curso que entrar depois, porque fala do MÉTODO e não de    │
+                │  uma área — que é o que um instituto de desenvolvimento     │
+                │  humano precisa quando o catálogo cresce.                   │
+                │                                                             │
+                │  Se preferir a anterior, é trocar o texto do <h1>.          │
+                └─────────────────────────────────────────────────────────────┘ */}
             <p className="mt-7 max-w-xl text-[17.5px] leading-relaxed md:text-lg">
               PNL, Hipnoterapia e Coaching com prática supervisionada no SENA — nosso simulador
               clínico. Você treina em pacientes virtuais, com devolutiva a cada intervenção,
               antes do primeiro atendimento real.
             </p>
+
+            {/* Os fatos. Vêm antes dos botões de propósito: quem chega ainda
+                está decidindo se o assunto é para ele, e é aqui que descobre. */}
+            <ul className="mt-9 grid gap-x-8 gap-y-3.5 sm:grid-cols-2">
+              {fatos.map((fato) => (
+                <li key={fato.texto} className="fato">
+                  <fato.icone
+                    size={17}
+                    aria-hidden="true"
+                    className="mt-px shrink-0 text-brand-accent"
+                  />
+                  {fato.texto}
+                </li>
+              ))}
+            </ul>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
               <a href="#cursos" className="btn-primary">
@@ -140,29 +202,32 @@ function Hero() {
           </div>
         </div>
 
-        {/* Os eixos continuam apresentados, mas como uma faixa discreta em vez
-            de três blocos coloridos: mesma informação, um quinto da altura. */}
+        {/* ┌───────────────────────────────────────────────────────────────┐
+            │  A CONTAGEM DE CURSOS SAIU DAQUI                              │
+            │                                                               │
+            │  Esta faixa mostrava, ao lado de cada eixo, quantas formações │
+            │  ele tem: "PNL 2 · Hipnoterapia 1 · Coaching 1 · Jornadas 1". │
+            │  Era informação correta e péssima de dar: a primeira coisa    │
+            │  que a pessoa lia na home era que o catálogo é pequeno.       │
+            │                                                               │
+            │  Os eixos continuam aqui, porque servem para navegar. O que   │
+            │  saiu foi o número. Quando houver vinte cursos, ele volta a   │
+            │  ser um argumento e pode voltar — hoje é um argumento contra. │
+            └───────────────────────────────────────────────────────────────┘ */}
         <nav aria-label="Eixos de formação" className="mt-14">
           <ul className="flex flex-wrap items-center gap-x-7 gap-y-3">
-            <li className="text-[13px] font-semibold tracking-[0.1em] text-brand-quiet uppercase">
-              Eixos
-            </li>
+            <li className="sobretitulo">Eixos</li>
             {eixosComCurso().map((eixo) => (
               <li key={eixo.id}>
                 <Link
                   to={`${routes.formacoes}#${eixo.id}`}
-                  className="group flex items-baseline gap-2.5 text-[14.5px] transition-colors hover:text-white"
+                  className="group flex items-center gap-2.5 text-[14.5px] text-brand-platinum transition-colors hover:text-brand-cream"
                 >
                   <span
                     aria-hidden="true"
                     className={`h-1.5 w-1.5 shrink-0 rounded-full ${paletas[eixo.cor].fundo}`}
                   />
-                  <span className="font-medium text-white/85 group-hover:text-white">
-                    {eixo.nome}
-                  </span>
-                  <span className="text-[13px] text-brand-quiet">
-                    {cursosDoEixo(eixo.id).length}
-                  </span>
+                  {eixo.nome}
                 </Link>
               </li>
             ))}
@@ -222,7 +287,7 @@ function Sena() {
               { valor: 'Automático', rotulo: 'Prontuário de sessão' },
             ].map((item) => (
               <div key={item.rotulo} className="cartao-vidro p-4">
-                <p className="font-display text-lg font-bold text-white">{item.valor}</p>
+                <p className="font-display text-lg font-bold text-brand-cream">{item.valor}</p>
                 <p className="mt-1 text-[13px] leading-snug">{item.rotulo}</p>
               </div>
             ))}
@@ -321,7 +386,7 @@ function ParaQuem() {
                 {publico.icone}
               </span>
               <p className={`sobretitulo mb-3 ${paletas[publico.cor].texto}`}>{publico.selo}</p>
-              <h3 className="mb-4 font-display text-[26px] font-bold text-white">
+              <h3 className="mb-4 font-display text-[26px] font-bold text-brand-cream">
                 {publico.titulo}
               </h3>
               <p className="mb-7 leading-relaxed">{publico.texto}</p>
@@ -333,7 +398,7 @@ function ParaQuem() {
                       size={19}
                       aria-hidden="true"
                     />
-                    <span className="text-[15px] text-white">{item}</span>
+                    <span className="text-[15px] text-brand-cream">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -400,13 +465,13 @@ function Cursos() {
       <div className="faixa-accent mt-10 flex flex-col gap-7 p-8 md:flex-row md:items-center md:justify-between md:p-12">
         <div>
           <p className="sobretitulo mb-3 text-brand-accent">Pacote completo</p>
-          <h3 className="font-display text-[28px] font-bold text-white md:text-[34px]">
+          <h3 className="font-display text-[28px] font-bold text-brand-cream md:text-[34px]">
             Trilogia IBSDH
           </h3>
           <p className="mt-3 max-w-xl leading-relaxed">
             Practitioner, Hipnoterapia e Master PNL juntos por{' '}
-            <strong className="text-white">{courses.trilogia.price}</strong> — R$ 338 a menos do
-            que a soma das três matrículas separadas.
+            <strong className="text-brand-cream">{courses.trilogia.price}</strong> — R$ 338 a
+            menos do que a soma das três matrículas separadas.
           </p>
         </div>
         <Link to={courses.trilogia.route} className="btn-primary shrink-0">
@@ -416,7 +481,7 @@ function Cursos() {
 
       <div className="cartao mt-6 p-7 text-center md:p-8">
         <p className="leading-relaxed">
-          <strong className="text-white">Dúvida de qual escolher?</strong> Comece pelo PNL
+          <strong className="text-brand-cream">Dúvida de qual escolher?</strong> Comece pelo PNL
           Practitioner. É a base que torna todo o resto mais fácil — e muitos alunos fazem os
           três, usando cada um para uma área da vida.
         </p>
@@ -519,7 +584,7 @@ function PorQueNos() {
               <p className="mb-5 font-display text-[34px] leading-none font-extrabold text-white/12">
                 {item.numero}
               </p>
-              <h3 className="mb-4 font-display text-[24px] font-bold text-white">
+              <h3 className="mb-4 font-display text-[24px] font-bold text-brand-cream">
                 {item.titulo}
               </h3>
               <p className="mb-4 text-[17px] leading-relaxed text-white/75 italic">
@@ -587,7 +652,7 @@ function Certificados() {
                 />
               </div>
               <p className={`sobretitulo mt-6 mb-3 ${paletas[cert.cor].texto}`}>{cert.selo}</p>
-              <h3 className="mb-4 font-display text-[24px] font-bold text-white">
+              <h3 className="mb-4 font-display text-[24px] font-bold text-brand-cream">
                 {cert.titulo}
               </h3>
               <p className="mb-5 leading-relaxed">{cert.texto}</p>
@@ -620,12 +685,12 @@ function PagamentoSeguro() {
         <span className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-emerald/25 bg-brand-emerald/10 text-brand-emerald">
           <Lock size={26} aria-hidden="true" />
         </span>
-        <h2 className="font-display text-[26px] font-bold text-white md:text-[32px]">
+        <h2 className="font-display text-[26px] font-bold text-brand-cream md:text-[32px]">
           Pagamento 100% seguro
         </h2>
         <p className="mt-4 leading-relaxed">
           Todos os pagamentos são processados pela{' '}
-          <strong className="text-white">{site.paymentPlatform}</strong>, plataforma
+          <strong className="text-brand-cream">{site.paymentPlatform}</strong>, plataforma
           especializada em cursos online. Os dados do seu cartão são tratados no ambiente seguro
           dela — o instituto não os recebe nem armazena.
         </p>
@@ -722,7 +787,7 @@ function Depoimentos() {
                   {dep.initial}
                 </span>
                 <span>
-                  <span className="block font-bold text-white">{dep.name}</span>
+                  <span className="block font-bold text-brand-cream">{dep.name}</span>
                   <span className="block text-[13px] text-brand-quiet">{dep.role}</span>
                 </span>
               </figcaption>
@@ -801,7 +866,7 @@ function Ebooks() {
           href={whatsappLink(whatsappMessages.ebooks)}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block rounded-full border border-brand-purple/30 bg-brand-purple/10 px-8 py-4 font-bold text-white transition-colors hover:bg-brand-purple/20"
+          className="inline-block rounded-full border border-brand-purple/30 bg-brand-purple/10 px-8 py-4 font-bold text-brand-cream transition-colors hover:bg-brand-purple/20"
         >
           Ou leve os dois por <span className="text-brand-purple">R$ 47</span> e economize R$ 10
         </a>
@@ -838,7 +903,7 @@ function Mentor() {
 
           <div className="mt-7 space-y-5 leading-relaxed">
             <p>Não sou o terapeuta com 30 anos de clínica. Não sou um guru de palco lotado.</p>
-            <p className="font-display text-[22px] font-bold text-white">
+            <p className="font-display text-[22px] font-bold text-brand-cream">
               Sou obcecado por método.
             </p>
             <p>
@@ -849,7 +914,7 @@ function Mentor() {
             </p>
             <p>
               Não vendo transformação mágica. Entrego{' '}
-              <strong className="text-white">ferramentas reproduzíveis</strong>.
+              <strong className="text-brand-cream">ferramentas reproduzíveis</strong>.
             </p>
           </div>
 
@@ -868,7 +933,7 @@ function Mentor() {
               />
             </div>
             <div>
-              <h3 className="mb-2 font-bold text-white">Membro oficial NLPEA</h3>
+              <h3 className="mb-2 font-bold text-brand-cream">Membro oficial NLPEA</h3>
               <p className="text-[14px] leading-relaxed">
                 Reconhecimento internacional pela Neuro Linguistic Programming Excellence
                 Assurance. Certificação vitalícia que atesta conhecimento teórico e capacidade
@@ -937,7 +1002,7 @@ function OndeAtuam() {
               className="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 whitespace-nowrap"
             >
               <Globe size={16} className="shrink-0 text-brand-accent" aria-hidden="true" />
-              <span className="font-medium text-white">{area}</span>
+              <span className="font-medium text-brand-cream">{area}</span>
             </li>
           ))}
         </ul>
@@ -989,7 +1054,7 @@ function InCompany() {
                   <CheckCircle2 size={20} aria-hidden="true" />
                 </span>
                 <span>
-                  <span className="block font-bold text-white">{item.titulo}</span>
+                  <span className="block font-bold text-brand-cream">{item.titulo}</span>
                   <span className="block text-[14px]">{item.texto}</span>
                 </span>
               </li>
@@ -1068,10 +1133,17 @@ function PerguntasFrequentes() {
 function AcaoFinal() {
   return (
     <Secao cor="accent" brilho brilhoEm="centro" className="py-24 md:py-32">
+      {/* Este bloco escrevia o próprio título à mão, com outro tamanho, outro
+          peso e espacejamento negativo — e por isso a última chamada da
+          página, que é a mais importante, era a que menos parecia um título.
+          Agora usa a mesma escala das outras dezesseis. */}
       <div className="mx-auto max-w-3xl text-center">
-        <p className="sobretitulo mb-5 text-brand-accent">Pronto para começar?</p>
+        <div className="mb-5 flex items-center justify-center gap-3.5">
+          <span aria-hidden="true" className="regua-secao bg-brand-accent" />
+          <p className="sobretitulo">Pronto para começar?</p>
+        </div>
 
-        <h2 className="font-display text-[36px] leading-[1.06] font-extrabold tracking-[-0.035em] text-white md:text-[52px]">
+        <h2 className="titulo-secao">
           Sua transformação começa <span className="texto-gradiente">hoje.</span>
         </h2>
 

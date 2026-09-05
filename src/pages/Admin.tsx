@@ -100,7 +100,9 @@ export default function Admin() {
       </Helmet>
 
       <div className="max-w-5xl mx-auto px-6 pt-36 pb-24">
-        <h1 className="font-display text-4xl font-bold text-white mb-8">Lista de espera</h1>
+        <h1 className="font-display text-4xl font-bold text-brand-cream mb-8">
+          Lista de espera
+        </h1>
 
         {checkingAuth ? (
           <p className="text-brand-platinum flex items-center gap-2" role="status">
@@ -120,7 +122,9 @@ export default function Admin() {
         ) : !allowed ? (
           <div className="border border-brand-danger/30 bg-brand-danger/[0.05] p-8">
             <ShieldAlert className="text-brand-danger mb-4" size={32} aria-hidden="true" />
-            <h2 className="text-xl font-bold text-white mb-3">Esta conta não tem acesso</h2>
+            <h2 className="text-xl font-bold text-brand-cream mb-3">
+              Esta conta não tem acesso
+            </h2>
             <p className="text-brand-platinum mb-6">
               Para liberar, copie o identificador abaixo e adicione à lista{' '}
               <code className="text-brand-accent">ADMIN_UIDS</code> em{' '}
@@ -130,7 +134,7 @@ export default function Admin() {
               <code className="text-brand-accent">firebase deploy --only firestore:rules</code>.
             </p>
             <div className="flex flex-wrap items-center gap-3 mb-6">
-              <code className="border border-white/12 bg-brand-dark px-4 py-2 text-sm break-all text-white">
+              <code className="border border-white/12 bg-brand-dark px-4 py-2 text-sm break-all text-brand-cream">
                 {user.uid}
               </code>
               <button
@@ -210,7 +214,7 @@ export default function Admin() {
               <div className="overflow-x-auto border border-white/12">
                 <table className="w-full text-left text-sm">
                   <caption className="sr-only">Cadastros na lista de espera</caption>
-                  <thead className="bg-white/5 text-white">
+                  <thead className="bg-white/5 text-brand-cream">
                     <tr>
                       <th scope="col" className="p-4 font-bold">
                         Nome
@@ -229,7 +233,7 @@ export default function Admin() {
                   <tbody className="text-brand-platinum">
                     {leads.map((lead) => (
                       <tr key={lead.id} className="border-t border-white/5">
-                        <td className="p-4 text-white">{lead.name}</td>
+                        <td className="p-4 text-brand-cream">{lead.name}</td>
                         <td className="p-4">
                           <a href={`mailto:${lead.email}`} className="hover:text-brand-accent">
                             {lead.email}

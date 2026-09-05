@@ -47,6 +47,39 @@ export const site = {
 } as const;
 
 /**
+ * A barra de aviso no topo de todas as páginas.
+ *
+ * Os cinco sites que serviram de referência têm uma, e é o primeiro pixel
+ * que a pessoa lê. Ela existe para dizer o que muda AGORA — turma abrindo,
+ * condição por tempo limitado, um evento — e não para repetir o que a página
+ * já diz.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  COMO DESLIGAR                                                        │
+ * │                                                                       │
+ * │  Ponha `ativa: false`. A barra some e o cabeçalho volta a encostar no │
+ * │  topo, sem sobra nenhuma.                                             │
+ * │                                                                       │
+ * │  Duas regras para ela continuar funcionando:                          │
+ * │                                                                       │
+ * │  1. Se estiver sempre ligada com o mesmo texto, ela vira moldura e    │
+ * │     ninguém mais lê. Troque quando o que ela anuncia mudar.           │
+ * │  2. Nada de urgência que não seja verdade. "Últimas vagas" numa       │
+ * │     turma que nunca lota é o tipo de coisa que o comprador percebe    │
+ * │     na segunda visita, e aí ele desconta a credibilidade do resto.    │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+export const aviso = {
+  ativa: true,
+  texto: 'Turmas abertas nas três formações',
+  /** O trecho depois do separador, mais leve. Opcional. */
+  complemento: '7 dias de garantia incondicional',
+  /** Para onde a barra leva. Deixe `undefined` para uma barra que não é link. */
+  href: '#cursos',
+  chamada: 'Ver formações',
+} as const;
+
+/**
  * Monta um link do WhatsApp com mensagem pré-preenchida.
  * Centraliza a codificação para que nenhuma mensagem volte a ser
  * escrita já percent-encoded na mão dentro do JSX.
