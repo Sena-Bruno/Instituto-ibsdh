@@ -118,8 +118,11 @@ export function Trilha({ itens }: { itens: ItemTrilha[] }) {
           </>
         );
 
+        // A coluna do título é `auto`: dimensiona pela linha mais larga e
+        // mantém o resumo logo ao lado. Com 1fr no título, ele esticava até
+        // o meio da tabela e abria um vão morto entre o nome e a descrição.
         const grade =
-          'grid grid-cols-[36px_minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 border-b border-white/8 py-5 sm:grid-cols-[48px_minmax(0,1fr)_200px_110px] sm:gap-5';
+          'grid grid-cols-[36px_minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 border-b border-white/8 py-5 sm:grid-cols-[48px_auto_minmax(0,1fr)_110px] sm:gap-x-8';
 
         return (
           <li key={item.numero}>
