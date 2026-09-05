@@ -2,6 +2,7 @@ import { ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { contarAulas, type ModuloCurriculo, somarCarga } from '../config/curriculos';
+import { type NomeCor, paletas } from '../lib/cores';
 import { collapse, duration, ease } from '../lib/motion';
 import { cn } from '../lib/utils';
 
@@ -20,11 +21,14 @@ import { cn } from '../lib/utils';
  */
 export default function Ementa({
   modulos,
+  cor,
   className,
 }: {
   modulos: ModuloCurriculo[];
+  cor: NomeCor;
   className?: string;
 }) {
+  const p = paletas[cor];
   // O primeiro módulo já vem aberto: uma ementa toda fechada esconde
   // justamente a evidência que convence, e obriga a um clique para saber
   // se vale a pena olhar.
@@ -35,19 +39,19 @@ export default function Ementa({
 
   return (
     <div className={className}>
-      <p className="rotulo-accent mb-5">
+      <p className={`sobretitulo mb-5 ${p.texto}`}>
         Ementa oficial · {modulos.length} módulos · {aulas} aulas
         {horas > 0 && ` · ${horas}h`}
       </p>
 
-      <div className="border-t border-white/12">
+      <div className="flex flex-col gap-3">
         {modulos.map((modulo) => {
           const isOpen = aberto === modulo.numero;
           const painelId = `modulo-painel-${modulo.numero}`;
           const botaoId = `modulo-botao-${modulo.numero}`;
 
           return (
-            <div key={modulo.numero} className="border-b border-white/8">
+            <div key={modulo.numero} className="cartao overflow-hidden hover:border-white/20">
               <h3>
                 <button
                   type="button"
@@ -55,13 +59,13 @@ export default function Ementa({
                   aria-expanded={isOpen}
                   aria-controls={painelId}
                   onClick={() => setAberto(isOpen ? null : modulo.numero)}
-                  className="flex w-full items-baseline gap-4 py-5 text-left transition-colors hover:text-brand-accent"
+                  className="flex w-full items-baseline gap-4 p-5 text-left transition-colors hover:bg-white/[0.03]"
                 >
-                  <span className="dado shrink-0 text-[12.5px] text-brand-quiet">
+                  <span className={`shrink-0 font-display text-[13px] font-bold ${p.texto}`}>
                     {modulo.numero}
                   </span>
                   <span className="flex-1">
-                    <span className="block text-[15.5px] font-semibold text-white">
+                    <span className="block font-display text-[16.5px] font-bold text-white">
                       {modulo.titulo}
                     </span>
                     {modulo.resumo && (
@@ -71,7 +75,7 @@ export default function Ementa({
                     )}
                   </span>
                   {modulo.carga && (
-                    <span className="dado shrink-0 text-[12.5px] text-brand-quiet">
+                    <span className="shrink-0 text-[12.5px] font-semibold text-brand-quiet">
                       {modulo.carga}
                     </span>
                   )}
@@ -81,7 +85,7 @@ export default function Ementa({
                     transition={{ duration: duration.fast, ease: ease.out }}
                     className="shrink-0 text-brand-accent"
                   >
-                    <ChevronDown size={18} />
+                    <ChevronDown size={19} />
                   </motion.span>
                 </button>
               </h3>
@@ -99,12 +103,12 @@ export default function Ementa({
                     className="overflow-hidden"
                   >
                     {modulo.aulas.length > 0 ? (
-                      <ListaAulas modulo={modulo} />
+                      <ListaAulas modulo={modulo} cor={cor} />
                     ) : (
                       // Um módulo sem aulas listadas é uma lacuna na ementa,
                       // não um módulo vazio. Melhor dizer isso do que exibir
                       // um painel em branco que parece defeito.
-                      <p className="pb-6 pl-[38px] text-[13.5px] leading-relaxed text-brand-quiet">
+                      <p className="px-5 pb-5 text-[13.5px] leading-relaxed text-brand-quiet">
                         Detalhamento por aula em atualização. O módulo integra a carga horária e
                         a certificação.
                       </p>
@@ -120,7 +124,7 @@ export default function Ementa({
   );
 }
 
-function ListaAulas({ modulo }: { modulo: ModuloCurriculo }) {
+function ListaAulas({ modulo, cor }: { modulo: ModuloCurriculo; cor: NomeCor }) {
   // Só mostramos a coluna de conteúdo se a ementa deste curso a registra:
   // uma coluna vazia em todas as linhas é ruído, não informação.
   const temConteudo = modulo.aulas.some((aula) => aula.conteudo);
@@ -128,25 +132,37 @@ function ListaAulas({ modulo }: { modulo: ModuloCurriculo }) {
   return (
     // A tabela rola sozinha na horizontal em tela estreita, em vez de
     // empurrar a página inteira para o lado.
-    <div className="overflow-x-auto pb-6 pl-0 sm:pl-[38px]">
+    <div className="overflow-x-auto px-5 pb-5">
       <table className="w-full min-w-[560px] border-collapse text-left">
         <caption className="sr-only">
           Aulas do módulo {modulo.numero} — {modulo.titulo}
         </caption>
         <thead>
           <tr className="border-b border-white/8">
-            <th scope="col" className="rotulo w-14 py-2.5 pr-3 font-normal">
+            <th
+              scope="col"
+              className="w-14 py-2.5 pr-3 text-[11.5px] font-semibold tracking-[0.1em] text-brand-quiet uppercase"
+            >
               Aula
             </th>
-            <th scope="col" className="rotulo py-2.5 pr-4 font-normal">
+            <th
+              scope="col"
+              className="py-2.5 pr-4 text-[11.5px] font-semibold tracking-[0.1em] text-brand-quiet uppercase"
+            >
               Título
             </th>
             {temConteudo && (
-              <th scope="col" className="rotulo py-2.5 pr-4 font-normal">
+              <th
+                scope="col"
+                className="py-2.5 pr-4 text-[11.5px] font-semibold tracking-[0.1em] text-brand-quiet uppercase"
+              >
                 Conteúdo
               </th>
             )}
-            <th scope="col" className="rotulo py-2.5 font-normal">
+            <th
+              scope="col"
+              className="py-2.5 text-[11.5px] font-semibold tracking-[0.1em] text-brand-quiet uppercase"
+            >
               Prática no SENA
             </th>
           </tr>
@@ -163,7 +179,7 @@ function ListaAulas({ modulo }: { modulo: ModuloCurriculo }) {
               <th
                 scope="row"
                 className={cn(
-                  'dado py-3 pr-3 text-[12.5px] font-normal',
+                  'py-3 pr-3 text-[12.5px] font-semibold',
                   aula.etica ? 'text-brand-danger' : 'text-brand-quiet',
                 )}
               >
@@ -177,7 +193,11 @@ function ListaAulas({ modulo }: { modulo: ModuloCurriculo }) {
               >
                 {aula.titulo}
                 {aula.destaque && (
-                  <span className="rotulo-accent ml-2 whitespace-nowrap">avaliação</span>
+                  <span
+                    className={`ml-2 text-[11px] font-bold tracking-[0.1em] uppercase whitespace-nowrap ${paletas[cor].texto}`}
+                  >
+                    avaliação
+                  </span>
                 )}
               </td>
               {temConteudo && (
@@ -186,7 +206,7 @@ function ListaAulas({ modulo }: { modulo: ModuloCurriculo }) {
               <td
                 className={cn(
                   'py-3 text-[13px] leading-snug',
-                  aula.etica ? 'text-brand-danger/90' : 'text-brand-accent',
+                  aula.etica ? 'text-brand-danger/90' : paletas[cor].texto,
                 )}
               >
                 {aula.pratica}

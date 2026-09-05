@@ -59,12 +59,12 @@ export default function CourseImage({
         role="img"
         aria-label={alt}
         className={cn(
-          'hachura flex h-full w-full flex-col items-start justify-end gap-2 border border-white/10 p-5',
+          'flex h-full w-full flex-col items-start justify-end gap-2 bg-gradient-to-br from-white/[0.07] to-white/[0.02] p-6',
           className,
         )}
       >
-        <span className="rotulo">Imagem pendente</span>
-        <span className="text-[15px] leading-tight font-semibold text-white/85">
+        <span className="sobretitulo text-brand-accent">Imagem pendente</span>
+        <span className="font-display text-[17px] leading-tight font-bold text-white/90">
           {title ?? alt}
         </span>
       </div>
@@ -79,7 +79,7 @@ export default function CourseImage({
       <div
         aria-hidden="true"
         className={cn(
-          'hachura absolute inset-0 transition-opacity duration-500',
+          'absolute inset-0 bg-gradient-to-br from-white/[0.07] to-white/[0.02] transition-opacity duration-500',
           loaded ? 'opacity-0' : 'opacity-100',
         )}
       />

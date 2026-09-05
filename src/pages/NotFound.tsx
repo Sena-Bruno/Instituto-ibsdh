@@ -13,32 +13,30 @@ import { routes, whatsappLink, whatsappMessages } from '../config/site';
  */
 export default function NotFound() {
   return (
-    <main className="grade mx-auto min-h-[70vh] max-w-3xl px-6 pt-36 pb-24">
+    <main className="relative mx-auto min-h-[70vh] max-w-3xl overflow-hidden px-6 pt-36 pb-24">
       <Helmet>
         <title>Página não encontrada | Instituto Bruno Sena</title>
         <meta name="robots" content="noindex" />
       </Helmet>
 
-      <p className="rotulo-accent mb-6">Erro 404</p>
+      <p className="sobretitulo mb-6 text-brand-accent">Erro 404</p>
 
-      <h1 className="font-display text-4xl leading-tight font-semibold tracking-tight text-white md:text-5xl">
-        Esta página não existe.
-      </h1>
+      <h1 className="titulo-secao">Esta página não existe.</h1>
 
       <p className="mt-5 max-w-xl text-[17px] leading-relaxed">
         O endereço pode ter mudado, ou o link que você seguiu está incompleto. As formações do
         instituto estão todas listadas abaixo.
       </p>
 
-      <nav aria-label="Formações do instituto" className="mt-10 border-t border-white/12">
+      <nav aria-label="Formações do instituto" className="mt-10">
         {Object.values(courses).map((course) => (
           <Link
             key={course.route}
             to={course.route}
-            className="flex items-baseline justify-between gap-4 border-b border-white/8 py-4 transition-colors hover:bg-white/[0.03]"
+            className="mb-2.5 flex items-baseline justify-between gap-4 rounded-[16px] border border-white/10 bg-brand-surface px-5 py-4 transition-colors hover:border-white/25"
           >
             <span className="text-[16px] font-semibold text-white">{course.title}</span>
-            <span className="dado text-[13.5px] text-brand-accent">{course.price}</span>
+            <span className="font-semibold text-brand-accent">{course.price}</span>
           </Link>
         ))}
       </nav>

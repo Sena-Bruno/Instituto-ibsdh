@@ -106,6 +106,7 @@ export default function MasterPNL() {
 
       <PaginaCurso
         curso={curso}
+        cor="accent"
         trilha={[
           { rotulo: 'PNL Practitioner', para: routes.pnlPractitioner },
           { rotulo: 'Hipnoterapia Clínica', para: routes.hipnoterapia },
@@ -147,8 +148,8 @@ export default function MasterPNL() {
         ]}
       >
         <SecaoCurso
-          numero="01"
-          rotulo="O problema"
+          cor="accent"
+          sobretitulo="O problema"
           titulo="Você já sabe aplicar PNL. Mas será que domina?"
         >
           <p className="max-w-2xl text-[15.5px] leading-relaxed">
@@ -158,6 +159,7 @@ export default function MasterPNL() {
           </p>
 
           <ListaItens
+            cor="accent"
             className="mt-8"
             itens={[
               {
@@ -176,18 +178,19 @@ export default function MasterPNL() {
           />
         </SecaoCurso>
 
-        <SecaoCurso numero="02" rotulo="Competências" titulo="O arsenal de um Master">
+        <SecaoCurso cor="accent" sobretitulo="Competências" titulo="O arsenal de um Master">
           <p className="mb-8 max-w-2xl text-[15.5px] leading-relaxed">
             Técnicas avançadas, validadas por simulação — não por leitura.
           </p>
-          <ListaItens itens={arsenal} />
+          <ListaItens cor="accent" itens={arsenal} />
         </SecaoCurso>
 
-        <SecaoCurso numero="03" rotulo="Para quem é" titulo="Para quem é o Master?">
+        <SecaoCurso cor="accent" sobretitulo="Para quem é" titulo="Para quem é o Master?">
           <div className="grid gap-8 sm:grid-cols-2">
             <div>
               <p className="rotulo mb-4">Terapeutas e coaches</p>
               <ListaItens
+                cor="accent"
                 itens={[
                   { titulo: 'Lidar com clientes difíceis ou resistentes' },
                   { titulo: 'Resultados mais rápidos em casos complexos' },
@@ -198,6 +201,7 @@ export default function MasterPNL() {
             <div>
               <p className="rotulo mb-4">Líderes e negociadores</p>
               <ListaItens
+                cor="accent"
                 itens={[
                   { titulo: 'Persuasão ética com Sleight of Mouth' },
                   { titulo: 'Modelar a excelência de top performers' },
@@ -208,16 +212,22 @@ export default function MasterPNL() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso numero="04" rotulo="Ementa" id="ementa" titulo="Ementa Master PNL — 120h">
-          <Ementa modulos={curriculoMasterPnl} />
+        <SecaoCurso
+          cor="accent"
+          sobretitulo="Ementa"
+          id="ementa"
+          titulo="Ementa Master PNL — 120h"
+        >
+          <Ementa cor="accent" modulos={curriculoMasterPnl} />
         </SecaoCurso>
 
         <SecaoCurso
-          numero="05"
-          rotulo="Certificação"
+          cor="accent"
+          sobretitulo="Certificação"
           titulo="Não vendemos diplomas. Certificamos competência."
         >
           <Comparativo
+            cor="accent"
             legenda="Comparação entre certificado de conclusão e certificado de competência Master"
             colunas={['Certificado de conclusão', 'Certificado de competência Master']}
             linhas={[
@@ -243,8 +253,9 @@ export default function MasterPNL() {
           />
         </SecaoCurso>
 
-        <SecaoCurso numero="06" rotulo="Comparação" titulo="Qual o seu próximo passo?">
+        <SecaoCurso cor="accent" sobretitulo="Comparação" titulo="Qual o seu próximo passo?">
           <Comparativo
+            cor="accent"
             legenda="Comparação entre as formações Practitioner e Master"
             colunas={['Practitioner — o fundamento', 'Master — a excelência']}
             linhas={[
@@ -286,7 +297,7 @@ export default function MasterPNL() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso numero="07" rotulo="Alunos" titulo="O que dizem os Masters">
+        <SecaoCurso cor="accent" sobretitulo="Alunos" titulo="O que dizem os Masters">
           <div className="grid gap-x-10 gap-y-8 sm:grid-cols-2">
             {depoimentos.map((dep) => (
               <figure key={dep.nome} className="border-t border-white/12 pt-5">
@@ -305,7 +316,7 @@ export default function MasterPNL() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso numero="08" rotulo="Garantia" titulo="Garantia de evolução">
+        <SecaoCurso cor="accent" sobretitulo="Garantia" titulo="Garantia de evolução">
           <p className="max-w-2xl text-[15.5px] leading-relaxed">
             Você tem 7 dias para testar o Master e o SENA Avançado. Se achar que o nível de
             exigência não é para você, ou que o conteúdo não entrega o que promete, devolvemos
@@ -313,6 +324,7 @@ export default function MasterPNL() {
           </p>
 
           <ListaItens
+            cor="accent"
             className="mt-8"
             itens={[
               { titulo: 'Formação Master PNL completa — 120h' },
@@ -324,15 +336,15 @@ export default function MasterPNL() {
           />
         </SecaoCurso>
 
-        <SecaoCurso numero="09" rotulo="Perguntas" titulo="Dúvidas frequentes">
+        <SecaoCurso cor="accent" sobretitulo="Perguntas" titulo="Dúvidas frequentes">
           <Faq items={perguntas} />
         </SecaoCurso>
 
-        <SecaoCurso numero="10" rotulo="Método">
+        <SecaoCurso cor="accent" sobretitulo="Método">
           <SenaExplanation />
         </SecaoCurso>
 
-        <SecaoCurso numero="11" rotulo="Avaliações">
+        <SecaoCurso cor="accent" sobretitulo="Avaliações">
           <CourseReviews courseId={curso.slug} />
         </SecaoCurso>
       </PaginaCurso>

@@ -129,7 +129,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-8">
-        <h3 className="font-display text-2xl font-semibold text-white md:text-[28px]">
+        <h3 className="font-display text-2xl font-bold text-white md:text-[28px]">
           Avaliações de Alunos
         </h3>
         {reviews.length > 0 && (
@@ -142,7 +142,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
       </div>
 
       {/* Review Form */}
-      <div className="bloco mb-10 p-6">
+      <div className="cartao mb-10 p-6">
         {user ? (
           <form onSubmit={handleSubmit}>
             <div className="flex items-center gap-4 mb-6">
@@ -150,7 +150,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                 <img
                   src={user.photoURL}
                   alt={user.displayName || ''}
-                  className="h-11 w-11 border border-white/20 object-cover"
+                  className="h-11 w-11 rounded-full border border-white/20 object-cover"
                 />
               ) : (
                 <UserCircle2 className="h-11 w-11 text-brand-platinum" />
@@ -194,7 +194,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Compartilhe sua experiência com esta formação..."
-              className="mb-4 h-28 w-full resize-none border border-white/12 bg-black/40 p-4 text-white transition-colors placeholder:text-white/60 focus:border-brand-accent/60"
+              className="mb-4 h-28 w-full resize-none rounded-[14px] border border-white/12 bg-black/40 p-4 text-white transition-colors placeholder:text-white/60 focus:border-brand-accent/60"
               required
               maxLength={2000}
             />
@@ -222,7 +222,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
             <button
               type="button"
               onClick={loginWithGoogle}
-              className="inline-flex items-center gap-2 bg-white px-6 py-3 font-semibold text-brand-dark transition-colors hover:bg-brand-platinum"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-bold text-brand-dark transition-colors hover:bg-brand-platinum"
             >
               <LogIn size={20} />
               Entrar com Google
@@ -244,13 +244,13 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
         ) : loadError ? (
           <p
             role="alert"
-            className="border border-brand-danger/25 bg-brand-danger/[0.05] px-6 py-7 text-center text-brand-danger"
+            className="rounded-[18px] border border-brand-danger/25 bg-brand-danger/[0.05] px-6 py-7 text-center text-brand-danger"
           >
             Não foi possível carregar as avaliações agora. Recarregue a página para tentar de
             novo.
           </p>
         ) : reviews.length === 0 ? (
-          <p className="border border-white/10 px-6 py-7 text-center">
+          <p className="cartao px-6 py-7 text-center">
             Ainda não há avaliações para esta formação. Seja o primeiro a avaliar!
           </p>
         ) : (
@@ -267,7 +267,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                   layout
                   variants={revealUp}
                   exit={{ opacity: 0, scale: 0.97 }}
-                  className="border-b border-white/8 pb-6"
+                  className="cartao p-6"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-4">
@@ -275,7 +275,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                         <img
                           src={review.userPhoto}
                           alt={review.userName}
-                          className="h-9 w-9 border border-white/20 object-cover"
+                          className="h-9 w-9 rounded-full border border-white/20 object-cover"
                         />
                       ) : (
                         <UserCircle2 className="h-9 w-9 text-brand-platinum" />
@@ -297,7 +297,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                             ))}
                           </div>
                           {review.createdAt && (
-                            <span className="dado text-[12px] text-brand-quiet">
+                            <span className="text-[12px] text-brand-quiet">
                               {new Date(review.createdAt.toDate()).toLocaleDateString('pt-BR')}
                             </span>
                           )}

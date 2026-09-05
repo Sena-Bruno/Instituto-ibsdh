@@ -18,7 +18,7 @@ const FixedWhatsApp = () => {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed right-5 bottom-5 z-50 flex items-center gap-2.5 border border-[#25D366]/40 bg-brand-dark px-4 py-3 text-[13.5px] font-semibold text-white transition-colors hover:border-[#25D366] hover:bg-[#25D366] hover:text-brand-dark"
+      className="fixed right-5 bottom-5 z-50 flex items-center gap-2.5 rounded-full border border-[#25D366]/40 bg-brand-dark/90 px-5 py-3.5 text-[14px] font-bold text-white shadow-[0_8px_28px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all hover:border-[#25D366] hover:bg-[#25D366] hover:text-brand-dark"
     >
       {/* Texto real em vez de só aria-label: continua funcionando se o
           atributo for removido, e é o que a regra de acessibilidade pede.

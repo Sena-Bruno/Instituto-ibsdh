@@ -19,7 +19,7 @@ function Skeleton({ className, style }: { className?: string; style?: CSSPropert
     <div
       aria-hidden="true"
       style={style}
-      className={cn('animate-pulse bg-white/10', className)}
+      className={cn('animate-pulse rounded-lg bg-white/10', className)}
     />
   );
 }
@@ -27,17 +27,17 @@ function Skeleton({ className, style }: { className?: string; style?: CSSPropert
 /** Espelha um card de avaliação: estrelas, duas linhas de texto, autor. */
 export function SkeletonReview() {
   return (
-    <div className="border border-white/10 p-5">
+    <div className="cartao p-6">
       <div className="flex gap-2 mb-4">
         {Array.from({ length: 5 }, (_, i) => (
-          <Skeleton key={i} className="h-3.5 w-3.5" />
+          <Skeleton key={i} className="h-3.5 w-3.5 rounded" />
         ))}
       </div>
       <Skeleton className="h-4 w-full mb-2" />
       <Skeleton className="h-4 w-11/12 mb-2" />
       <Skeleton className="h-4 w-2/3 mb-6" />
       <div className="flex items-center gap-3">
-        <Skeleton className="h-9 w-9" />
+        <Skeleton className="h-11 w-11 rounded-full" />
         <div className="flex-1">
           <Skeleton className="h-3 w-32 mb-2" />
           <Skeleton className="h-3 w-20" />
@@ -74,8 +74,8 @@ export function SkeletonPage() {
       <Skeleton className="h-5 w-11/12 mb-3" />
       <Skeleton className="h-5 w-4/5 mb-12" />
       <div className="grid sm:grid-cols-2 gap-6">
-        <Skeleton className="h-40" />
-        <Skeleton className="h-40" />
+        <Skeleton className="h-40 rounded-[22px]" />
+        <Skeleton className="h-40 rounded-[22px]" />
       </div>
     </div>
   );
