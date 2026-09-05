@@ -1,6 +1,8 @@
+import { ShieldCheck } from 'lucide-react';
 import type { Course } from '../config/courses';
 import { site } from '../config/site';
-import { Especificacao } from './Tabela';
+import { type NomeCor, paletas } from '../lib/cores';
+import { cn } from '../lib/utils';
 
 /**
  * A coluna de compra, fixa durante a rolagem.
@@ -11,70 +13,88 @@ import { Especificacao } from './Tabela';
  * convence — quem decidia comprar precisava procurar onde clicar, rolando
  * para cima ou para baixo até reencontrar um botão.
  *
- * Agora o preço e a ação acompanham a leitura em telas largas. Em telas
- * estreitas não há coluna lateral, então ela vira um bloco normal no fluxo:
- * uma barra grudada no rodapé do celular cobriria o conteúdo justo nas
- * telas em que ele já é escasso.
+ * Em telas estreitas não há coluna lateral, então ela vira um bloco normal
+ * no fluxo: uma barra grudada no rodapé do celular cobriria o conteúdo justo
+ * nas telas em que ele já é escasso.
  */
 export default function RailCompra({
   curso,
-  /** Texto do botão. Vale a pena ser específico do curso. */
+  cor,
   acao,
   especificacoes,
 }: {
   curso: Course;
+  cor: NomeCor;
   acao: string;
   especificacoes: { rotulo: string; valor: string }[];
 }) {
+  const p = paletas[cor];
+
   return (
     <aside className="lg:sticky lg:top-28">
-      <div className="bloco p-6">
-        <p className="rotulo mb-5">Matrícula</p>
+      <div className={cn('overflow-hidden rounded-[22px] border bg-brand-surface', p.borda)}>
+        <div className={cn('h-1.5 bg-gradient-to-r', p.capa)} />
 
-        {curso.priceFrom && (
-          <p className="mb-1 text-[14px] text-brand-quiet line-through">De {curso.priceFrom}</p>
-        )}
+        <div className="p-7">
+          <p className={cn('sobretitulo mb-5', p.texto)}>Matrícula</p>
 
-        {curso.installment ? (
-          <>
-            <p className="font-display text-[34px] leading-none font-semibold tracking-tight text-white">
-              12x {curso.installment}
+          {curso.priceFrom && (
+            <p className="mb-1.5 text-[14px] text-brand-quiet line-through">
+              De {curso.priceFrom}
             </p>
-            <p className="mt-2 text-[14.5px] text-brand-accent">ou {curso.price} à vista</p>
-          </>
-        ) : (
-          <p className="font-display text-[34px] leading-none font-semibold tracking-tight text-white">
-            {curso.price}
+          )}
+
+          {curso.installment ? (
+            <>
+              <p className="font-display text-[36px] leading-none font-extrabold tracking-[-0.03em] text-white">
+                12x {curso.installment}
+              </p>
+              <p className={cn('mt-2.5 text-[15px] font-semibold', p.texto)}>
+                ou {curso.price} à vista
+              </p>
+            </>
+          ) : (
+            <p className="font-display text-[34px] leading-none font-extrabold text-white">
+              {curso.price}
+            </p>
+          )}
+
+          {curso.checkout ? (
+            <a
+              href={curso.checkout}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn('mt-6 w-full', p.botao)}
+            >
+              {acao}
+            </a>
+          ) : (
+            <p className="mt-6 rounded-full border border-white/12 bg-white/5 px-5 py-4 text-center text-[14px]">
+              Turma ainda não aberta
+            </p>
+          )}
+
+          <p className="mt-4 flex items-center justify-center gap-2 text-[12.5px] text-brand-quiet">
+            <ShieldCheck size={15} aria-hidden="true" />7 dias de garantia · devolução integral
           </p>
-        )}
 
-        {curso.checkout ? (
-          <a
-            href={curso.checkout}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary mt-6 w-full"
-          >
-            {acao}
-          </a>
-        ) : (
-          <p className="mt-6 border border-white/12 px-5 py-4 text-center text-[14px]">
-            Turma ainda não aberta
+          <dl className="mt-7 border-t border-white/10 pt-2">
+            {especificacoes.map((item) => (
+              <div
+                key={item.rotulo}
+                className="flex items-baseline justify-between gap-4 border-b border-white/[0.06] py-3 last:border-b-0"
+              >
+                <dt className="text-[13.5px]">{item.rotulo}</dt>
+                <dd className="text-[13.5px] font-semibold text-white">{item.valor}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <p className="mt-6 text-[12.5px] leading-relaxed text-brand-quiet">
+            Pagamento processado pela {site.paymentPlatform}. O instituto não recebe nem
+            armazena os dados do seu cartão.
           </p>
-        )}
-
-        <p className="rotulo mt-4 text-center normal-case">
-          7 dias de garantia · devolução integral
-        </p>
-
-        <div className="mt-6 border-t border-white/12 pt-2">
-          <Especificacao itens={especificacoes} />
         </div>
-
-        <p className="mt-5 text-[12.5px] leading-relaxed text-brand-quiet">
-          Pagamento processado pela {site.paymentPlatform}. O instituto não recebe nem armazena
-          os dados do seu cartão.
-        </p>
       </div>
     </aside>
   );

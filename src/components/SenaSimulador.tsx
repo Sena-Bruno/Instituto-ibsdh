@@ -31,15 +31,22 @@ export default function SenaSimulador() {
   const idOpcoes = useId();
 
   return (
-    <div className="bloco flex flex-col">
+    <div className="cartao flex flex-col overflow-hidden">
       {/* Cabeçalho da sessão */}
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-white/12 px-5 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-white/10 bg-white/[0.03] px-5 py-4">
         <div className="flex items-center gap-3">
-          <span aria-hidden="true" className="h-2 w-2 shrink-0 bg-brand-accent" />
+          <span
+            aria-hidden="true"
+            className="pulso h-2 w-2 shrink-0 rounded-full bg-brand-emerald shadow-[0_0_10px_#39d4a1]"
+          />
           <span className="text-[14.5px] font-semibold text-white">Paciente virtual</span>
-          <span className="rotulo border-l border-white/15 pl-3">Perfil: {sena.perfil}</span>
+          <span className="border-l border-white/15 pl-3 text-[12px] font-semibold tracking-[0.08em] text-brand-quiet uppercase">
+            Perfil: {sena.perfil}
+          </span>
         </div>
-        <span className="rotulo">Sessão 01</span>
+        <span className="text-[12px] font-semibold tracking-[0.08em] text-brand-quiet uppercase">
+          Sessão 01
+        </span>
       </div>
 
       <div className="flex flex-col gap-4 p-5">
@@ -69,14 +76,16 @@ export default function SenaSimulador() {
         {/* As opções, enquanto ninguém escolheu */}
         {!escolhida && (
           <fieldset className="mt-2 border-0 p-0">
-            <legend className="rotulo mb-3">Como você responderia?</legend>
+            <legend className="sobretitulo mb-3 text-brand-quiet">
+              Como você responderia?
+            </legend>
             <div className="flex flex-col gap-2" id={idOpcoes}>
               {sena.respostas.map((resposta) => (
                 <button
                   key={resposta.id}
                   type="button"
                   onClick={() => setEscolhida(resposta)}
-                  className="border border-white/14 px-4 py-3.5 text-left text-[14.5px] leading-snug text-brand-platinum transition-colors hover:border-brand-accent/45 hover:bg-white/[0.04] hover:text-white"
+                  className="rounded-[14px] border border-white/12 px-4 py-3.5 text-left text-[14.5px] leading-snug text-brand-platinum transition-colors hover:border-brand-accent/50 hover:bg-white/[0.05] hover:text-white"
                 >
                   {resposta.texto}
                 </button>
@@ -91,13 +100,13 @@ export default function SenaSimulador() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: duration.base, delay: 0.15, ease: ease.out }}
-            className="mt-2 border-t border-white/12 pt-4"
+            className="mt-2 border-t border-white/10 pt-4"
           >
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <span className="rotulo-accent">Devolutiva SENA</span>
+              <span className="sobretitulo text-brand-accent">Devolutiva SENA</span>
               <span
                 className={cn(
-                  'font-mono text-[11px] uppercase tracking-[0.08em]',
+                  'text-[11.5px] font-bold tracking-[0.1em] uppercase',
                   corPorVeredito[escolhida.veredito],
                 )}
               >
@@ -111,7 +120,7 @@ export default function SenaSimulador() {
               <button type="button" onClick={() => setEscolhida(null)} className="btn-ghost">
                 Tentar outra resposta
               </button>
-              <span className="rotulo">
+              <span className="text-[12.5px] text-brand-quiet">
                 Na formação são {sena.totalCenarios} cenários assim
               </span>
             </div>
@@ -135,13 +144,20 @@ function Fala({
   return (
     <div
       className={cn(
-        'max-w-[85%] border px-4 py-3.5',
+        'max-w-[85%] rounded-[16px] border px-4 py-3.5',
         doVisitante
           ? 'self-end border-brand-accent/28 bg-brand-accent/10'
           : 'self-start border-white/8 bg-white/[0.04]',
       )}
     >
-      <p className={cn('mb-2', doVisitante ? 'rotulo-accent' : 'rotulo')}>{quem}</p>
+      <p
+        className={cn(
+          'mb-2 text-[11px] font-bold tracking-[0.1em] uppercase',
+          doVisitante ? 'text-brand-accent' : 'text-brand-quiet',
+        )}
+      >
+        {quem}
+      </p>
       <p className={cn('text-[15px] leading-relaxed', doVisitante ? 'text-white' : '')}>
         {children}
       </p>

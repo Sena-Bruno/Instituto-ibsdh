@@ -52,13 +52,14 @@ export default function SiteHeader() {
   }, [isMenuOpen]);
 
   return (
-    // O cabeçalho não é mais transparente sobre o hero: a Direção B trata a
-    // navegação como cabeçalho de documento, sempre presente e sempre com a
-    // régua embaixo. Perdeu o backdrop-blur junto com o resto do desfoque.
+    // Transparente sobre o hero e sólido depois de rolar: o hero tem brilho
+    // atrás, e uma barra opaca por cima cortaria o efeito logo na entrada.
     <header
       className={cn(
-        'fixed top-0 right-0 left-0 z-50 border-b border-white/12 bg-brand-dark transition-[padding] duration-200',
-        isScrolled || !isHome ? 'py-3' : 'py-4',
+        'fixed top-0 right-0 left-0 z-50 transition-all duration-300',
+        isScrolled || !isHome
+          ? 'border-b border-white/10 bg-brand-dark/85 py-3 backdrop-blur-xl'
+          : 'border-b border-transparent py-5',
       )}
     >
       <nav
@@ -77,11 +78,13 @@ export default function SiteHeader() {
             height={48}
             className="h-10 w-10 object-contain"
           />
-          <span className="text-[14.5px] leading-none font-bold tracking-tight text-white">
-            INSTITUTO BRUNO SENA
-          </span>
-          <span className="rotulo hidden border-l border-white/15 pl-3 lg:block">
-            {site.shortName}
+          <span className="flex flex-col leading-none">
+            <span className="font-display text-[15px] font-extrabold tracking-tight text-white">
+              INSTITUTO
+            </span>
+            <span className="mt-0.5 text-[9.5px] font-semibold tracking-[0.2em] text-brand-accent">
+              {site.shortName}
+            </span>
           </span>
         </Link>
 
@@ -92,8 +95,8 @@ export default function SiteHeader() {
                 to={link.to}
                 aria-current={pathname === link.to ? 'page' : undefined}
                 className={cn(
-                  'border-b border-transparent pb-0.5 transition-colors hover:text-brand-accent',
-                  pathname === link.to && 'border-brand-accent font-semibold text-brand-accent',
+                  'transition-colors hover:text-white',
+                  pathname === link.to && 'font-semibold text-brand-accent',
                 )}
               >
                 {link.label}
@@ -104,10 +107,10 @@ export default function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <Link
-            to={isHome ? '#formacoes' : routes.home}
-            className="hidden bg-brand-accent px-5 py-2.5 text-[13.5px] font-semibold text-brand-dark transition-colors hover:bg-[#f0d488] sm:block"
+            to={isHome ? '#cursos' : routes.home}
+            className="hidden rounded-full bg-gradient-to-br from-brand-accent-light to-brand-accent px-6 py-2.5 text-[13.5px] font-bold text-brand-dark shadow-[0_6px_20px_rgba(229,195,101,0.28)] transition-transform hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 sm:block"
           >
-            Matrícula
+            Matricule-se
           </Link>
           <button
             type="button"
@@ -115,7 +118,7 @@ export default function SiteHeader() {
             aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={isMenuOpen}
             aria-controls="menu-mobile"
-            className="p-2 text-white transition-colors hover:bg-white/5 lg:hidden"
+            className="rounded-xl p-2 text-white transition-colors hover:bg-white/5 lg:hidden"
           >
             <motion.span
               key={isMenuOpen ? 'fechar' : 'abrir'}
@@ -140,7 +143,7 @@ export default function SiteHeader() {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="absolute top-full right-0 left-0 overflow-hidden border-b border-white/12 bg-brand-dark lg:hidden"
+            className="absolute top-full right-0 left-0 overflow-hidden border-b border-white/10 bg-brand-dark/95 backdrop-blur-xl lg:hidden"
           >
             <div className="flex flex-col px-6 pt-2 pb-6">
               {courseLinks.map((link, i) => (
@@ -153,7 +156,7 @@ export default function SiteHeader() {
                     pathname === link.to ? 'text-brand-accent' : 'text-white',
                   )}
                 >
-                  <span className="dado text-[12px] text-brand-quiet">
+                  <span className="font-display text-[12px] font-bold text-white/25">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <span className="text-[16px] font-medium">{link.label}</span>

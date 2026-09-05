@@ -42,50 +42,52 @@ npm run smoke
 > todas as páginas perderem o título próprio. Isso foi verificado com o
 > `npm run smoke`. Não troque o pacote sem rodar esse teste.
 
-## Linguagem visual — Direção B, "Clínico"
+## Linguagem visual
 
-O site foi redesenhado sobre uma tese: o mercado brasileiro de PNL usa
-inteiro a estética de lançamento — gradiente, orbe de blur, card
-arredondado, brilho no botão. **Parecer uma instituição, e não um
-infoproduto, é hoje o que mais destoa** — e é o que sustenta o próprio
-texto do site ("não formamos amadores").
+O site mistura duas direções apresentadas em tela:
 
-Três regras que valem para código novo:
+**De D vem o sistema de cor.** Cada formação tem a sua, e a cor é orientação,
+não enfeite: azul é Practitioner, roxo é Hipnoterapia, dourado é Master PNL,
+verde é Master Coach. A mesma cor aparece no card da home, no botão de
+matrícula, no brilho de fundo da página do curso e na barra do certificado —
+quem navega aprende a cor e passa a se localizar por ela.
 
-1. **Zero decoração.** Nada de orbe de blur, gradiente ornamental ou brilho
-   de botão. O que estrutura a página é a grade (`.grade`), e ela só entra
-   em seção de peso alto. Se aparecer em todas, volta a ser o problema que
-   os orbes eram: com o mesmo brilho atrás de tudo, tudo parece igualmente
-   importante e nada fica na memória.
-2. **Canto reto.** Os tokens `--radius-*` são zero. `rounded-full` não passa
-   por token — não use.
-3. **Três vozes, uma família.** IBM Plex Serif no display (`font-display`),
-   Sans no texto corrido, Mono nos rótulos e números (`.rotulo`, `.dado`).
-   Caixa alta é voz da mono; título em serifa vai em caixa de sentença.
+**De E vem a escala.** Título grande de verdade, número grande como prova,
+contraste alto. A energia vem de tamanho e contraste, não de encher a tela
+de elementos brilhando.
+
+### As regras
+
+1. **Brilho tem dono.** A classe `.brilho` herda a cor da seção pela variável
+   `--brilho`, e só entra onde a seção tem cor. O site já teve 33 orbes
+   idênticos, um por seção — como tudo brilhava igual, nada se destacava.
+2. **Cor vem de `lib/cores.ts`.** As classes ficam escritas por extenso, não
+   montadas por template: o Tailwind varre o código em busca de nomes
+   literais, e uma string como `` `text-brand-${cor}` `` some do CSS final.
+3. **Para apagar um texto, troque o token.** `brand-platinum` (8,5:1) e
+   `brand-quiet` (5,8:1) passam no mínimo 4,5:1 do WCAG AA. Opacidade não —
+   foi assim que o site chegou a ter 37 usos de um tom a 3,4:1.
 
 ### Componentes que carregam a linguagem
 
 | Componente | Para quê |
 |---|---|
-| `Secao` | Seção numerada (`§ 02 — MÉTODO`) com peso explícito |
+| `Secao` + `Cabecalho` | Seção com sobretítulo, título grande e brilho opcional |
+| `CardCurso` | O card de formação, dono de uma cor |
+| `Numeros` | A faixa de números grandes |
 | `PaginaCurso` / `SecaoCurso` | Página de formação, com a coluna de compra fixa |
-| `Trilha` | Sequência ordenada, quando a ordem é a informação |
-| `Dados` | Atributos comparáveis, separados por régua vertical |
-| `ListaItens` | O que era grid de card com ícone |
 | `Comparativo` | Tabela de duas colunas |
+| `ListaItens` | O que era grid de card com ícone |
 | `Ementa` | Currículo vindo de `config/curriculos.ts` |
 | `SenaSimulador` | A demonstração interativa do simulador |
 
-O peso das seções é **orçamento apertado, não opção de gosto**: só o SENA é
-`maximo`, e só o hero e a ação final são `alto`. Se tudo virar `alto`, a
-hierarquia se perde de novo.
+### Classes utilitárias
 
-### Contraste
-
-O token `brand-quiet` (`#7d7d87`) é o tom dos rótulos e do texto
-secundário, a 4,9:1 sobre o fundo — passa no mínimo 4,5:1 do WCAG AA para
-texto pequeno. Ele substituiu `brand-platinum/60`, que dava 3,4:1. Não use
-opacidade para "apagar" texto: escolha o token.
+`titulo-hero`, `titulo-secao`, `titulo-card` para a escala tipográfica;
+`sobretitulo` para o rótulo em maiúsculas; `texto-gradiente` para a palavra
+em gradiente (uma por página, no máximo — se aparecer em todo título, deixa
+de destacar); `cartao`, `cartao-vidro`, `faixa-accent`, `selo` para as
+superfícies.
 
 ## Movimento
 
@@ -277,6 +279,19 @@ para outra.
   checkout dos cursos avulsos, a R$ 397 e R$ 997. Enquanto os produtos não
   existirem na Kiwify, o botão dos dois leva ao WhatsApp da coordenação.
   Criando os links, basta preencher o campo `checkout` de cada combo.
+- **Ebooks sem checkout.** Os três botões da seção de ebooks eram `<button>`
+  sem destino nenhum. Hoje levam ao WhatsApp com a mensagem preenchida.
+  Mesma correção dos combos: crie o produto e preencha o link.
+- **Faixa de instituições.** A home listava quatro nomes genéricos e
+  inventados ("Global Tech", "Institutos Financeiros"), repetidos para
+  preencher o carrossel, sob a frase "metodologia aplicada em instituições
+  como". Nome de parceiro que não existe é risco de credibilidade, então a
+  faixa passou a listar as **áreas** em que os alunos atuam — que é verdade
+  e diz a mesma coisa. Quando houver parceria real com logo, ela entra em
+  `OndeAtuam`, na home.
+- **"+50 empresas transformadas".** O selo vinha com quatro avatares
+  inventados. O número ficou; os rostos falsos saíram. Se o número puder ser
+  comprovado, vale mantê-lo — senão, convém revisá-lo também.
 
 ### Herdadas do projeto original
 

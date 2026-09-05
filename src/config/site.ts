@@ -62,6 +62,13 @@ export const whatsappMessages = {
   enrollment:
     'Olá! Gostaria de saber mais sobre as formações e como posso garantir minha vaga.',
   inCompany: 'Olá! Gostaria de saber mais sobre os Treinamentos Corporativos (In Company).',
+  /**
+   * Os ebooks não têm link de checkout: os três botões daquela seção eram
+   * <button> sem destino nenhum. Enquanto os produtos não existirem na
+   * plataforma de pagamento, o pedido chega pela coordenação — melhor do
+   * que um botão que não faz nada.
+   */
+  ebooks: 'Olá! Gostaria de comprar os ebooks do Instituto Bruno Sena.',
 } as const;
 
 /** Rotas internas, para evitar strings soltas nos links de navegação. */

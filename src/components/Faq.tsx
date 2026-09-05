@@ -29,16 +29,14 @@ export default function Faq({
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    // Era uma pilha de cards arredondados com fundo próprio. Aqui é uma lista
-    // com régua: um sumário de documento que se abre, não seis caixas.
-    <div className={cn('border-t border-white/12', className)}>
+    <div className={cn('flex flex-col gap-3', className)}>
       {items.map((item, i) => {
         const isOpen = openIndex === i;
         const panelId = `faq-painel-${i}`;
         const buttonId = `faq-botao-${i}`;
 
         return (
-          <div key={item.q} className="border-b border-white/8">
+          <div key={item.q} className="cartao overflow-hidden hover:border-white/20">
             <h3>
               <button
                 type="button"
@@ -46,19 +44,18 @@ export default function Faq({
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpenIndex(isOpen ? null : i)}
-                className="flex w-full items-baseline justify-between gap-4 py-5 text-left transition-colors hover:text-brand-accent"
+                className="flex w-full items-center justify-between gap-4 p-6 text-left transition-colors hover:bg-white/[0.03]"
               >
-                <span className="dado shrink-0 text-[12px] text-brand-quiet">
-                  {String(i + 1).padStart(2, '0')}
+                <span className="flex-1 font-display text-[16.5px] font-bold text-white">
+                  {item.q}
                 </span>
-                <span className="flex-1 text-[15.5px] font-semibold text-white">{item.q}</span>
                 <motion.span
                   aria-hidden="true"
                   animate={{ rotate: isOpen ? 180 : 0 }}
                   transition={{ duration: duration.fast, ease: ease.out }}
                   className="shrink-0 text-brand-accent"
                 >
-                  <ChevronDown size={18} />
+                  <ChevronDown size={20} />
                 </motion.span>
               </button>
             </h3>
@@ -78,9 +75,7 @@ export default function Faq({
                   exit="hidden"
                   className="overflow-hidden"
                 >
-                  {/* Alinhado com a pergunta, não com a numeração: o recuo
-                      da esquerda casa com a largura do dado + espaçamento. */}
-                  <div className="pb-6 pl-[38px] text-[14.5px] leading-relaxed">{item.a}</div>
+                  <div className="px-6 pb-6 text-[14.5px] leading-relaxed">{item.a}</div>
                 </motion.div>
               )}
             </AnimatePresence>

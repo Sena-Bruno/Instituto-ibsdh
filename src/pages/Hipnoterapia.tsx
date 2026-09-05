@@ -86,6 +86,7 @@ export default function Hipnoterapia() {
 
       <PaginaCurso
         curso={curso}
+        cor="purple"
         trilha={[
           { rotulo: 'PNL Practitioner', para: routes.pnlPractitioner },
           { rotulo: 'Hipnoterapia Clínica', atual: true },
@@ -123,8 +124,8 @@ export default function Hipnoterapia() {
         ]}
       >
         <SecaoCurso
-          numero="01"
-          rotulo="O problema"
+          cor="purple"
+          sobretitulo="O problema"
           titulo="Você sabe que a mente tem poder. Mas não sabe acessar."
         >
           <div className="space-y-5 text-[15.5px] leading-relaxed">
@@ -154,11 +155,11 @@ export default function Hipnoterapia() {
         </SecaoCurso>
 
         <SecaoCurso
-          numero="02"
-          rotulo="Competências"
+          cor="purple"
+          sobretitulo="Competências"
           titulo={`Em ${curriculoHipnoterapia.length} módulos, você se torna capaz de:`}
         >
-          <ListaItens itens={competencias} />
+          <ListaItens cor="purple" itens={competencias} />
 
           <div className="mt-8 border border-brand-danger/35 bg-brand-danger/[0.06] p-6">
             <p className="rotulo mb-3 text-brand-danger">E o mais importante</p>
@@ -171,11 +172,12 @@ export default function Hipnoterapia() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso numero="03" rotulo="Para quem é" titulo="Este curso é para você que:">
+        <SecaoCurso cor="purple" sobretitulo="Para quem é" titulo="Este curso é para você que:">
           <div className="grid gap-8 sm:grid-cols-2">
             <div>
               <p className="rotulo mb-4">Terapeutas e coaches</p>
               <ListaItens
+                cor="purple"
                 itens={[
                   { titulo: 'Adiciona ferramenta de acesso direto ao inconsciente' },
                   {
@@ -189,6 +191,7 @@ export default function Hipnoterapia() {
             <div>
               <p className="rotulo mb-4">Uso pessoal e desenvolvimento</p>
               <ListaItens
+                cor="purple"
                 itens={[
                   { titulo: 'Busca autodomínio profundo: auto-hipnose, regulação emocional' },
                   { titulo: 'Quer entender a própria mente em nível inconsciente' },
@@ -200,20 +203,21 @@ export default function Hipnoterapia() {
         </SecaoCurso>
 
         <SecaoCurso
-          numero="04"
-          rotulo="Ementa"
+          cor="purple"
+          sobretitulo="Ementa"
           id="ementa"
           titulo={`${horas} horas. ${aulas} aulas. Ética em primeiro lugar.`}
         >
-          <Ementa modulos={curriculoHipnoterapia} />
+          <Ementa cor="purple" modulos={curriculoHipnoterapia} />
         </SecaoCurso>
 
         <SecaoCurso
-          numero="05"
-          rotulo="Certificação"
+          cor="purple"
+          sobretitulo="Certificação"
           titulo="Dois níveis. Um significa competência real."
         >
           <Comparativo
+            cor="purple"
             legenda="Comparação entre o certificado de conclusão e o de hipnoterapeuta clínico"
             colunas={['Certificado de conclusão', 'Certificado de hipnoterapeuta clínico']}
             linhas={[
@@ -245,8 +249,8 @@ export default function Hipnoterapia() {
         </SecaoCurso>
 
         <SecaoCurso
-          numero="06"
-          rotulo="Comparação"
+          cor="purple"
+          sobretitulo="Comparação"
           id="comparativo"
           titulo="PNL ou hipnoterapia?"
         >
@@ -256,6 +260,7 @@ export default function Hipnoterapia() {
           </p>
 
           <Comparativo
+            cor="purple"
             legenda="Comparação entre PNL e Hipnoterapia Clínica"
             colunas={['PNL (Practitioner / Master)', 'Hipnoterapia Clínica']}
             linhas={[
@@ -346,15 +351,15 @@ export default function Hipnoterapia() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso numero="07" rotulo="Perguntas" titulo="Dúvidas frequentes">
+        <SecaoCurso cor="purple" sobretitulo="Perguntas" titulo="Dúvidas frequentes">
           <Faq items={perguntas} />
         </SecaoCurso>
 
-        <SecaoCurso numero="08" rotulo="Método">
+        <SecaoCurso cor="purple" sobretitulo="Método">
           <SenaExplanation />
         </SecaoCurso>
 
-        <SecaoCurso numero="09" rotulo="Avaliações">
+        <SecaoCurso cor="purple" sobretitulo="Avaliações">
           <CourseReviews courseId={curso.slug} />
         </SecaoCurso>
       </PaginaCurso>

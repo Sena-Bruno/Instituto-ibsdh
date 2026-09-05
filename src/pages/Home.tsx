@@ -1,147 +1,194 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { ArrowRight } from 'lucide-react';
+import {
+  ArrowRight,
+  Award,
+  Brain,
+  Briefcase,
+  Building2,
+  CheckCircle2,
+  Download,
+  Globe,
+  Instagram,
+  Lock,
+  Sparkles,
+  Target,
+  User,
+} from 'lucide-react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
+import CardCurso from '../components/CardCurso';
 import CourseImage from '../components/CourseImage';
 import Faq from '../components/Faq';
-import Secao, { Revela, SecaoIntro, SecaoTitulo } from '../components/Secao';
+import Numeros from '../components/Numeros';
+import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
-import { Dados, type ItemTrilha, Trilha } from '../components/Tabela';
 import { courses } from '../config/courses';
 import { site, whatsappLink, whatsappMessages } from '../config/site';
+import { paletas } from '../lib/cores';
 import { duration, ease } from '../lib/motion';
 
 /**
- * A home, reestruturada de 16 seções para 8.
+ * A home.
  *
- * O diagnóstico era de hierarquia, não de estética: as 16 seções tinham
- * todas a mesma altura, o mesmo orbe de blur no fundo e o mesmo par
- * badge + título + grid de cards. Sem pico nem vale, quem rolava não
- * guardava nada — e a seção que mais importa ficava em quarto lugar.
+ * A linguagem visual é a mistura das direções D (cor como sistema de
+ * orientação) e E (escala e contraste). O brilho voltou, mas com dono: ele
+ * herda a cor da seção e só aparece onde há uma cor governando.
  *
- * O que mudou de estrutura:
+ * Sobre o tamanho: uma versão anterior cortou a home de 16 para 8 seções, e
+ * ficou curta demais. Aqui as seções voltaram — Ebooks, In Company e a faixa
+ * de instituições — e as fusões foram desfeitas: "Como funciona", "Por que
+ * nós", "Depoimentos" e "Pagamento seguro" voltam a ter seção própria.
  *
- *   · O SENA subiu da 4ª para a 2ª posição e virou interativo. É o único
- *     argumento que a concorrência não copia, e estava sendo apresentado
- *     como captura de tela.
- *   · Sete pares de seções redundantes viraram uma cada: Cursos + Como
- *     funciona, Para quem é + Por que nós, Certificados + Parceiros,
- *     Mentor + Depoimentos, FAQ + Pagamento seguro.
- *   · Os selos de confiança viraram uma faixa de dados dentro do hero:
- *     promessa, ação e prova na mesma tela.
- *   · Os Ebooks saíram. Oferecer um ebook de R$ 27 na mesma página de uma
- *     formação de R$ 997 dá uma saída barata a quem estava quase comprando.
- *     (Os três botões daquela seção também não tinham destino nenhum.)
- *   · O In Company saiu para o rodapé: é outro público e outra jornada de
- *     compra, e no meio da home competia com a matrícula.
- *   · A vitrine de "instituições parceiras" saiu. Os quatro nomes eram
- *     genéricos e repetidos para preencher o carrossel; a credencial real
- *     do instituto — NLPEA e IBSDH — está na seção de certificação.
+ * Três blocos voltaram com o conteúdo trocado, e é de propósito:
+ *
+ *   · A faixa de instituições listava quatro nomes genéricos ("Global Tech",
+ *     "Institutos Financeiros") repetidos para preencher o carrossel, sob a
+ *     frase "metodologia aplicada em instituições como". Nomes de parceiro
+ *     que não existem são risco de credibilidade, então a faixa passou a
+ *     listar as ÁREAS em que os alunos atuam — que é verdade e diz a mesma
+ *     coisa. Quando houver logo de parceiro real, entra aqui.
+ *   · O selo "+50 Empresas Transformadas" vinha com quatro avatares
+ *     inventados. O número ficou, os rostos falsos saíram.
+ *   · Os três botões dos Ebooks não tinham destino. Enquanto não houver
+ *     link de checkout, o pedido chega pela coordenação no WhatsApp.
  */
 
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
 
-const provas = [
-  { rotulo: 'Alunos formados', valor: '+2.500', nota: 'De terapeutas a executivos.' },
-  { rotulo: 'Certificação', valor: 'NLPEA + IBSDH', nota: 'Internacional e nacional.' },
-  { rotulo: 'Acesso', valor: 'Vitalício', nota: 'Inclui as atualizações.' },
-  { rotulo: 'Garantia', valor: '7 dias', nota: 'Devolução integral.' },
-];
-
 function Hero() {
   return (
-    <section className="grade relative border-b border-white/8 pt-32 pb-0 md:pt-40">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-16">
+    <section className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-24">
+      <div
+        aria-hidden="true"
+        className="brilho -top-48 left-[44%] h-[560px] w-[820px]"
+        style={{ '--brilho': paletas.accent.brilho } as React.CSSProperties}
+      />
+      <div
+        aria-hidden="true"
+        className="brilho top-32 -left-40 h-[520px] w-[520px]"
+        style={{ '--brilho': paletas.blue.brilho } as React.CSSProperties}
+      />
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
+        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_360px]">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: duration.slow, ease: ease.out }}
           >
-            <p className="rotulo-accent mb-7">
-              Instituto de formação em desenvolvimento humano
+            <p className="selo mb-7 border-white/12 bg-white/5 text-brand-accent">
+              <span
+                aria-hidden="true"
+                className="pulso h-1.5 w-1.5 rounded-full bg-brand-emerald shadow-[0_0_10px_#39d4a1]"
+              />
+              Turmas abertas
             </p>
 
-            <h1 className="max-w-[19ch] font-display text-[40px] leading-[1.06] font-semibold tracking-tight text-white sm:text-[52px] lg:text-[60px]">
-              Aprender a técnica é a parte fácil. Saber quando usar é a formação.
+            <h1 className="titulo-hero max-w-[16ch]">
+              Domine as ferramentas que{' '}
+              <span className="texto-gradiente">reprogramam vidas.</span>
             </h1>
 
-            <p className="mt-7 max-w-xl text-[17px] leading-relaxed md:text-lg">
-              PNL, Hipnoterapia e Coaching com prática supervisionada antes do primeiro
-              atendimento real. Para terapeutas, coaches, líderes — e para quem quer
-              autodomínio, sem intenção de atender ninguém.
+            <p className="mt-7 max-w-xl text-[17.5px] leading-relaxed md:text-lg">
+              PNL, Hipnoterapia e Coaching com prática supervisionada no SENA — nosso simulador
+              clínico. Você treina em pacientes virtuais, com devolutiva a cada intervenção,
+              antes do primeiro atendimento real.
             </p>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <a href="#formacoes" className="btn-primary">
-                Ver as formações <ArrowRight size={16} aria-hidden="true" />
+              <a href="#cursos" className="btn-primary">
+                Quero começar agora <ArrowRight size={17} aria-hidden="true" />
               </a>
               <a href="#sena" className="btn-outline">
-                Experimentar o simulador
+                Experimentar o SENA
               </a>
             </div>
           </motion.div>
 
-          {/* O retrato é o elemento LCP da home: carrega com prioridade alta e
-              tem dimensões declaradas para não deslocar o layout. Perdeu o
-              orbe de brilho e a sombra dourada de 30px que tinha atrás. */}
-          <div className="relative mx-auto w-full max-w-[380px] lg:max-w-none">
-            <img
-              src="/brunosena.webp"
-              alt="Bruno Sena, fundador do Instituto"
-              width={900}
-              height={1206}
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-              className="w-full object-cover object-top"
-              style={{
-                WebkitMaskImage: 'linear-gradient(to bottom, black 72%, transparent 100%)',
-                maskImage: 'linear-gradient(to bottom, black 72%, transparent 100%)',
-              }}
-            />
+          {/* A pilha de cores é a legenda visual do site: quem chega já
+              aprende que azul é Practitioner, roxo é Hipnoterapia e dourado
+              é Master, antes de rolar até os cards. */}
+          <div className="flex flex-col gap-3">
+            {[
+              { nivel: 'Nível 01', curso: courses.pnlPractitioner, cor: 'blue' as const },
+              { nivel: 'Nível 02', curso: courses.hipnoterapia, cor: 'purple' as const },
+              { nivel: 'Nível 03', curso: courses.masterPnl, cor: 'accent' as const },
+            ].map(({ nivel, curso, cor }) => (
+              <Link
+                key={curso.route}
+                to={curso.route}
+                className={`rounded-[20px] border bg-gradient-to-br px-6 py-5 transition-colors ${paletas[cor].borda} ${paletas[cor].bordaHover} ${paletas[cor].capa}`}
+              >
+                <span className={`sobretitulo block ${paletas[cor].texto}`}>{nivel}</span>
+                <span className="mt-1.5 block font-display text-lg font-bold text-white">
+                  {curso.title}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
-
-        {/* A prova entra na mesma tela da promessa, em vez de virar uma
-            seção própria 900 pixels abaixo. */}
-        <Dados itens={provas} className="mt-4 border-b-0" />
       </div>
     </section>
   );
 }
 
-/* ── § 01 — SENA ──────────────────────────────────────────────────────────── */
+/* ── Números ──────────────────────────────────────────────────────────────── */
+
+function Prova() {
+  return (
+    <Secao className="py-14 md:py-16">
+      <Numeros
+        itens={[
+          {
+            valor: '2.500',
+            sufixo: '+',
+            legenda: 'Alunos formados, de terapeutas a executivos',
+          },
+          { valor: '100', sufixo: 'h', legenda: 'De formação em cada trilha completa' },
+          { valor: '8', legenda: 'Perfis clínicos no simulador SENA' },
+          { valor: '7', sufixo: 'd', legenda: 'De garantia incondicional, em qualquer curso' },
+        ]}
+        className="border-t-0 pt-0"
+      />
+    </Secao>
+  );
+}
+
+/* ── SENA ─────────────────────────────────────────────────────────────────── */
 
 function Sena() {
   return (
-    <Secao numero="01" rotulo="Método" peso="maximo" id="sena" grade>
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)] lg:gap-14">
+    <Secao id="sena" cor="accent" brilho brilhoEm="direita" elevada>
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,400px)_minmax(0,1fr)] lg:gap-16">
         <div>
-          <SecaoTitulo>Experimente atender agora.</SecaoTitulo>
-          <SecaoIntro>
+          <Cabecalho
+            sobretitulo="Tecnologia exclusiva"
+            titulo={
+              <>
+                Experimente <span className="texto-gradiente">atender agora.</span>
+              </>
+            }
+          >
             O SENA é a plataforma de simulação clínica do instituto: pacientes virtuais com
-            perfil psicológico definido, e devolutiva técnica a cada intervenção. Este é um
-            deles. Escolha como você responderia.
-          </SecaoIntro>
+            perfil psicológico definido e devolutiva técnica a cada intervenção. Este é um deles
+            — escolha como você responderia.
+          </Cabecalho>
 
-          <div className="mt-8 border-t border-white/12">
+          <div className="mt-9 grid grid-cols-2 gap-3">
             {[
-              { rotulo: 'Perfis clínicos', valor: '8' },
-              { rotulo: 'Devolutiva', valor: 'por intervenção' },
-              { rotulo: 'Prontuário', valor: 'automático' },
+              { valor: '8', rotulo: 'Perfis clínicos' },
+              { valor: '44', rotulo: 'Cenários por formação' },
+              { valor: 'Texto, áudio', rotulo: 'e vídeo' },
+              { valor: 'Automático', rotulo: 'Prontuário de sessão' },
             ].map((item) => (
-              <div
-                key={item.rotulo}
-                className="flex items-baseline justify-between border-b border-white/8 py-3"
-              >
-                <span className="text-[14px]">{item.rotulo}</span>
-                <span className="dado text-[14px] text-white">{item.valor}</span>
+              <div key={item.rotulo} className="cartao-vidro p-4">
+                <p className="font-display text-lg font-bold text-white">{item.valor}</p>
+                <p className="mt-1 text-[13px] leading-snug">{item.rotulo}</p>
               </div>
             ))}
           </div>
 
-          <p className="mt-6 max-w-md text-[13.5px] leading-relaxed text-brand-quiet">
+          <p className="mt-7 max-w-md text-[14px] leading-relaxed text-brand-quiet">
             Nenhuma outra formação de PNL no Brasil oferece prática supervisionada antes do
             primeiro atendimento real. É o que separa formação de videoaula.
           </p>
@@ -155,130 +202,230 @@ function Sena() {
   );
 }
 
-/* ── § 02 — Formações ─────────────────────────────────────────────────────── */
+/* ── Para quem é ──────────────────────────────────────────────────────────── */
 
-const trilha: ItemTrilha[] = [
+const publicos = [
   {
-    numero: '01',
-    titulo: courses.pnlPractitioner.title,
-    resumo: 'Fundamento. A base que torna o resto mais fácil.',
-    valor: courses.pnlPractitioner.price,
-    para: courses.pnlPractitioner.route,
-    destaque: true,
+    cor: 'accent' as const,
+    icone: <User size={26} aria-hidden="true" />,
+    selo: 'Para você',
+    titulo: 'Desenvolvimento pessoal',
+    texto:
+      'Quebre ciclos de autossabotagem, elimine crenças limitantes e assuma o controle da sua mente e das suas emoções. Uma jornada de autoconhecimento — sem nenhuma intenção de atender ninguém, e isso é um caminho legítimo aqui.',
+    itens: [
+      'Desbloqueie seu potencial oculto',
+      'Vença a ansiedade e a procrastinação',
+      'Melhore seus relacionamentos pessoais',
+      'Tenha mais foco, disciplina e inteligência emocional',
+    ],
   },
   {
-    numero: '02',
-    titulo: courses.hipnoterapia.title,
-    resumo: 'Acesso ao inconsciente, com protocolo e limite.',
-    valor: courses.hipnoterapia.price,
-    para: courses.hipnoterapia.route,
-  },
-  {
-    numero: '03',
-    titulo: courses.masterPnl.title,
-    resumo: 'Modelagem e intervenção avançada.',
-    valor: courses.masterPnl.price,
-    para: courses.masterPnl.route,
-  },
-  {
-    numero: '04',
-    titulo: courses.masterCoach.title,
-    resumo: 'Coaching executivo e ferramentas sistêmicas.',
-    valor: courses.masterCoach.price,
-    para: courses.masterCoach.route,
-    estado: 'Em breve',
+    cor: 'blue' as const,
+    icone: <Briefcase size={26} aria-hidden="true" />,
+    selo: 'Para profissionais',
+    titulo: 'Carreira e negócios',
+    texto:
+      'Construa uma carreira como terapeuta ou coach. Ferramentas avançadas de transformação humana para aplicar em pacientes, clientes ou na sua equipe — com certificação que permite atuação imediata.',
+    itens: [
+      'Certificação reconhecida nacionalmente',
+      'Nova fonte de renda ajudando pessoas',
+      'Ferramentas para terapeutas e psicólogos',
+      'Comunicação persuasiva e liderança',
+    ],
   },
 ];
 
-const etapas = [
-  'Escolha a formação pelo objetivo, não pelo nome.',
-  'Estude no seu ritmo: aulas gravadas, acesso vitalício.',
-  'Pratique no SENA, com devolutiva a cada intervenção.',
-  'Seja avaliado por competência demonstrada, não por presença.',
-];
-
-function Formacoes() {
+function ParaQuem() {
   return (
-    <Secao numero="02" rotulo="Formações" id="formacoes">
-      <SecaoTitulo>Uma trilha, não uma vitrine.</SecaoTitulo>
-      <SecaoIntro>
-        A ordem aqui é conteúdo: o Practitioner é pré-requisito da Hipnoterapia, que prepara o
-        Master. Se você está começando, comece pela primeira linha.
-      </SecaoIntro>
+    <Secao cor="blue">
+      <Cabecalho
+        sobretitulo="Duas trilhas, o mesmo método"
+        cor="blue"
+        titulo="Para quem é o Instituto Bruno Sena?"
+        centralizado
+      >
+        As formações servem tanto para quem busca uma transformação pessoal quanto para quem
+        quer construir carreira em desenvolvimento humano.
+      </Cabecalho>
 
-      <div className="mt-10">
-        <Trilha itens={trilha} />
-      </div>
-
-      {/* Como funciona: era uma seção própria com quatro círculos numerados e
-          uma linha de gradiente ligando eles. Aqui é o desdobramento natural
-          da trilha, em quatro linhas. */}
-      <div className="mt-14">
-        <p className="rotulo mb-5">Como funciona</p>
-        <ol className="grid gap-x-10 gap-y-4 sm:grid-cols-2">
-          {etapas.map((etapa, i) => (
-            <li key={etapa} className="flex gap-4 border-t border-white/8 pt-4">
-              <span className="dado shrink-0 text-[13px] text-brand-accent">
-                {String(i + 1).padStart(2, '0')}
+      <div className="mt-14 grid gap-6 lg:grid-cols-2">
+        {publicos.map((publico, i) => (
+          <Revela key={publico.titulo} atraso={i * 0.08} className="h-full">
+            <div
+              className={`h-full rounded-[22px] border bg-gradient-to-br p-8 md:p-10 ${paletas[publico.cor].borda} ${paletas[publico.cor].bordaHover} from-white/[0.04] to-transparent transition-colors`}
+            >
+              <span
+                className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl ${paletas[publico.cor].tenue} ${paletas[publico.cor].texto}`}
+              >
+                {publico.icone}
               </span>
-              <span className="text-[14.5px] leading-relaxed">{etapa}</span>
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      {/* A Trilogia. Era um card dourado centralizado com selo de "OFERTA
-          ESPECIAL" e botão em pílula com brilho — a estética exata que a
-          Direção B abandona. Continua sendo a oferta de maior valor, e agora
-          se apresenta como o que é: um pacote com preço e economia. */}
-      <div className="bloco-accent mt-14 flex flex-col gap-6 p-7 md:flex-row md:items-center md:justify-between md:p-9">
-        <div>
-          <p className="rotulo-accent mb-3">Pacote completo</p>
-          <h3 className="font-display text-2xl font-semibold text-white md:text-[28px]">
-            Trilogia IBSDH
-          </h3>
-          <p className="mt-2 max-w-lg text-[14.5px] leading-relaxed">
-            Practitioner, Hipnoterapia e Master PNL juntos, por{' '}
-            <strong className="text-white">{courses.trilogia.price}</strong> — menos do que a
-            soma das três matrículas separadas.
-          </p>
-        </div>
-        <Link to={courses.trilogia.route} className="btn-primary shrink-0">
-          Ver a Trilogia <ArrowRight size={16} aria-hidden="true" />
-        </Link>
+              <p className={`sobretitulo mb-3 ${paletas[publico.cor].texto}`}>{publico.selo}</p>
+              <h3 className="mb-4 font-display text-[26px] font-bold text-white">
+                {publico.titulo}
+              </h3>
+              <p className="mb-7 leading-relaxed">{publico.texto}</p>
+              <ul className="space-y-3.5">
+                {publico.itens.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <CheckCircle2
+                      className={`mt-0.5 shrink-0 ${paletas[publico.cor].texto}`}
+                      size={19}
+                      aria-hidden="true"
+                    />
+                    <span className="text-[15px] text-white">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Revela>
+        ))}
       </div>
     </Secao>
   );
 }
 
-/* ── § 03 — Diferencial ───────────────────────────────────────────────────── */
+/* ── Cursos ───────────────────────────────────────────────────────────────── */
 
-const publicos = [
+const vitrine = [
   {
-    rotulo: 'Para você',
-    titulo: 'Desenvolvimento pessoal',
-    texto:
-      'Quebre ciclos de autossabotagem, elimine crenças limitantes e assuma o controle das suas emoções. Sem intenção de atender ninguém — e isso é um caminho legítimo aqui.',
-    itens: [
-      'Ansiedade e procrastinação',
-      'Foco e disciplina',
-      'Relacionamentos',
-      'Inteligência emocional',
-    ],
+    curso: courses.pnlPractitioner,
+    cor: 'blue' as const,
+    icone: <Brain size={22} aria-hidden="true" />,
+    selo: 'Mais popular',
+    resumo:
+      'A base que torna todo o resto mais fácil. Comunicação inconsciente, ancoragem emocional e reformulação de crenças.',
   },
   {
-    rotulo: 'Para profissionais',
-    titulo: 'Carreira e clínica',
-    texto:
-      'Ferramentas de transformação humana para aplicar em pacientes, clientes ou equipe. Com certificação que permite atuação profissional imediata.',
-    itens: [
-      'Prática clínica certificada',
-      'Nova fonte de renda',
-      'Ferramentas para psicólogos',
-      'Liderança e negociação',
-    ],
+    curso: courses.hipnoterapia,
+    cor: 'purple' as const,
+    icone: <Sparkles size={22} aria-hidden="true" />,
+    selo: 'Requer o nível 01',
+    resumo:
+      'Induções, profundização de transe, protocolos terapêuticos e regressão — com quatro módulos de ética e limites.',
+  },
+  {
+    curso: courses.masterPnl,
+    cor: 'accent' as const,
+    icone: <Target size={22} aria-hidden="true" />,
+    selo: 'Avançado',
+    resumo:
+      'Modelagem, metaprogramas, Sleight of Mouth e Modelo Milton. Para quem quer ser referência, não só competente.',
+    destaque: true,
+  },
+  {
+    curso: courses.masterCoach,
+    cor: 'emerald' as const,
+    icone: <Award size={22} aria-hidden="true" />,
+    selo: 'Lançamento em breve',
+    resumo: 'Coaching executivo, abordagem sistêmica e estruturação de negócio de alto valor.',
   },
 ];
+
+function Cursos() {
+  return (
+    <Secao id="cursos" cor="accent" brilho brilhoEm="topo">
+      <Cabecalho
+        sobretitulo="Nossas formações"
+        titulo="Escolha sua ferramenta de transformação"
+      >
+        Cada formação tem uma cor, e ela te acompanha do card até o certificado. Se você está
+        começando, comece pelo Practitioner.
+      </Cabecalho>
+
+      <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {vitrine.map((item, i) => (
+          <Revela key={item.curso.route} atraso={i * 0.07} className="h-full">
+            <CardCurso
+              curso={item.curso}
+              cor={item.cor}
+              icone={item.icone}
+              selo={item.selo}
+              resumo={item.resumo}
+              destaque={item.destaque}
+            />
+          </Revela>
+        ))}
+      </div>
+
+      {/* A Trilogia */}
+      <div className="faixa-accent mt-10 flex flex-col gap-7 p-8 md:flex-row md:items-center md:justify-between md:p-12">
+        <div>
+          <p className="sobretitulo mb-3 text-brand-accent">Pacote completo</p>
+          <h3 className="font-display text-[28px] font-bold text-white md:text-[34px]">
+            Trilogia IBSDH
+          </h3>
+          <p className="mt-3 max-w-xl leading-relaxed">
+            Practitioner, Hipnoterapia e Master PNL juntos por{' '}
+            <strong className="text-white">{courses.trilogia.price}</strong> — R$ 338 a menos do
+            que a soma das três matrículas separadas.
+          </p>
+        </div>
+        <Link to={courses.trilogia.route} className="btn-primary shrink-0">
+          Ver a Trilogia <ArrowRight size={17} aria-hidden="true" />
+        </Link>
+      </div>
+
+      <div className="cartao mt-6 p-7 text-center md:p-8">
+        <p className="leading-relaxed">
+          <strong className="text-white">Dúvida de qual escolher?</strong> Comece pelo PNL
+          Practitioner. É a base que torna todo o resto mais fácil — e muitos alunos fazem os
+          três, usando cada um para uma área da vida.
+        </p>
+      </div>
+    </Secao>
+  );
+}
+
+/* ── Como funciona ────────────────────────────────────────────────────────── */
+
+const etapas = [
+  {
+    titulo: 'Escolha sua ferramenta',
+    texto: 'PNL, Hipnoterapia ou ambas. Comece pelo que faz sentido para o seu objetivo agora.',
+  },
+  {
+    titulo: 'Aprenda no seu ritmo',
+    texto:
+      'Aulas gravadas e acesso vitalício. Estude quando e onde quiser, quantas vezes quiser.',
+  },
+  {
+    titulo: 'Pratique no SENA',
+    texto: 'Pacientes virtuais, quiz, diálogo imersivo e devolutiva a cada intervenção.',
+  },
+  {
+    titulo: 'Aplique e transforme',
+    texto: 'Use para si, para outros ou para construir uma nova carreira. Você decide.',
+  },
+];
+
+function ComoFunciona() {
+  return (
+    <Secao elevada cor="blue">
+      <Cabecalho
+        sobretitulo="Como funciona"
+        cor="blue"
+        titulo="Sua jornada, do início ao fim"
+        centralizado
+      />
+
+      <ol className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {etapas.map((etapa, i) => (
+          <Revela key={etapa.titulo} atraso={i * 0.07} className="h-full">
+            <li className="cartao h-full p-7">
+              <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-brand-blue/30 bg-brand-blue/10 font-display text-lg font-extrabold text-brand-blue">
+                {i + 1}
+              </span>
+              <h3 className="titulo-card mb-2.5">{etapa.titulo}</h3>
+              <p className="text-[14px] leading-relaxed">{etapa.texto}</p>
+            </li>
+          </Revela>
+        ))}
+      </ol>
+    </Secao>
+  );
+}
+
+/* ── Por que nós ──────────────────────────────────────────────────────────── */
 
 const diferenciais = [
   {
@@ -287,11 +434,12 @@ const diferenciais = [
     tese: 'Teoria sem prática é entretenimento. Prática sem método é acidente.',
     texto:
       'Sete etapas progressivas em que você faz, erra, corrige e domina — desde a primeira aula, não no final do curso.',
+    largo: true,
   },
   {
     numero: '02',
     titulo: 'Linguagem sem jargão',
-    tese: 'Descomplicamos o que é complexo, sem perder a profundidade.',
+    tese: 'Descomplicamos o que é complexo, sem perder profundidade.',
     texto:
       'Não importa se você nunca estudou psicologia ou se já atua na área: o método traduz conceito avançado em passo acionável.',
   },
@@ -301,115 +449,159 @@ const diferenciais = [
     tese: 'O certificado atesta o que você sabe fazer, não onde você esteve.',
     texto:
       'Exame prático com critérios publicados. Quem não demonstra a competência não recebe o certificado — é o que dá valor a quem recebe.',
+    largo: true,
   },
 ];
 
-function Diferencial() {
+function PorQueNos() {
   return (
-    <Secao numero="03" rotulo="Diferencial">
-      <SecaoTitulo>Por que isto e não um curso de R$ 47.</SecaoTitulo>
-      <SecaoIntro>
-        A pergunta é justa: o mercado está cheio de curso de PNL barato. A diferença não está na
-        lista de técnicas — está em como você é levado a aplicá-las e em quem assina que você
-        sabe.
-      </SecaoIntro>
+    <Secao cor="purple" brilho brilhoEm="centro">
+      <Cabecalho
+        sobretitulo="Nosso diferencial"
+        cor="purple"
+        titulo="O que nos separa de qualquer curso de PNL do mercado"
+        centralizado
+      />
 
-      <div className="mt-12 grid gap-10 md:grid-cols-2 md:gap-12">
-        {publicos.map((publico) => (
-          <div key={publico.rotulo} className="border-t border-white/12 pt-6">
-            <p className="rotulo mb-4">{publico.rotulo}</p>
-            <h3 className="font-display text-2xl font-semibold text-white">{publico.titulo}</h3>
-            <p className="mt-3 text-[15px] leading-relaxed">{publico.texto}</p>
-            <ul className="mt-5">
-              {publico.itens.map((item) => (
-                <li
-                  key={item}
-                  className="flex items-baseline gap-3 border-b border-white/8 py-2.5 text-[14px]"
-                >
-                  <span aria-hidden="true" className="text-brand-accent">
-                    ·
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-16">
-        <p className="rotulo mb-6">O que sustenta isso</p>
-        <div className="grid gap-8 md:grid-cols-3">
-          {diferenciais.map((item) => (
-            <div key={item.numero} className="border-t border-white/12 pt-5">
-              <p className="dado mb-4 text-[13px] text-brand-accent">{item.numero}</p>
-              <h3 className="font-display text-xl font-semibold text-white">{item.titulo}</h3>
-              <p className="mt-3 font-display text-[15.5px] leading-snug text-white/75 italic">
+      <div className="mt-14 grid gap-6 md:grid-cols-2">
+        {diferenciais.map((item, i) => (
+          <Revela key={item.numero} atraso={i * 0.08} className="h-full">
+            <div className="cartao h-full p-8 hover:border-brand-purple/40 md:p-10">
+              <p className="mb-5 font-display text-[34px] leading-none font-extrabold text-white/12">
+                {item.numero}
+              </p>
+              <h3 className="mb-4 font-display text-[24px] font-bold text-white">
+                {item.titulo}
+              </h3>
+              <p className="mb-4 text-[17px] leading-relaxed text-white/75 italic">
                 {item.tese}
               </p>
-              <p className="mt-3 text-[14px] leading-relaxed">{item.texto}</p>
+              <p className="leading-relaxed">{item.texto}</p>
             </div>
-          ))}
-        </div>
+          </Revela>
+        ))}
       </div>
     </Secao>
   );
 }
 
-/* ── § 04 — Certificação ──────────────────────────────────────────────────── */
+/* ── Certificados ─────────────────────────────────────────────────────────── */
 
 const certificados = [
   {
-    rotulo: 'Reconhecimento internacional',
-    titulo: 'Certificação NLPEA',
+    cor: 'blue' as const,
+    selo: 'Reconhecimento global',
+    titulo: 'Certificação internacional NLPEA',
     texto:
-      'Emitida pela Neuro Linguistic Programming Excellence Assurance, com sede no Reino Unido. Registro único e vitalício, válido em qualquer país.',
+      'Reconhecimento vitalício emitido pela Neuro Linguistic Programming Excellence Assurance, com sede no Reino Unido. Seu passaporte global como profissional qualificado em PNL.',
+    itens: ['Válido internacionalmente em qualquer país', 'Registro único e vitalício'],
     imagem: undefined,
     alt: 'Certificado Internacional NLPEA',
     nome: 'Certificado NLPEA',
   },
   {
-    rotulo: 'Chancela nacional',
-    titulo: 'Certificação IBSDH',
+    cor: 'accent' as const,
+    selo: 'Selo de excelência',
+    titulo: 'Certificação oficial IBSDH',
     texto:
-      'Emitida pelo Instituto Bruno Sena de Desenvolvimento Humano, apenas após avaliação de performance prática e aprovação no exame. Atesta competência clínica, técnica e ética.',
+      'Certificado nacional com chancela do Instituto Bruno Sena de Desenvolvimento Humano, emitido apenas após avaliação de performance prática e aprovação no exame.',
+    itens: [
+      'Atesta competência clínica, técnica e ética',
+      'Permite atuação imediata no Brasil',
+    ],
     imagem: '/Certificado-IBSDH.webp',
     alt: 'Certificado IBSDH',
     nome: 'Certificado IBSDH',
   },
 ];
 
-function Certificacao() {
+function Certificados() {
   return (
-    <Secao numero="04" rotulo="Certificação">
-      <SecaoTitulo>Duas assinaturas no seu certificado.</SecaoTitulo>
-      <SecaoIntro>
-        Credencial é âncora de confiança neste mercado, e por isso merece ser verificável. Cada
-        formação emite os dois documentos abaixo.
-      </SecaoIntro>
+    <Secao elevada>
+      <Cabecalho sobretitulo="Titulação" titulo="Veja seus certificados" centralizado>
+        Documentos oficiais, chancelados por instituições reconhecidas, que atestam a sua
+        capacidade técnica e prática.
+      </Cabecalho>
 
-      <div className="mt-12 grid gap-12 md:grid-cols-2">
-        {certificados.map((cert) => (
-          <div key={cert.titulo}>
-            <div className="border border-white/10">
-              <CourseImage
-                src={cert.imagem}
-                alt={cert.alt}
-                title={cert.nome}
-                className="aspect-[4/3]"
-              />
+      <div className="mt-14 grid gap-10 lg:grid-cols-2 lg:gap-12">
+        {certificados.map((cert, i) => (
+          <Revela key={cert.titulo} atraso={i * 0.08}>
+            <div className="h-full">
+              <div
+                className={`overflow-hidden rounded-[22px] border ${paletas[cert.cor].borda}`}
+              >
+                <CourseImage
+                  src={cert.imagem}
+                  alt={cert.alt}
+                  title={cert.nome}
+                  className="aspect-[4/3]"
+                />
+              </div>
+              <p className={`sobretitulo mt-6 mb-3 ${paletas[cert.cor].texto}`}>{cert.selo}</p>
+              <h3 className="mb-4 font-display text-[24px] font-bold text-white">
+                {cert.titulo}
+              </h3>
+              <p className="mb-5 leading-relaxed">{cert.texto}</p>
+              <ul className="space-y-3">
+                {cert.itens.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <CheckCircle2
+                      className={`mt-0.5 shrink-0 ${paletas[cert.cor].texto}`}
+                      size={19}
+                      aria-hidden="true"
+                    />
+                    <span className="text-[15px]">{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <p className="rotulo mt-5 mb-3">{cert.rotulo}</p>
-            <h3 className="font-display text-xl font-semibold text-white">{cert.titulo}</h3>
-            <p className="mt-3 text-[14.5px] leading-relaxed">{cert.texto}</p>
-          </div>
+          </Revela>
         ))}
       </div>
     </Secao>
   );
 }
 
-/* ── § 05 — Quem ensina ───────────────────────────────────────────────────── */
+/* ── Pagamento seguro ─────────────────────────────────────────────────────── */
+
+function PagamentoSeguro() {
+  return (
+    <Secao cor="emerald" className="py-16 md:py-20">
+      <div className="mx-auto max-w-3xl text-center">
+        <span className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-brand-emerald/25 bg-brand-emerald/10 text-brand-emerald">
+          <Lock size={26} aria-hidden="true" />
+        </span>
+        <h2 className="font-display text-[26px] font-bold text-white md:text-[32px]">
+          Pagamento 100% seguro
+        </h2>
+        <p className="mt-4 leading-relaxed">
+          Todos os pagamentos são processados pela{' '}
+          <strong className="text-white">{site.paymentPlatform}</strong>, plataforma
+          especializada em cursos online. Os dados do seu cartão são tratados no ambiente seguro
+          dela — o instituto não os recebe nem armazena.
+        </p>
+
+        {/* Antes eram 6 imagens buscadas de cdn.simpleicons.org e do
+            Wikimedia — hotlink de terceiro que podia sumir a qualquer
+            momento e ainda somava 6 conexões externas ao carregamento. */}
+        <ul className="mt-9 flex flex-wrap items-center justify-center gap-2.5">
+          {[site.paymentPlatform, 'Pix', 'Visa', 'Mastercard', 'Elo', 'Amex', 'Boleto'].map(
+            (meio) => (
+              <li
+                key={meio}
+                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[13.5px] font-medium"
+              >
+                {meio}
+              </li>
+            ),
+          )}
+        </ul>
+      </div>
+    </Secao>
+  );
+}
+
+/* ── Depoimentos ──────────────────────────────────────────────────────────── */
 
 const depoimentos = [
   {
@@ -456,12 +648,127 @@ const depoimentos = [
   },
 ];
 
-function QuemEnsina() {
+function Depoimentos() {
   return (
-    <Secao numero="05" rotulo="Quem ensina" id="sobre-mentor">
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)] lg:gap-14">
-        <div>
-          <div className="border border-white/10">
+    <Secao id="depoimentos" cor="blue" brilho brilhoEm="esquerda" elevada>
+      <Cabecalho
+        sobretitulo="Prova social"
+        cor="blue"
+        titulo="O que acontece quando você aplica o método"
+        centralizado
+      >
+        Resultados de alunos que aplicaram as técnicas de PNL e Hipnoterapia nas suas vidas e
+        profissões.
+      </Cabecalho>
+
+      <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {depoimentos.map((dep, i) => (
+          <Revela key={dep.id} atraso={(i % 3) * 0.07} className="h-full">
+            <figure className="cartao flex h-full flex-col p-7 hover:border-brand-blue/35">
+              <blockquote className="mb-7 flex-1 text-[15.5px] leading-relaxed text-white/85">
+                “{dep.text}”
+              </blockquote>
+              <figcaption className="flex items-center gap-3.5">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-brand-blue/25 bg-brand-blue/10 font-display text-[13px] font-bold text-brand-blue">
+                  {dep.initial}
+                </span>
+                <span>
+                  <span className="block font-bold text-white">{dep.name}</span>
+                  <span className="block text-[13px] text-brand-quiet">{dep.role}</span>
+                </span>
+              </figcaption>
+            </figure>
+          </Revela>
+        ))}
+      </div>
+    </Secao>
+  );
+}
+
+/* ── Ebooks ───────────────────────────────────────────────────────────────── */
+
+const ebooks = [
+  {
+    titulo: 'O Despertar da Mente',
+    subtitulo: 'Introdução à reprogramação mental',
+    preco: 'R$ 27',
+    img: '/mockuppnl.webp',
+  },
+  {
+    titulo: 'Hipnose no Dia a Dia',
+    subtitulo: 'Técnicas que você pode usar hoje',
+    preco: 'R$ 27',
+    img: '/mockuphip.webp',
+  },
+];
+
+function Ebooks() {
+  return (
+    <Secao id="ebooks" cor="purple">
+      <Cabecalho
+        sobretitulo="Entrada acessível"
+        cor="purple"
+        titulo="Conheça a didática antes de se comprometer"
+        centralizado
+      >
+        Se você quer sentir o método antes de entrar numa formação completa, comece por aqui.
+      </Cabecalho>
+
+      <div className="mx-auto mt-14 grid max-w-4xl gap-6 md:grid-cols-2">
+        {ebooks.map((ebook, i) => (
+          <Revela key={ebook.titulo} atraso={i * 0.08} className="h-full">
+            <div className="cartao flex h-full flex-col items-center gap-6 p-7 hover:border-brand-purple/40 sm:flex-row">
+              <img
+                loading="lazy"
+                decoding="async"
+                src={ebook.img}
+                width={320}
+                height={420}
+                className="w-36 shrink-0 object-contain drop-shadow-2xl"
+                alt={ebook.titulo}
+              />
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="titulo-card mb-1.5">{ebook.titulo}</h3>
+                <p className="mb-5 text-[14px] leading-snug">{ebook.subtitulo}</p>
+                <p className="mb-5 font-display text-[26px] font-extrabold text-brand-purple">
+                  {ebook.preco}
+                </p>
+                <a
+                  href={whatsappLink(`Olá! Gostaria de comprar o ebook "${ebook.titulo}".`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-brand-purple/30 bg-brand-purple/10 py-3.5 text-[14px] font-bold text-brand-purple transition-colors hover:bg-brand-purple hover:text-brand-dark"
+                >
+                  <Download size={16} aria-hidden="true" /> Quero este
+                </a>
+              </div>
+            </div>
+          </Revela>
+        ))}
+      </div>
+
+      <div className="mx-auto mt-8 max-w-4xl text-center">
+        <a
+          href={whatsappLink(whatsappMessages.ebooks)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block rounded-full border border-brand-purple/30 bg-brand-purple/10 px-8 py-4 font-bold text-white transition-colors hover:bg-brand-purple/20"
+        >
+          Ou leve os dois por <span className="text-brand-purple">R$ 47</span> e economize R$ 10
+        </a>
+      </div>
+    </Secao>
+  );
+}
+
+/* ── Mentor ───────────────────────────────────────────────────────────────── */
+
+function Mentor() {
+  return (
+    <Secao id="sobre-mentor" cor="accent" brilho brilhoEm="direita" elevada>
+      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <Revela>
+          <div className="overflow-hidden rounded-[22px] border border-white/10">
             <img
               loading="lazy"
               decoding="async"
@@ -469,20 +776,22 @@ function QuemEnsina() {
               width={900}
               height={1206}
               className="w-full object-cover"
-              alt="Bruno Sena"
+              alt="Bruno Sena, fundador do Instituto"
             />
           </div>
-          <p className="rotulo mt-4">Bruno Sena · Fundador · Membro vitalício NLPEA</p>
-        </div>
+        </Revela>
 
         <div>
-          <SecaoTitulo as="h2">
+          <p className="sobretitulo mb-4 text-brand-accent">O seu mentor</p>
+          <h2 className="titulo-secao">
             “O método é o protagonista. Eu sou apenas o arquiteto.”
-          </SecaoTitulo>
+          </h2>
 
-          <div className="mt-7 space-y-5 text-[15.5px] leading-relaxed">
+          <div className="mt-7 space-y-5 leading-relaxed">
             <p>Não sou o terapeuta com 30 anos de clínica. Não sou um guru de palco lotado.</p>
-            <p className="font-display text-xl text-white">Sou obcecado por método.</p>
+            <p className="font-display text-[22px] font-bold text-white">
+              Sou obcecado por método.
+            </p>
             <p>
               Passei os últimos anos desmontando as técnicas dos melhores profissionais em PNL,
               Hipnoterapia e Coaching do Brasil. Testei, falhei, refinei, sistematizei. O
@@ -493,49 +802,177 @@ function QuemEnsina() {
               Não vendo transformação mágica. Entrego{' '}
               <strong className="text-white">ferramentas reproduzíveis</strong>.
             </p>
-            <blockquote className="border-l-2 border-brand-accent pl-5 font-display text-[15.5px] leading-relaxed text-white/75 italic">
-              “Se você quer charlatanismo, existem milhares de gurus por aí. Se quer estrutura
-              que gera resultado, você está no lugar certo.”
-            </blockquote>
+          </div>
+
+          <blockquote className="mt-8 rounded-r-[14px] border-l-2 border-brand-accent bg-white/[0.03] py-5 pr-6 pl-6 text-[15.5px] leading-relaxed text-white/80 italic">
+            “Se você quer charlatanismo, existem milhares de gurus por aí. Se quer estrutura que
+            gera resultado, você está no lugar certo.”
+          </blockquote>
+
+          <div className="faixa-accent mt-8 flex flex-col items-center gap-6 p-6 sm:flex-row">
+            <div className="w-28 shrink-0">
+              <CourseImage
+                src={undefined}
+                alt="Membro vitalício NLPEA"
+                title="NLPEA"
+                className="aspect-square rounded-[16px]"
+              />
+            </div>
+            <div>
+              <h3 className="mb-2 font-bold text-white">Membro oficial NLPEA</h3>
+              <p className="text-[14px] leading-relaxed">
+                Reconhecimento internacional pela Neuro Linguistic Programming Excellence
+                Assurance. Certificação vitalícia que atesta conhecimento teórico e capacidade
+                prática e ética no ensino de PNL em nível global.
+              </p>
+            </div>
           </div>
 
           <a
             href={site.social.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-ghost mt-7 inline-flex"
+            className="btn-outline mt-8"
           >
-            {site.social.instagramHandle} no Instagram
+            <Instagram size={18} aria-hidden="true" />
+            {site.social.instagramHandle}
           </a>
-        </div>
-      </div>
-
-      {/* Os depoimentos ficam nesta seção, não em uma própria: a pessoa e a
-          prova do que ela ensina andam juntas. Eram cards arredondados com
-          cinco estrelas idênticas em cada um — a estrela repetida seis vezes
-          não informa nada. Agora são citações com atribuição. */}
-      <div className="mt-16">
-        <p className="rotulo mb-6">Alunos, nas palavras deles</p>
-        <div className="grid gap-x-10 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
-          {depoimentos.map((dep) => (
-            <figure key={dep.id} className="border-t border-white/12 pt-5">
-              <blockquote className="text-[14.5px] leading-relaxed">“{dep.text}”</blockquote>
-              <figcaption className="mt-4 flex items-baseline gap-3">
-                <span className="dado text-[11px] text-brand-accent">{dep.initial}</span>
-                <span>
-                  <span className="block text-[14px] font-semibold text-white">{dep.name}</span>
-                  <span className="rotulo">{dep.role}</span>
-                </span>
-              </figcaption>
-            </figure>
-          ))}
         </div>
       </div>
     </Secao>
   );
 }
 
-/* ── § 06 — Objeções ──────────────────────────────────────────────────────── */
+/* ── Onde os alunos atuam ─────────────────────────────────────────────────── */
+
+/**
+ * Substitui a faixa de "instituições parceiras", que listava quatro nomes
+ * genéricos e inventados, repetidos para preencher o carrossel, sob a frase
+ * "metodologia aplicada por profissionais em instituições como".
+ *
+ * Estas são áreas de atuação, não nomes de empresa: é o que dá para afirmar
+ * com verdade. Quando houver parceria real com logo, ela entra aqui.
+ */
+const areas = [
+  'Consultórios de psicologia',
+  'Clínicas de terapia integrativa',
+  'RH e desenvolvimento organizacional',
+  'Coaching executivo',
+  'Escolas e educação',
+  'Vendas e negociação',
+  'Consultórios de nutrição',
+  'Prática autônoma',
+];
+
+function OndeAtuam() {
+  return (
+    <Secao className="overflow-hidden py-14 md:py-16">
+      <p className="mb-9 text-center text-[13px] font-bold tracking-[0.2em] text-brand-quiet uppercase">
+        Onde os nossos alunos aplicam o método
+      </p>
+
+      <div className="relative flex overflow-x-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-brand-dark to-transparent"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-brand-dark to-transparent"
+        />
+
+        <ul className="animate-marquee flex shrink-0 items-center gap-4 pr-4">
+          {[...areas, ...areas].map((area, i) => (
+            <li
+              key={`${area}-${i}`}
+              className="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 whitespace-nowrap"
+            >
+              <Globe size={16} className="shrink-0 text-brand-accent" aria-hidden="true" />
+              <span className="font-medium text-white">{area}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Secao>
+  );
+}
+
+/* ── In Company ───────────────────────────────────────────────────────────── */
+
+function InCompany() {
+  return (
+    <Secao id="in-company" cor="emerald" brilho brilhoEm="esquerda">
+      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <p className="selo mb-6 border-brand-emerald/25 bg-brand-emerald/10 text-brand-emerald">
+            <Building2 size={15} aria-hidden="true" />
+            In Company
+          </p>
+
+          <h2 className="titulo-secao">
+            Treinamentos corporativos de{' '}
+            <span className="text-brand-emerald">alto impacto</span>
+          </h2>
+
+          <p className="mt-6 leading-relaxed">
+            A mesma metodologia que transforma vidas, formatada para os desafios da sua empresa.
+            Aumente o engajamento, desenvolva líderes e crie uma cultura de alta performance com
+            inteligência emocional.
+          </p>
+
+          <ul className="mt-9 space-y-5">
+            {[
+              {
+                titulo: 'Liderança humanizada',
+                texto: 'Ferramentas de Coaching e PNL para gestão de equipes.',
+              },
+              {
+                titulo: 'Comunicação assertiva',
+                texto: 'Resolução de conflitos e negociação avançada.',
+              },
+              {
+                titulo: 'Inteligência emocional',
+                texto: 'Controle do estresse e produtividade sob pressão.',
+              },
+            ].map((item) => (
+              <li key={item.titulo} className="flex items-start gap-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-emerald/25 bg-brand-emerald/10 text-brand-emerald">
+                  <CheckCircle2 size={20} aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block font-bold text-white">{item.titulo}</span>
+                  <span className="block text-[14px]">{item.texto}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <a
+            href={whatsappLink(whatsappMessages.inCompany)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-emerald mt-10"
+          >
+            Solicitar proposta <ArrowRight size={17} aria-hidden="true" />
+          </a>
+        </div>
+
+        <Revela>
+          <div className="overflow-hidden rounded-[22px] border border-brand-emerald/20">
+            <CourseImage
+              src={undefined}
+              alt="Treinamento corporativo in company"
+              title="Treinamentos In Company"
+              className="aspect-square"
+            />
+          </div>
+        </Revela>
+      </div>
+    </Secao>
+  );
+}
+
+/* ── FAQ ──────────────────────────────────────────────────────────────────── */
 
 const perguntas = [
   {
@@ -544,7 +981,7 @@ const perguntas = [
   },
   {
     q: 'Posso usar para atender outras pessoas profissionalmente?',
-    a: 'Sim. Todos os cursos entregam certificado válido para prática profissional. Porém, verifique a legislação específica da sua região. Algumas práticas podem exigir regulamentação adicional dependendo do estado.',
+    a: 'Sim. Todos os cursos entregam certificado válido para prática profissional. Porém, verifique a legislação específica da sua região — algumas práticas podem exigir regulamentação adicional dependendo do estado.',
   },
   {
     q: 'E se eu quiser usar só para mim, para autoconhecimento?',
@@ -562,68 +999,62 @@ const perguntas = [
     q: 'Qual a diferença entre PNL Practitioner e Master PNL?',
     a: 'O Practitioner é a base completa: tudo que você precisa para usar PNL com competência. O Master aprofunda técnicas avançadas, modelagem estratégica e estruturação de sessões profissionais de alto nível. Comece pelo Practitioner.',
   },
-  {
-    q: 'Como funciona o pagamento?',
-    a: `Todos os pagamentos são processados pela ${site.paymentPlatform}, plataforma especializada em cursos online. Os dados do seu cartão são tratados no ambiente seguro dela — o instituto não os recebe nem armazena. Aceita Pix, boleto e cartão em até 12x.`,
-  },
 ];
 
-function Objecoes() {
+function PerguntasFrequentes() {
   return (
-    <Secao numero="06" rotulo="Objeções">
-      <SecaoTitulo>O que costuma travar a decisão.</SecaoTitulo>
-      <SecaoIntro>
-        Reunimos aqui tudo que aparece antes da matrícula — pré-requisito, uso do certificado,
-        garantia e forma de pagamento — em vez de espalhar pela página.
-      </SecaoIntro>
-
-      <div className="mt-10">
-        <Faq items={perguntas} />
+    <Secao elevada>
+      <div className="mx-auto max-w-3xl">
+        <Cabecalho sobretitulo="Dúvidas frequentes" titulo="Perguntas comuns" centralizado />
+        <div className="mt-12">
+          <Faq items={perguntas} />
+        </div>
       </div>
-
-      <p className="mt-8 max-w-2xl text-[13.5px] leading-relaxed text-brand-quiet">
-        Continua em dúvida sobre qual formação serve para o seu momento?{' '}
-        <a
-          href={whatsappLink(whatsappMessages.general)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-brand-accent underline decoration-brand-accent/40 underline-offset-4 hover:decoration-brand-accent"
-        >
-          Fale com a coordenação no WhatsApp
-        </a>
-        .
-      </p>
     </Secao>
   );
 }
 
-/* ── § 07 — Matrícula ─────────────────────────────────────────────────────── */
+/* ── Contato e ação final ─────────────────────────────────────────────────── */
 
-function Matricula() {
+function AcaoFinal() {
   return (
-    <Secao numero="07" rotulo="Matrícula" peso="alto" grade>
-      <SecaoTitulo>Comece pelo Practitioner.</SecaoTitulo>
-      <SecaoIntro>
-        É a base que torna todas as outras formações mais fáceis, e a única que não tem
-        pré-requisito. {courses.pnlPractitioner.price} à vista, ou 12x de{' '}
-        {courses.pnlPractitioner.installment} sem juros.
-      </SecaoIntro>
+    <Secao cor="accent" brilho brilhoEm="centro" className="py-24 md:py-32">
+      <div className="mx-auto max-w-3xl text-center">
+        <p className="sobretitulo mb-5 text-brand-accent">Pronto para começar?</p>
 
-      <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
-        <a
-          href={courses.pnlPractitioner.checkout}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary"
-        >
-          Matricular no Practitioner <ArrowRight size={16} aria-hidden="true" />
-        </a>
-        <Link to={courses.pnlPractitioner.route} className="btn-outline">
-          Ver a ementa completa
-        </Link>
+        <h2 className="font-display text-[36px] leading-[1.06] font-extrabold tracking-[-0.035em] text-white md:text-[52px]">
+          Sua transformação começa <span className="texto-gradiente">hoje.</span>
+        </h2>
+
+        <p className="mx-auto mt-6 max-w-xl text-[17px] leading-relaxed md:text-lg">
+          Comece pelo PNL Practitioner por {courses.pnlPractitioner.price} à vista, ou 12x de{' '}
+          {courses.pnlPractitioner.installment} sem juros. Sete dias de garantia — se não for
+          para você, devolvemos tudo.
+        </p>
+
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <a
+            href={courses.pnlPractitioner.checkout}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary w-full sm:w-auto"
+          >
+            Matricular no Practitioner <ArrowRight size={17} aria-hidden="true" />
+          </a>
+          <a
+            href={whatsappLink(whatsappMessages.enrollment)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline w-full sm:w-auto"
+          >
+            Falar com um consultor
+          </a>
+        </div>
+
+        <p className="mt-8 text-[13.5px] text-brand-quiet">
+          Acesso vitalício · Certificação NLPEA e IBSDH · Simulador SENA incluso
+        </p>
       </div>
-
-      <p className="rotulo mt-8">7 dias de garantia · devolução integral · acesso vitalício</p>
     </Secao>
   );
 }
@@ -638,7 +1069,7 @@ export default function Home() {
         <title>Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching</title>
         <meta
           name="description"
-          content="Formações em PNL, Hipnoterapia e Coaching com prática clínica supervisionada no simulador SENA. Certificação NLPEA e IBSDH."
+          content="Formações em PNL, Hipnoterapia e Coaching com prática clínica supervisionada no simulador SENA. Certificação NLPEA e IBSDH, acesso vitalício."
         />
         <meta
           property="og:title"
@@ -656,13 +1087,21 @@ export default function Home() {
 
       <main>
         <Hero />
+        <Prova />
         <Sena />
-        <Formacoes />
-        <Diferencial />
-        <Certificacao />
-        <QuemEnsina />
-        <Objecoes />
-        <Matricula />
+        <ParaQuem />
+        <Cursos />
+        <ComoFunciona />
+        <PorQueNos />
+        <Certificados />
+        <PagamentoSeguro />
+        <Depoimentos />
+        <Ebooks />
+        <Mentor />
+        <OndeAtuam />
+        <InCompany />
+        <PerguntasFrequentes />
+        <AcaoFinal />
       </main>
     </>
   );

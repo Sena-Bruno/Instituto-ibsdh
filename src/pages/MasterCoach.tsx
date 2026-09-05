@@ -1,7 +1,8 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
+import { Clock } from 'lucide-react';
 import { CourseReviews } from '../components/CourseReviews';
 import { ListaItens } from '../components/PaginaCurso';
-import Secao, { SecaoIntro, SecaoTitulo } from '../components/Secao';
+import Secao, { Cabecalho } from '../components/Secao';
 import WaitlistForm from '../components/WaitlistForm';
 import { courses } from '../config/courses';
 import { routes, site } from '../config/site';
@@ -49,15 +50,20 @@ export default function MasterCoach() {
       </Helmet>
 
       <main>
-        <section className="grade border-b border-white/8 pt-32 pb-16 md:pt-40 md:pb-20">
-          <div className="mx-auto max-w-7xl px-6">
+        <section className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-20">
+          <div
+            aria-hidden="true"
+            className="brilho -top-44 left-1/2 h-[520px] w-[820px] -translate-x-1/2"
+            style={{ '--brilho': 'rgb(57 212 161 / 20%)' } as React.CSSProperties}
+          />
+          <div className="relative z-10 mx-auto max-w-7xl px-6">
             <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-16">
               <div>
-                <p className="rotulo-accent mb-6">Lançamento em breve</p>
+                <p className="selo mb-7 border-brand-emerald/25 bg-brand-emerald/10 text-brand-emerald">
+                  <Clock size={14} aria-hidden="true" /> Lançamento em breve
+                </p>
 
-                <h1 className="max-w-2xl font-display text-[38px] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl md:text-[56px]">
-                  Formação Master Coach
-                </h1>
+                <h1 className="titulo-hero max-w-2xl">Formação Master Coach</h1>
 
                 <p className="mt-6 max-w-2xl text-[17px] leading-relaxed md:text-lg">
                   Eleve seus atendimentos ao nível de excelência: ferramentas sistêmicas,
@@ -73,31 +79,30 @@ export default function MasterCoach() {
 
               {/* O formulário fica ao lado do texto, não como um card
                   centralizado embaixo dele: é a única ação desta página. */}
-              <div className="bloco self-start p-6">
-                <p className="rotulo mb-5">Lista de espera</p>
+              <div className="cartao self-start p-7">
+                <p className="sobretitulo mb-5 text-brand-emerald">Lista de espera</p>
                 <WaitlistForm courseId={curso.slug} />
               </div>
             </div>
           </div>
         </section>
 
-        <Secao numero="01" rotulo="Conteúdo">
-          <SecaoTitulo>O que você vai dominar</SecaoTitulo>
-          <SecaoIntro>
+        <Secao cor="emerald" elevada>
+          <Cabecalho sobretitulo="Conteúdo" cor="emerald" titulo="O que você vai dominar">
             Uma prévia do arsenal de ferramentas que estará à disposição. A ementa completa é
             publicada junto com a abertura das matrículas.
-          </SecaoIntro>
-          <ListaItens className="mt-10" itens={arsenal} />
+          </Cabecalho>
+          <ListaItens cor="emerald" className="mt-10" itens={arsenal} />
         </Secao>
 
-        <Secao numero="02" rotulo="Certificação">
-          <SecaoTitulo>A mais alta titulação</SecaoTitulo>
-          <SecaoIntro>
+        <Secao cor="emerald" brilho brilhoEm="direita">
+          <Cabecalho sobretitulo="Certificação" cor="emerald" titulo="A mais alta titulação">
             A certificação de Coach Profissional atesta a capacidade de conduzir processos de
             transformação profunda com segurança, método e resultado verificável.
-          </SecaoIntro>
+          </Cabecalho>
 
           <ListaItens
+            cor="emerald"
             className="mt-10"
             itens={[
               { titulo: 'Certificado válido nacionalmente' },
@@ -109,13 +114,13 @@ export default function MasterCoach() {
           <img
             src="/Certificado-IBSDH-coach.webp"
             alt="Certificado de Coach Profissional emitido pelo IBSDH"
-            className="mt-10 w-full max-w-3xl border border-white/10"
+            className="mt-10 w-full max-w-3xl rounded-[22px] border border-brand-emerald/20"
             loading="lazy"
             decoding="async"
           />
         </Secao>
 
-        <Secao numero="03" rotulo="Avaliações">
+        <Secao elevada>
           <CourseReviews courseId={curso.slug} />
         </Secao>
       </main>

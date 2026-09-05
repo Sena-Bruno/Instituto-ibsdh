@@ -21,7 +21,7 @@ export default function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-white/12 bg-brand-dark pt-14 pb-10 text-sm">
+    <footer className="border-t border-white/10 bg-brand-dark pt-16 pb-10 text-sm">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-12 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -33,22 +33,25 @@ export default function SiteFooter() {
                 height={48}
                 className="h-10 w-10 object-contain"
               />
-              <span className="text-[14.5px] leading-none font-bold tracking-tight text-white">
-                INSTITUTO
-                <br />
-                BRUNO SENA
+              <span className="flex flex-col leading-none">
+                <span className="font-display text-[15px] font-extrabold tracking-tight text-white">
+                  INSTITUTO
+                </span>
+                <span className="mt-0.5 text-[9.5px] font-semibold tracking-[0.2em] text-brand-accent">
+                  BRUNO SENA
+                </span>
               </span>
             </div>
             <p className="max-w-xs text-[13.5px] leading-relaxed">{site.description}</p>
           </div>
 
           <nav aria-labelledby="rodape-formacoes">
-            <h2 id="rodape-formacoes" className="rotulo mb-4">
+            <h2 id="rodape-formacoes" className="sobretitulo mb-5 text-brand-accent">
               Formações
             </h2>
             <ul>
               {Object.values(courses).map((course) => (
-                <li key={course.route} className="border-b border-white/8">
+                <li key={course.route} className="border-b border-white/[0.07]">
                   <Link
                     to={course.route}
                     className="block py-2.5 text-[13.5px] transition-colors hover:text-brand-accent"
@@ -61,9 +64,9 @@ export default function SiteFooter() {
           </nav>
 
           <div>
-            <h2 className="rotulo mb-4">Contato</h2>
+            <h2 className="sobretitulo mb-5 text-brand-accent">Contato</h2>
             <ul>
-              <li className="border-b border-white/8">
+              <li className="border-b border-white/[0.07]">
                 <a
                   href={`mailto:${site.email.contact}`}
                   className="block py-2.5 text-[13.5px] break-all transition-colors hover:text-brand-accent"
@@ -71,17 +74,17 @@ export default function SiteFooter() {
                   {site.email.contact}
                 </a>
               </li>
-              <li className="border-b border-white/8">
+              <li className="border-b border-white/[0.07]">
                 <a
                   href={whatsappLink()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="dado block py-2.5 text-[13.5px] transition-colors hover:text-brand-accent"
+                  className="block py-2.5 text-[13.5px] transition-colors hover:text-brand-accent"
                 >
                   {site.whatsapp.display}
                 </a>
               </li>
-              <li className="border-b border-white/8">
+              <li className="border-b border-white/[0.07]">
                 <a
                   href={site.social.instagram}
                   target="_blank"
@@ -95,7 +98,7 @@ export default function SiteFooter() {
           </div>
 
           <div>
-            <h2 className="rotulo mb-4">Para empresas</h2>
+            <h2 className="sobretitulo mb-5 text-brand-emerald">Para empresas</h2>
             <p className="text-[13.5px] leading-relaxed">
               A mesma metodologia formatada para liderança, comunicação assertiva e inteligência
               emocional em equipe.
@@ -104,7 +107,7 @@ export default function SiteFooter() {
               href={whatsappLink(whatsappMessages.inCompany)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-ghost mt-4 inline-flex text-[13.5px]"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-brand-emerald/30 bg-brand-emerald/10 px-5 py-2.5 text-[13px] font-bold text-brand-emerald transition-colors hover:bg-brand-emerald hover:text-brand-dark"
             >
               Solicitar proposta In Company
             </a>
@@ -117,7 +120,7 @@ export default function SiteFooter() {
           </div>
         </div>
 
-        <div className="space-y-4 border-t border-white/12 pt-7 text-[12.5px] text-brand-quiet">
+        <div className="space-y-4 border-t border-white/10 pt-8 text-[12.5px] text-brand-quiet">
           <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <li>
               <Link

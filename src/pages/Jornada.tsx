@@ -2,7 +2,7 @@ import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
 import { CourseReviews } from '../components/CourseReviews';
 import Faq from '../components/Faq';
-import Secao, { SecaoIntro, SecaoTitulo } from '../components/Secao';
+import Secao, { Cabecalho } from '../components/Secao';
 import { combos, courses } from '../config/courses';
 import { routes, site, whatsappLink } from '../config/site';
 import { cn } from '../lib/utils';
@@ -155,11 +155,16 @@ export default function Jornada() {
       </Helmet>
 
       <main>
-        <section className="grade border-b border-white/8 pt-32 pb-16 md:pt-40 md:pb-20">
-          <div className="mx-auto max-w-7xl px-6">
-            <p className="rotulo-accent mb-6">Escada de valor IBSDH</p>
-            <h1 className="max-w-3xl font-display text-[38px] leading-[1.06] font-semibold tracking-tight text-white sm:text-5xl md:text-[56px]">
-              Escolha o seu nível de domínio.
+        <section className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-20">
+          <div
+            aria-hidden="true"
+            className="brilho -top-44 left-1/2 h-[540px] w-[880px] -translate-x-1/2"
+            style={{ '--brilho': 'rgb(229 195 101 / 24%)' } as React.CSSProperties}
+          />
+          <div className="relative z-10 mx-auto max-w-7xl px-6">
+            <p className="sobretitulo mb-6 text-brand-accent">Escada de valor IBSDH</p>
+            <h1 className="titulo-hero max-w-3xl">
+              Escolha o seu <span className="texto-gradiente">nível de domínio.</span>
             </h1>
             <p className="mt-6 max-w-2xl text-[17px] leading-relaxed md:text-lg">
               Da base à maestria. Cada degrau constrói o próximo, e o SENA está em todos.
@@ -168,25 +173,31 @@ export default function Jornada() {
           </div>
         </section>
 
-        <Secao numero="01" rotulo="Níveis" id="niveis">
-          <SecaoTitulo>Os quatro caminhos</SecaoTitulo>
-          <SecaoIntro>
+        <Secao id="niveis" cor="accent" elevada>
+          <Cabecalho sobretitulo="Níveis" titulo="Os quatro caminhos">
             A diferença entre eles não é quanto conteúdo você recebe, e sim que tipo de
             profissional você sai sendo.
-          </SecaoIntro>
+          </Cabecalho>
 
           <div className="mt-12 grid gap-6 lg:grid-cols-2">
             {niveis.map((nivel) => (
               <article
                 key={nivel.numero}
-                className={cn('flex flex-col p-7', nivel.destaque ? 'bloco-accent' : 'bloco')}
+                className={cn(
+                  'flex flex-col p-7',
+                  nivel.destaque ? 'faixa-accent' : 'cartao hover:border-white/20',
+                )}
               >
                 <div className="mb-5 flex items-baseline justify-between gap-4">
-                  <span className="dado text-[13px] text-brand-quiet">{nivel.numero}</span>
-                  <span className="rotulo">{nivel.composicao}</span>
+                  <span className="font-display text-[15px] font-extrabold text-white/25">
+                    {nivel.numero}
+                  </span>
+                  <span className="text-[11.5px] font-bold tracking-[0.1em] text-brand-quiet uppercase">
+                    {nivel.composicao}
+                  </span>
                 </div>
 
-                <h3 className="font-display text-2xl font-semibold text-white">
+                <h3 className="font-display text-[26px] font-bold text-white">
                   {nivel.titulo}
                 </h3>
 
@@ -196,7 +207,7 @@ export default function Jornada() {
                       De {nivel.precoDe}
                     </p>
                   )}
-                  <p className="mt-1 font-display text-[30px] leading-none font-semibold text-white">
+                  <p className="mt-1 font-display text-[32px] leading-none font-extrabold tracking-[-0.02em] text-white">
                     {nivel.preco}
                   </p>
                   <p className="mt-2 text-[13.5px] text-brand-accent">
@@ -205,7 +216,7 @@ export default function Jornada() {
                   </p>
                 </div>
 
-                <p className="rotulo mt-5 mb-3">Inclui</p>
+                <p className="sobretitulo mt-6 mb-3 text-brand-accent">Inclui</p>
                 <ul className="mb-5">
                   {nivel.inclui.map((item) => (
                     <li key={item} className="border-b border-white/8 py-2.5 text-[13.5px]">
@@ -216,11 +227,11 @@ export default function Jornada() {
 
                 <dl className="mb-6 space-y-3 text-[13.5px] leading-relaxed">
                   <div>
-                    <dt className="rotulo mb-1">Para quem</dt>
+                    <dt className="sobretitulo mb-1.5 text-brand-quiet">Para quem</dt>
                     <dd>{nivel.paraQuem}</dd>
                   </div>
                   <div>
-                    <dt className="rotulo mb-1">Resultado</dt>
+                    <dt className="sobretitulo mb-1.5 text-brand-quiet">Resultado</dt>
                     <dd>{nivel.resultado}</dd>
                   </div>
                 </dl>
@@ -250,7 +261,7 @@ export default function Jornada() {
                       >
                         {nivel.acao}
                       </a>
-                      <p className="rotulo mt-3 text-center normal-case">
+                      <p className="mt-3 text-center text-[12.5px] text-brand-quiet">
                         Matrícula pela coordenação
                       </p>
                     </>
@@ -261,8 +272,8 @@ export default function Jornada() {
           </div>
         </Secao>
 
-        <Secao numero="02" rotulo="Comparação">
-          <SecaoTitulo>Lado a lado</SecaoTitulo>
+        <Secao cor="blue">
+          <Cabecalho sobretitulo="Comparação" cor="blue" titulo="Lado a lado" />
 
           <div className="mt-10 overflow-x-auto">
             <table className="w-full min-w-[640px] border-collapse text-left">
@@ -271,7 +282,10 @@ export default function Jornada() {
               </caption>
               <thead>
                 <tr className="border-b border-white/12">
-                  <th scope="col" className="rotulo py-3 pr-4 font-normal">
+                  <th
+                    scope="col"
+                    className="py-3 pr-4 text-[11.5px] font-semibold tracking-[0.1em] text-brand-quiet uppercase"
+                  >
                     <span className="sr-only">Critério</span>
                   </th>
                   {niveis.map((nivel) => (
@@ -306,7 +320,10 @@ export default function Jornada() {
                   },
                 ].map((linha) => (
                   <tr key={linha.rotulo} className="border-b border-white/8 align-baseline">
-                    <th scope="row" className="rotulo py-3.5 pr-4 font-normal">
+                    <th
+                      scope="row"
+                      className="py-3.5 pr-4 text-[11.5px] font-semibold tracking-[0.1em] text-brand-quiet uppercase"
+                    >
                       {linha.rotulo}
                     </th>
                     {linha.valores.map((valor, i) => (
@@ -327,8 +344,8 @@ export default function Jornada() {
           </div>
         </Secao>
 
-        <Secao numero="03" rotulo="Recomendação">
-          <SecaoTitulo>Qual é o seu momento?</SecaoTitulo>
+        <Secao cor="accent" brilho brilhoEm="centro">
+          <Cabecalho sobretitulo="Recomendação" titulo="Qual é o seu momento?" />
 
           <ol className="mt-10 border-t border-white/12">
             {[
@@ -344,7 +361,7 @@ export default function Jornada() {
                 <span className="text-[15px] text-white">{situacao}</span>
                 <span className="text-[13.5px]">
                   <span className="text-brand-accent">{indicacao.titulo}</span>
-                  <span className="dado ml-3 text-brand-quiet">{indicacao.preco}</span>
+                  <span className="ml-3 font-semibold text-brand-quiet">{indicacao.preco}</span>
                 </span>
               </li>
             ))}
@@ -365,14 +382,14 @@ export default function Jornada() {
           </div>
         </Secao>
 
-        <Secao numero="04" rotulo="Perguntas">
-          <SecaoTitulo>Dúvidas frequentes</SecaoTitulo>
+        <Secao elevada>
+          <Cabecalho sobretitulo="Perguntas" titulo="Dúvidas frequentes" />
           <div className="mt-10">
             <Faq items={perguntas} />
           </div>
         </Secao>
 
-        <Secao numero="05" rotulo="Avaliações">
+        <Secao>
           <CourseReviews courseId={courses.trilogia.slug} />
         </Secao>
       </main>

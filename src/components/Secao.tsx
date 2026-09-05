@@ -1,55 +1,51 @@
 import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
+import { type NomeCor, paletas } from '../lib/cores';
 import { revealUp } from '../lib/motion';
 import { cn } from '../lib/utils';
 
 /**
- * A seção numerada da Direção B.
+ * A seção do site.
  *
- * Duas coisas que o site não tinha:
+ * Duas regras que vieram da direção escolhida:
  *
- * 1. NUMERAÇÃO. Cada seção se anuncia como "§ 02 — MÉTODO", numa coluna à
- *    esquerda do conteúdo. É o que faz a página ler como documento de uma
- *    instituição em vez de rolagem de página de vendas. Também dá a quem
- *    chega uma noção de onde está e de quanto falta.
+ * · O BRILHO TEM DONO. Ele herda a cor da seção e só aparece onde a seção
+ *   tem cor. Antes eram 33 orbes iguais, um em cada seção — como tudo
+ *   brilhava do mesmo jeito, nada se destacava. Agora o brilho diz onde
+ *   você está, e a maioria das seções não tem nenhum.
  *
- * 2. PESO. As 16 seções da home antiga tinham todas a mesma altura, o mesmo
- *    orbe de blur no fundo e o mesmo par badge + título + grid de cards.
- *    Como tudo pesava igual, nada ficava na memória. Aqui o peso é explícito
- *    e escasso: só o SENA é `maximo`, e só o hero e a ação final são `alto`.
- *    Se tudo virar `alto` de novo, a hierarquia se perde outra vez — é para
- *    ser um orçamento apertado, não uma opção de gosto.
+ * · O TÍTULO É GRANDE. A hierarquia se lê de longe: `titulo-secao` é bem
+ *   maior que o texto ao redor, e o sobretítulo em maiúsculas dá o assunto
+ *   antes de a pessoa ler a frase.
  */
 
-type Peso = 'maximo' | 'alto' | 'base' | 'compacto';
-
-const alturaPorPeso: Record<Peso, string> = {
-  maximo: 'py-28 md:py-40',
-  alto: 'py-24 md:py-32',
-  base: 'py-16 md:py-24',
-  compacto: 'py-12 md:py-16',
-};
-
 interface SecaoProps {
-  /** O número do parágrafo, como aparece: "01", "02"… */
-  numero?: string;
-  /** O rótulo em mono ao lado do número. Vai para maiúsculas no CSS. */
-  rotulo?: string;
-  peso?: Peso;
   id?: string;
-  /** Liga a grade de fundo. Reservada para as seções de peso alto ou máximo:
-   *  se aparecer em todas, volta a ser o problema dos orbes. */
-  grade?: boolean;
+  /** Cor que governa o brilho e o sobretítulo desta seção */
+  cor?: NomeCor;
+  /** Liga o brilho de fundo. Use com parcimônia: é o destaque mais caro. */
+  brilho?: boolean;
+  /** Posição do brilho, quando ligado */
+  brilhoEm?: 'topo' | 'centro' | 'esquerda' | 'direita';
+  /** Fundo levemente elevado, para alternar o ritmo entre seções */
+  elevada?: boolean;
   className?: string;
   children: ReactNode;
 }
 
+const posicaoBrilho: Record<string, string> = {
+  topo: '-top-40 left-1/2 -translate-x-1/2 w-[760px] h-[520px]',
+  centro: 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[620px]',
+  esquerda: 'top-1/4 -left-40 w-[560px] h-[560px]',
+  direita: 'top-1/4 -right-40 w-[560px] h-[560px]',
+};
+
 export default function Secao({
-  numero,
-  rotulo,
-  peso = 'base',
   id,
-  grade = false,
+  cor,
+  brilho = false,
+  brilhoEm = 'topo',
+  elevada = false,
   className,
   children,
 }: SecaoProps) {
@@ -57,74 +53,65 @@ export default function Secao({
     <section
       id={id}
       className={cn(
-        'relative border-t border-white/8',
-        alturaPorPeso[peso],
-        grade && 'grade',
+        'relative overflow-hidden border-t border-white/5 py-20 md:py-28',
+        elevada && 'bg-brand-surface/40',
         className,
       )}
     >
-      <div className="relative mx-auto max-w-7xl px-6">
-        <div className="md:grid md:grid-cols-[160px_minmax(0,1fr)] md:gap-10 lg:gap-16">
-          {/* A coluna da numeração. Em telas estreitas ela vira uma linha
-              acima do conteúdo, porque 160px de recuo num celular comem
-              metade da largura útil. */}
-          {(numero || rotulo) && (
-            <div className="mb-8 md:mb-0">
-              <div className="rotulo-accent md:sticky md:top-28">
-                {numero && <span aria-hidden="true">§ {numero}</span>}
-                {numero && rotulo && <span aria-hidden="true"> — </span>}
-                {rotulo}
-              </div>
-            </div>
-          )}
-          {/* min-w-0 pelo mesmo motivo de PaginaCurso: item de grid não
-              encolhe abaixo do conteúdo, e uma tabela larga aqui dentro
-              empurraria a página inteira. */}
-          <div className="min-w-0">{children}</div>
-        </div>
-      </div>
+      {brilho && (
+        <div
+          aria-hidden="true"
+          className={cn('brilho', posicaoBrilho[brilhoEm])}
+          style={
+            {
+              '--brilho': cor ? paletas[cor].brilho : paletas.accent.brilho,
+            } as React.CSSProperties
+          }
+        />
+      )}
+      <div className="relative z-10 mx-auto max-w-7xl px-6">{children}</div>
     </section>
   );
 }
 
 /**
- * O título de uma seção. Serif, tamanho grande, medida de linha curta.
- * Existe como componente para que os sete arquivos não divirjam em tamanho
- * e entrelinha como divergiram antes.
+ * O cabeçalho de uma seção: sobretítulo, título e texto de apoio.
+ * Existe como componente para que as sete páginas não divirjam em tamanho
+ * e espaçamento, como divergiram antes.
  */
-export function SecaoTitulo({
+export function Cabecalho({
+  sobretitulo,
+  cor = 'accent',
+  titulo,
   children,
+  centralizado = false,
   className,
-  as: Tag = 'h2',
 }: {
-  children: ReactNode;
+  sobretitulo?: string;
+  cor?: NomeCor;
+  titulo: ReactNode;
+  /** Texto de apoio abaixo do título */
+  children?: ReactNode;
+  centralizado?: boolean;
   className?: string;
-  as?: 'h1' | 'h2' | 'h3';
 }) {
   return (
-    <Tag
-      className={cn(
-        'max-w-3xl font-display text-3xl leading-[1.12] font-semibold tracking-tight text-white sm:text-4xl md:text-[42px]',
-        className,
+    <div className={cn(centralizado && 'mx-auto text-center', 'max-w-3xl', className)}>
+      {sobretitulo && (
+        <p className={cn('sobretitulo mb-4', paletas[cor].texto)}>{sobretitulo}</p>
       )}
-    >
-      {children}
-    </Tag>
-  );
-}
-
-/** Texto de apoio logo abaixo do título. */
-export function SecaoIntro({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <p className={cn('mt-5 max-w-2xl text-[17px] leading-relaxed md:text-lg', className)}>
-      {children}
-    </p>
+      <h2 className="titulo-secao">{titulo}</h2>
+      {children && (
+        <p
+          className={cn(
+            'mt-5 text-[17px] leading-relaxed md:text-lg',
+            centralizado && 'mx-auto',
+          )}
+        >
+          {children}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -133,13 +120,23 @@ export function SecaoIntro({
  * `once` para não reanimar quem rola de volta, e margem negativa para
  * disparar um pouco antes de o bloco encostar na borda.
  */
-export function Revela({ children, className }: { children: ReactNode; className?: string }) {
+export function Revela({
+  children,
+  className,
+  atraso = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  /** Atraso em segundos, para escalonar uma sequência de blocos */
+  atraso?: number;
+}) {
   return (
     <motion.div
       variants={revealUp}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: '-60px' }}
+      transition={{ delay: atraso }}
       className={className}
     >
       {children}

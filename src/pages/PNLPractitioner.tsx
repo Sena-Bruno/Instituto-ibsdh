@@ -120,6 +120,7 @@ export default function PNLPractitioner() {
 
       <PaginaCurso
         curso={curso}
+        cor="blue"
         trilha={[
           { rotulo: 'PNL Practitioner', atual: true },
           { rotulo: 'Hipnoterapia Clínica', para: routes.hipnoterapia },
@@ -154,11 +155,11 @@ export default function PNLPractitioner() {
         ]}
       >
         <SecaoCurso
-          numero="01"
-          rotulo="Competências"
+          cor="blue"
+          sobretitulo="Competências"
           titulo={`Em ${curriculoPnlPractitioner.length} módulos, você sai apto a:`}
         >
-          <ListaItens itens={competencias} />
+          <ListaItens cor="blue" itens={competencias} />
 
           <div className="bloco-accent mt-8 p-6">
             <p className="rotulo-accent mb-3">E o mais importante</p>
@@ -170,11 +171,12 @@ export default function PNLPractitioner() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso numero="02" rotulo="Para quem é" titulo="Este curso é para você que:">
+        <SecaoCurso cor="blue" sobretitulo="Para quem é" titulo="Este curso é para você que:">
           <div className="grid gap-8 sm:grid-cols-2">
             <div>
               <p className="rotulo mb-4">Uso pessoal</p>
               <ListaItens
+                cor="blue"
                 itens={[
                   { titulo: 'Quer parar de sabotar os próprios objetivos' },
                   { titulo: 'Deseja melhorar relacionamentos e comunicação' },
@@ -186,6 +188,7 @@ export default function PNLPractitioner() {
             <div>
               <p className="rotulo mb-4">Uso profissional</p>
               <ListaItens
+                cor="blue"
                 itens={[
                   { titulo: 'É terapeuta e quer somar PNL à caixa de ferramentas' },
                   { titulo: 'É coach e precisa de resultado mais rápido' },
@@ -203,8 +206,8 @@ export default function PNLPractitioner() {
         </SecaoCurso>
 
         <SecaoCurso
-          numero="03"
-          rotulo="Ementa"
+          cor="blue"
+          sobretitulo="Ementa"
           id="ementa"
           titulo={`${horas} horas. ${aulas} aulas. Sem enchimento.`}
         >
@@ -212,22 +215,23 @@ export default function PNLPractitioner() {
             Cada módulo inclui demonstração em vídeo e prática no SENA, conforme a ementa
             oficial IBSDH.
           </p>
-          <Ementa modulos={curriculoPnlPractitioner} />
+          <Ementa cor="blue" modulos={curriculoPnlPractitioner} />
         </SecaoCurso>
 
-        <SecaoCurso numero="04" rotulo="Aplicação" titulo="Onde você pode aplicar">
+        <SecaoCurso cor="blue" sobretitulo="Aplicação" titulo="Onde você pode aplicar">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {aplicacoes.map((grupo) => (
               <div key={grupo.rotulo}>
                 <p className="rotulo mb-4">{grupo.rotulo}</p>
-                <ListaItens itens={grupo.itens.map((titulo) => ({ titulo }))} />
+                <ListaItens cor="blue" itens={grupo.itens.map((titulo) => ({ titulo }))} />
               </div>
             ))}
           </div>
         </SecaoCurso>
 
-        <SecaoCurso numero="05" rotulo="Incluso" titulo="O que vem junto">
+        <SecaoCurso cor="blue" sobretitulo="Incluso" titulo="O que vem junto">
           <ListaItens
+            cor="blue"
             itens={[
               { titulo: 'Apostila completa em PDF, conforme a ementa oficial IBSDH' },
               { titulo: `Biblioteca de demonstrações práticas das ${aulas} aulas` },
@@ -242,11 +246,12 @@ export default function PNLPractitioner() {
         </SecaoCurso>
 
         <SecaoCurso
-          numero="06"
-          rotulo="Comparação"
+          cor="blue"
+          sobretitulo="Comparação"
           titulo="Mesma profundidade. Sem a barreira de preço."
         >
           <Comparativo
+            cor="blue"
             legenda="Comparação entre cursos presenciais tradicionais e a formação do IBSDH"
             colunas={['Cursos tradicionais', 'IBSDH']}
             linhas={[
@@ -286,8 +291,8 @@ export default function PNLPractitioner() {
         </SecaoCurso>
 
         <SecaoCurso
-          numero="07"
-          rotulo="Garantia"
+          cor="blue"
+          sobretitulo="Garantia"
           titulo="Você não arrisca nada. Exceto continuar do jeito que está."
         >
           <div className="max-w-2xl space-y-4 text-[15.5px] leading-relaxed">
@@ -303,15 +308,15 @@ export default function PNLPractitioner() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso numero="08" rotulo="Perguntas" titulo="Dúvidas frequentes">
+        <SecaoCurso cor="blue" sobretitulo="Perguntas" titulo="Dúvidas frequentes">
           <Faq items={perguntas} />
         </SecaoCurso>
 
-        <SecaoCurso numero="09" rotulo="Método">
+        <SecaoCurso cor="blue" sobretitulo="Método">
           <SenaExplanation />
         </SecaoCurso>
 
-        <SecaoCurso numero="10" rotulo="Avaliações">
+        <SecaoCurso cor="blue" sobretitulo="Avaliações">
           <CourseReviews courseId={curso.slug} />
         </SecaoCurso>
       </PaginaCurso>
