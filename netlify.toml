@@ -3,6 +3,25 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# ── Forma canônica das URLs ────────────────────────────────────────────────
+#
+# O Netlify liga "Pretty URLs" por padrão, e ele acrescenta barra ao fim de
+# todo caminho de diretório: `/hipnoterapia` responde 301 para
+# `/hipnoterapia/`.
+#
+# Isso brigava com o resto do site. O canônico de cada página, o sitemap, os
+# dados estruturados e todos os links internos usam a forma SEM barra. O
+# resultado, medido em produção: as dez URLs do sitemap respondiam 301, e
+# cada etiqueta canônica apontava para um endereço que redirecionava. O
+# Google resolve, mas registra "Página com redirecionamento" no relatório de
+# cobertura, gasta rastreio em saltos que não precisavam existir e acaba
+# indexando uma URL diferente da que o site declara como preferida.
+#
+# Desligado, o Netlify serve `/hipnoterapia` direto do arquivo
+# `dist/hipnoterapia/index.html`, com 200 e sem salto.
+[build.processing.html]
+  pretty_urls = false
+
 [build.environment]
   # Fixa a versão do Node. Sem isto o Netlify usa a mais recente que tiver
   # na imagem, e uma troca de major pode quebrar o build sem nenhuma
