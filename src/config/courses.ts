@@ -69,6 +69,30 @@ export interface Course {
   carga?: string;
   aulas?: string;
   certificado?: string;
+  /**
+   * As artes da formação, em duas versões.
+   *
+   * ┌─────────────────────────────────────────────────────────────────────┐
+   * │  POR QUE SÃO DOIS ARQUIVOS, E NÃO UM                                │
+   * │                                                                     │
+   * │  `capa` é o pôster inteiro, em pé, e vai na página do curso, onde    │
+   * │  há altura para ele e onde o nome escrito na arte é bem-vindo.      │
+   * │                                                                     │
+   * │  `capaFaixa` é um recorte deitado da mesma arte, mostrando só o     │
+   * │  grafismo. Vai no card, por dois motivos: um pôster em pé deixaria  │
+   * │  a grade de cursos altíssima, e o nome da formação impresso na arte │
+   * │  apareceria logo acima do nome que o card já escreve — a mesma      │
+   * │  palavra duas vezes, com dois desenhos diferentes.                  │
+   * │                                                                     │
+   * │  Os recortes são gerados a partir do pôster original; o processo    │
+   * │  está descrito no README, em "As artes das formações".              │
+   * │                                                                     │
+   * │  Curso sem capa não quebra nada: o card mostra a reserva do         │
+   * │  `CourseImage`, que mantém a mesma altura dos demais.               │
+   * └─────────────────────────────────────────────────────────────────────┘
+   */
+  capa?: string;
+  capaFaixa?: string;
   /** Aparece na vitrine da home. Sem isto, o curso vive só no catálogo. */
   destaque?: boolean;
   /** Selo curto no card: "Mais popular", "Requer o nível 01"… */
@@ -92,6 +116,8 @@ export const courses = {
     carga: '100h',
     aulas: '44 aulas',
     certificado: 'NLPEA + IBSDH',
+    capa: '/capa-practitioner.webp',
+    capaFaixa: '/capa-practitioner-faixa.webp',
     situacao: 'aberto',
     destaque: true,
     selo: 'Mais popular',
@@ -113,6 +139,8 @@ export const courses = {
     carga: '120h',
     aulas: '31 aulas',
     certificado: 'NLPEA + IBSDH',
+    capa: '/capa-master-pnl.webp',
+    capaFaixa: '/capa-master-pnl-faixa.webp',
     situacao: 'aberto',
     destaque: true,
     selo: 'Avançado',
@@ -134,6 +162,8 @@ export const courses = {
     carga: '100h',
     aulas: '40 aulas',
     certificado: 'IBSDH',
+    // A arte da Hipnoterapia ainda não chegou. Sem os campos `capa`, o card
+    // mostra a reserva do CourseImage, com a mesma altura dos outros.
     situacao: 'aberto',
     destaque: true,
     selo: 'Requer o Practitioner',
@@ -153,6 +183,8 @@ export const courses = {
     eixo: 'coaching',
     ordem: 1,
     certificado: 'IBSDH',
+    capa: '/capa-coaching.webp',
+    capaFaixa: '/capa-coaching-faixa.webp',
     situacao: 'emBreve',
     destaque: true,
     selo: 'Lançamento em breve',
