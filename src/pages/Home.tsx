@@ -1,4 +1,3 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
 import {
   Apple,
   ArrowRight,
@@ -31,6 +30,7 @@ import Faq from '../components/Faq';
 import Numeros from '../components/Numeros';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
+import Seo from '../components/Seo';
 import VideoPlayer from '../components/Video';
 import { courses, economiaDe, eixosComCurso, listaCursos } from '../config/courses';
 import { depoimentos } from '../config/depoimentos';
@@ -39,6 +39,13 @@ import { meiosPagamento } from '../config/pagamento';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
 import { duration, ease } from '../lib/motion';
+import {
+  fundador,
+  listaDeCursos,
+  organizacao,
+  perguntasFrequentes,
+  websiteDoInstituto,
+} from '../lib/schema';
 import { cn } from '../lib/utils';
 
 /**
@@ -1283,26 +1290,19 @@ function AcaoFinal() {
 export default function Home() {
   return (
     <>
-      <Helmet>
-        <link rel="canonical" href={`${site.url}/`} />
-        <title>Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching</title>
-        <meta
-          name="description"
-          content="Formações em PNL, Hipnoterapia e Coaching com prática clínica supervisionada no simulador SENA. Certificação NLPEA e IBSDH, acesso vitalício."
-        />
-        <meta
-          property="og:title"
-          content="Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching"
-        />
-        <meta
-          property="og:description"
-          content="Prática clínica supervisionada antes do primeiro atendimento real. Certificação NLPEA e IBSDH."
-        />
-        <meta property="og:image" content={`${site.url}/og-image.png`} />
-        <meta property="og:url" content={`${site.url}/`} />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+      <Seo
+        rota="/"
+        titulo="Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching"
+        descricao="Formações em PNL, Hipnoterapia e Coaching com prática clínica supervisionada no simulador SENA. Certificação NLPEA e IBSDH, acesso vitalício."
+        imagemAlt="Instituto Bruno Sena — formações em PNL, Hipnoterapia e Coaching"
+        dados={[
+          organizacao(),
+          fundador(),
+          websiteDoInstituto(),
+          listaDeCursos(listaCursos),
+          perguntasFrequentes(perguntas),
+        ]}
+      />
 
       <main>
         <Hero />

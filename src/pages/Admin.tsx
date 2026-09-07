@@ -1,10 +1,11 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { Copy, Download, Loader2, LogIn, ShieldAlert } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import Seo from '../components/Seo';
 import { SkeletonRow } from '../components/Skeleton';
 import { isAdmin } from '../config/admin';
+import { routes, site } from '../config/site';
 import { auth, db, loginWithGoogle, logout } from '../firebase';
 import { useDelayedFlag } from '../lib/useDelayedFlag';
 
@@ -93,13 +94,14 @@ export default function Admin() {
 
   return (
     <>
-      <Helmet>
-        <title>Lista de espera | Instituto Bruno Sena</title>
-        {/* Página interna: nunca deve ser indexada */}
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+      <Seo
+        rota={routes.admin}
+        titulo={`Lista de espera | ${site.name}`}
+        descricao="Painel interno do Instituto Bruno Sena."
+        indexar={false}
+      />
 
-      <div className="max-w-5xl mx-auto px-6 pt-36 pb-24">
+      <main className="max-w-5xl mx-auto px-6 pt-36 pb-24">
         <h1 className="font-display text-4xl font-bold text-brand-cream mb-8">
           Lista de espera
         </h1>
@@ -253,7 +255,7 @@ export default function Admin() {
             )}
           </>
         )}
-      </div>
+      </main>
     </>
   );
 }

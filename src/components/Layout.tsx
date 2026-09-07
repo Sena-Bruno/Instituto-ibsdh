@@ -30,8 +30,15 @@ export default function Layout() {
         entra com uma subida curta em vez de trocar num corte seco.
         Bem contido de propósito: navegar é frequente, e animação longa
         aqui vira imposto cobrado em toda troca de página.
+
+        É <div>, e não <main>: cada página traz o próprio <main>, e dois
+        aninhados são HTML inválido — a especificação admite um único
+        `main` visível por documento. Enquanto tudo era montado no
+        navegador, isso passava despercebido; agora o `main` duplicado
+        está no HTML que o rastreador lê, e é ele que decide qual bloco é
+        o conteúdo principal da página.
       */}
-      <motion.main
+      <motion.div
         id="conteudo"
         key={pathname}
         variants={pageTransition}
@@ -39,7 +46,7 @@ export default function Layout() {
         animate="visible"
       >
         <Outlet />
-      </motion.main>
+      </motion.div>
       <SiteFooter />
       <FixedWhatsApp />
     </div>

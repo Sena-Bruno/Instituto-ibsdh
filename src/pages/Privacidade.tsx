@@ -1,5 +1,33 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
-import { site } from '../config/site';
+import Seo from '../components/Seo';
+import { routes, site } from '../config/site';
+import { organizacao } from '../lib/schema';
+
+/**
+ * Quando este documento foi revisado pela última vez.
+ *
+ * Era `new Date()`, o que fazia a página anunciar a data de HOJE, todo
+ * dia, sem que uma linha do texto tivesse mudado. Isso é errado por dois
+ * motivos independentes:
+ *
+ * 1. É uma declaração falsa num documento legal. Quem precisa saber se
+ *    os termos mudaram desde que aceitou não tem como saber, porque a
+ *    data nunca para de avançar.
+ *
+ * 2. Quebrava a hidratação. O HTML é gerado no build e a data congela
+ *    ali; no dia seguinte o navegador renderiza outra data, o React vê
+ *    que a árvore não bate com o HTML recebido e redesenha o documento
+ *    inteiro — perdendo a página pré-renderizada por causa de uma linha.
+ *
+ * AO REVISAR O TEXTO, ATUALIZE ESTA DATA. É a única coisa que precisa
+ * ser feita à mão aqui, e é o que dá sentido ao aviso.
+ */
+const ULTIMA_REVISAO = '2026-09-07';
+
+/** `2026-09-07` → `07/09/2026`, sem passar por fuso horário. */
+function formatarData(iso: string): string {
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
 
 /**
  * Política de Privacidade — exigida pela LGPD.
@@ -10,22 +38,20 @@ import { site } from '../config/site';
 export default function Privacidade() {
   return (
     <>
-      <Helmet>
-        <title>Política de Privacidade | {site.name}</title>
-        <meta
-          name="description"
-          content="Como o Instituto Bruno Sena coleta, usa e protege seus dados pessoais, conforme a LGPD."
-        />
-        <link rel="canonical" href={`${site.url}/privacidade`} />
-        <meta name="robots" content="index, follow" />
-      </Helmet>
+      <Seo
+        rota={routes.privacidade}
+        titulo={`Política de Privacidade | ${site.name}`}
+        descricao="Como o Instituto Bruno Sena coleta, usa e protege seus dados pessoais, conforme a LGPD."
+        dados={[organizacao()]}
+      />
 
-      <article className="max-w-3xl mx-auto px-6 pt-36 pb-24 prose-institucional">
+      <main className="max-w-3xl mx-auto px-6 pt-36 pb-24 prose-institucional">
         <h1 className="mb-4 font-display text-4xl leading-tight font-semibold tracking-tight text-brand-cream md:text-5xl">
           Política de Privacidade
         </h1>
         <p className="sobretitulo mb-12 text-brand-quiet">
-          Última atualização: {new Date().toLocaleDateString('pt-BR')}
+          Última atualização:{' '}
+          <time dateTime={ULTIMA_REVISAO}>{formatarData(ULTIMA_REVISAO)}</time>
         </p>
 
         <div className="space-y-8 leading-relaxed">
@@ -121,7 +147,7 @@ export default function Privacidade() {
             </p>
           </section>
         </div>
-      </article>
+      </main>
     </>
   );
 }

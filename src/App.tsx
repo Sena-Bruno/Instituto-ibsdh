@@ -1,44 +1,20 @@
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { MotionConfig } from 'motion/react';
-import { lazy, Suspense } from 'react';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import type { ComponentType } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
-import Layout from './components/Layout';
-import { SkeletonPage } from './components/Skeleton';
-import { routes } from './config/site';
+import Rotas from './Rotas';
 
-// Cada rota vira um chunk próprio. Antes, as 7 páginas (≈4.400 linhas,
-// só a home com 1.455) eram importadas estaticamente e iam todas no
-// mesmo bundle inicial.
-const Home = lazy(() => import('./pages/Home'));
-const Formacoes = lazy(() => import('./pages/Formacoes'));
-const PNLPractitioner = lazy(() => import('./pages/PNLPractitioner'));
-const MasterPNL = lazy(() => import('./pages/MasterPNL'));
-const Hipnoterapia = lazy(() => import('./pages/Hipnoterapia'));
-const Jornada = lazy(() => import('./pages/Jornada'));
-const MasterCoach = lazy(() => import('./pages/MasterCoach'));
-const Privacidade = lazy(() => import('./pages/Privacidade'));
-const Termos = lazy(() => import('./pages/Termos'));
-const Admin = lazy(() => import('./pages/Admin'));
-const NotFound = lazy(() => import('./pages/NotFound'));
-
-/**
- * Mostrado enquanto o chunk da rota é baixado.
- *
- * Antes era um spinner solto no meio da tela. O skeleton tem o formato
- * de uma página — título, texto, blocos — então a troca para o conteúdo
- * real não desloca nada, e a espera parece progresso em vez de pausa.
- */
-function PageFallback() {
-  return (
-    <div role="status" aria-live="polite">
-      <span className="sr-only">Carregando página…</span>
-      <SkeletonPage />
-    </div>
-  );
-}
-
-export default function App() {
+export default function App({
+  resolvidos,
+}: {
+  /**
+   * O componente da rota que já está na tela, quando o HTML veio
+   * pré-renderizado. Ver o comentário longo em `main.tsx`: sem ele a
+   * hidratação suspende e descarta o documento que o servidor entregou.
+   */
+  resolvidos?: Record<string, ComponentType>;
+}) {
   return (
     <HelmetProvider>
       {/*
@@ -51,23 +27,7 @@ export default function App() {
       <MotionConfig reducedMotion="user">
         <ErrorBoundary>
           <Router>
-            <Suspense fallback={<PageFallback />}>
-              <Routes>
-                <Route element={<Layout />}>
-                  <Route path={routes.home} element={<Home />} />
-                  <Route path={routes.formacoes} element={<Formacoes />} />
-                  <Route path={routes.pnlPractitioner} element={<PNLPractitioner />} />
-                  <Route path={routes.masterPnl} element={<MasterPNL />} />
-                  <Route path={routes.hipnoterapia} element={<Hipnoterapia />} />
-                  <Route path={routes.jornada} element={<Jornada />} />
-                  <Route path={routes.masterCoach} element={<MasterCoach />} />
-                  <Route path={routes.privacidade} element={<Privacidade />} />
-                  <Route path={routes.termos} element={<Termos />} />
-                  <Route path={routes.admin} element={<Admin />} />
-                  <Route path="*" element={<NotFound />} />
-                </Route>
-              </Routes>
-            </Suspense>
+            <Rotas resolvidos={resolvidos} />
           </Router>
         </ErrorBoundary>
       </MotionConfig>

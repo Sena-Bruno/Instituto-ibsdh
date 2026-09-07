@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#09090B" />
 
+    <!-- Bloco substituído por rota no build; ver scripts/prerender.mjs.
+         O que está escrito aqui é o padrão da home e só vale em `vite dev`.
+         Não acrescente aqui tag que uma página também emita pelo Helmet. -->
+    <!-- seo:inicio -->
     <title>Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching</title>
     <meta name="description" content="Formações em PNL, Hipnoterapia e Coaching do Instituto Bruno Sena. Método estruturado, certificação reconhecida e prática clínica supervisionada." />
     <link rel="canonical" href="https://institutobrunosena.com.br/" />
-
-    <!-- Compartilhamento. Os crawlers de WhatsApp, Facebook e LinkedIn não
-         executam JavaScript, então estas tags precisam existir no HTML
-         estático: as definidas por página só chegam a quem renderiza JS. -->
     <meta property="og:site_name" content="Instituto Bruno Sena" />
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:type" content="website" />
@@ -25,6 +25,7 @@
     <meta name="twitter:title" content="Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching" />
     <meta name="twitter:description" content="Método estruturado, certificação reconhecida e prática clínica supervisionada." />
     <meta name="twitter:image" content="https://institutobrunosena.com.br/og-image.png" />
+    <!-- seo:fim -->
 
     <link rel="icon" href="/icon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/logo-do-instituto.svg" type="image/svg+xml" />
@@ -50,25 +51,6 @@
          frio ao lado de um título tão duro. -->
     <link rel="preload" as="font" type="font/woff2" href="/fontes/oswald-700-lat.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fontes/lato-400-lat.woff2" crossorigin />
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "EducationalOrganization",
-        "name": "Instituto Bruno Sena",
-        "alternateName": "IBSDH",
-        "description": "Formações em PNL, Hipnoterapia e Coaching.",
-        "url": "https://institutobrunosena.com.br",
-        "logo": "https://institutobrunosena.com.br/logo-do-instituto.svg",
-        "image": "https://institutobrunosena.com.br/og-image.png",
-        "email": "contato@institutobrunosena.com.br",
-        "telephone": "+5511987355750",
-        "areaServed": "BR",
-        "sameAs": [
-          "https://www.instagram.com/brunosenaoficial/"
-        ]
-      }
-    </script>
   </head>
   <body class="bg-brand-dark text-brand-platinum antialiased">
     <div id="root"></div>

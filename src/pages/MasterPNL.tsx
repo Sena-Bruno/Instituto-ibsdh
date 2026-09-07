@@ -1,13 +1,19 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
-import { CourseReviews } from '../components/CourseReviews';
+import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
 import Ementa from '../components/Ementa';
 import Faq from '../components/Faq';
 import PaginaCurso, { Comparativo, ListaItens, SecaoCurso } from '../components/PaginaCurso';
 import SenaExplanation from '../components/SenaExplanation';
+import Seo from '../components/Seo';
 import { corDoCurso, courses } from '../config/courses';
 import { contarAulas, curriculoMasterPnl } from '../config/curriculos';
-import { routes, site } from '../config/site';
+import { routes } from '../config/site';
+import {
+  cursoComoSchema,
+  organizacao,
+  perguntasFrequentes,
+  trilhaDeNavegacao,
+} from '../lib/schema';
 
 const curso = courses.masterPnl;
 /* A cor da página vem do eixo do curso, nunca do curso em si. */
@@ -88,23 +94,23 @@ const perguntas = [
 export default function MasterPNL() {
   return (
     <>
-      <Helmet>
-        <link rel="canonical" href={`${site.url}${routes.masterPnl}`} />
-        <title>Formação Master PNL | Instituto Bruno Sena</title>
-        <meta
-          name="description"
-          content="Formação Master em PNL: modelagem comportamental, metaprogramas, Sleight of Mouth e Modelo Milton, com avaliação por competência no simulador SENA Avançado."
-        />
-        <meta property="og:title" content="Formação Master PNL | Instituto Bruno Sena" />
-        <meta
-          property="og:description"
-          content="Modelagem, metaprogramas e intervenção avançada, com avaliação por competência demonstrada."
-        />
-        <meta property="og:image" content={`${site.url}/og-image.png`} />
-        <meta property="og:url" content={`${site.url}${routes.masterPnl}`} />
-        <meta property="og:type" content="article" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+      <Seo
+        rota={routes.masterPnl}
+        titulo="Formação Master PNL | Instituto Bruno Sena"
+        descricao="Formação Master em PNL: modelagem comportamental, metaprogramas, Sleight of Mouth e Modelo Milton, com avaliação por competência no simulador SENA Avançado."
+        imagem="/capa-master-pnl.webp"
+        imagemAlt="Arte da formação Master PNL do Instituto Bruno Sena"
+        dados={[
+          organizacao(),
+          cursoComoSchema(curso),
+          trilhaDeNavegacao([
+            { nome: 'Início', rota: routes.home },
+            { nome: 'Formações', rota: routes.formacoes },
+            { nome: 'Master PNL', rota: routes.masterPnl },
+          ]),
+          perguntasFrequentes(perguntas),
+        ]}
+      />
 
       <PaginaCurso
         curso={curso}
@@ -352,7 +358,7 @@ export default function MasterPNL() {
         </SecaoCurso>
 
         <SecaoCurso cor={cor} sobretitulo="Avaliações">
-          <CourseReviews courseId={curso.slug} />
+          <AvaliacoesDoCurso courseId={curso.slug} />
         </SecaoCurso>
       </PaginaCurso>
     </>

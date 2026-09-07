@@ -1,11 +1,12 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CardCurso from '../components/CardCurso';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
+import Seo from '../components/Seo';
 import { cursosDoEixo, eixosComCurso, listaCursos } from '../config/courses';
-import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
+import { routes, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
+import { listaDeCursos, organizacao, trilhaDeNavegacao } from '../lib/schema';
 
 /**
  * O catálogo de formações.
@@ -37,23 +38,20 @@ export default function Formacoes() {
 
   return (
     <>
-      <Helmet>
-        <link rel="canonical" href={`${site.url}${routes.formacoes}`} />
-        <title>Formações | Instituto Bruno Sena</title>
-        <meta
-          name="description"
-          content="Todas as formações do Instituto Bruno Sena, organizadas por eixo: PNL, Hipnoterapia, Coaching e jornadas completas. Certificação NLPEA e IBSDH."
-        />
-        <meta property="og:title" content="Formações | Instituto Bruno Sena" />
-        <meta
-          property="og:description"
-          content="Todas as formações do instituto, organizadas por eixo, com prática supervisionada no simulador SENA."
-        />
-        <meta property="og:image" content={`${site.url}/og-image.png`} />
-        <meta property="og:url" content={`${site.url}${routes.formacoes}`} />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+      <Seo
+        rota={routes.formacoes}
+        titulo="Formações | Instituto Bruno Sena"
+        descricao="Todas as formações do Instituto Bruno Sena, organizadas por eixo: PNL, Hipnoterapia, Coaching e jornadas completas. Certificação NLPEA e IBSDH."
+        imagemAlt="Catálogo de formações do Instituto Bruno Sena"
+        dados={[
+          organizacao(),
+          listaDeCursos(listaCursos),
+          trilhaDeNavegacao([
+            { nome: 'Início', rota: routes.home },
+            { nome: 'Formações', rota: routes.formacoes },
+          ]),
+        ]}
+      />
 
       <main>
         <section className="relative overflow-hidden pt-32 pb-14 md:pt-40 md:pb-16">

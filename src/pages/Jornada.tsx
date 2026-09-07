@@ -1,10 +1,16 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
-import { CourseReviews } from '../components/CourseReviews';
+import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
 import Faq from '../components/Faq';
 import Secao, { Cabecalho } from '../components/Secao';
+import Seo from '../components/Seo';
 import { combos, courses } from '../config/courses';
-import { routes, site, whatsappLink } from '../config/site';
+import { routes, whatsappLink } from '../config/site';
+import {
+  cursoComoSchema,
+  organizacao,
+  perguntasFrequentes,
+  trilhaDeNavegacao,
+} from '../lib/schema';
 import { cn } from '../lib/utils';
 
 /**
@@ -133,26 +139,22 @@ const perguntas = [
 export default function Jornada() {
   return (
     <>
-      <Helmet>
-        <link rel="canonical" href={`${site.url}${routes.jornada}`} />
-        <title>Jornada do Herói — pacotes de formação | Instituto Bruno Sena</title>
-        <meta
-          name="description"
-          content="Os quatro caminhos de formação do Instituto Bruno Sena, do Practitioner à Trilogia completa. Compare preço, carga horária e certificados."
-        />
-        <meta
-          property="og:title"
-          content="Jornada do Herói — pacotes de formação | Instituto Bruno Sena"
-        />
-        <meta
-          property="og:description"
-          content="Do Practitioner à Trilogia completa. Compare preço, carga horária e certificados."
-        />
-        <meta property="og:image" content={`${site.url}/og-image.png`} />
-        <meta property="og:url" content={`${site.url}${routes.jornada}`} />
-        <meta property="og:type" content="article" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+      <Seo
+        rota={routes.jornada}
+        titulo="Jornada do Herói — pacotes de formação | Instituto Bruno Sena"
+        descricao="Os quatro caminhos de formação do Instituto Bruno Sena, do Practitioner à Trilogia completa. Compare preço, carga horária e certificados."
+        imagemAlt="Os caminhos de formação do Instituto Bruno Sena"
+        dados={[
+          organizacao(),
+          cursoComoSchema(courses.trilogia),
+          trilhaDeNavegacao([
+            { nome: 'Início', rota: routes.home },
+            { nome: 'Formações', rota: routes.formacoes },
+            { nome: 'Jornada do Herói', rota: routes.jornada },
+          ]),
+          perguntasFrequentes(perguntas),
+        ]}
+      />
 
       <main>
         <section className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-20">
@@ -406,7 +408,7 @@ export default function Jornada() {
         </Secao>
 
         <Secao>
-          <CourseReviews courseId={courses.trilogia.slug} />
+          <AvaliacoesDoCurso courseId={courses.trilogia.slug} />
         </Secao>
       </main>
     </>

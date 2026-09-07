@@ -15,18 +15,21 @@ npm run dev        # http://localhost:3000
 | Script | O que faz |
 | --- | --- |
 | `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build de produção em `dist/` |
+| `npm run build` | Build de produção: pacote, pré-renderização das rotas e sitemap |
 | `npm run preview` | Serve o build para conferência |
 | `npm run lint` | Tipos + Biome (o que o CI roda) |
 | `npm run check:fix` | Corrige lint e formatação automaticamente |
 | `npm run knip` | Procura código e dependências sem uso |
 | `npm run smoke` | Teste de navegador nas rotas públicas (com o preview no ar) |
 
-O `smoke` percorre as 6 rotas públicas e falha se encontrar imagem
-quebrada, CTA de compra sem destino, título duplicado ou ausente, ou erro
-de console. O Playwright fica fora das dependências de propósito — ele
-baixa centenas de MB de navegadores na instalação, o que só atrasaria o
-build de produção:
+O `smoke` percorre as rotas públicas e falha se encontrar imagem quebrada,
+CTA de compra sem destino, título duplicado ou ausente, erro de console —
+ou, com **o JavaScript desligado**, uma página sem título próprio, sem
+canônico, sem dados estruturados ou sem texto no corpo. Essa última parte
+é o que protege a pré-renderização: tudo o mais passaria igual num site
+que só monta o conteúdo no navegador. O Playwright fica fora das
+dependências de propósito — ele baixa centenas de MB de navegadores na
+instalação, o que só atrasaria o build de produção:
 
 ```bash
 npm install --no-save playwright
@@ -222,6 +225,90 @@ ativo, o SDK (490 kB) **só é baixado se um erro acontecer** — quem navega
 sem problema nunca paga por ele. Configure `VITE_SENTRY_DSN` em
 *Netlify → Site settings → Environment variables*.
 
+## Busca e indexação
+
+O site é pré-renderizado: `npm run build` gera **um arquivo HTML por
+rota**, com o texto, os links, o `<title>`, a descrição, o canônico e os
+dados estruturados já dentro da primeira resposta HTTP 200.
+
+### Por que isso importa
+
+Antes, o site era uma SPA pura. O servidor devolvia sempre o mesmo
+`index.html`, com o `<div id="root">` vazio e sempre o mesmo `<title>`;
+tudo o mais aparecia quando o React montava no navegador.
+
+O Google até executa JavaScript, mas em duas etapas separadas: primeiro lê
+o HTML cru, depois enfileira a página para um Chromium sem cabeça
+renderizar. Essa fila é o gargalo — e nela vale um teto rígido de **2 MB
+por recurso**, acima do qual nada é sequer transferido. Pior: robôs de rede
+social (WhatsApp, LinkedIn) e boa parte dos rastreadores de IA não têm
+segunda etapa nenhuma. Para todos eles, as sete páginas do site eram
+literalmente o mesmo documento, com o mesmo título.
+
+O JavaScript continua no lugar: ele hidrata o HTML e devolve a
+interatividade. Só deixou de ser condição para o conteúdo existir.
+
+### Como funciona
+
+```
+vite build                              → o pacote do navegador
+vite build --ssr src/entry-server.tsx   → o mesmo site, para rodar em Node
+node scripts/prerender.mjs              → um HTML por rota + o sitemap
+```
+
+| Arquivo | Papel |
+|---|---|
+| `src/config/paginas.ts` | A tabela de rotas: fonte única do roteador, do HTML gerado e do sitemap |
+| `src/Rotas.tsx` | A árvore de rotas, compartilhada pelo navegador e pelo servidor |
+| `src/entry-server.tsx` | Renderiza uma rota em texto, com o `<head>` que o Helmet produziu |
+| `scripts/prerender.mjs` | Injeta corpo e `<head>` no modelo e grava os arquivos |
+| `src/components/Seo.tsx` | O `<head>` de cada página, num lugar só |
+| `src/lib/schema.ts` | Os dados estruturados JSON-LD |
+
+**Para adicionar uma página:** acrescente uma entrada em
+`src/config/paginas.ts`. Ela ganha rota, HTML estático e linha no sitemap
+de uma vez — esquecer o sitemap deixou de ser possível.
+
+### O que o build recusa publicar
+
+`scripts/prerender.mjs` quebra o build se alguma rota sair sem `<title>`,
+sem canônico, com o corpo vazio ou com o skeleton de carregamento no lugar
+do conteúdo. São falhas que ninguém veria a olho nu no navegador, porque o
+JavaScript conserta a tela — e que só apareceriam meses depois, na queda
+das posições.
+
+`npm run smoke` fecha o cerco pelo outro lado: abre cada rota **com o
+JavaScript desligado** e confere título, canônico, descrição, JSON-LD, um
+único `<h1>`, volume de texto e links internos, além de exigir 404 de
+verdade num endereço inventado.
+
+### Dados estruturados
+
+Em JSON-LD, num bloco só por página, com os nós amarrados por `@id`:
+`EducationalOrganization` e `Person` (o fundador) em todas; `Course` com
+oferta, carga e certificado nas páginas de formação; `BreadcrumbList`,
+`FAQPage` e `ItemList` onde há o conteúdo correspondente **visível**.
+
+⚠ **Tudo o que o schema declara tem de estar na tela.** Preço no schema
+diferente do preço exibido, ou nota de avaliação que a página não mostra,
+não custa o resultado enriquecido daquela página: custa a elegibilidade do
+**domínio inteiro**. É por isso que nada em `schema.ts` é escrito à mão —
+preço, carga, certificado e checkout vêm de `config/courses.ts`, a mesma
+fonte que desenha o card e a coluna de compra.
+
+### Depois de publicar
+
+1. **Search Console** → *Inspeção de URL* em cada rota. O "HTML renderizado"
+   e o "HTML de origem" agora devem trazer o mesmo conteúdo.
+2. **Enviar o sitemap** (`/sitemap.xml`) uma vez. O `lastmod` sai do último
+   commit que tocou o arquivo da página, então passa a se atualizar sozinho.
+3. **Teste de resultados aprimorados** do Google em uma página de formação,
+   para validar o `Course`.
+4. **HSTS preload:** o cabeçalho já declara `preload`, mas só vale depois de
+   submeter o domínio em [hstspreload.org](https://hstspreload.org).
+   Confirme antes que **todos** os subdomínios servem HTTPS — a lista é
+   embutida nos navegadores e sair dela leva meses.
+
 ## Estrutura
 
 ```
@@ -251,7 +338,8 @@ aparecia 11 vezes, cada e-mail 6 — e já haviam divergido entre páginas.
 Agora existe um lugar só.
 
 Cabeçalho e rodapé vêm de `components/Layout.tsx`, aplicado como rota-pai
-em `App.tsx`. Páginas novas entram como `<Route>` filha e herdam tudo.
+em `Rotas.tsx`. Página nova é uma entrada em `config/paginas.ts` — ela
+herda a moldura e ganha HTML estático e linha no sitemap sozinha.
 
 ## Como o catálogo cresce
 
@@ -303,13 +391,24 @@ intenção e é inoperável em tela de toque.
 
 ## Deploy
 
-O build é estático (`dist/`). Como é uma SPA, **o host precisa redirecionar
-todas as rotas para `index.html`**, senão acessar `/hipnoterapia` direto
-devolve 404. Já vão configurados:
+O build é estático (`dist/`) e **cada rota tem arquivo próprio**:
+`/hipnoterapia` é servido por `dist/hipnoterapia/index.html`. Não existe
+mais o redirecionamento `/*  →  /index.html` que uma SPA exige — ele foi
+removido de propósito (ver [Busca e indexação](#busca-e-indexação)).
 
-- Netlify: `netlify.toml` e `public/_redirects`
-- Vercel: `vercel.json`
-- Firebase Hosting: `firebase.json`
+O que o host precisa fazer, e já vai configurado nos três:
+
+| | Netlify | Vercel | Firebase |
+|---|---|---|---|
+| arquivo | `netlify.toml` | `vercel.json` | `firebase.json` |
+| URL sem `.html` | padrão | `cleanUrls` | `cleanUrls` |
+| endereço inexistente | `404.html`, status 404 | idem | idem |
+| `/admin` | rewrite explícito | padrão | rewrite explícito |
+| HSTS, cache, cabeçalhos | sim | sim | sim |
+
+**Ao trocar de host, confira duas coisas:** que `/formacoes` responde com o
+conteúdo de `formacoes/index.html` (e não com a home), e que um endereço
+inventado responde **404**, não 200. `npm run smoke` verifica as duas.
 
 ### Firestore
 
