@@ -1,0 +1,386 @@
+/**
+ * Os artigos do instituto.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE ESTA SEÇÃO EXISTE                                            │
+ * │                                                                       │
+ * │  Até aqui o site tinha sete páginas, todas de venda. Isso responde a  │
+ * │  quem já decidiu comprar uma formação e procura qual — mas é uma      │
+ * │  fração minúscula das buscas. A maioria das pessoas chega antes:      │
+ * │  "o que é PNL", "hipnose funciona mesmo", "metamodelo da linguagem".  │
+ * │  Para essas buscas o site não tinha nenhuma página, e quem responde   │
+ * │  hoje são os concorrentes que estão no ar há anos.                    │
+ * │                                                                       │
+ * │  Um artigo não vende no primeiro clique, e não é para vender. Ele     │
+ * │  responde à pergunta e apresenta o instituto a quem ainda não sabia   │
+ * │  que precisava de uma formação.                                       │
+ * └───────────────────────────────────────────────────────────────────────┘
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  ⚠  A REGRA QUE NÃO PODE SER QUEBRADA                                 │
+ * │                                                                       │
+ * │  Desde a atualização de março de 2024, a Google pune o que chama de  │
+ * │  "abuso de conteúdo em escala": páginas produzidas em volume que      │
+ * │  apenas reescrevem o que já existe indexado. A punição é de domínio,  │
+ * │  não de página — leva o site inteiro junto.                           │
+ * │                                                                       │
+ * │  O que separa um artigo útil de conteúdo de enchimento não é o        │
+ * │  tamanho nem a palavra-chave: é ter algo que só este instituto pode   │
+ * │  dizer. Aqui isso existe e é concreto — as ementas, o simulador       │
+ * │  SENA, os módulos de ética obrigatória, a experiência clínica do      │
+ * │  Bruno. Artigo que não traz nada disso é melhor não publicar.         │
+ * │                                                                       │
+ * │  POR ISSO EXISTE O CAMPO `revisado`. Um artigo só vai ao ar depois    │
+ * │  de o Bruno ler, corrigir e acrescentar o que só ele sabe. Enquanto   │
+ * │  for `false`, ele não entra na listagem, não entra no sitemap e sai   │
+ * │  com `noindex` — existe apenas para ser revisado.                     │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+
+/** Um pedaço de artigo. Formato fechado de propósito: texto puro em vez de
+ *  JSX mantém a edição ao alcance de quem escreve, não de quem programa. */
+export type Bloco =
+  | { tipo: 'paragrafo'; texto: string }
+  | { tipo: 'subtitulo'; texto: string }
+  | { tipo: 'lista'; itens: string[] }
+  | { tipo: 'citacao'; texto: string; autor?: string }
+  /** Caixa de destaque. Use para o aviso que a pessoa não pode deixar de ler. */
+  | { tipo: 'destaque'; titulo?: string; texto: string };
+
+export interface Artigo {
+  /** Vira a URL: /artigos/<slug>. Não mude depois de publicado. */
+  slug: string;
+  titulo: string;
+  /** O <title> da aba e do resultado de busca. Até ~60 caracteres. */
+  tituloSeo?: string;
+  /** A meta descrição e o resumo do card. Entre 120 e 158 caracteres. */
+  resumo: string;
+  /** A pergunta que este artigo responde. Só documentação, não vai ao ar. */
+  buscaAlvo: string;
+  /** ISO 8601. `datePublished` do schema e ordem da listagem. */
+  publicadoEm: string;
+  /** ISO 8601. Atualize ao revisar o texto — é o `dateModified`. */
+  revisadoEm?: string;
+  /** Eixo a que o artigo pertence; define a cor e o curso relacionado. */
+  eixo: 'pnl' | 'hipnoterapia' | 'coaching';
+  /** Rota da formação que o artigo naturalmente leva a considerar. */
+  cursoRelacionado?: string;
+  /**
+   * `false` enquanto o Bruno não revisou. Ver o aviso no topo do arquivo:
+   * artigo não revisado fica fora da listagem, fora do sitemap e com
+   * `noindex`. É rascunho, não publicação.
+   */
+  revisado: boolean;
+  corpo: Bloco[];
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+   OS ARTIGOS
+
+   Escritos a partir das ementas em `curriculos.ts` e marcados como não
+   revisados. O que falta em cada um está anotado num comentário — é
+   sempre a mesma coisa: o caso concreto que só quem atendeu pode contar.
+   ──────────────────────────────────────────────────────────────────── */
+
+export const artigos: Artigo[] = [
+  /*
+    ⚠ PARA O BRUNO, ANTES DE PUBLICAR:
+    Falta o seu caso. Um atendimento em que o mapa da pessoa era o
+    problema inteiro — o que ela dizia, o que você percebeu, o que mudou.
+    Três parágrafos bastam. Sem isso o artigo é correto e esquecível: diz
+    o que vinte outros sites já dizem, e o Google sabe disso.
+    Depois de escrever, ponha `revisado: true` e a data em `revisadoEm`.
+  */
+  {
+    slug: 'o-que-e-pnl',
+    titulo: 'O que é PNL — e o que ela não é',
+    tituloSeo: 'O que é PNL: o que a Programação Neurolinguística faz e o que não faz',
+    resumo:
+      'A PNL estuda como a linguagem organiza a experiência e como padrões de comportamento podem ser mudados. Não é terapia, não é ciência médica — e entender essa fronteira é o que separa o profissional sério do charlatão.',
+    buscaAlvo: 'o que é PNL / PNL funciona / para que serve a PNL',
+    publicadoEm: '2026-09-07',
+    eixo: 'pnl',
+    cursoRelacionado: '/pnl-practitioner',
+    revisado: false,
+    corpo: [
+      {
+        tipo: 'paragrafo',
+        texto:
+          'PNL é a sigla de Programação Neurolinguística. O nome soa a laboratório, e é aí que começa a maior parte da confusão: ele descreve uma proposta, não uma credencial científica. A PNL nasceu nos anos 1970, quando Richard Bandler e John Grinder decidiram fazer uma pergunta simples sobre terapeutas que obtinham resultados muito acima da média — **o que exatamente eles fazem?**',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A resposta a essa pergunta é o que a PNL de fato é: um conjunto de modelos sobre como as pessoas organizam a própria experiência através da linguagem, e como esses padrões podem ser observados, descritos e alterados. É por isso que a modelagem é o coração do método, e não uma técnica entre outras.',
+      },
+      { tipo: 'subtitulo', texto: 'O pressuposto que sustenta o resto' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          '"O mapa não é o território." É a frase mais repetida da área e a mais mal entendida. Ela não diz que a realidade não existe, nem que basta pensar diferente para que os fatos mudem. Diz que ninguém opera sobre a realidade diretamente: cada pessoa age sobre uma representação dela, montada a partir do que os sentidos captaram, do que a memória guardou e do que a linguagem conseguiu nomear.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Essa representação é construída por três operações que acontecem o tempo todo, sem que ninguém perceba: **omissão** (o que fica de fora), **distorção** (o que é reinterpretado) e **generalização** (o caso que vira regra). Elas não são defeitos — são o que torna a experiência administrável. O problema aparece quando o mapa fica pequeno demais para o território que a pessoa precisa atravessar.',
+      },
+      { tipo: 'subtitulo', texto: 'Os cinco canais, e por que isso importa na prática' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A PNL chama de VAKOG os cinco sistemas por onde a experiência entra e é reconstruída: visual, auditivo, cinestésico, olfativo e gustativo. A observação prática é que as pessoas privilegiam canais diferentes ao pensar — e isso vaza na linguagem que usam.',
+      },
+      {
+        tipo: 'lista',
+        itens: [
+          '"Não estou **vendo** saída para isso" — a pessoa está construindo imagens.',
+          '"Isso não me **soa** bem" — a pessoa está ouvindo a própria fala interna.',
+          '"Estou **travado** com essa decisão" — a pessoa está descrevendo uma sensação corporal.',
+        ],
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Quem conduz uma conversa terapêutica ou uma negociação e devolve a informação no mesmo canal em que ela veio é entendido mais rápido. É uma observação prática sobre atenção e linguagem, e funciona no dia a dia — não é uma afirmação sobre como o cérebro está fisicamente organizado.',
+      },
+      { tipo: 'subtitulo', texto: 'O que a PNL não é' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Aqui é onde a maior parte do material disponível na internet mente, por omissão ou por venda. Vale ser direto:',
+      },
+      {
+        tipo: 'lista',
+        itens: [
+          '**Não é tratamento médico nem psiquiátrico.** Não substitui acompanhamento clínico, medicação ou psicoterapia conduzida por profissional habilitado.',
+          '**Não tem respaldo científico como técnica clínica.** As revisões acadêmicas sobre PNL não sustentam as afirmações mais ambiciosas do campo. Quem promete o contrário está vendendo, não informando.',
+          '**Não reprograma o cérebro.** A expressão é metáfora de marketing. O que se trabalha são padrões de linguagem, atenção e resposta emocional — que já é bastante, e não precisa de exagero.',
+          '**Não é leitura de mente.** Pistas oculares, predicados e calibração são hipóteses a testar na conversa, nunca diagnósticos.',
+        ],
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'Por que dizemos isso numa página que vende formação',
+        texto:
+          'Porque a fronteira é o que torna o trabalho seguro. Um profissional que sabe o que a ferramenta não faz sabe quando encaminhar — e é exatamente esse julgamento que separa a prática responsável do dano. Nas nossas formações isso não é um aviso no rodapé: é módulo de ética com aprovação obrigatória.',
+      },
+      { tipo: 'subtitulo', texto: 'Então o que ela faz, afinal' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Feito o desconto do exagero, sobra um conjunto de ferramentas concretas e bem descritas. O **metamodelo** é um repertório de perguntas que recupera a informação que a fala apagou — o que transforma "eu nunca consigo" numa frase examinável. A **ancoragem** usa associação para tornar um estado emocional acessível quando ele é necessário. A **modelagem** decompõe uma competência em passos observáveis, de modo que ela possa ser ensinada em vez de admirada.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Nada disso é mágico e nada disso é pouco. São ferramentas de comunicação e de mudança de comportamento, e funcionam na medida em que quem as usa sabe o que está fazendo — o que só se resolve com prática supervisionada, não com apostila.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Se quiser ver como esses conteúdos se organizam numa formação completa, a ementa do [PNL Practitioner](/pnl-practitioner) está publicada aula por aula, incluindo qual exercício prático corresponde a cada uma.',
+      },
+    ],
+  },
+
+  /*
+    ⚠ PARA O BRUNO, ANTES DE PUBLICAR:
+    Faltam exemplos seus de metamodelo em atendimento real — de preferência
+    um em que a pergunta certa mudou a conversa de rumo, e um em que você
+    perguntou demais e a pessoa fechou. O segundo vale mais que o primeiro:
+    ninguém escreve sobre os próprios erros, e é o que dá credibilidade.
+  */
+  {
+    slug: 'metamodelo-da-linguagem',
+    titulo: 'Metamodelo: as três formas como a fala esconde o problema',
+    tituloSeo: 'Metamodelo da linguagem na PNL: omissão, distorção e generalização',
+    resumo:
+      'Omissão, distorção e generalização são os três modos como a linguagem encolhe a experiência. O metamodelo é o conjunto de perguntas que recupera o que ficou de fora — e a razão de "eu nunca consigo" ser uma frase incompleta.',
+    buscaAlvo: 'metamodelo PNL / omissão distorção generalização / perguntas do metamodelo',
+    publicadoEm: '2026-09-07',
+    eixo: 'pnl',
+    cursoRelacionado: '/pnl-practitioner',
+    revisado: false,
+    corpo: [
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Ninguém diz tudo o que sabe. Entre a experiência completa de uma pessoa — a **estrutura profunda** — e a frase que ela pronuncia — a **estrutura superficial** — há uma perda enorme e inevitável. Falar exige encolher. O metamodelo é o mapa dessa perda: descreve por onde a informação some e oferece a pergunta que a traz de volta.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Não é uma técnica de persuasão. É o contrário: um método de escutar com precisão, feito de perguntas que devolvem à pessoa a parte da própria experiência que ela deixou de fora ao contar.',
+      },
+      { tipo: 'subtitulo', texto: '1. Omissão — o que ficou de fora' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A frase está gramaticalmente completa, mas falta informação para que ela signifique alguma coisa verificável.',
+      },
+      {
+        tipo: 'lista',
+        itens: [
+          '"Eu estou ansioso." → Ansioso **com o quê**? Em que situação, especificamente?',
+          '"Ninguém me apoia." → **Quem**, exatamente, não te apoiou?',
+          '"É melhor assim." → Melhor **do que o quê**? Melhor **para quem**?',
+          '"Fui rejeitado." → Rejeitado **por quem** e **como** você soube?',
+        ],
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'O ganho não é retórico. "Estou ansioso" é um estado permanente sobre o qual não há nada a fazer. "Fico ansioso quando preciso falar numa reunião com mais de seis pessoas" é um problema com contorno, e problema com contorno tem por onde ser trabalhado.',
+      },
+      { tipo: 'subtitulo', texto: '2. Distorção — o que foi reinterpretado' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Aqui a informação não sumiu: ela foi remontada numa relação que talvez não exista. Três formas aparecem o tempo todo.',
+      },
+      {
+        tipo: 'lista',
+        itens: [
+          '**Leitura mental** — "Ele acha que eu sou incompetente." → Como você sabe o que ele acha?',
+          '**Causa e efeito** — "Ela me irrita." → Como, exatamente, o que ela faz produz a sua irritação?',
+          '**Nominalização** — "Falta comunicação no meu casamento." → "Comunicação" virou coisa. Quem precisa comunicar o quê, a quem, e quando isso deixou de acontecer?',
+        ],
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A nominalização é a mais traiçoeira das três. Ela transforma um processo em substantivo, e um substantivo não tem o que ser mudado: "a comunicação" é um objeto parado. Devolver o verbo — comunicar — devolve junto quem age.',
+      },
+      { tipo: 'subtitulo', texto: '3. Generalização — o caso que virou regra' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Uma experiência particular é promovida a lei. É o mecanismo que permite aprender com um caso — e o mesmo que aprisiona quem aprendeu a lição errada.',
+      },
+      {
+        tipo: 'lista',
+        itens: [
+          '**Quantificador universal** — "Eu **nunca** consigo." → Nunca? Houve alguma vez em que conseguiu, mesmo que em parte?',
+          '**Operador modal de necessidade** — "Eu **tenho que** aguentar." → O que aconteceria se você não aguentasse?',
+          '**Operador modal de possibilidade** — "Eu **não posso** recusar." → O que impede?',
+        ],
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A pergunta sobre o quantificador universal é a mais produtiva de todas, porque uma única exceção derruba a regra inteira. Quem responde "bom, uma vez eu consegui" acabou de fornecer o material com que a mudança será construída.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'A parte que quase nunca é ensinada',
+        texto:
+          'O metamodelo é fácil de aprender e fácil de usar mal. Perguntado em sequência, sem sintonia, ele vira interrogatório — e a pessoa fecha. A regra prática: cada pergunta precisa ser sustentada por rapport suficiente para bancá-la, e a informação recuperada precisa ir a algum lugar. Perguntar por perguntar é violência com aparência de técnica.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'É por isso que a nossa formação não trata o metamodelo como uma lista para decorar: são cinco aulas, com prática correspondente para cada categoria, e os exercícios acontecem no simulador antes de qualquer atendimento real. A [ementa completa do Practitioner](/pnl-practitioner) mostra como isso se distribui.',
+      },
+    ],
+  },
+
+  /*
+    ⚠ PARA O BRUNO, ANTES DE PUBLICAR:
+    Verifique o parágrafo sobre legislação e conselhos profissionais — ele
+    está deliberadamente cauteloso, mas a situação varia por estado e você
+    conhece o terreno melhor do que qualquer fonte pública. E acrescente,
+    se puder, um caso de encaminhamento: alguém que procurou hipnose e que
+    você mandou para outro profissional. É o que prova a ética na prática.
+  */
+  {
+    slug: 'hipnose-clinica-o-que-e-o-transe',
+    titulo: 'Hipnose clínica: o que o transe é, e o que ele não é',
+    tituloSeo: 'Hipnose clínica: o que é o transe, como funciona e quando não usar',
+    resumo:
+      'Transe não é sono, não é perda de controle e não é palco. É um estado de atenção concentrada com o senso crítico afrouxado — e saber quando não induzi-lo importa mais do que saber induzi-lo.',
+    buscaAlvo: 'o que é hipnose clínica / hipnose funciona / o que se sente na hipnose',
+    publicadoEm: '2026-09-07',
+    eixo: 'hipnoterapia',
+    cursoRelacionado: '/hipnoterapia',
+    revisado: false,
+    corpo: [
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A maior parte do que as pessoas sabem sobre hipnose veio de palco e de televisão, e quase tudo está errado. Quem chega a uma primeira sessão costuma trazer três medos: dormir, perder o controle e revelar algo que não queria. Nenhum dos três descreve o que acontece.',
+      },
+      { tipo: 'subtitulo', texto: 'O que o transe é' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Transe é um estado de **atenção concentrada** em que o filtro que costuma avaliar e recusar cada informação nova — o fator crítico — fica temporariamente afrouxado. A pessoa continua acordada, continua ouvindo, continua sabendo onde está. O que muda é a proporção: menos vigilância analítica, mais absorção.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'É um estado comum. Dirigir um trecho conhecido e chegar sem lembrar do caminho é transe. Perder a noção do tempo dentro de um livro é transe. O que a hipnose clínica faz não é criar um estado exótico: é induzir de propósito, aprofundar de modo controlado e usar para um objetivo combinado, algo que acontece sozinho o tempo todo.',
+      },
+      { tipo: 'subtitulo', texto: 'O que ele não é' },
+      {
+        tipo: 'lista',
+        itens: [
+          '**Não é sono.** Registros de atividade cerebral em transe não se parecem com os do sono. A pessoa está desperta e responde.',
+          '**Não é perda de vontade.** Ninguém faz sob hipnose o que recusaria fora dela. Sugestão que colide com os valores da pessoa é simplesmente rejeitada — e a rejeição costuma encerrar o transe.',
+          '**Não é inconsciência.** A esmagadora maioria lembra da sessão inteira. Quem esperava apagar sai achando que "não funcionou", quando funcionou.',
+          '**Não é máquina de verdade.** O ponto seguinte é o mais importante deste texto.',
+        ],
+      },
+      { tipo: 'subtitulo', texto: 'Memória sob hipnose: o risco que quase ninguém menciona' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A memória humana não é gravação: é reconstrução, e cada lembrança é remontada no momento em que é evocada. Sob transe, com o senso crítico afrouxado e a sugestionabilidade aumentada, essa reconstrução fica **mais** vulnerável à influência de quem conduz — não menos.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A consequência é séria e bem documentada: uma pergunta mal formulada pode produzir uma lembrança vívida, detalhada, emocionalmente convincente — e falsa. Pior, o processo tende a aumentar a confiança da pessoa naquilo que "lembrou". É por isso que material obtido sob hipnose tem valor probatório restrito ou nulo em vários sistemas jurídicos.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'Como isso aparece na nossa formação',
+        texto:
+          'Falsas memórias não são uma nota de rodapé no módulo de regressão: são uma aula inteira, dedicada a identificá-las e preveni-las, seguida de uma aula de ética crítica sobre regressão e trauma com aprovação obrigatória. Não se avança na formação sem passar por ela. É a diferença entre ensinar uma técnica e ensinar a responsabilidade que vem com ela.',
+      },
+      { tipo: 'subtitulo', texto: 'Quando NÃO usar hipnose' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Essa é a pergunta que separa o profissional do entusiasta, e é o único conteúdo desta página que pedimos que você leve daqui mesmo que nunca faça formação nenhuma.',
+      },
+      {
+        tipo: 'lista',
+        itens: [
+          'Quadros psicóticos, em surto ou com histórico — a indução pode agravar.',
+          'Quando há indicação clínica ou psiquiátrica ativa: a hipnoterapia não substitui tratamento, e conduzir como se substituísse é dano.',
+          'Quando a demanda é jurídica ou investigativa — recuperar memória "para provar" algo é justamente onde o risco de falsa memória se realiza.',
+          'Quando não há consentimento informado e específico sobre o que será feito.',
+          'Quando o caso está claramente fora da sua competência. Encaminhar é decisão técnica, não fracasso.',
+        ],
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A hipnoterapia é uma abordagem educacional e de desenvolvimento pessoal. Não substitui tratamento médico ou psiquiátrico, e a legislação sobre atendimento terapêutico varia conforme o estado e o conselho profissional envolvido — verifique a sua situação antes de atender.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Se quiser ver como esse cuidado se traduz em ementa, os quatro blocos de ética obrigatória da [formação em Hipnoterapia Clínica](/hipnoterapia) estão publicados, com o conteúdo de cada um.',
+      },
+    ],
+  },
+];
+
+/** Só o que o Bruno já revisou vai ao ar. Ver o aviso no topo do arquivo. */
+export const artigosPublicados = artigos.filter((a) => a.revisado);
+
+/** Encontra um artigo pelo slug da URL. */
+export function artigoPorSlug(slug?: string): Artigo | undefined {
+  return artigos.find((a) => a.slug === slug);
+}

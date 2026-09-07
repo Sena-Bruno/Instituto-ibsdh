@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import { StrictMode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
+import { matchPath } from 'react-router-dom';
 import App from './App.tsx';
 import { paginas } from './config/paginas';
 import { initSentry } from './lib/sentry';
@@ -38,7 +39,11 @@ const raiz = document.getElementById('root')!;
  * └───────────────────────────────────────────────────────────────────────┘
  */
 async function paginaDaTela(): Promise<Record<string, ComponentType>> {
-  const atual = paginas.find((p) => p.rota === window.location.pathname);
+  const caminho = window.location.pathname;
+  /* Igualdade primeiro, padrão depois: `/artigos` é rota própria e não
+     pode ser capturada por `/artigos/:slug`. */
+  const atual =
+    paginas.find((p) => p.rota === caminho) ?? paginas.find((p) => matchPath(p.rota, caminho));
   if (atual) return { [atual.rota]: (await atual.carregar()).default };
   // Endereço sem rota: o servidor entregou o 404.html, que é o NotFound.
   return { '*': (await import('./pages/NotFound')).default };

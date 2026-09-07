@@ -1,5 +1,6 @@
+import type { Artigo } from '../config/artigos';
 import type { Course } from '../config/courses';
-import { site } from '../config/site';
+import { routes, site } from '../config/site';
 
 /**
  * Os dados estruturados do site, em JSON-LD.
@@ -214,6 +215,55 @@ export function perguntasFrequentes(itens: readonly { q: string; a: string }[]) 
       '@type': 'Question',
       name: item.q,
       acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  };
+}
+
+/**
+ * Um artigo.
+ *
+ * `author` e `publisher` não são formalidade: o sistema de conteúdo útil
+ * do Google avalia se dá para saber quem escreveu e sob que
+ * responsabilidade, e uma peça sem autoria declarada é uma peça sem
+ * responsável. Os dois apontam para os nós que a página já declara, por
+ * `@id`, então não há como o schema dizer um nome e a página outro.
+ *
+ * `dateModified` sai da revisão quando houve uma; sem revisão, repete a
+ * publicação. Nunca é a data de hoje — data que avança sozinha é sinal
+ * falso de frescor, e o Google desconta o site que o emite.
+ */
+export function artigoComoSchema(artigo: Artigo) {
+  const url = `${site.url}${routes.artigos}/${artigo.slug}`;
+  return {
+    '@type': 'Article',
+    '@id': `${url}#artigo`,
+    headline: artigo.tituloSeo ?? artigo.titulo,
+    name: artigo.titulo,
+    description: artigo.resumo,
+    url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    inLanguage: 'pt-BR',
+    datePublished: artigo.publicadoEm,
+    dateModified: artigo.revisadoEm ?? artigo.publicadoEm,
+    /* Sem título honorífico nem "Escrito por" grudado no nome: o campo é
+       o identificador da pessoa, e adorno ali quebra a correspondência
+       com a entidade declarada no resto do site. */
+    author: { '@id': ids.fundador },
+    publisher: { '@id': ids.organizacao },
+    image: `${site.url}/og-image.png`,
+    isAccessibleForFree: true,
+  };
+}
+
+/** A lista de artigos publicados — o que a página `/artigos` mostra. */
+export function listaDeArtigos(lista: Artigo[]) {
+  return {
+    '@type': 'ItemList',
+    itemListElement: lista.map((artigo, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: artigo.titulo,
+      url: `${site.url}${routes.artigos}/${artigo.slug}`,
     })),
   };
 }

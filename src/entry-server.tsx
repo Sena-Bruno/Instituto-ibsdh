@@ -2,7 +2,7 @@ import { HelmetProvider, type HelmetServerState } from '@dr.pogodin/react-helmet
 import { MotionConfig } from 'motion/react';
 import type { ComponentType } from 'react';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom';
+import { matchPath, StaticRouter } from 'react-router-dom';
 import { paginas } from './config/paginas';
 import Rotas from './Rotas';
 
@@ -50,9 +50,18 @@ export interface Renderizacao {
  */
 export const ROTA_404 = '/__404__';
 
-/** Recorta e injeta as rotas conhecidas; o resto cai na página 404. */
+/**
+ * Recorta e injeta a rota pedida; o resto cai na página 404.
+ *
+ * O casamento é por padrão, e não por igualdade: `/artigos/o-que-e-pnl`
+ * precisa encontrar a página registrada como `/artigos/:slug`. A ordem
+ * importa — a rota exata é procurada primeiro, senão `/artigos` seria
+ * capturado pelo padrão com parâmetro.
+ */
 async function componenteDaRota(rota: string): Promise<Record<string, ComponentType>> {
-  const pagina = paginas.find((p) => p.rota === rota);
+  const pagina =
+    paginas.find((p) => p.rota === rota) ?? paginas.find((p) => matchPath(p.rota, rota));
+
   if (!pagina) {
     const mod = await import('./pages/NotFound');
     return { '*': mod.default };
@@ -130,7 +139,10 @@ export async function renderizar(rota: string): Promise<Renderizacao> {
 
 /** As rotas que recebem HTML pré-renderizado, mais a página de erro. */
 export const rotasParaGerar: string[] = [
-  ...paginas.filter((p) => p.publica).map((p) => p.rota),
+  ...paginas
+    .filter((p) => p.publica)
+    // Rota com parâmetro vira os endereços concretos que ela representa.
+    .flatMap((p) => (p.expandir ? p.expandir() : [p.rota])),
   ROTA_404,
 ];
 
@@ -146,10 +158,12 @@ export const rotasPrivadas: string[] = paginas.filter((p) => !p.publica).map((p)
  */
 export const rotasDoSitemap = paginas
   .filter((p) => p.publica)
-  .map(({ rota, frequencia, prioridade, imagem, fonte }) => ({
-    rota,
-    frequencia,
-    prioridade,
-    imagem,
-    fonte,
-  }));
+  .flatMap(({ rota, frequencia, prioridade, imagem, fonte, expandir, expandirSitemap }) =>
+    (expandirSitemap?.() ?? expandir?.() ?? [rota]).map((concreta) => ({
+      rota: concreta,
+      frequencia,
+      prioridade,
+      imagem,
+      fonte,
+    })),
+  );

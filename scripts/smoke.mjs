@@ -26,6 +26,7 @@ const routes = [
   '/hipnoterapia',
   '/jornada',
   '/master-coach',
+  '/artigos',
 ];
 
 // O ambiente traz um Chromium pré-instalado que pode não bater com a build

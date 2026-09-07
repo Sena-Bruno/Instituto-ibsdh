@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import { artigos, artigosPublicados } from './artigos';
 import { routes } from './site';
 
 /**
@@ -60,6 +61,28 @@ export interface Pagina {
    * à mão no dia em que o sitemap foi criado.
    */
   fonte?: string;
+  /**
+   * Para rotas com parâmetro (`/artigos/:slug`), os caminhos concretos
+   * que ela representa.
+   *
+   * O React Router resolve `:slug` em tempo de execução, mas a
+   * pré-renderização e o sitemap precisam de endereços reais: não dá
+   * para gravar em disco um arquivo chamado `:slug`, nem anunciá-lo ao
+   * Google. Quem tem `expandir` entra na tabela uma vez e sai dela como
+   * N páginas.
+   */
+  expandir?: () => string[];
+  /**
+   * Os caminhos que entram no sitemap, quando são menos que os de
+   * `expandir`. Sem isto, os dois conjuntos são o mesmo.
+   *
+   * Existe por causa dos rascunhos de artigo. Eles PRECISAM de arquivo
+   * próprio — senão o Bruno não consegue abrir o texto para revisar, já
+   * que o servidor devolve 404 para endereço sem arquivo. Mas não podem
+   * ser anunciados: saem com `noindex`, ficam fora da listagem e ficam
+   * fora daqui.
+   */
+  expandirSitemap?: () => string[];
 }
 
 export const paginas: Pagina[] = [
@@ -125,6 +148,33 @@ export const paginas: Pagina[] = [
     frequencia: 'monthly',
     prioridade: 0.7,
     imagem: '/capa-coaching.webp',
+  },
+  /*
+    Os artigos. A listagem é uma rota fixa; cada artigo é uma expansão de
+    `/artigos/:slug`, e só entram os que o Bruno já revisou — rascunho não
+    ganha arquivo próprio nem linha no sitemap. Ver `config/artigos.ts`.
+  */
+  {
+    rota: routes.artigos,
+    carregar: () => import('../pages/Artigos'),
+    fonte: 'src/config/artigos.ts',
+    publica: true,
+    frequencia: 'weekly',
+    prioridade: 0.8,
+    imagem: '/og-image.png',
+  },
+  {
+    rota: `${routes.artigos}/:slug`,
+    carregar: () => import('../pages/Artigo'),
+    fonte: 'src/config/artigos.ts',
+    publica: true,
+    frequencia: 'monthly',
+    prioridade: 0.7,
+    /* Todo artigo ganha arquivo, inclusive o rascunho: é como o Bruno o
+       lê para revisar. O que separa um do outro é o `noindex` da página e
+       a ausência dele no sitemap, logo abaixo. */
+    expandir: () => artigos.map((a) => `${routes.artigos}/${a.slug}`),
+    expandirSitemap: () => artigosPublicados.map((a) => `${routes.artigos}/${a.slug}`),
   },
   {
     rota: routes.privacidade,

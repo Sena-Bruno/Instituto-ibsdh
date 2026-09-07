@@ -316,6 +316,54 @@ não custa o resultado enriquecido daquela página: custa a elegibilidade do
 preço, carga, certificado e checkout vêm de `config/courses.ts`, a mesma
 fonte que desenha o card e a coluna de compra.
 
+## Artigos
+
+O site tinha sete páginas, todas de venda. Isso responde a quem já decidiu
+comprar e procura qual formação — uma fração minúscula das buscas. A
+maioria das pessoas chega antes: *"o que é PNL"*, *"hipnose funciona"*,
+*"metamodelo da linguagem"*. Para essas buscas o site não tinha página
+nenhuma, e quem responde hoje são os concorrentes que estão no ar há anos.
+
+| | |
+|---|---|
+| Registro e conteúdo | `src/config/artigos.ts` |
+| Listagem | `/artigos` |
+| Artigo | `/artigos/<slug>` |
+| Renderização dos blocos | `src/components/CorpoArtigo.tsx` |
+
+### Como escrever um artigo
+
+Acrescente uma entrada em `src/config/artigos.ts`. O corpo é uma lista de
+blocos (`paragrafo`, `subtitulo`, `lista`, `citacao`, `destaque`) em texto
+puro — escrever um artigo não exige mexer em JSX. Dentro do texto valem
+três marcações e mais nenhuma:
+
+```
+**negrito**              → negrito
+[texto](/hipnoterapia)   → link interno
+[texto](https://…)       → link externo
+```
+
+### ⚠ O campo `revisado`
+
+**Artigo com `revisado: false` é rascunho, não publicação.** Ele ganha um
+arquivo HTML — sem isso você não conseguiria abrir a URL para ler — mas
+sai com `noindex`, fica fora da listagem e fora do sitemap, e mostra uma
+tarja dizendo que está em revisão.
+
+Ponha `revisado: true` e preencha `revisadoEm` só depois de ler o texto,
+corrigir o que estiver errado **e acrescentar o que só você sabe**. Cada
+rascunho traz, num comentário, o que especificamente falta nele.
+
+Isso não é zelo editorial, é sobrevivência: desde março de 2024 a Google
+pune "abuso de conteúdo em escala" — páginas que apenas reescrevem o que
+já existe indexado — e a punição atinge o domínio inteiro, não a página.
+O que separa um artigo útil de enchimento não é o tamanho nem a
+palavra-chave: é ter algo que só este instituto pode dizer. As ementas, o
+simulador SENA, os módulos de ética obrigatória e a sua experiência
+clínica são esse algo. Artigo que não traz nada disso é melhor não
+publicar.
+
 ### Depois de publicar
 
 1. **Search Console** → *Inspeção de URL* em cada rota. O "HTML renderizado"
