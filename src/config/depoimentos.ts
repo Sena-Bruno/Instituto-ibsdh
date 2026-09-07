@@ -6,14 +6,14 @@ import type { Video } from './midia';
  * ┌───────────────────────────────────────────────────────────────────────┐
  * │  COMO A SEÇÃO SE COMPORTA                                             │
  * │                                                                       │
- * │  Assim que QUALQUER depoimento tiver `video` preenchido, a seção      │
- * │  inteira troca de formato: sai a grade de citações e entram os        │
- * │  celulares com o vídeo, no formato da referência do Instituto Mix     │
- * │  que o Bruno apontou. Só entram os que têm vídeo.                     │
+ * │  Todos aparecem numa moldura de celular, no formato da referência do  │
+ * │  Instituto Mix que o Bruno apontou. O que muda é o conteúdo dela:     │
  * │                                                                       │
- * │  Enquanto nenhum tiver, a seção continua mostrando as citações, como  │
- * │  hoje. Não existe estado intermediário com meia moldura de celular    │
- * │  vazia esperando arquivo.                                             │
+ * │  · SEM `video` — a citação ocupa a tela do celular, como um post.     │
+ * │  · COM `video` — entra o quadro de abertura e o botão de play, e a    │
+ * │    citação desce para baixo da moldura, como legenda.                 │
+ * │                                                                       │
+ * │  A troca é por aluno: preencher `video` em um deles muda só aquele.   │
  * └───────────────────────────────────────────────────────────────────────┘
  *
  * ── Por que vídeo, e não mais citações ──────────────────────────────────
@@ -100,6 +100,3 @@ export const depoimentos: Depoimento[] = [
       'O método A.P.L.I.C.A.R mudou o jogo para mim. Não é só teoria vazia. Consegui dobrar os resultados do meu time de vendas usando as estratégias de comunicação e rapport avançado que aprendi aqui.',
   },
 ];
-
-/** Os que já têm vídeo. Vazio enquanto ninguém tiver. */
-export const depoimentosComVideo = depoimentos.filter((d) => d.video);

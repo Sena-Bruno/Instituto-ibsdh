@@ -28,7 +28,7 @@ import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
 import VideoPlayer from '../components/Video';
 import { courses, eixosComCurso, listaCursos } from '../config/courses';
-import { depoimentos, depoimentosComVideo } from '../config/depoimentos';
+import { depoimentos } from '../config/depoimentos';
 import { midia } from '../config/midia';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
@@ -731,8 +731,6 @@ function PagamentoSeguro() {
 /* ── Depoimentos ──────────────────────────────────────────────────────────── */
 
 function Depoimentos() {
-  const comVideo = depoimentosComVideo;
-
   return (
     <Secao id="depoimentos" cor="blue" brilho brilhoEm="esquerda" elevada>
       <Cabecalho
@@ -741,52 +739,29 @@ function Depoimentos() {
         titulo="O que acontece quando você aplica o método"
         centralizado
       >
-        {comVideo.length > 0
-          ? 'Alunos contando, com as próprias palavras, o que mudou depois da formação.'
-          : 'Resultados de alunos que aplicaram as técnicas de PNL e Hipnoterapia nas suas vidas e profissões.'}
+        Alunos contando, com as próprias palavras, o que mudou depois da formação.
       </Cabecalho>
 
       {/* ┌───────────────────────────────────────────────────────────────┐
-          │  A SEÇÃO TEM DUAS FORMAS, E ESCOLHE SOZINHA                   │
+          │  A MOLDURA DE CELULAR APARECE SEMPRE                          │
           │                                                               │
-          │  Havendo depoimento com vídeo, entram os celulares — o        │
-          │  formato da referência do Instituto Mix. Não havendo, ficam   │
-          │  as citações, como antes.                                     │
+          │  A primeira versão desta seção só trocava de formato quando   │
+          │  houvesse vídeo preenchido. Como não há nenhum gravado ainda, │
+          │  na prática a página continuava idêntica à de antes — o       │
+          │  formato novo existia só no código.                           │
           │                                                               │
-          │  Não existe meio-termo com moldura vazia esperando arquivo:   │
-          │  celular sem vídeo dentro anuncia o que falta em vez de       │
-          │  mostrar o que existe.                                        │
+          │  Agora o celular aparece sempre. Sem vídeo, ele mostra a      │
+          │  citação como um post; com vídeo, mostra o quadro de abertura │
+          │  e o play. A troca é por aluno, e acontece sozinha ao         │
+          │  preencher `video` em `config/depoimentos.ts`.                │
           └───────────────────────────────────────────────────────────────┘ */}
-      {comVideo.length > 0 ? (
-        <div className="mt-14 grid justify-items-center gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {comVideo.map((dep, i) => (
-            <Revela key={dep.id} atraso={(i % 3) * 0.07}>
-              <DepoimentoVideo dep={dep} />
-            </Revela>
-          ))}
-        </div>
-      ) : (
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {depoimentos.map((dep, i) => (
-            <Revela key={dep.id} atraso={(i % 3) * 0.07} className="h-full">
-              <figure className="cartao flex h-full flex-col p-7 hover:border-brand-blue/35">
-                <blockquote className="mb-7 flex-1 text-[15.5px] leading-relaxed text-brand-platinum">
-                  “{dep.texto}”
-                </blockquote>
-                <figcaption className="flex items-center gap-3.5">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-brand-blue/25 bg-brand-blue/10 font-display text-[13px] font-bold text-brand-blue">
-                    {dep.iniciais}
-                  </span>
-                  <span>
-                    <span className="block font-bold text-brand-cream">{dep.nome}</span>
-                    <span className="block text-[13px] text-brand-quiet">{dep.papel}</span>
-                  </span>
-                </figcaption>
-              </figure>
-            </Revela>
-          ))}
-        </div>
-      )}
+      <div className="mt-14 grid justify-items-center gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+        {depoimentos.map((dep, i) => (
+          <Revela key={dep.id} atraso={(i % 3) * 0.07} className="w-full">
+            <DepoimentoVideo dep={dep} />
+          </Revela>
+        ))}
+      </div>
     </Secao>
   );
 }

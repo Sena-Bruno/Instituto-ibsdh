@@ -445,9 +445,10 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
   rascunho meu. É a única parte do site que emite julgamento clínico, e sai
   assinada pelo instituto. O texto está separado da marcação justamente
   para que revisar seja editar prosa.
-- **Gravar três depoimentos em vídeo** (`src/config/depoimentos.ts`). Basta
-  preencher `video` em qualquer um dos alunos e a seção troca de formato
-  sozinha, dos cartões de citação para os celulares com vídeo. Vertical,
+- **Gravar três depoimentos em vídeo** (`src/config/depoimentos.ts`). A
+  moldura de celular já está na página; hoje ela mostra a citação como um
+  post. Preencher `video` num aluno troca aquele card para o vídeo, com
+  quadro de abertura e play. Grave vertical,
   filmado no celular, de 30 a 60 segundos, com três perguntas: como você
   estava antes, o que mudou, e o que faz hoje com isso. Passe também um
   `poster`, porque a miniatura que o YouTube gera é 16:9 e fica quase só
