@@ -8,12 +8,29 @@
  * Configuração (Netlify → Site settings → Environment variables):
  *   RESEND_API_KEY   chave da API do Resend (resend.com, plano gratuito
  *                    cobre bem o volume de uma lista de espera)
- *   NOTIFY_EMAIL     endereço que recebe o aviso
  *   NOTIFY_FROM      remetente verificado no Resend
+ *   NOTIFY_EMAIL     opcional — quem recebe o aviso. Sem ela, vai para o
+ *                    contato do instituto, logo abaixo.
  *
- * Sem RESEND_API_KEY a função responde 204 e não faz nada: o site
- * continua funcionando normalmente, apenas sem o aviso.
+ * Sem RESEND_API_KEY ou sem NOTIFY_FROM a função responde 204 e não faz
+ * nada: o site continua funcionando normalmente, apenas sem o aviso.
  */
+
+/**
+ * Para onde o aviso vai quando NOTIFY_EMAIL não está definida.
+ *
+ * É o mesmo endereço de `site.email.contact`, repetido aqui porque esta
+ * função roda fora do bundle do site e não importa nada de `src/`. Ele já
+ * é público — aparece no rodapé, nas páginas legais e nos dados
+ * estruturados —, então repetir não expõe nada de novo. Se o contato do
+ * instituto mudar, mude nos dois lugares.
+ *
+ * O motivo de existir um padrão: com as três variáveis obrigatórias, quem
+ * configurasse a chave e o remetente e esquecesse o destinatário ficaria
+ * com a função respondendo 204 em silêncio — cadastro salvo, aviso nunca
+ * enviado, e nada na tela dizendo isso.
+ */
+const CONTATO_PADRAO = 'contato@institutobrunosena.com.br';
 
 const ESCAPE = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const escapeHtml = (v) => String(v).replace(/[&<>"']/g, (c) => ESCAPE[c]);
@@ -24,9 +41,9 @@ export default async (request) => {
   }
 
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.NOTIFY_EMAIL;
   const from = process.env.NOTIFY_FROM;
-  if (!apiKey || !to || !from) return new Response(null, { status: 204 });
+  const to = process.env.NOTIFY_EMAIL?.trim() || CONTATO_PADRAO;
+  if (!apiKey || !from) return new Response(null, { status: 204 });
 
   let payload;
   try {

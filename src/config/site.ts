@@ -89,6 +89,23 @@ export function whatsappLink(message?: string): string {
   return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
 
+/**
+ * Monta um `mailto:` com assunto preenchido.
+ *
+ * Existe pela mesma razão que `whatsappLink`: o assunto precisa ser
+ * percent-encoded, e escrever isso à mão dentro do JSX é exatamente onde o
+ * acento vira `%E7` errado e o assunto chega quebrado.
+ */
+export function mailtoLink(email: string, subject?: string): string {
+  const base = `mailto:${email}`;
+  return subject ? `${base}?subject=${encodeURIComponent(subject)}` : base;
+}
+
+/** Assuntos dos contatos por e-mail, para o pedido já chegar identificado. */
+export const emailSubjects = {
+  inCompany: 'Proposta para treinamento In Company',
+} as const;
+
 /** Mensagens usadas nos CTAs do site. */
 export const whatsappMessages = {
   general: 'Olá! Gostaria de saber mais sobre as formações do Instituto Bruno Sena.',

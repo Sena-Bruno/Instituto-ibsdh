@@ -535,17 +535,34 @@ em Firestore → Índices.
 na lista. É opcional: **sem configurar, o site funciona normalmente e o
 cadastro continua sendo salvo** — apenas o aviso não é enviado.
 
-Para ativar, crie uma conta no [Resend](https://resend.com) e defina três
-variáveis em *Netlify → Site settings → Environment variables*:
+Para ativar, crie uma conta no [Resend](https://resend.com) e defina em
+*Netlify → Site settings → Environment variables*:
 
-| Variável | Valor |
-| --- | --- |
-| `RESEND_API_KEY` | a chave da API |
-| `NOTIFY_EMAIL` | endereço que recebe o aviso |
-| `NOTIFY_FROM` | remetente verificado no Resend |
+| Variável | Obrigatória | Valor |
+| --- | --- | --- |
+| `RESEND_API_KEY` | sim | a chave da API |
+| `NOTIFY_FROM` | sim | remetente verificado no Resend |
+| `NOTIFY_EMAIL` | não | quem recebe o aviso. Em branco, vai para `contato@institutobrunosena.com.br` |
 
-O destinatário nunca vem do formulário — é sempre `NOTIFY_EMAIL` —, então
-o endereço não pode ser usado para disparar e-mail a terceiros.
+O remetente não pode ser um endereço qualquer: o Resend só envia de um
+domínio verificado por você. São dois caminhos:
+
+- **Definitivo** — em *Resend → Domains*, acrescente
+  `institutobrunosena.com.br` e publique os registros DNS que ele indicar
+  (onde o domínio está registrado). Depois use algo como
+  `avisos@institutobrunosena.com.br` em `NOTIFY_FROM`.
+- **Para testar hoje** — o Resend aceita `onboarding@resend.dev` como
+  remetente sem nenhuma configuração, mas só entrega para o e-mail dono da
+  conta do Resend. Serve para confirmar que o caminho funciona; não serve
+  em produção.
+
+O destinatário nunca vem do formulário — é sempre `NOTIFY_EMAIL`, ou o
+contato do instituto —, então o endereço não pode ser usado para disparar
+e-mail a terceiros.
+
+O aviso é uma conveniência, não o registro: quem guarda os cadastros é o
+Firestore, e a lista completa fica em `/admin`. Se o e-mail falhar, nenhum
+lead se perde.
 
 ### Migrar a plataforma de pagamento
 
