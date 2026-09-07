@@ -27,6 +27,7 @@ const routes = [
   '/jornada',
   '/master-coach',
   '/artigos',
+  '/artigos/o-que-e-pnl',
 ];
 
 // O ambiente traz um Chromium pré-instalado que pode não bater com a build

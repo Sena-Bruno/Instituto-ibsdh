@@ -83,13 +83,6 @@ export interface Artigo {
    ──────────────────────────────────────────────────────────────────── */
 
 export const artigos: Artigo[] = [
-  /*
-    ⚠ PARA O BRUNO, ANTES DE PUBLICAR:
-    O caso do chefe já está aqui, escrito na sua voz a partir do que você
-    contou. Leia e corrija o que eu tiver torcido: sobretudo as falas entre
-    aspas, que são as suas e da cliente, e a descrição da fisiologia.
-    Se estiver fiel, ponha `revisado: true` e a data em `revisadoEm`.
-  */
   {
     slug: 'o-que-e-pnl',
     titulo: 'O que é PNL, e o que ela não é',
@@ -98,9 +91,10 @@ export const artigos: Artigo[] = [
       'A PNL estuda como a linguagem organiza a experiência e como padrões de comportamento podem ser mudados. Não é terapia nem ciência médica, e entender essa fronteira é o que separa o profissional sério do charlatão.',
     buscaAlvo: 'o que é PNL / PNL funciona / para que serve a PNL',
     publicadoEm: '2026-09-07',
+    revisadoEm: '2026-09-07',
     eixo: 'pnl',
     cursoRelacionado: '/pnl-practitioner',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
@@ -203,13 +197,6 @@ export const artigos: Artigo[] = [
     ],
   },
 
-  /*
-    ⚠ PARA O BRUNO, ANTES DE PUBLICAR:
-    Os dois casos já estão aqui: o da pergunta que abriu a conversa e o do
-    rapaz que se fechou. Leia sobretudo o segundo, que é o mais valioso e o
-    mais fácil de eu ter suavizado sem querer. As falas entre aspas são
-    suas e dele. Se estiver fiel, ponha `revisado: true` e a data.
-  */
   {
     slug: 'metamodelo-da-linguagem',
     titulo: 'Metamodelo: as três formas como a fala esconde o problema',
@@ -218,9 +205,10 @@ export const artigos: Artigo[] = [
       'Omissão, distorção e generalização são os três modos como a linguagem encolhe a experiência. O metamodelo é o conjunto de perguntas que recupera o que ficou de fora, e a razão de "eu nunca consigo" ser uma frase incompleta.',
     buscaAlvo: 'metamodelo PNL / omissão distorção generalização / perguntas do metamodelo',
     publicadoEm: '2026-09-07',
+    revisadoEm: '2026-09-07',
     eixo: 'pnl',
     cursoRelacionado: '/pnl-practitioner',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
@@ -336,17 +324,6 @@ export const artigos: Artigo[] = [
     ],
   },
 
-  /*
-    ⚠ PARA O BRUNO, ANTES DE PUBLICAR:
-    Este é o único dos três que ainda está sem material seu. Falta:
-
-    1. Conferir o parágrafo sobre legislação e conselhos profissionais.
-       Escrevi deliberadamente cauteloso, mas a situação varia por estado
-       e você conhece o terreno melhor do que qualquer fonte pública.
-    2. Um caso de encaminhamento: alguém que procurou hipnose e que você
-       mandou para outro profissional. É o que prova a ética na prática,
-       e é a coisa que nenhum concorrente vai publicar.
-  */
   {
     slug: 'hipnose-clinica-o-que-e-o-transe',
     titulo: 'Hipnose clínica: o que o transe é, e o que ele não é',
@@ -355,9 +332,10 @@ export const artigos: Artigo[] = [
       'Transe não é sono, não é perda de controle e não é palco. É um estado de atenção concentrada com o senso crítico afrouxado, e saber quando não induzi-lo importa mais do que saber induzi-lo.',
     buscaAlvo: 'o que é hipnose clínica / hipnose funciona / o que se sente na hipnose',
     publicadoEm: '2026-09-07',
+    revisadoEm: '2026-09-07',
     eixo: 'hipnoterapia',
     cursoRelacionado: '/hipnoterapia',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
@@ -422,6 +400,38 @@ export const artigos: Artigo[] = [
         tipo: 'paragrafo',
         texto:
           'A hipnoterapia é uma abordagem educacional e de desenvolvimento pessoal. Não substitui tratamento médico ou psiquiátrico, e a legislação sobre atendimento terapêutico varia conforme o estado e o conselho profissional envolvido. Verifique a sua situação antes de atender.',
+      },
+      { tipo: 'subtitulo', texto: 'A vez em que o melhor atendimento foi não atender' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Uma mulher me procurou dizendo que queria hipnose para "apagar" um término de relacionamento que estava destruindo ela. Chegou falando rápido, com os olhos marejados, repetindo que não aguentava mais sentir dor e que precisava de um "reset" urgente, porque estava faltando ao trabalho e perdendo peso sem querer. Na superfície, um luto amoroso clássico.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Quando pedi que descrevesse o dia a dia, ela mencionou de passagem que tinha crises de taquicardia e que já havia desmaiado duas vezes no último mês. Ali eu parei e respirei fundo. O que ela estava descrevendo não era só tristeza: eram sintomas físicos que escapam completamente do que a hipnose pode oferecer com segurança.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Precisei ser direto, mas com cuidado. Falei que a hipnose podia ajudar com a angústia, sim, mas que aqueles sintomas pediam uma avaliação médica primeiro, porque eu não tenho formação para descartar algo cardiológico ou hormonal. Ela ficou em silêncio por alguns segundos, com cara de desapontamento, e eu vi que tinha interpretado aquilo como rejeição.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Expliquei que não era um não definitivo, era um "vamos por partes", e que eu podia acompanhar depois se o laudo viesse limpo. Minha prioridade era não transformar uma ferramenta poderosa num paliativo perigoso. Indiquei uma cardiologista que eu conhecia e que tem um jeito acolhedor, e escrevi num papel o contato dela e o que ela deveria falar na consulta.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Ela agradeceu meio sem jeito. Soube que tinha acertado duas semanas depois, quando ela me mandou mensagem contando que a médica encontrou uma arritmia leve e que já estava em tratamento. Escreveu que, se tivesse feito hipnose naquele estado, provavelmente teria mascarado o problema e piorado tudo.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'O que esse caso ensina',
+        texto:
+          'Não é sobre atender todo mundo. É sobre saber quando o melhor atendimento é não atender. Esse tipo de história não vende curso nem gera curtida, e é por isso que quase ninguém a publica. Mas é exatamente aí que a ética deixa de ser discurso e vira atitude, e é isso que se ensina numa formação séria: não a técnica de induzir, mas o julgamento de quando não induzir.',
       },
       {
         tipo: 'paragrafo',
