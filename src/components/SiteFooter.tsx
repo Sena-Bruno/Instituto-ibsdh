@@ -73,7 +73,7 @@ export default function SiteFooter() {
               ))}
               <Link
                 to={routes.formacoes}
-                className="inline-block pt-1 text-[13.5px] font-semibold text-brand-accent transition-colors hover:text-brand-accent-light"
+                className="block pt-1 text-[13.5px] font-semibold text-brand-accent transition-colors hover:text-brand-accent-light"
               >
                 Ver o catálogo completo →
               </Link>
@@ -86,7 +86,7 @@ export default function SiteFooter() {
               */}
               <Link
                 to={routes.artigos}
-                className="inline-block pt-1 text-[13.5px] font-semibold text-brand-accent transition-colors hover:text-brand-accent-light"
+                className="block pt-1 text-[13.5px] font-semibold text-brand-accent transition-colors hover:text-brand-accent-light"
               >
                 Artigos →
               </Link>
