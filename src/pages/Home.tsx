@@ -27,7 +27,7 @@ import Numeros from '../components/Numeros';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
 import VideoPlayer from '../components/Video';
-import { courses, eixosComCurso, listaCursos } from '../config/courses';
+import { courses, economiaDe, eixosComCurso, listaCursos } from '../config/courses';
 import { depoimentos } from '../config/depoimentos';
 import { midia } from '../config/midia';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
@@ -438,6 +438,8 @@ const icones: Record<string, ReactNode> = {
 const vitrine = listaCursos.filter((curso) => curso.destaque);
 
 function Cursos() {
+  const economiaDaTrilogia = economiaDe(courses.trilogia);
+
   return (
     <Secao id="cursos" cor="accent" brilho brilhoEm="topo">
       <Cabecalho
@@ -464,22 +466,50 @@ function Cursos() {
         </Link>
       </div>
 
-      {/* A Trilogia */}
-      <div className="faixa-accent mt-10 flex flex-col gap-7 p-8 md:flex-row md:items-center md:justify-between md:p-12">
-        <div>
-          <p className="sobretitulo mb-3 text-brand-accent">Pacote completo</p>
+      {/* ┌───────────────────────────────────────────────────────────────┐
+          │  A TRILOGIA ABRE PELA PARCELA, NÃO PELO TOTAL                 │
+          │                                                               │
+          │  Antes o bloco dizia "juntos por R$ 1.353,00" no meio de uma  │
+          │  frase. Mil e trezentos lidos de uma vez é o número que faz a │
+          │  pessoa fechar a aba — mesmo sendo, aqui, o mais barato dos   │
+          │  caminhos. A parcela é o que ela consegue comparar com o      │
+          │  próprio mês, e o total continua logo abaixo, sem esconder.   │
+          │                                                               │
+          │  A economia é CALCULADA a partir de `priceFrom` e `price` em  │
+          │  `courses.ts`, e não escrita à mão como estava ("R$ 338").    │
+          │  Preço escrito à mão em dois lugares é preço que diverge no   │
+          │  dia em que um dos dois muda.                                 │
+          └───────────────────────────────────────────────────────────────┘ */}
+      <div className="faixa-accent mt-10 flex flex-col gap-8 p-8 md:flex-row md:items-center md:justify-between md:p-12">
+        <div className="min-w-0">
+          <p className="sobretitulo mb-3">Pacote completo</p>
           <h3 className="font-display text-[28px] font-bold text-brand-cream md:text-[34px]">
             Trilogia IBSDH
           </h3>
-          <p className="mt-3 max-w-xl leading-relaxed">
-            Practitioner, Hipnoterapia e Master PNL juntos por{' '}
-            <strong className="text-brand-cream">{courses.trilogia.price}</strong> — R$ 338 a
-            menos do que a soma das três matrículas separadas.
+          <p className="mt-3 max-w-lg leading-relaxed">
+            Practitioner, Hipnoterapia e Master PNL juntos, com os três certificados.
           </p>
         </div>
-        <Link to={courses.trilogia.route} className="btn-primary shrink-0">
-          Ver a Trilogia <ArrowRight size={17} aria-hidden="true" />
-        </Link>
+
+        <div className="shrink-0 md:text-right">
+          {courses.trilogia.priceFrom && (
+            <p className="text-[13.5px] text-brand-quiet line-through">
+              De {courses.trilogia.priceFrom}
+            </p>
+          )}
+          <p className="mt-1 font-display text-[38px] leading-none font-extrabold text-brand-cream md:text-[44px]">
+            12x {courses.trilogia.installment}
+          </p>
+          <p className="mt-2 text-[14px]">ou {courses.trilogia.price} à vista</p>
+          {economiaDaTrilogia && (
+            <p className="mt-2 text-[13.5px] font-bold text-brand-accent">
+              Economia de {economiaDaTrilogia} sobre as três matrículas separadas
+            </p>
+          )}
+          <Link to={courses.trilogia.route} className="btn-primary mt-6 w-full md:w-auto">
+            Ver a Trilogia <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        </div>
       </div>
 
       <div className="cartao mt-6 p-7 text-center md:p-8">
@@ -1044,12 +1074,19 @@ function InCompany() {
         </div>
 
         <Revela>
+          {/* A foto chegou e substitui a reserva "imagem pendente".
+              A proporção deixou de ser quadrada: a original é deitada, e
+              recortada para o quadrado perdia metade da mesa — que é
+              justamente o que a foto tem para mostrar, uma sala com gente
+              dentro. */}
           <div className="overflow-hidden rounded-[22px] border border-brand-emerald/20">
             <CourseImage
-              src={undefined}
-              alt="Treinamento corporativo in company"
+              src="/in-company.webp"
+              alt="Treinamento corporativo em andamento: uma facilitadora conduz uma equipe reunida em torno da mesa, diante de uma apresentação sobre engajamento, liderança e inteligência emocional"
               title="Treinamentos In Company"
-              className="aspect-square"
+              className="aspect-[16/11]"
+              width={1120}
+              height={611}
             />
           </div>
         </Revela>

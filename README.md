@@ -486,10 +486,10 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
   possível.
 
   O Bruno reenviou as artes do **PNL Practitioner**, do **Master PNL**, do
-  **Coaching** e o selo da **NLPEA**, e as quatro já estão no ar. Continuam
-  faltando duas: a arte da **Hipnoterapia Clínica** e a foto da seção **In
-  Company**. Nas duas, `components/CourseImage.tsx` mostra a reserva com o
-  nome no lugar, mantendo a altura correta.
+  **Coaching**, o selo da **NLPEA** e a foto da seção **In Company**. As
+  cinco já estão no ar. Continua faltando uma: a arte da **Hipnoterapia
+  Clínica**, onde `components/CourseImage.tsx` mostra a reserva com o nome
+  no lugar, mantendo a altura correta.
 
   Para colocar a da Hipnoterapia, siga "As artes das formações", mais acima.
 - **Projeto do Firebase.** O projeto (`gen-lang-client-…`) e o banco
