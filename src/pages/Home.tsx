@@ -21,16 +21,19 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import CardCurso from '../components/CardCurso';
 import CourseImage from '../components/CourseImage';
+import DepoimentoVideo from '../components/DepoimentoVideo';
 import Faq from '../components/Faq';
 import Numeros from '../components/Numeros';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
 import VideoPlayer from '../components/Video';
 import { courses, eixosComCurso, listaCursos } from '../config/courses';
+import { depoimentos, depoimentosComVideo } from '../config/depoimentos';
 import { midia } from '../config/midia';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
 import { duration, ease } from '../lib/motion';
+import { cn } from '../lib/utils';
 
 /**
  * A home.
@@ -609,9 +612,14 @@ const certificados = [
     texto:
       'Reconhecimento vitalício emitido pela Neuro Linguistic Programming Excellence Assurance, com sede no Reino Unido. Seu passaporte global como profissional qualificado em PNL.',
     itens: ['Válido internacionalmente em qualquer país', 'Registro único e vitalício'],
-    imagem: undefined,
-    alt: 'Certificado Internacional NLPEA',
+    imagem: '/nlpea.webp',
+    alt: 'Certificado de membro vitalício e Practitioner da NLPEA, NLP Association of Excellence',
     nome: 'Certificado NLPEA',
+    // O da NLPEA é um selo em pé com fundo transparente, não uma folha
+    // digitalizada. Recortado para preencher, como o outro, perderia as
+    // estrelas em cima e a faixa de Practitioner embaixo — que são
+    // justamente as duas partes que dizem o que ele certifica.
+    ajuste: 'contain' as const,
   },
   {
     cor: 'accent' as const,
@@ -626,6 +634,7 @@ const certificados = [
     imagem: '/Certificado-IBSDH.webp',
     alt: 'Certificado IBSDH',
     nome: 'Certificado IBSDH',
+    ajuste: 'cover' as const,
   },
 ];
 
@@ -642,13 +651,17 @@ function Certificados() {
           <Revela key={cert.titulo} atraso={i * 0.08}>
             <div className="h-full">
               <div
-                className={`overflow-hidden rounded-[22px] border ${paletas[cert.cor].borda}`}
+                className={cn(
+                  'flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[22px] border',
+                  paletas[cert.cor].borda,
+                  cert.ajuste === 'contain' && 'bg-white/[0.03] p-6',
+                )}
               >
                 <CourseImage
                   src={cert.imagem}
                   alt={cert.alt}
                   title={cert.nome}
-                  className="aspect-[4/3]"
+                  imgClassName={cert.ajuste === 'contain' ? 'object-contain' : undefined}
                 />
               </div>
               <p className={`sobretitulo mt-6 mb-3 ${paletas[cert.cor].texto}`}>{cert.selo}</p>
@@ -717,52 +730,9 @@ function PagamentoSeguro() {
 
 /* ── Depoimentos ──────────────────────────────────────────────────────────── */
 
-const depoimentos = [
-  {
-    id: 1,
-    name: 'Ana Silva',
-    role: 'Psicóloga Clínica',
-    initial: 'AS',
-    text: 'A formação em Master PNL transformou completamente a minha abordagem clínica. Hoje consigo acessar a raiz dos problemas dos meus pacientes de forma muito mais rápida e profunda.',
-  },
-  {
-    id: 2,
-    name: 'Carlos Mendes',
-    role: 'Empresário',
-    initial: 'CM',
-    text: 'O curso me deu ferramentas práticas para liderar minha equipe com mais empatia e assertividade. Os resultados na empresa foram imediatos após aplicar as técnicas de ancoragem.',
-  },
-  {
-    id: 3,
-    name: 'Juliana Costa',
-    role: 'Coach de Carreira',
-    initial: 'JC',
-    text: 'Fiz a formação em Hipnoterapia e foi um divisor de águas. A didática do Instituto Bruno Sena é excepcional, e o suporte pós-curso faz toda a diferença na nossa segurança profissional.',
-  },
-  {
-    id: 4,
-    name: 'Roberto Almeida',
-    role: 'Terapeuta Holístico',
-    initial: 'RA',
-    text: 'A Jornada do Herói me ajudou a ressignificar traumas que eu nem sabia que estavam me travando. É uma experiência intensa e profundamente curadora.',
-  },
-  {
-    id: 5,
-    name: 'Mariana Souza',
-    role: 'Professora',
-    initial: 'MS',
-    text: 'Sempre tive muito medo de falar em público. Com as técnicas de PNL Practitioner, consegui superar esse bloqueio e hoje dou palestras para centenas de pessoas com tranquilidade.',
-  },
-  {
-    id: 6,
-    name: 'Fernando Dias',
-    role: 'Gestor Comercial',
-    initial: 'FD',
-    text: 'O método A.P.L.I.C.A.R mudou o jogo para mim. Não é só teoria vazia. Consegui dobrar os resultados do meu time de vendas usando as estratégias de comunicação e rapport avançado que aprendi aqui.',
-  },
-];
-
 function Depoimentos() {
+  const comVideo = depoimentosComVideo;
+
   return (
     <Secao id="depoimentos" cor="blue" brilho brilhoEm="esquerda" elevada>
       <Cabecalho
@@ -771,30 +741,52 @@ function Depoimentos() {
         titulo="O que acontece quando você aplica o método"
         centralizado
       >
-        Resultados de alunos que aplicaram as técnicas de PNL e Hipnoterapia nas suas vidas e
-        profissões.
+        {comVideo.length > 0
+          ? 'Alunos contando, com as próprias palavras, o que mudou depois da formação.'
+          : 'Resultados de alunos que aplicaram as técnicas de PNL e Hipnoterapia nas suas vidas e profissões.'}
       </Cabecalho>
 
-      <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {depoimentos.map((dep, i) => (
-          <Revela key={dep.id} atraso={(i % 3) * 0.07} className="h-full">
-            <figure className="cartao flex h-full flex-col p-7 hover:border-brand-blue/35">
-              <blockquote className="mb-7 flex-1 text-[15.5px] leading-relaxed text-white/85">
-                “{dep.text}”
-              </blockquote>
-              <figcaption className="flex items-center gap-3.5">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-brand-blue/25 bg-brand-blue/10 font-display text-[13px] font-bold text-brand-blue">
-                  {dep.initial}
-                </span>
-                <span>
-                  <span className="block font-bold text-brand-cream">{dep.name}</span>
-                  <span className="block text-[13px] text-brand-quiet">{dep.role}</span>
-                </span>
-              </figcaption>
-            </figure>
-          </Revela>
-        ))}
-      </div>
+      {/* ┌───────────────────────────────────────────────────────────────┐
+          │  A SEÇÃO TEM DUAS FORMAS, E ESCOLHE SOZINHA                   │
+          │                                                               │
+          │  Havendo depoimento com vídeo, entram os celulares — o        │
+          │  formato da referência do Instituto Mix. Não havendo, ficam   │
+          │  as citações, como antes.                                     │
+          │                                                               │
+          │  Não existe meio-termo com moldura vazia esperando arquivo:   │
+          │  celular sem vídeo dentro anuncia o que falta em vez de       │
+          │  mostrar o que existe.                                        │
+          └───────────────────────────────────────────────────────────────┘ */}
+      {comVideo.length > 0 ? (
+        <div className="mt-14 grid justify-items-center gap-10 sm:grid-cols-2 lg:grid-cols-3">
+          {comVideo.map((dep, i) => (
+            <Revela key={dep.id} atraso={(i % 3) * 0.07}>
+              <DepoimentoVideo dep={dep} />
+            </Revela>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {depoimentos.map((dep, i) => (
+            <Revela key={dep.id} atraso={(i % 3) * 0.07} className="h-full">
+              <figure className="cartao flex h-full flex-col p-7 hover:border-brand-blue/35">
+                <blockquote className="mb-7 flex-1 text-[15.5px] leading-relaxed text-brand-platinum">
+                  “{dep.texto}”
+                </blockquote>
+                <figcaption className="flex items-center gap-3.5">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-brand-blue/25 bg-brand-blue/10 font-display text-[13px] font-bold text-brand-blue">
+                    {dep.iniciais}
+                  </span>
+                  <span>
+                    <span className="block font-bold text-brand-cream">{dep.nome}</span>
+                    <span className="block text-[13px] text-brand-quiet">{dep.papel}</span>
+                  </span>
+                </figcaption>
+              </figure>
+            </Revela>
+          ))}
+        </div>
+      )}
     </Secao>
   );
 }

@@ -231,7 +231,8 @@ src/
 | `eixos.ts` | Os eixos de formação e a cor de cada um |
 | `courses.ts` | O catálogo: preço, checkout, eixo, situação e os pacotes |
 | `curriculos.ts` | As ementas das três formações, módulo e aula |
-| `sena.ts` | O conteúdo clínico da demonstração do SENA na home |
+| `sena.ts` | O paciente e a devolutiva da amostra do SENA na home |
+| `depoimentos.ts` | Os depoimentos de alunos, com espaço para vídeo |
 | `midia.ts` | Os vídeos do site: boas-vindas no hero e amostra do SENA |
 | `admin.ts` | Quem enxerga o painel de cadastros |
 
@@ -383,6 +384,29 @@ São dois pontos, e os dois precisam mudar juntos:
 Se só um dos dois mudar, o site anuncia uma plataforma e leva o comprador
 para outra.
 
+### A amostra do SENA na home
+
+A home tem uma cópia do simulador (`components/SenaSimulador.tsx`), e ela
+segue o produto real de perto porque uma amostra que ensina a mecânica
+errada é pior do que não ter amostra. A versão anterior era múltipla
+escolha; o SENA não é.
+
+O que a amostra faz igual ao produto: mostra o paciente virtual com perfil,
+resistências e abordagem recomendada; recebe a intervenção **escrita** pelo
+visitante, com o mesmo mínimo de 50 caracteres; e pede a autoavaliação de
+seis itens que no SENA vem antes da IA.
+
+**Onde ela para, e por quê.** No lugar de avaliar o texto do visitante, ela
+mostra uma resposta de *referência* já avaliada, no formato exato da
+devolutiva do simulador — nota, rótulo e blocos de análise. A tela diz, em
+cima da nota, que a nota é da resposta de referência e não da dele.
+
+Avaliar de verdade exige a IA do simulador. Inventar uma nota para o texto
+de quem está de fora seria mentir sobre o produto logo na demonstração dele,
+e é o tipo de coisa que o comprador descobre na primeira aula.
+
+O link para o simulador de verdade aparece ao final, para quem já é aluno.
+
 ### Publicar os dois vídeos
 
 Os espaços já existem; falta o conteúdo. Tudo se resolve em
@@ -414,15 +438,20 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
 - **Gravar os dois vídeos.** O de boas-vindas é o espaço mais valioso da
   home: em 60 a 90 segundos, quem você é, por que o instituto existe e o que
   a pessoa leva ao final. A amostra do SENA é uma gravação de tela de uma
-  sessão real — hoje a seção mostra a demonstração que eu construí, útil
-  para experimentar a mecânica, mas que não é o produto. Com a gravação, a
-  demonstração passa a ser o convite e o vídeo passa a ser a prova.
-- **Revisar o conteúdo clínico do simulador** (`src/config/sena.ts`). As
-  três respostas ao paciente cético, e principalmente as três devolutivas,
-  são rascunho meu. É a única parte do site que emite julgamento clínico
-  ("isto rompe o rapport", "isto está fora de hora") e sai assinada pelo
-  instituto. O texto está separado da marcação justamente para que revisar
-  seja editar prosa.
+  sessão real: a amostra da home reproduz a mecânica até onde pode, mas a
+  IA avaliando um texto de verdade só se vê em vídeo.
+- **Revisar o conteúdo clínico da amostra do SENA** (`src/config/sena.ts`).
+  A resposta de referência e, principalmente, a devolutiva com nota são
+  rascunho meu. É a única parte do site que emite julgamento clínico, e sai
+  assinada pelo instituto. O texto está separado da marcação justamente
+  para que revisar seja editar prosa.
+- **Gravar três depoimentos em vídeo** (`src/config/depoimentos.ts`). Basta
+  preencher `video` em qualquer um dos alunos e a seção troca de formato
+  sozinha, dos cartões de citação para os celulares com vídeo. Vertical,
+  filmado no celular, de 30 a 60 segundos, com três perguntas: como você
+  estava antes, o que mudou, e o que faz hoje com isso. Passe também um
+  `poster`, porque a miniatura que o YouTube gera é 16:9 e fica quase só
+  tarja preta dentro da moldura vertical.
 - **Duas ementas incompletas** (`src/config/curriculos.ts`). O Master PNL
   anunciava 48 aulas e publica 31, numeradas de 1 a 31 sem intervalos. A
   Hipnoterapia anuncia 44 e publica 40 — o módulo 6 tem descrição mas

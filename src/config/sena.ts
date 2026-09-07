@@ -1,91 +1,140 @@
 /**
- * Conteúdo clínico da demonstração do SENA na home.
+ * O conteúdo da amostra do SENA na home.
  *
  * ┌───────────────────────────────────────────────────────────────────────┐
- * │  ⚠  RASCUNHO — PENDENTE DE REVISÃO TÉCNICA DO BRUNO                   │
+ * │  ⚠  O TEXTO CLÍNICO É RASCUNHO — PENDENTE DE REVISÃO DO BRUNO         │
  * │                                                                       │
- * │  As três respostas e, principalmente, as três devolutivas abaixo      │
+ * │  A resposta de referência e, principalmente, a devolutiva com nota    │
  * │  foram redigidas como proposta de estrutura, não como material        │
- * │  didático aprovado. É a única parte do site que afirma um julgamento  │
- * │  clínico ("isto rompe o rapport", "isto está fora de hora") — e ela   │
- * │  sai assinada pelo instituto.                                        │
+ * │  didático aprovado. É a única parte do site que emite julgamento      │
+ * │  clínico, e ela sai assinada pelo instituto.                          │
  * │                                                                       │
  * │  Revise antes de divulgar. O texto vive aqui, separado da marcação,   │
- * │  exatamente para que a revisão seja editar prosa e não mexer em JSX.  │
+ * │  exatamente para que revisar seja editar prosa, e não mexer em JSX.   │
  * └───────────────────────────────────────────────────────────────────────┘
  *
- * Por que a demonstração existe: a home mostrava esta mesma cena como
- * imagem congelada, com um selo de "Rapport Estabelecido" que não respondia
- * a nada. O simulador é o único argumento do site que a concorrência não
- * consegue copiar, e estava sendo *afirmado* numa captura de tela em vez de
- * demonstrado. Aqui o visitante escolhe uma intervenção e recebe a
- * devolutiva — a mesma mecânica que o aluno usa na formação.
+ * ── Por que a amostra foi refeita ───────────────────────────────────────
+ *
+ * A versão anterior era um teste de múltipla escolha: o paciente falava e o
+ * visitante escolhia uma entre três respostas prontas. O SENA de verdade
+ * (simulador.institutobrunosena.com.br) não funciona assim. Nele o aluno
+ * ESCREVE a intervenção com as próprias palavras — mínimo de 50 caracteres,
+ * por texto ou por voz — e uma IA devolve uma nota e a análise da condução.
+ *
+ * Uma amostra que ensina a mecânica errada é pior do que não ter amostra:
+ * quem se matricula esperando um quiz encontra outra coisa.
+ *
+ * ── Onde a amostra para, e por quê ──────────────────────────────────────
+ *
+ * A amostra reproduz o produto até o ponto em que o produto começa a
+ * pensar. Ela mostra o paciente real, aceita o texto livre com a mesma
+ * regra de tamanho e apresenta a autoavaliação, que no SENA vem antes da
+ * IA. Aí ela para e mostra uma resposta de REFERÊNCIA já avaliada.
+ *
+ * A nota exibida é a da resposta de referência, nunca a do visitante — e a
+ * tela diz isso com todas as letras. Avaliar de verdade exige a IA do
+ * simulador, e inventar uma nota para o texto de quem está de fora seria
+ * mentir sobre o produto logo na demonstração dele.
  */
 
-/** Como o SENA classifica a intervenção. Governa a cor do veredito. */
-export type Veredito = 'estabelecido' | 'perdido' | 'ruptura';
-
-export interface RespostaSena {
+/** O que o SENA pede antes de a IA entrar: o aluno julga a própria condução. */
+export interface ItemAutoavaliacao {
   id: string;
-  /** A intervenção que o visitante escolhe, na primeira pessoa. */
   texto: string;
-  /** Como o paciente reage a ela. */
-  reacao: string;
-  veredito: Veredito;
-  /** O rótulo do veredito, como aparece na tela. */
-  vereditoRotulo: string;
-  /** A devolutiva: por que funcionou ou não, em termos técnicos. */
-  analise: string;
 }
 
 export const sena = {
-  /** O perfil do paciente virtual desta demonstração. */
-  perfil: 'Cético',
+  /** Onde o aluno matriculado usa o SENA de verdade. */
+  url: 'https://simulador.institutobrunosena.com.br/',
 
-  /** A fala de abertura do paciente. */
-  falaInicial:
-    'Sinceramente, não sei se isso vai funcionar. Já tentei de tudo e essas técnicas parecem muito teóricas.',
+  /**
+   * O paciente virtual da amostra.
+   *
+   * Os campos são os mesmos do simulador: identificação, perfil, descrição,
+   * resistências esperadas e a abordagem recomendada para o perfil. No
+   * produto o paciente é sorteado a cada sessão; aqui é fixo, para que a
+   * amostra seja sempre a mesma conversa.
+   */
+  paciente: {
+    id: 'PV-014',
+    perfil: 'Cético',
+    descricao:
+      'Paciente cético, testa a competência do profissional antes de se entregar ao processo. Já passou por outras abordagens sem resultado e chega esperando mais uma decepção.',
+    resistencias: [
+      'Pede evidências',
+      'Testa autoridade',
+      'Compara com tentativas anteriores',
+      'Desistência rápida',
+    ],
+    abordagem:
+      'Credibilização rápida, referenciação, convite à experiência direta, menos promessas.',
+    falaInicial:
+      'Sinceramente, não sei se isso vai funcionar. Já tentei de tudo e essas técnicas parecem muito teóricas.',
+    /** O estado emocional do paciente, de 0 a 100, como a barra do simulador. */
+    estado: { rotulo: 'Abertura ao processo', valor: 22 },
+  },
 
-  respostas: [
+  /** Os limites de tamanho da resposta, iguais aos do simulador. */
+  minimoCaracteres: 50,
+  maximoCaracteres: 5000,
+
+  /**
+   * A autoavaliação que o SENA pede antes de acionar a IA.
+   *
+   * Os seis itens são os do simulador, na mesma ordem. Existe para o aluno
+   * julgar a própria condução antes de receber a nota — sem isso a nota
+   * vira placar, e o aluno aprende a agradar o avaliador em vez de a
+   * conduzir a sessão.
+   */
+  autoavaliacao: [
+    { id: 'rapport', texto: 'Estabeleci rapport e conexão com o perfil do paciente' },
     {
-      id: 'autoridade',
-      texto:
-        'A PNL tem comprovação em diversos estudos e é usada por profissionais no mundo todo.',
-      reacao: 'Então é mais uma coisa em que eu deveria simplesmente acreditar.',
-      veredito: 'perdido',
-      vereditoRotulo: 'Rapport perdido',
-      analise:
-        'Você defendeu o método em vez de acolher a objeção. Com perfil cético, argumento de autoridade aumenta a resistência: ele não questionou a literatura, questionou a própria capacidade de mudar.',
+      id: 'perfil',
+      texto: 'Identifiquei e adaptei minha condução ao perfil clínico sorteado',
+    },
+    { id: 'tecnica', texto: 'Apliquei uma técnica ou estratégia compatível com esta aula' },
+    {
+      id: 'resistencia',
+      texto: 'Manejei as resistências específicas do paciente adequadamente',
     },
     {
-      id: 'pacing',
-      texto:
-        'Entendo o ceticismo. Faz sentido, depois de tentar tanta coisa. Que tal testarmos algo pequeno agora, e você julga pelo resultado?',
-      reacao: 'Tudo bem... o que seria?',
-      veredito: 'estabelecido',
-      vereditoRotulo: 'Rapport estabelecido',
-      analise:
-        'Você fez pacing da experiência dele antes de propor qualquer coisa, e transferiu o critério de julgamento para ele. Devolver o controle é exatamente o que o perfil cético precisa para baixar a guarda.',
+      id: 'etica',
+      texto: 'Mantive postura ética e respeitei os limites do papel profissional',
     },
-    {
-      id: 'confronto',
-      texto:
-        'Se você já tentou de tudo e nada funcionou, talvez o problema não esteja na técnica.',
-      reacao: 'Ou seja, a culpa é minha.',
-      veredito: 'ruptura',
-      vereditoRotulo: 'Ruptura',
-      analise:
-        'Confronto sem aliança prévia é lido como julgamento. A intervenção não está errada em si — está fora de hora. Ela funciona depois do rapport estabelecido, nunca na abertura.',
-    },
-  ] satisfies RespostaSena[],
+    { id: 'avanco', texto: 'Validei se houve avanço ou mudança antes de encerrar' },
+  ] satisfies ItemAutoavaliacao[],
 
-  /** Números da plataforma, exibidos ao lado da demonstração. */
-  numeros: [
-    { rotulo: 'Perfis clínicos', valor: '8' },
-    { rotulo: 'Devolutiva', valor: 'por intervenção' },
-    { rotulo: 'Prontuário', valor: 'automático' },
-  ],
-
-  /** Quantos cenários o aluno encontra na formação completa. */
-  totalCenarios: 44,
+  /**
+   * A resposta de referência e a devolutiva dela.
+   *
+   * É o que a amostra mostra no lugar de avaliar o texto do visitante. A
+   * nota é desta resposta, e a tela diz isso.
+   */
+  referencia: {
+    resposta:
+      'Faz sentido você estar em dúvida — se já tentou várias coisas sem resultado, desconfiar é o que qualquer pessoa sensata faria. Não vou te pedir para acreditar em nada. Vamos fazer um teste pequeno agora, de dois minutos, e você julga pelo que sentir, não pelo que eu disser.',
+    nota: 9.2,
+    notaMinima: 8,
+    rotulo: 'Condução adequada',
+    blocos: [
+      {
+        tipo: 'good' as const,
+        titulo: 'Acolheu a objeção antes de propor',
+        texto:
+          'A dúvida foi validada como reação razoável, não como obstáculo a vencer. Com perfil cético é o que abre espaço: ele não questionou a técnica, questionou a própria capacidade de mudar.',
+      },
+      {
+        tipo: 'good' as const,
+        titulo: 'Devolveu o critério ao paciente',
+        texto:
+          '"Você julga pelo que sentir" transfere a autoridade para ele. É a abordagem recomendada para este perfil — convite à experiência direta, menos promessas.',
+      },
+      {
+        tipo: 'mid' as const,
+        titulo: 'Ponto de atenção: o prazo prometido',
+        texto:
+          'Dizer "dois minutos" cria um compromisso mensurável. Se o exercício passar disso, o paciente cético registra a quebra e a credibilidade cai. Prefira "um teste curto".',
+      },
+    ],
+  },
 } as const;
