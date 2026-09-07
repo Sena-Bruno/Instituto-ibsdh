@@ -135,9 +135,17 @@ dois desenhos diferentes. Por isso a faixa mostra só o grafismo.
    recorte é o erro comum.
 3. Preencha `capa` e `capaFaixa` na entrada do curso em `courses.ts`.
 
+**Sobre marca-d'água.** As artes vêm de gerador de imagem, e algumas chegam
+com a marca do gerador num canto. Ela sai antes de subir: como o fundo dessas
+capas é liso, o jeito limpo é reconstruir a área por interpolação horizontal
+linha a linha, ligando o pixel à esquerda da marca ao pixel à direita. Cor
+chapada deixaria um retângulo visível, porque o degradê muda de valor ao
+longo da altura.
+
 **Curso sem arte não quebra nada.** O card cai na reserva do `CourseImage`,
 que ocupa exatamente a mesma altura e escreve "imagem pendente" — a grade não
-desalinha e fica claro que falta um arquivo. É o caso da Hipnoterapia hoje.
+desalinha e fica claro que falta um arquivo. Hoje todas as formações têm
+arte, então essa reserva não aparece em lugar nenhum.
 
 ### Componentes que carregam a linguagem
 
@@ -234,6 +242,7 @@ src/
 | `sena.ts` | O paciente e a devolutiva da amostra do SENA na home |
 | `depoimentos.ts` | Os depoimentos de alunos, com espaço para vídeo |
 | `midia.ts` | Os vídeos do site: boas-vindas no hero e amostra do SENA |
+| `pagamento.ts` | Os meios de pagamento aceitos e as marcas deles |
 | `admin.ts` | Quem enxerga o painel de cadastros |
 
 **Antes de editar preço, link de checkout, telefone ou e-mail, olhe em
@@ -480,18 +489,14 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
 
 ### Herdadas do projeto original
 
-- **Capas dos cursos — quase resolvido.** Seis imagens se perderam na
-  exportação original do projeto: os binários passaram por uma decodificação
-  UTF-8 que destruiu cerca de um quinto de cada arquivo, sem recuperação
-  possível.
+- **Capas dos cursos — resolvido.** Seis imagens se perderam na exportação
+  original do projeto: os binários passaram por uma decodificação UTF-8 que
+  destruiu cerca de um quinto de cada arquivo, sem recuperação possível.
 
-  O Bruno reenviou as artes do **PNL Practitioner**, do **Master PNL**, do
-  **Coaching**, o selo da **NLPEA** e a foto da seção **In Company**. As
-  cinco já estão no ar. Continua faltando uma: a arte da **Hipnoterapia
-  Clínica**, onde `components/CourseImage.tsx` mostra a reserva com o nome
-  no lugar, mantendo a altura correta.
-
-  Para colocar a da Hipnoterapia, siga "As artes das formações", mais acima.
+  O Bruno reenviou todas as seis, e não há mais nenhuma reserva de "imagem
+  pendente" no site. `components/CourseImage.tsx` continua no lugar como
+  proteção: se um arquivo sumir do servidor, o layout segue íntegro em vez
+  de mostrar ícone de imagem quebrada.
 - **Projeto do Firebase.** O projeto (`gen-lang-client-…`) e o banco
   (`ai-studio-…`) foram criados automaticamente pela ferramenta que gerou o
   projeto. Funcionam e contêm dados reais, mas o domínio de autenticação

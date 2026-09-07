@@ -162,8 +162,8 @@ export const courses = {
     carga: '100h',
     aulas: '40 aulas',
     certificado: 'IBSDH',
-    // A arte da Hipnoterapia ainda não chegou. Sem os campos `capa`, o card
-    // mostra a reserva do CourseImage, com a mesma altura dos outros.
+    capa: '/capa-hipnoterapia.webp',
+    capaFaixa: '/capa-hipnoterapia-faixa.webp',
     situacao: 'aberto',
     destaque: true,
     selo: 'Requer o Practitioner',

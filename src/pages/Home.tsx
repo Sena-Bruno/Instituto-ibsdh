@@ -1,5 +1,6 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
 import {
+  Apple,
   ArrowRight,
   Award,
   Brain,
@@ -8,13 +9,17 @@ import {
   CheckCircle2,
   Clock,
   Download,
-  Globe,
+  GraduationCap,
   Instagram,
+  Leaf,
   Lock,
   ShieldCheck,
   Sparkles,
+  Stethoscope,
   Target,
+  TrendingUp,
   User,
+  Users,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
@@ -30,6 +35,7 @@ import VideoPlayer from '../components/Video';
 import { courses, economiaDe, eixosComCurso, listaCursos } from '../config/courses';
 import { depoimentos } from '../config/depoimentos';
 import { midia } from '../config/midia';
+import { meiosPagamento } from '../config/pagamento';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
 import { duration, ease } from '../lib/motion';
@@ -738,20 +744,50 @@ function PagamentoSeguro() {
           dela — o instituto não os recebe nem armazena.
         </p>
 
-        {/* Antes eram 6 imagens buscadas de cdn.simpleicons.org e do
-            Wikimedia — hotlink de terceiro que podia sumir a qualquer
-            momento e ainda somava 6 conexões externas ao carregamento. */}
-        <ul className="mt-9 flex flex-wrap items-center justify-center gap-2.5">
-          {[site.paymentPlatform, 'Pix', 'Visa', 'Mastercard', 'Elo', 'Amex', 'Boleto'].map(
-            (meio) => (
-              <li
-                key={meio}
-                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[13.5px] font-medium"
-              >
-                {meio}
-              </li>
-            ),
-          )}
+        {/* ┌─────────────────────────────────────────────────────────────┐
+            │  AS MARCAS SÃO DESENHO, NÃO IMAGEM BUSCADA FORA            │
+            │                                                             │
+            │  Aqui já foram 6 imagens vindas do cdn.simpleicons.org e do │
+            │  Wikimedia: hotlink de terceiro que podia sumir a qualquer  │
+            │  momento e somava 6 conexões externas ao carregamento.      │
+            │  Viraram pílulas de texto, que resolviam o problema técnico │
+            │  e não pareciam meio de pagamento nenhum.                   │
+            │                                                             │
+            │  Agora os contornos oficiais estão embutidos em             │
+            │  `config/pagamento.ts` e herdam `currentColor`: zero        │
+            │  requisição, e todas no mesmo tom. Em cores originais a     │
+            │  fileira viraria um arco-íris no meio de uma página que usa │
+            │  um acento só.                                              │
+            │                                                             │
+            │  Elo e Boleto não têm contorno publicado, então continuam   │
+            │  como palavra — na mesma caixa e na mesma altura. Desenhar  │
+            │  marca de terceiro à mão seria inventar a identidade visual │
+            │  de outra empresa.                                          │
+            └─────────────────────────────────────────────────────────────┘ */}
+        <ul className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          {meiosPagamento.map((meio) => (
+            <li
+              key={meio.nome}
+              className="flex h-12 min-w-[72px] items-center justify-center rounded-[12px] border border-white/10 bg-white/[0.04] px-4 text-brand-platinum transition-colors hover:border-white/25 hover:text-brand-cream"
+            >
+              {meio.caminho ? (
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  role="img"
+                  aria-label={meio.nome}
+                  className={cn('h-auto', meio.larga ? 'w-12' : 'w-8')}
+                >
+                  <title>{meio.nome}</title>
+                  <path d={meio.caminho} />
+                </svg>
+              ) : (
+                <span className="font-display text-[15px] font-semibold tracking-[0.04em]">
+                  {meio.nome}
+                </span>
+              )}
+            </li>
+          ))}
         </ul>
       </div>
     </Secao>
@@ -969,46 +1005,68 @@ function Mentor() {
  * Estas são áreas de atuação, não nomes de empresa: é o que dá para afirmar
  * com verdade. Quando houver parceria real com logo, ela entra aqui.
  */
+/**
+ * Onde os alunos aplicam o método.
+ *
+ * Cada área tem o próprio ícone. Antes eram oito globos idênticos, um por
+ * item: ícone repetido não informa nada, só ocupa espaço à esquerda do
+ * texto. Com um desenho por área, a lista passa a ser varrida pelo olho
+ * antes de ser lida.
+ *
+ * Esta faixa listava quatro nomes de empresa inventados ("Global Tech",
+ * "Institutos Financeiros") sob a frase "metodologia aplicada em
+ * instituições como". Nome de parceiro que não existe é risco de
+ * credibilidade, então virou a lista das áreas — que é verdade e diz a
+ * mesma coisa. Quando houver parceria real com logo, ela entra aqui.
+ */
 const areas = [
-  'Consultórios de psicologia',
-  'Clínicas de terapia integrativa',
-  'RH e desenvolvimento organizacional',
-  'Coaching executivo',
-  'Escolas e educação',
-  'Vendas e negociação',
-  'Consultórios de nutrição',
-  'Prática autônoma',
+  { icone: Stethoscope, nome: 'Consultórios de psicologia' },
+  { icone: Leaf, nome: 'Clínicas de terapia integrativa' },
+  { icone: Users, nome: 'RH e desenvolvimento organizacional' },
+  { icone: Target, nome: 'Coaching executivo' },
+  { icone: GraduationCap, nome: 'Escolas e educação' },
+  { icone: TrendingUp, nome: 'Vendas e negociação' },
+  { icone: Apple, nome: 'Consultórios de nutrição' },
+  { icone: Briefcase, nome: 'Prática autônoma' },
 ];
 
 function OndeAtuam() {
   return (
-    <Secao className="overflow-hidden py-14 md:py-16">
-      <p className="mb-9 text-center text-[13px] font-bold tracking-[0.2em] text-brand-quiet uppercase">
-        Onde os nossos alunos aplicam o método
-      </p>
+    <Secao elevada>
+      <Cabecalho
+        sobretitulo="Onde o método é aplicado"
+        titulo="A formação abre mais de uma porta"
+        centralizado
+      >
+        As mesmas ferramentas atendem em consultório, conduzem equipe e fecham venda. É o que os
+        alunos fazem com elas depois de formados.
+      </Cabecalho>
 
-      <div className="relative flex overflow-x-hidden">
-        <div
-          aria-hidden="true"
-          className="absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-brand-dark to-transparent"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-brand-dark to-transparent"
-        />
-
-        <ul className="animate-marquee flex shrink-0 items-center gap-4 pr-4">
-          {[...areas, ...areas].map((area, i) => (
-            <li
-              key={`${area}-${i}`}
-              className="flex items-center gap-2.5 rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 whitespace-nowrap"
-            >
-              <Globe size={16} className="shrink-0 text-brand-accent" aria-hidden="true" />
-              <span className="font-medium text-brand-cream">{area}</span>
+      {/* ┌───────────────────────────────────────────────────────────────┐
+          │  ERA UM CARROSSEL EM LAÇO INFINITO, E VIROU UMA GRADE PARADA  │
+          │                                                               │
+          │  O carrossel cortava as palavras nas duas bordas — a primeira │
+          │  e a última área apareciam pela metade o tempo todo, o que    │
+          │  lia como defeito e não como movimento. E texto que anda não  │
+          │  se lê: para saber o que estava escrito era preciso esperar   │
+          │  o item passar.                                               │
+          │                                                               │
+          │  Parada, a lista mostra as oito áreas de uma vez, inteiras, e │
+          │  a seção passa a ter cabeçalho como todas as outras em vez de │
+          │  um rótulo solto.                                             │
+          └───────────────────────────────────────────────────────────────┘ */}
+      <ul className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {areas.map((area, i) => (
+          <Revela key={area.nome} atraso={(i % 4) * 0.06} className="h-full">
+            <li className="flex h-full items-center gap-3.5 rounded-[16px] border border-white/8 bg-white/[0.03] p-4 transition-colors hover:border-white/20">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-brand-accent/20 bg-brand-accent/8 text-brand-accent">
+                <area.icone size={18} aria-hidden="true" />
+              </span>
+              <span className="text-[14.5px] leading-snug text-brand-cream">{area.nome}</span>
             </li>
-          ))}
-        </ul>
-      </div>
+          </Revela>
+        ))}
+      </ul>
     </Secao>
   );
 }
