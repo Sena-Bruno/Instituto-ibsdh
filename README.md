@@ -269,6 +269,26 @@ node scripts/prerender.mjs              → um HTML por rota + o sitemap
 `src/config/paginas.ts`. Ela ganha rota, HTML estático e linha no sitemap
 de uma vez — esquecer o sitemap deixou de ser possível.
 
+### Animação e conteúdo legível
+
+As animações de entrada eram `motion` com `initial="hidden"`, o que
+gravava `opacity:0` no HTML. Enquanto tudo era montado no navegador isso
+não custava nada; com o HTML pré-renderizado, passou a custar o site
+inteiro: medido em navegador sem cabeça e **sem JavaScript**, a home
+entregava **5%** do texto legível — o envelope de transição de página
+envolvia tudo e saía invisível.
+
+A regra agora é uma só: **o HTML sai visível; quem esconde é o
+navegador**, dentro da janela entre montar o DOM e pintar a tela
+(`useLayoutEffect`). O visitante vê a animação inteira, sem lampejo; quem
+não executa JavaScript lê o texto. Vale para `Revela` (entra ao rolar,
+`components/Secao.tsx`) e `Entrada` (entra ao abrir, `components/Entrada.tsx`);
+os estados vivem em `index.css`, em `[data-revela]` e `[data-entrada]`.
+
+**Ao criar uma animação de entrada, siga esse padrão** — não use
+`initial="hidden"` em bloco que contenha texto. O `npm run smoke` falha se
+menos de 95% do texto de uma página estiver visível sem JavaScript.
+
 ### O que o build recusa publicar
 
 `scripts/prerender.mjs` quebra o build se alguma rota sair sem `<title>`,

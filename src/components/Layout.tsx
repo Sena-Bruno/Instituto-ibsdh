@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { pageTransition } from '../lib/motion';
 import BarraAviso from './BarraAviso';
@@ -13,6 +14,24 @@ import SiteHeader from './SiteHeader';
  */
 export default function Layout() {
   const { pathname } = useLocation();
+
+  /*
+    A transição de página é um efeito de TROCA de rota, e só faz sentido a
+    partir da segunda. Na primeira ela cobrava caro: `initial="hidden"`
+    gravava `opacity:0` no envelope que contém a página inteira, e como
+    esse HTML agora é pré-renderizado, um robô que aplica CSS sem executar
+    JavaScript recebia o site inteiro invisível — 5% do texto da home
+    legível, medido em navegador sem cabeça.
+
+    Com `initial={false}` na primeira renderização, o bloco nasce visível
+    no HTML e no primeiro passe do cliente (que precisam ser iguais, senão
+    a hidratação descarta o documento). O ref vira `true` depois da
+    montagem, então toda navegação seguinte anima normalmente.
+  */
+  const jaMontou = useRef(false);
+  useEffect(() => {
+    jaMontou.current = true;
+  }, []);
 
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans">
@@ -42,7 +61,7 @@ export default function Layout() {
         id="conteudo"
         key={pathname}
         variants={pageTransition}
-        initial="hidden"
+        initial={jaMontou.current ? 'hidden' : false}
         animate="visible"
       >
         <Outlet />

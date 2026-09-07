@@ -361,3 +361,61 @@
 .pulso {
   animation: pulso-suave 2.4s ease-in-out infinite;
 }
+
+/* ── Revelação ao rolar ─────────────────────────────────────────────────────
+   Os estados do componente `Revela` (src/components/Secao.tsx).
+
+   O estado escondido é aplicado por JavaScript, nunca pela renderização:
+   o HTML sai visível, e só o navegador esconde o bloco — antes da primeira
+   pintura — para poder animá-lo. Quem não executa JavaScript (robô de rede
+   social, rastreador de IA) lê o texto inteiro; quem executa vê a animação.
+   Ver o comentário longo em `Secao.tsx` para o porquê. */
+[data-revela="oculto"] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+[data-revela="visivel"] {
+  opacity: 1;
+  transform: none;
+  /* 350ms com ease-out, os mesmos valores de `duration.base` e `ease.out`
+     em lib/motion.ts — este bloco é a versão em CSS daquela curva. */
+  transition:
+    opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Cinto de segurança: mesmo que o JavaScript esconda o bloco antes de ler
+   a preferência, nada fica invisível para quem pediu menos movimento. */
+@media (prefers-reduced-motion: reduce) {
+  [data-revela] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* Os estados do componente `Entrada` (src/components/Entrada.tsx), a
+   entrada do hero. Mesma inversão do `Revela`: o HTML sai visível e só o
+   navegador esconde, antes da primeira pintura, para poder animar. */
+[data-entrada="oculto"] {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+[data-entrada="visivel"] {
+  opacity: 1;
+  transform: none;
+  /* 500ms — o `duration.slow` de lib/motion.ts, que é o que o hero usava. */
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-entrada] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

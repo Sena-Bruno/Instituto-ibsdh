@@ -157,16 +157,41 @@ const environmental =
 
   for (const route of routes) {
     const resposta = await p4.goto(base + route, { waitUntil: 'domcontentloaded' });
-    const dados = await p4.evaluate(() => ({
-      titulo: document.title,
-      canonico: document.querySelector('link[rel=canonical]')?.href ?? '',
-      descricao: document.querySelector('meta[name=description]')?.content ?? '',
-      dadosEstruturados: document.querySelectorAll('script[type="application/ld+json"]').length,
-      h1: document.querySelectorAll('h1').length,
-      // Quanto texto de verdade existe no corpo antes de o React montar.
-      texto: (document.getElementById('root')?.textContent ?? '').trim().length,
-      links: document.querySelectorAll('#root a[href^="/"]').length,
-    }));
+    const dados = await p4.evaluate(() => {
+      const raiz = document.getElementById('root');
+      const texto = (raiz?.textContent ?? '').trim().length;
+
+      /*
+        Texto PRESENTE não é texto LEGÍVEL. As animações de entrada
+        gravavam `opacity:0` no HTML pré-renderizado, e um robô que aplica
+        CSS sem executar JavaScript lia 5% da home — o resto estava lá,
+        invisível. Nenhuma verificação pegava isso: o texto existia, o
+        título existia, o JSON-LD existia. Por isso a conta aqui é de
+        estilo computado, não de conteúdo.
+      */
+      let oculto = 0;
+      for (const el of document.querySelectorAll('#root *')) {
+        const cs = getComputedStyle(el);
+        const some = cs.opacity === '0' || cs.visibility === 'hidden' || cs.display === 'none';
+        if (!some || !el.textContent?.trim()) continue;
+        // Só o ancestral mais alto, para não somar os filhos de novo.
+        if (!el.parentElement?.closest('[style*="opacity: 0"],[data-revela],[data-entrada]')) {
+          oculto += el.textContent.trim().length;
+        }
+      }
+
+      return {
+        titulo: document.title,
+        canonico: document.querySelector('link[rel=canonical]')?.href ?? '',
+        descricao: document.querySelector('meta[name=description]')?.content ?? '',
+        dadosEstruturados: document.querySelectorAll('script[type="application/ld+json"]')
+          .length,
+        h1: document.querySelectorAll('h1').length,
+        texto,
+        legivel: texto - oculto,
+        links: document.querySelectorAll('#root a[href^="/"]').length,
+      };
+    });
 
     const problemas = [];
     if (resposta?.status() !== 200) problemas.push(`status ${resposta?.status()}`);
@@ -178,6 +203,13 @@ const environmental =
     // Abaixo disto, o que veio foi casca: título e menu, sem conteúdo.
     if (dados.texto < 1500) problemas.push(`só ${dados.texto} caracteres de texto`);
     if (dados.links < 5) problemas.push(`só ${dados.links} links internos`);
+    // Sem JavaScript, nada deveria estar escondido por animação nenhuma.
+    const pctLegivel = dados.texto ? (dados.legivel / dados.texto) * 100 : 0;
+    if (pctLegivel < 95) {
+      problemas.push(
+        `só ${Math.round(pctLegivel)}% do texto está visível (o resto sai com opacity:0)`,
+      );
+    }
 
     // Título e canônico repetidos entre rotas é o sintoma clássico de
     // SPA não pré-renderizada: todas as páginas com o <head> da home.
@@ -190,6 +222,7 @@ const environmental =
 
     console.log(
       `  ${route.padEnd(20)} ${dados.texto.toString().padStart(6)} car. · ` +
+        `${Math.round((dados.legivel / (dados.texto || 1)) * 100)}% visível · ` +
         `${dados.links} links · ${dados.dadosEstruturados} JSON-LD` +
         (problemas.length ? `\n      ✗ ${problemas.join('; ')}` : ''),
     );
