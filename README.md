@@ -242,6 +242,7 @@ src/
 | `sena.ts` | O paciente e a devolutiva da amostra do SENA na home |
 | `depoimentos.ts` | Os depoimentos de alunos, com espaço para vídeo |
 | `midia.ts` | Os vídeos do site: boas-vindas no hero e amostra do SENA |
+| `pagamento.ts` | Os meios de pagamento aceitos e as marcas deles |
 | `admin.ts` | Quem enxerga o painel de cadastros |
 
 **Antes de editar preço, link de checkout, telefone ou e-mail, olhe em
