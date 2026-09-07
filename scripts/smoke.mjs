@@ -26,6 +26,7 @@ const routes = [
   '/hipnoterapia',
   '/jornada',
   '/master-coach',
+  '/artigos',
 ];
 
 // O ambiente traz um Chromium pré-instalado que pode não bater com a build
@@ -137,6 +138,112 @@ const environmental =
   console.log(`  reduced-motion abre sem animação: ${instantaneo ? 'sim' : 'NÃO'}`);
   if (!instantaneo) failures++;
   await ctx.close();
+}
+
+// --- O que o robô lê ---
+//
+// Esta é a verificação que protege a pré-renderização. Tudo o que vem
+// acima roda com JavaScript ligado, e por isso passaria igual num site
+// que só monta o conteúdo no navegador — que era o estado anterior, e o
+// motivo de as sete páginas serem, para qualquer rastreador que não
+// executa JS, um único documento repetido.
+//
+// Aqui o navegador entra com JavaScript DESLIGADO: o que sobra é
+// exatamente o que chega na primeira resposta HTTP.
+{
+  console.log('\n=== HTML sem JavaScript ===');
+  const semJs = await browser.newContext({ javaScriptEnabled: false });
+  const p4 = await semJs.newPage();
+  const vistos = new Map();
+
+  for (const route of routes) {
+    const resposta = await p4.goto(base + route, { waitUntil: 'domcontentloaded' });
+    const dados = await p4.evaluate(() => {
+      const raiz = document.getElementById('root');
+      const texto = (raiz?.textContent ?? '').trim().length;
+
+      /*
+        Texto PRESENTE não é texto LEGÍVEL. As animações de entrada
+        gravavam `opacity:0` no HTML pré-renderizado, e um robô que aplica
+        CSS sem executar JavaScript lia 5% da home — o resto estava lá,
+        invisível. Nenhuma verificação pegava isso: o texto existia, o
+        título existia, o JSON-LD existia. Por isso a conta aqui é de
+        estilo computado, não de conteúdo.
+      */
+      let oculto = 0;
+      for (const el of document.querySelectorAll('#root *')) {
+        const cs = getComputedStyle(el);
+        const some = cs.opacity === '0' || cs.visibility === 'hidden' || cs.display === 'none';
+        if (!some || !el.textContent?.trim()) continue;
+        // Só o ancestral mais alto, para não somar os filhos de novo.
+        if (!el.parentElement?.closest('[style*="opacity: 0"],[data-revela],[data-entrada]')) {
+          oculto += el.textContent.trim().length;
+        }
+      }
+
+      return {
+        titulo: document.title,
+        canonico: document.querySelector('link[rel=canonical]')?.href ?? '',
+        descricao: document.querySelector('meta[name=description]')?.content ?? '',
+        dadosEstruturados: document.querySelectorAll('script[type="application/ld+json"]')
+          .length,
+        h1: document.querySelectorAll('h1').length,
+        texto,
+        legivel: texto - oculto,
+        links: document.querySelectorAll('#root a[href^="/"]').length,
+      };
+    });
+
+    const problemas = [];
+    if (resposta?.status() !== 200) problemas.push(`status ${resposta?.status()}`);
+    if (!dados.titulo) problemas.push('sem <title>');
+    if (!dados.canonico) problemas.push('sem canônico');
+    if (!dados.descricao) problemas.push('sem descrição');
+    if (dados.dadosEstruturados === 0) problemas.push('sem JSON-LD');
+    if (dados.h1 !== 1) problemas.push(`${dados.h1} <h1> (esperado 1)`);
+    // Abaixo disto, o que veio foi casca: título e menu, sem conteúdo.
+    if (dados.texto < 1500) problemas.push(`só ${dados.texto} caracteres de texto`);
+    if (dados.links < 5) problemas.push(`só ${dados.links} links internos`);
+    // Sem JavaScript, nada deveria estar escondido por animação nenhuma.
+    const pctLegivel = dados.texto ? (dados.legivel / dados.texto) * 100 : 0;
+    if (pctLegivel < 95) {
+      problemas.push(
+        `só ${Math.round(pctLegivel)}% do texto está visível (o resto sai com opacity:0)`,
+      );
+    }
+
+    // Título e canônico repetidos entre rotas é o sintoma clássico de
+    // SPA não pré-renderizada: todas as páginas com o <head> da home.
+    const anterior = vistos.get(dados.titulo);
+    if (anterior) problemas.push(`título igual ao de ${anterior}`);
+    vistos.set(dados.titulo, route);
+    if (dados.canonico !== `https://institutobrunosena.com.br${route === '/' ? '/' : route}`) {
+      problemas.push(`canônico aponta para ${dados.canonico}`);
+    }
+
+    console.log(
+      `  ${route.padEnd(20)} ${dados.texto.toString().padStart(6)} car. · ` +
+        `${Math.round((dados.legivel / (dados.texto || 1)) * 100)}% visível · ` +
+        `${dados.links} links · ${dados.dadosEstruturados} JSON-LD` +
+        (problemas.length ? `\n      ✗ ${problemas.join('; ')}` : ''),
+    );
+    failures += problemas.length;
+  }
+
+  // Um endereço que não existe tem de responder 404 de verdade. Servido
+  // com 200, ele vira "soft 404": o Google indexa endereços inventados,
+  // todos com o mesmo conteúdo, e gasta neles o rastreio das páginas reais.
+  const inexistente = await p4.goto(`${base}/endereco-que-nao-existe`, {
+    waitUntil: 'domcontentloaded',
+  });
+  const status = inexistente?.status();
+  console.log(`  ${'/endereco-que-nao-existe'.padEnd(20)} HTTP ${status}`);
+  if (status !== 404) {
+    console.log('      ✗ esperado 404; um 200 aqui é soft 404');
+    failures++;
+  }
+
+  await semJs.close();
 }
 
 const unique = [...new Set(consoleErrors)].filter((e) => !environmental.test(e));

@@ -1,11 +1,12 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
 import { Clock } from 'lucide-react';
-import { CourseReviews } from '../components/CourseReviews';
+import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
+import ListaDeEspera from '../components/ListaDeEspera';
 import { ListaItens } from '../components/PaginaCurso';
 import Secao, { Cabecalho } from '../components/Secao';
-import WaitlistForm from '../components/WaitlistForm';
+import Seo from '../components/Seo';
 import { courses } from '../config/courses';
-import { routes, site } from '../config/site';
+import { routes } from '../config/site';
+import { cursoComoSchema, organizacao, trilhaDeNavegacao } from '../lib/schema';
 
 const curso = courses.masterCoach;
 
@@ -31,23 +32,22 @@ const arsenal = [
 export default function MasterCoach() {
   return (
     <>
-      <Helmet>
-        <link rel="canonical" href={`${site.url}${routes.masterCoach}`} />
-        <title>Formação Master Coach | Instituto Bruno Sena</title>
-        <meta
-          name="description"
-          content="Formação Master Coach do Instituto Bruno Sena: coaching executivo, abordagem sistêmica e estruturação de negócio. Entre na lista de espera do lançamento."
-        />
-        <meta property="og:title" content="Formação Master Coach | Instituto Bruno Sena" />
-        <meta
-          property="og:description"
-          content="Coaching executivo, abordagem sistêmica e estruturação de negócio. Lançamento em breve."
-        />
-        <meta property="og:image" content={`${site.url}/og-image.png`} />
-        <meta property="og:url" content={`${site.url}${routes.masterCoach}`} />
-        <meta property="og:type" content="article" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+      <Seo
+        rota={routes.masterCoach}
+        titulo="Formação Master Coach | Instituto Bruno Sena"
+        descricao="Formação Master Coach do Instituto Bruno Sena: coaching executivo, abordagem sistêmica e estruturação de negócio. Entre na lista de espera do lançamento."
+        imagem="/capa-coaching.webp"
+        imagemAlt="Arte da formação Master Coach do Instituto Bruno Sena"
+        dados={[
+          organizacao(),
+          cursoComoSchema(curso),
+          trilhaDeNavegacao([
+            { nome: 'Início', rota: routes.home },
+            { nome: 'Formações', rota: routes.formacoes },
+            { nome: 'Master Coach', rota: routes.masterCoach },
+          ]),
+        ]}
+      />
 
       <main>
         <section className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-20">
@@ -81,7 +81,7 @@ export default function MasterCoach() {
                   centralizado embaixo dele: é a única ação desta página. */}
               <div className="cartao self-start p-7">
                 <p className="sobretitulo mb-5 text-brand-emerald">Lista de espera</p>
-                <WaitlistForm courseId={curso.slug} />
+                <ListaDeEspera courseId={curso.slug} />
               </div>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function MasterCoach() {
         </Secao>
 
         <Secao elevada>
-          <CourseReviews courseId={curso.slug} />
+          <AvaliacoesDoCurso courseId={curso.slug} />
         </Secao>
       </main>
     </>

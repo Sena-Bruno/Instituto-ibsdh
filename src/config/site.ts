@@ -109,6 +109,8 @@ export const routes = {
   home: '/',
   /** O catálogo completo. Toda superfície que lista cursos aponta para cá. */
   formacoes: '/formacoes',
+  /** A lista de artigos. Cada artigo mora em `/artigos/<slug>`. */
+  artigos: '/artigos',
   pnlPractitioner: '/pnl-practitioner',
   masterPnl: '/master-pnl',
   hipnoterapia: '/hipnoterapia',

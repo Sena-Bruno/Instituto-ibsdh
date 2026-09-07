@@ -1,5 +1,5 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
+import Seo from '../components/Seo';
 import { corDoCurso, listaCursos } from '../config/courses';
 import { routes, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
@@ -15,10 +15,12 @@ import { paletas } from '../lib/cores';
 export default function NotFound() {
   return (
     <main className="relative mx-auto min-h-[70vh] max-w-3xl overflow-hidden px-6 pt-36 pb-24">
-      <Helmet>
-        <title>Página não encontrada | Instituto Bruno Sena</title>
-        <meta name="robots" content="noindex" />
-      </Helmet>
+      <Seo
+        rota="/404"
+        titulo="Página não encontrada | Instituto Bruno Sena"
+        descricao="O endereço não existe no site do Instituto Bruno Sena. As formações estão listadas nesta página."
+        indexar={false}
+      />
 
       <p className="sobretitulo mb-6 text-brand-accent">Erro 404</p>
 

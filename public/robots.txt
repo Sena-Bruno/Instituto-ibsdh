@@ -1,7 +1,33 @@
+# ┌───────────────────────────────────────────────────────────────────────────┐
+# │  O QUE ESTE ARQUIVO FAZ — E O QUE ELE NÃO FAZ                             │
+# │                                                                           │
+# │  `Disallow` controla RASTREIO, não indexação. Uma URL bloqueada aqui      │
+# │  ainda pode aparecer na busca — sem título e sem descrição — se qualquer  │
+# │  link externo apontar para ela: o Google sabe que ela existe, só não      │
+# │  pode ler o que há dentro.                                                │
+# │                                                                           │
+# │  Duas consequências práticas moldam este arquivo:                         │
+# │                                                                           │
+# │  1. `/admin` deixou de ser bloqueado. O painel declara `noindex` no       │
+# │     próprio HTML, e para obedecer a esse `noindex` o robô precisa PODER   │
+# │     ler a página. Bloquear o caminho tinha o efeito oposto do pretendido: │
+# │     impedia a leitura da única instrução que de fato tira a página do     │
+# │     índice.                                                               │
+# │                                                                           │
+# │  2. Não há bloqueio de parâmetros (`?utm_`, `?fbclid`). Quem chega por    │
+# │     uma URL com etiqueta de campanha é lido normalmente e encontra a      │
+# │     etiqueta canônica da página, que funde os acessos na URL limpa. Um    │
+# │     `Disallow` ali impediria justamente essa leitura, e a variante com    │
+# │     parâmetro ficaria no índice sem nunca poder ser consolidada.          │
+# └───────────────────────────────────────────────────────────────────────────┘
+
 User-agent: *
 Allow: /
 
-# Painel interno da lista de espera: dados pessoais, fora do índice.
-Disallow: /admin
+# CSS, JavaScript e fontes ficam explicitamente liberados. Sem eles o serviço
+# de renderização do Google monta a página sem estilo e sem o conteúdo que o
+# React desenha, e passa a avaliar um esqueleto em branco no lugar do site.
+Allow: /assets/
+Allow: /fontes/
 
 Sitemap: https://institutobrunosena.com.br/sitemap.xml

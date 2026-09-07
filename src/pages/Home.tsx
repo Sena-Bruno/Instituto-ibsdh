@@ -1,4 +1,3 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
 import {
   Apple,
   ArrowRight,
@@ -21,16 +20,17 @@ import {
   User,
   Users,
 } from 'lucide-react';
-import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import CardCurso from '../components/CardCurso';
 import CourseImage from '../components/CourseImage';
 import DepoimentoVideo from '../components/DepoimentoVideo';
+import Entrada from '../components/Entrada';
 import Faq from '../components/Faq';
 import Numeros from '../components/Numeros';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
+import Seo from '../components/Seo';
 import VideoPlayer from '../components/Video';
 import { courses, economiaDe, eixosComCurso, listaCursos } from '../config/courses';
 import { depoimentos } from '../config/depoimentos';
@@ -38,7 +38,13 @@ import { midia } from '../config/midia';
 import { meiosPagamento } from '../config/pagamento';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
-import { duration, ease } from '../lib/motion';
+import {
+  fundador,
+  listaDeCursos,
+  organizacao,
+  perguntasFrequentes,
+  websiteDoInstituto,
+} from '../lib/schema';
 import { cn } from '../lib/utils';
 
 /**
@@ -128,12 +134,7 @@ function Hero() {
             │  "Matricule-se" do cabeçalho fica fixo o tempo todo.          │
             └───────────────────────────────────────────────────────────────┘ */}
         <div className="grid items-center gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: duration.slow, ease: ease.out }}
-            className="lg:col-start-1 lg:row-start-1"
-          >
+          <Entrada className="lg:col-start-1 lg:row-start-1">
             {/* O selo "Turmas abertas" que ficava aqui subiu para a barra de
                 aviso, que é onde esse tipo de recado é lido. Repetido nos dois
                 lugares, ele só empurrava a manchete para baixo.
@@ -168,17 +169,15 @@ function Hero() {
               clínico. Você treina em pacientes virtuais, com devolutiva a cada intervenção,
               antes do primeiro atendimento real.
             </p>
-          </motion.div>
+          </Entrada>
 
           {/* O espaço do vídeo de boas-vindas.
               Aqui havia três blocos de cor anunciando os eixos — muita área
               nobre para pouca informação ("2 formações"), e no celular eles
               empurravam tudo o mais para baixo da dobra.
               Enquanto não houver vídeo, o retrato ocupa o lugar. */}
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: duration.slow, ease: ease.out, delay: 0.08 }}
+          <Entrada
+            atraso={0.08}
             className="relative lg:col-start-2 lg:row-span-2 lg:row-start-1"
           >
             {midia.boasVindas ? (
@@ -208,14 +207,9 @@ function Hero() {
                 }}
               />
             )}
-          </motion.div>
+          </Entrada>
 
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: duration.slow, ease: ease.out, delay: 0.14 }}
-            className="lg:col-start-1 lg:row-start-2"
-          >
+          <Entrada atraso={0.14} className="lg:col-start-1 lg:row-start-2">
             {/* Os fatos. Vêm antes dos botões de propósito: quem chega ainda
                 está decidindo se o assunto é para ele, e é aqui que descobre. */}
             <ul className="grid gap-x-8 gap-y-3.5 sm:grid-cols-2">
@@ -239,7 +233,7 @@ function Hero() {
                 Experimentar o SENA
               </a>
             </div>
-          </motion.div>
+          </Entrada>
         </div>
 
         {/* ┌───────────────────────────────────────────────────────────────┐
@@ -1283,26 +1277,19 @@ function AcaoFinal() {
 export default function Home() {
   return (
     <>
-      <Helmet>
-        <link rel="canonical" href={`${site.url}/`} />
-        <title>Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching</title>
-        <meta
-          name="description"
-          content="Formações em PNL, Hipnoterapia e Coaching com prática clínica supervisionada no simulador SENA. Certificação NLPEA e IBSDH, acesso vitalício."
-        />
-        <meta
-          property="og:title"
-          content="Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching"
-        />
-        <meta
-          property="og:description"
-          content="Prática clínica supervisionada antes do primeiro atendimento real. Certificação NLPEA e IBSDH."
-        />
-        <meta property="og:image" content={`${site.url}/og-image.png`} />
-        <meta property="og:url" content={`${site.url}/`} />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+      <Seo
+        rota="/"
+        titulo="Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching"
+        descricao="Formações em PNL, Hipnoterapia e Coaching com prática clínica supervisionada no simulador SENA. Certificação NLPEA e IBSDH, acesso vitalício."
+        imagemAlt="Instituto Bruno Sena — formações em PNL, Hipnoterapia e Coaching"
+        dados={[
+          organizacao(),
+          fundador(),
+          websiteDoInstituto(),
+          listaDeCursos(listaCursos),
+          perguntasFrequentes(perguntas),
+        ]}
+      />
 
       <main>
         <Hero />

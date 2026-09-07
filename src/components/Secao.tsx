@@ -1,7 +1,6 @@
-import { motion } from 'motion/react';
-import type { ReactNode } from 'react';
+import { type ReactNode, useRef } from 'react';
 import { type NomeCor, paletas } from '../lib/cores';
-import { revealUp } from '../lib/motion';
+import { useAntesDaPintura } from '../lib/useAntesDaPintura';
 import { cn } from '../lib/utils';
 
 /**
@@ -128,8 +127,36 @@ export function Cabecalho({
 
 /**
  * Envelope que revela o conteúdo ao entrar na área visível.
- * `once` para não reanimar quem rola de volta, e margem negativa para
- * disparar um pouco antes de o bloco encostar na borda.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE ISTO NÃO USA MAIS `motion` COM `initial="hidden"`            │
+ * │                                                                       │
+ * │  Era um `motion.div` com `initial="hidden"` e `whileInView`. Enquanto │
+ * │  o site montava tudo no navegador, isso não custava nada: o HTML      │
+ * │  chegava vazio e ninguém via o estado inicial.                        │
+ * │                                                                       │
+ * │  Com a pré-renderização, o estado inicial passou a ser gravado no     │
+ * │  HTML: 34 blocos da home saíam com `style="opacity:0"` embutido. O    │
+ * │  efeito, medido num navegador sem cabeça, era que 48% do texto da     │
+ * │  home ficava invisível para quem renderiza sem rolar a página — e     │
+ * │  28% mesmo num viewport de 9000px, parecido com o que o Googlebot     │
+ * │  usa. O que sumia não era enfeite: depoimentos, as certificações e a  │
+ * │  lista de onde os formados atuam.                                     │
+ * │                                                                       │
+ * │  A inversão resolve isso sem tirar a animação de ninguém:             │
+ * │                                                                       │
+ * │  · O HTML sai VISÍVEL. Nenhum estilo de opacidade é renderizado, no   │
+ * │    servidor ou na primeira pintura do cliente — então a hidratação    │
+ * │    também continua batendo.                                           │
+ * │  · Quem tem JavaScript esconde o bloco em `useLayoutEffect`, que roda │
+ * │    ANTES da pintura. Não há lampejo: o visitante nunca vê o conteúdo  │
+ * │    aparecer e sumir.                                                  │
+ * │  · Quem não tem JavaScript, ou não tem IntersectionObserver, fica com │
+ * │    o conteúdo visível para sempre. O pior caso é não ter animação —   │
+ * │    não é perder o texto.                                              │
+ * └───────────────────────────────────────────────────────────────────────┘
+ *
+ * A animação em si vive em `index.css`, nos seletores `[data-revela]`.
  */
 export function Revela({
   children,
@@ -141,16 +168,43 @@ export function Revela({
   /** Atraso em segundos, para escalonar uma sequência de blocos */
   atraso?: number;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useAntesDaPintura(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    /* Sem IntersectionObserver não há como saber quando revelar, e um
+       bloco escondido para sempre é pior do que um bloco sem animação. */
+    if (typeof IntersectionObserver === 'undefined') return;
+
+    /* Quem pediu menos movimento no sistema não recebe nem o estado
+       escondido: o conteúdo simplesmente já está lá. */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    el.dataset.revela = 'oculto';
+    if (atraso) el.style.transitionDelay = `${atraso}s`;
+
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        for (const entrada of entradas) {
+          if (!entrada.isIntersecting) continue;
+          el.dataset.revela = 'visivel';
+          // `once`: revelado uma vez, não volta a esconder ao rolar de volta.
+          observador.disconnect();
+        }
+      },
+      // A margem negativa dispara um pouco antes de o bloco encostar na borda.
+      { rootMargin: '-60px' },
+    );
+    observador.observe(el);
+
+    return () => observador.disconnect();
+  }, [atraso]);
+
   return (
-    <motion.div
-      variants={revealUp}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ delay: atraso }}
-      className={className}
-    >
+    <div ref={ref} className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }

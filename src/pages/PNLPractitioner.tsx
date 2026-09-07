@@ -1,13 +1,19 @@
-import { Helmet } from '@dr.pogodin/react-helmet';
 import { Link } from 'react-router-dom';
-import { CourseReviews } from '../components/CourseReviews';
+import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
 import Ementa from '../components/Ementa';
 import Faq from '../components/Faq';
 import PaginaCurso, { Comparativo, ListaItens, SecaoCurso } from '../components/PaginaCurso';
 import SenaExplanation from '../components/SenaExplanation';
+import Seo from '../components/Seo';
 import { corDoCurso, courses } from '../config/courses';
 import { contarAulas, curriculoPnlPractitioner, somarCarga } from '../config/curriculos';
-import { routes, site } from '../config/site';
+import { routes } from '../config/site';
+import {
+  cursoComoSchema,
+  organizacao,
+  perguntasFrequentes,
+  trilhaDeNavegacao,
+} from '../lib/schema';
 
 const curso = courses.pnlPractitioner;
 /* A cor da página vem do eixo do curso, nunca do curso em si. */
@@ -102,23 +108,23 @@ const perguntas = [
 export default function PNLPractitioner() {
   return (
     <>
-      <Helmet>
-        <link rel="canonical" href={`${site.url}${routes.pnlPractitioner}`} />
-        <title>Formação PNL Practitioner | Instituto Bruno Sena</title>
-        <meta
-          name="description"
-          content="Formação PNL Practitioner: VAKOG, rapport, ancoragem, metamodelo e submodalidades, com prática ilimitada no simulador SENA e certificação por competência."
-        />
-        <meta property="og:title" content="Formação PNL Practitioner | Instituto Bruno Sena" />
-        <meta
-          property="og:description"
-          content="Do zero à competência em reprogramação mental, com prática supervisionada no simulador SENA."
-        />
-        <meta property="og:image" content={`${site.url}/mockuppnl.webp`} />
-        <meta property="og:url" content={`${site.url}${routes.pnlPractitioner}`} />
-        <meta property="og:type" content="article" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+      <Seo
+        rota={routes.pnlPractitioner}
+        titulo="Formação PNL Practitioner | Instituto Bruno Sena"
+        descricao="Formação PNL Practitioner: VAKOG, rapport, ancoragem, metamodelo e submodalidades, com prática ilimitada no simulador SENA e certificação por competência."
+        imagem="/capa-practitioner.webp"
+        imagemAlt="Arte da formação PNL Practitioner do Instituto Bruno Sena"
+        dados={[
+          organizacao(),
+          cursoComoSchema(curso),
+          trilhaDeNavegacao([
+            { nome: 'Início', rota: routes.home },
+            { nome: 'Formações', rota: routes.formacoes },
+            { nome: 'PNL Practitioner', rota: routes.pnlPractitioner },
+          ]),
+          perguntasFrequentes(perguntas),
+        ]}
+      />
 
       <PaginaCurso
         curso={curso}
@@ -320,7 +326,7 @@ export default function PNLPractitioner() {
         </SecaoCurso>
 
         <SecaoCurso cor={cor} sobretitulo="Avaliações">
-          <CourseReviews courseId={curso.slug} />
+          <AvaliacoesDoCurso courseId={curso.slug} />
         </SecaoCurso>
       </PaginaCurso>
     </>

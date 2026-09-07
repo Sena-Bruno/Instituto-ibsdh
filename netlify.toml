@@ -9,13 +9,44 @@
   # mudança no código.
   NODE_VERSION = "22"
 
-# SPA: todas as rotas são resolvidas pelo React Router no navegador.
-# Sem este redirecionamento, abrir /hipnoterapia direto (ou o Google
-# rastrear a URL) devolve 404, porque não existe esse arquivo no servidor.
+# ── Canonicalização de host ────────────────────────────────────────────────
+#
+# O mesmo site em `www.` e sem `www.` são dois sites para o rastreador, e a
+# autoridade acumulada por links externos se divide entre os dois. O 301
+# resolve o desempate de uma vez: transfere o peso do endereço antigo e
+# ensina o robô a esquecer a variante.
+#
+# O HTTPS o Netlify já força sozinho, com 301, em todos os domínios que
+# gerencia — por isso não há regra de protocolo aqui.
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "https://www.institutobrunosena.com.br/*"
+  to = "https://institutobrunosena.com.br/:splat"
+  status = 301
+  force = true
+
+# ── Rotas do painel interno ────────────────────────────────────────────────
+#
+# NÃO existe mais o `/*  →  /index.html  200` que havia aqui.
+#
+# Aquela regra era necessária quando o site era uma SPA pura: nenhum
+# endereço tinha arquivo próprio, e sem o fallback abrir `/hipnoterapia`
+# direto devolvia 404. Agora o build pré-renderiza um arquivo HTML por rota
+# (`scripts/prerender.mjs`), então cada endereço real existe em disco e é
+# servido diretamente — com o conteúdo já dentro da resposta.
+#
+# Manter o fallback teria um custo: qualquer endereço inventado passaria a
+# responder 200 com a home dentro. É o "soft 404" — o Google indexa uma
+# quantidade indefinida de URLs que não existem, todas com o mesmo conteúdo,
+# e gasta nelas o orçamento de rastreio que deveria ir para as páginas reais.
+# Sem a regra, o Netlify devolve o `404.html` gerado no build, com status 404
+# de verdade.
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
   status = 200
+
+# ── Cache ──────────────────────────────────────────────────────────────────
 
 # Os arquivos em /assets levam hash no nome, então nunca mudam de
 # conteúdo: podem ser guardados em cache para sempre.
@@ -24,9 +55,49 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# As fontes também são imutáveis na prática: trocar de fonte significa
+# trocar de arquivo. Sem esta regra, cada visita revalida quatro woff2 que
+# nunca mudaram — e a fonte é bloqueante para a primeira pintura de texto.
+[[headers]]
+  for = "/fontes/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# As artes das formações mudam de vez em quando, mas não de hora em hora:
+# uma semana de cache com revalidação em segundo plano tira as imagens do
+# caminho crítico sem congelar uma troca de capa por um ano.
+[[headers]]
+  for = "*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+# O HTML NÃO entra em cache longo. Ele agora carrega o conteúdo da página,
+# o canônico e os dados estruturados: se ficar congelado no navegador ou no
+# CDN, uma correção de preço ou de texto continua sendo servida errada.
+# `must-revalidate` obriga a checar a cada visita — a resposta é 304 e
+# custa quase nada quando nada mudou.
 [[headers]]
   for = "/*"
   [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "SAMEORIGIN"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+    # HSTS: o navegador passa a exigir HTTPS neste domínio por um ano, sem
+    # nem tentar a versão insegura. Fecha a janela do primeiro acesso, em
+    # que o pedido ainda sai em HTTP e só depois é redirecionado — que é
+    # exatamente onde um redirecionamento pode ser sequestrado.
+    #
+    # `preload` está declarado, mas só passa a valer depois de submeter o
+    # domínio em hstspreload.org. Antes de submeter, confirme que TODOS os
+    # subdomínios servem HTTPS: a lista é embutida nos navegadores e sair
+    # dela leva meses.
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Content-Type = "application/xml; charset=utf-8"

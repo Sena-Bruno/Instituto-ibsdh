@@ -77,6 +77,19 @@ export default function SiteFooter() {
               >
                 Ver o catálogo completo →
               </Link>
+              {/*
+                Os artigos precisam de um link permanente em toda página.
+                Um endereço que só aparece no sitemap é descoberto uma vez
+                e nunca mais visitado pelo rastreador; ligado ao rodapé, ele
+                é encontrado a partir de qualquer página do site e recebe
+                parte da autoridade que as páginas de formação já têm.
+              */}
+              <Link
+                to={routes.artigos}
+                className="inline-block pt-1 text-[13.5px] font-semibold text-brand-accent transition-colors hover:text-brand-accent-light"
+              >
+                Artigos →
+              </Link>
             </div>
           </nav>
 
