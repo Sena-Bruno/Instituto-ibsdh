@@ -113,11 +113,26 @@ function Hero() {
       />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
+        {/* ┌───────────────────────────────────────────────────────────────┐
+            │  O HERO TEM TRÊS BLOCOS, E A ORDEM MUDA COM A LARGURA         │
+            │                                                               │
+            │  No desktop são duas colunas: o texto ocupa as duas linhas    │
+            │  da esquerda e o vídeo ocupa a coluna da direita inteira,     │
+            │  centralizado — exatamente o que havia antes.                 │
+            │                                                               │
+            │  No celular vira uma coluna só, e aí a ordem do HTML importa: │
+            │  promessa, vídeo, fatos, botões. Antes o vídeo era o último   │
+            │  item do hero e só aparecia a 930px do topo, depois de tudo.  │
+            │  Vídeo do fundador logo abaixo da promessa é onde ele traba-  │
+            │  lha; os fatos e os botões continuam logo em seguida, e o     │
+            │  "Matricule-se" do cabeçalho fica fixo o tempo todo.          │
+            └───────────────────────────────────────────────────────────────┘ */}
+        <div className="grid items-center gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: duration.slow, ease: ease.out }}
+            className="lg:col-start-1 lg:row-start-1"
           >
             {/* O selo "Turmas abertas" que ficava aqui subiu para a barra de
                 aviso, que é onde esse tipo de recado é lido. Repetido nos dois
@@ -153,10 +168,57 @@ function Hero() {
               clínico. Você treina em pacientes virtuais, com devolutiva a cada intervenção,
               antes do primeiro atendimento real.
             </p>
+          </motion.div>
 
+          {/* O espaço do vídeo de boas-vindas.
+              Aqui havia três blocos de cor anunciando os eixos — muita área
+              nobre para pouca informação ("2 formações"), e no celular eles
+              empurravam tudo o mais para baixo da dobra.
+              Enquanto não houver vídeo, o retrato ocupa o lugar. */}
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: duration.slow, ease: ease.out, delay: 0.08 }}
+            className="relative lg:col-start-2 lg:row-span-2 lg:row-start-1"
+          >
+            {midia.boasVindas ? (
+              /* A capa é composta (`capa-boas-vindas.webp`), não o retrato
+                 solto: o retrato é 3:4 fechado no rosto e, recortado para
+                 16:9, corta o Bruno na altura dos olhos. A capa põe o rosto
+                 inteiro à direita e deixa o meio escuro, que é onde cai o
+                 botão de play. */
+              <VideoPlayer
+                video={midia.boasVindas}
+                titulo="Bruno Sena — boas-vindas ao instituto"
+                posterAlternativo="/capa-boas-vindas.webp"
+              />
+            ) : (
+              <img
+                src="/brunosena.webp"
+                alt="Bruno Sena, fundador do Instituto"
+                width={900}
+                height={1206}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                className="w-full rounded-[22px] object-cover"
+                style={{
+                  WebkitMaskImage: 'linear-gradient(to bottom, black 78%, transparent 100%)',
+                  maskImage: 'linear-gradient(to bottom, black 78%, transparent 100%)',
+                }}
+              />
+            )}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: duration.slow, ease: ease.out, delay: 0.14 }}
+            className="lg:col-start-1 lg:row-start-2"
+          >
             {/* Os fatos. Vêm antes dos botões de propósito: quem chega ainda
                 está decidindo se o assunto é para ele, e é aqui que descobre. */}
-            <ul className="mt-9 grid gap-x-8 gap-y-3.5 sm:grid-cols-2">
+            <ul className="grid gap-x-8 gap-y-3.5 sm:grid-cols-2">
               {fatos.map((fato) => (
                 <li key={fato.texto} className="fato">
                   <fato.icone
@@ -178,37 +240,6 @@ function Hero() {
               </a>
             </div>
           </motion.div>
-
-          {/* O espaço do vídeo de boas-vindas.
-              Aqui havia três blocos de cor anunciando os eixos — muita área
-              nobre para pouca informação ("2 formações"), e no celular eles
-              empurravam tudo o mais para baixo da dobra.
-              Enquanto não houver vídeo, o retrato ocupa o lugar: é ele que
-              serve de capa quando o vídeo chegar. */}
-          <div className="relative">
-            {midia.boasVindas ? (
-              <VideoPlayer
-                video={midia.boasVindas}
-                titulo="Bruno Sena — boas-vindas ao instituto"
-                posterAlternativo="/brunosena.webp"
-              />
-            ) : (
-              <img
-                src="/brunosena.webp"
-                alt="Bruno Sena, fundador do Instituto"
-                width={900}
-                height={1206}
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                className="w-full rounded-[22px] object-cover"
-                style={{
-                  WebkitMaskImage: 'linear-gradient(to bottom, black 78%, transparent 100%)',
-                  maskImage: 'linear-gradient(to bottom, black 78%, transparent 100%)',
-                }}
-              />
-            )}
-          </div>
         </div>
 
         {/* ┌───────────────────────────────────────────────────────────────┐
