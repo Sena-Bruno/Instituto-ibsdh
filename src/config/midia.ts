@@ -43,8 +43,13 @@ export const midia = {
    * Sugestão de conteúdo, em 60 a 90 segundos: quem é você, por que o
    * instituto existe, e o que a pessoa leva ao final da formação. Sem
    * introdução longa — os primeiros 5 segundos decidem se assistem.
+   *
+   * A capa que aparece antes do play é `/capa-boas-vindas.webp`, definida no
+   * hero e não aqui: ela é a capa DAQUELE espaço, e continua servindo se o
+   * vídeo for trocado por outro. Para dar uma capa só a este vídeo, é só
+   * acrescentar `poster` na linha abaixo — ele ganha da capa do espaço.
    */
-  boasVindas: null as Video | null,
+  boasVindas: { tipo: 'vimeo', id: '1224542693' } as Video | null,
 
   /**
    * A amostra real do SENA, na seção do simulador.
