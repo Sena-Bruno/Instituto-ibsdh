@@ -924,14 +924,19 @@ function Mentor() {
           </blockquote>
 
           <div className="faixa-accent mt-8 flex flex-col items-center gap-6 p-6 sm:flex-row">
-            <div className="w-28 shrink-0">
-              <CourseImage
-                src={undefined}
-                alt="Membro vitalício NLPEA"
-                title="NLPEA"
-                className="aspect-square rounded-[16px]"
-              />
-            </div>
+            {/* O selo da NLPEA. É um PNG com fundo transparente e formato em
+                pé, então entra como <img> direto com `object-contain`, e não
+                pelo CourseImage: aquele recorta para preencher, o que cortaria
+                as estrelas em cima e o rótulo de Practitioner embaixo. */}
+            <img
+              src="/nlpea.webp"
+              alt="Selo de membro vitalício e Practitioner da NLPEA, NLP Association of Excellence"
+              width={460}
+              height={662}
+              loading="lazy"
+              decoding="async"
+              className="h-40 w-auto shrink-0 object-contain sm:h-44"
+            />
             <div>
               <h3 className="mb-2 font-bold text-brand-cream">Membro oficial NLPEA</h3>
               <p className="text-[14px] leading-relaxed">

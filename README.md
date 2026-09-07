@@ -108,6 +108,37 @@ faixas latin e latin-ext foram baixadas — 202 KB no total.
 Para atualizar, refaça a busca no Google Fonts e substitua `src/fontes.css`
 inteiro. Não edite à mão.
 
+### As artes das formações
+
+Cada formação tem **dois** arquivos em `public/`, apontados por `capa` e
+`capaFaixa` em `courses.ts`:
+
+| Arquivo | Onde aparece | Formato |
+|---|---|---|
+| `capa-<curso>.webp` | Página do curso, ao lado do título | Pôster inteiro, em pé, 760px de largura |
+| `capa-<curso>-faixa.webp` | Card na home e no catálogo | Recorte deitado, 860×573 |
+
+São dois porque servem a coisas diferentes. O pôster em pé cabe na página do
+curso, onde há altura para ele e onde o nome impresso na arte é bem-vindo. No
+card ele não serve: deixaria a grade altíssima, e o nome impresso apareceria
+logo acima do nome que o card já escreve — a mesma palavra duas vezes, com
+dois desenhos diferentes. Por isso a faixa mostra só o grafismo.
+
+**Para acrescentar a arte de uma formação nova:**
+
+1. Ponha o pôster original em `public/` como `capa-<curso>.webp`, com 760px
+   de largura. Os originais chegam com 1728px e mais de 1,5 MB cada.
+2. Gere a faixa: recorte 3:2, com 6% de margem lateral, centrado onde está o
+   grafismo — entre o nome do instituto, em cima, e o nome da formação,
+   embaixo. A fração exata da altura varia por pôster, então confira o
+   resultado antes de publicar: sobra de texto no topo ou no rodapé do
+   recorte é o erro comum.
+3. Preencha `capa` e `capaFaixa` na entrada do curso em `courses.ts`.
+
+**Curso sem arte não quebra nada.** O card cai na reserva do `CourseImage`,
+que ocupa exatamente a mesma altura e escreve "imagem pendente" — a grade não
+desalinha e fica claro que falta um arquivo. É o caso da Hipnoterapia hoje.
+
 ### Componentes que carregam a linguagem
 
 | Componente | Para quê |
@@ -419,12 +450,18 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
 
 ### Herdadas do projeto original
 
-- **Capas dos cursos.** Seis imagens se perderam na exportação original do
-  projeto: os binários passaram por uma decodificação UTF-8 que destruiu
-  cerca de um quinto de cada arquivo, sem recuperação possível. Enquanto os
-  originais não voltam, `components/CourseImage.tsx` exibe uma placa
-  técnica com o nome no lugar. Para restaurar, basta colocar o arquivo em
-  `public/` e apontar o `src` correspondente.
+- **Capas dos cursos — quase resolvido.** Seis imagens se perderam na
+  exportação original do projeto: os binários passaram por uma decodificação
+  UTF-8 que destruiu cerca de um quinto de cada arquivo, sem recuperação
+  possível.
+
+  O Bruno reenviou as artes do **PNL Practitioner**, do **Master PNL**, do
+  **Coaching** e o selo da **NLPEA**, e as quatro já estão no ar. Continuam
+  faltando duas: a arte da **Hipnoterapia Clínica** e a foto da seção **In
+  Company**. Nas duas, `components/CourseImage.tsx` mostra a reserva com o
+  nome no lugar, mantendo a altura correta.
+
+  Para colocar a da Hipnoterapia, siga "As artes das formações", mais acima.
 - **Projeto do Firebase.** O projeto (`gen-lang-client-…`) e o banco
   (`ai-studio-…`) foram criados automaticamente pela ferramenta que gerou o
   projeto. Funcionam e contêm dados reais, mas o domínio de autenticação

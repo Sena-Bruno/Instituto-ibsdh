@@ -107,50 +107,87 @@ export default function PaginaCurso({
             </ol>
           </nav>
 
-          {selo && <p className={cn('selo mb-6', p.borda, p.tenue, p.texto)}>{selo}</p>}
+          {/* Duas colunas quando há pôster: o texto à esquerda e a arte à
+              direita. Sem pôster o texto ocupa a largura toda, em vez de
+              deixar meia tela vazia esperando um arquivo. */}
+          <div
+            className={cn(
+              'grid items-start gap-12',
+              curso.capa && 'lg:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:gap-16',
+            )}
+          >
+            <div className="min-w-0">
+              {selo && <p className={cn('selo mb-6', p.borda, p.tenue, p.texto)}>{selo}</p>}
 
-          {aviso && (
-            <p className="selo mb-6 border-brand-danger/35 bg-brand-danger/10 text-brand-danger normal-case tracking-normal">
-              {aviso}
-            </p>
-          )}
-
-          <h1 className="titulo-hero max-w-4xl">{titulo}</h1>
-
-          <div className="mt-6 max-w-2xl text-[17.5px] leading-relaxed md:text-lg">
-            {resumo}
-          </div>
-
-          {/* Os fatos da formação, logo abaixo da promessa — o mesmo padrão do
-              hero da home, e o mesmo das cinco referências. Sai tudo de
-              `courses.ts`: carga, aulas e certificado. Um curso sem esses
-              campos preenchidos simplesmente não mostra a linha, em vez de
-              mostrar um espaço vazio ou um traço. */}
-          {fatosDoCurso.length > 0 && (
-            <ul className="mt-8 flex max-w-3xl flex-wrap gap-x-8 gap-y-3">
-              {fatosDoCurso.map((fato) => (
-                <li key={fato.texto} className="fato">
-                  <fato.icone
-                    size={17}
-                    aria-hidden="true"
-                    className={cn('mt-px shrink-0', p.texto)}
-                  />
-                  {fato.texto}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {preRequisito && (
-            <div
-              className={cn(
-                'mt-8 max-w-2xl rounded-[18px] border bg-gradient-to-br from-white/[0.04] to-transparent p-6',
-                p.borda,
+              {aviso && (
+                <p className="selo mb-6 border-brand-danger/35 bg-brand-danger/10 text-brand-danger normal-case tracking-normal">
+                  {aviso}
+                </p>
               )}
-            >
-              {preRequisito}
+
+              <h1 className="titulo-hero max-w-4xl">{titulo}</h1>
+
+              <div className="mt-6 max-w-2xl text-[17.5px] leading-relaxed md:text-lg">
+                {resumo}
+              </div>
+
+              {/* Os fatos da formação, logo abaixo da promessa — o mesmo padrão
+                  do hero da home, e o mesmo das cinco referências. Sai tudo de
+                  `courses.ts`: carga, aulas e certificado. Um curso sem esses
+                  campos preenchidos simplesmente não mostra a linha, em vez de
+                  mostrar um espaço vazio ou um traço. */}
+              {fatosDoCurso.length > 0 && (
+                <ul className="mt-8 flex max-w-3xl flex-wrap gap-x-8 gap-y-3">
+                  {fatosDoCurso.map((fato) => (
+                    <li key={fato.texto} className="fato">
+                      <fato.icone
+                        size={17}
+                        aria-hidden="true"
+                        className={cn('mt-px shrink-0', p.texto)}
+                      />
+                      {fato.texto}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {preRequisito && (
+                <div
+                  className={cn(
+                    'mt-8 max-w-2xl rounded-[18px] border bg-gradient-to-br from-white/[0.04] to-transparent p-6',
+                    p.borda,
+                  )}
+                >
+                  {preRequisito}
+                </div>
+              )}
             </div>
-          )}
+
+            {/* O pôster inteiro, em pé. Aqui há altura para ele, e o nome
+                impresso na arte não repete nada: o <h1> ao lado é a mesma
+                informação chegando pelo outro olho. No celular ele fica
+                acima do texto, com largura limitada para não empurrar a
+                promessa para fora da primeira tela. */}
+            {curso.capa && (
+              <div
+                className={cn(
+                  'mx-auto w-full max-w-[260px] overflow-hidden rounded-[20px] border shadow-[0_24px_60px_rgba(0,0,0,0.5)] lg:sticky lg:top-28 lg:mx-0 lg:max-w-none',
+                  p.borda,
+                )}
+              >
+                <img
+                  src={curso.capa}
+                  alt={`Arte da formação ${curso.title}`}
+                  width={760}
+                  height={1085}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="block w-full"
+                />
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
