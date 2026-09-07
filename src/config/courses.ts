@@ -286,3 +286,29 @@ export const combos = {
     checkout: undefined as string | undefined,
   },
 } as const;
+
+/**
+ * A diferença entre o preço "de" e o preço à vista, já formatada em reais.
+ *
+ * Existe porque a economia da Trilogia estava escrita à mão no JSX da home
+ * ("R$ 338 a menos"), enquanto os dois preços que a produzem moram aqui.
+ * Preço escrito à mão em dois lugares é preço que diverge no dia em que um
+ * dos dois muda — e nenhum teste pega, porque os dois são texto válido.
+ *
+ * Devolve `undefined` quando não há `priceFrom` ou quando a conta não fecha
+ * num desconto: nesse caso a linha some, em vez de anunciar "economia de
+ * R$ 0,00".
+ */
+export function economiaDe(curso: { price: string; priceFrom?: string }): string | undefined {
+  const emCentavos = (v: string) => {
+    const n = Number.parseFloat(v.replace(/[^\d,]/g, '').replace(',', '.'));
+    return Number.isFinite(n) ? Math.round(n * 100) : Number.NaN;
+  };
+  if (!curso.priceFrom) return undefined;
+  const diferenca = emCentavos(curso.priceFrom) - emCentavos(curso.price);
+  if (!Number.isFinite(diferenca) || diferenca <= 0) return undefined;
+  return (diferenca / 100).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+}

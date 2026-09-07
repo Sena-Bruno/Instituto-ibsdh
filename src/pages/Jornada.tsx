@@ -201,19 +201,35 @@ export default function Jornada() {
                   {nivel.titulo}
                 </h3>
 
+                {/* A PARCELA É O NÚMERO GRANDE, não o preço à vista.
+                    Estava invertido: o total aparecia em 32px e o 12x numa
+                    linha de apoio. Quem decide entre pacotes compara a
+                    parcela, porque é ela que cabe ou não no mês; o total é
+                    a informação que confirma a compra, não a que a começa.
+                    O à vista continua logo abaixo, sem esconder nada. */}
                 <div className="mt-5 border-y border-white/10 py-5">
                   {nivel.precoDe && (
                     <p className="text-[13.5px] text-brand-quiet line-through">
                       De {nivel.precoDe}
                     </p>
                   )}
-                  <p className="mt-1 font-display text-[32px] leading-none font-extrabold tracking-[-0.02em] text-brand-cream">
-                    {nivel.preco}
-                  </p>
-                  <p className="mt-2 text-[13.5px] text-brand-accent">
-                    {nivel.parcela && <>12x {nivel.parcela}</>}
-                    {nivel.economia && <> · economia de {nivel.economia}</>}
-                  </p>
+                  {nivel.parcela ? (
+                    <>
+                      <p className="mt-1 font-display text-[34px] leading-none font-extrabold text-brand-cream">
+                        12x {nivel.parcela}
+                      </p>
+                      <p className="mt-2 text-[13.5px]">ou {nivel.preco} à vista</p>
+                    </>
+                  ) : (
+                    <p className="mt-1 font-display text-[34px] leading-none font-extrabold text-brand-cream">
+                      {nivel.preco}
+                    </p>
+                  )}
+                  {nivel.economia && (
+                    <p className="mt-2 text-[13.5px] text-brand-accent">
+                      Economia de {nivel.economia}
+                    </p>
+                  )}
                 </div>
 
                 <p className="sobretitulo mt-6 mb-3 text-brand-accent">Inclui</p>

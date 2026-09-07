@@ -27,8 +27,8 @@ import Numeros from '../components/Numeros';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import SenaSimulador from '../components/SenaSimulador';
 import VideoPlayer from '../components/Video';
-import { courses, eixosComCurso, listaCursos } from '../config/courses';
-import { depoimentos, depoimentosComVideo } from '../config/depoimentos';
+import { courses, economiaDe, eixosComCurso, listaCursos } from '../config/courses';
+import { depoimentos } from '../config/depoimentos';
 import { midia } from '../config/midia';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
@@ -438,6 +438,8 @@ const icones: Record<string, ReactNode> = {
 const vitrine = listaCursos.filter((curso) => curso.destaque);
 
 function Cursos() {
+  const economiaDaTrilogia = economiaDe(courses.trilogia);
+
   return (
     <Secao id="cursos" cor="accent" brilho brilhoEm="topo">
       <Cabecalho
@@ -464,22 +466,50 @@ function Cursos() {
         </Link>
       </div>
 
-      {/* A Trilogia */}
-      <div className="faixa-accent mt-10 flex flex-col gap-7 p-8 md:flex-row md:items-center md:justify-between md:p-12">
-        <div>
-          <p className="sobretitulo mb-3 text-brand-accent">Pacote completo</p>
+      {/* ┌───────────────────────────────────────────────────────────────┐
+          │  A TRILOGIA ABRE PELA PARCELA, NÃO PELO TOTAL                 │
+          │                                                               │
+          │  Antes o bloco dizia "juntos por R$ 1.353,00" no meio de uma  │
+          │  frase. Mil e trezentos lidos de uma vez é o número que faz a │
+          │  pessoa fechar a aba — mesmo sendo, aqui, o mais barato dos   │
+          │  caminhos. A parcela é o que ela consegue comparar com o      │
+          │  próprio mês, e o total continua logo abaixo, sem esconder.   │
+          │                                                               │
+          │  A economia é CALCULADA a partir de `priceFrom` e `price` em  │
+          │  `courses.ts`, e não escrita à mão como estava ("R$ 338").    │
+          │  Preço escrito à mão em dois lugares é preço que diverge no   │
+          │  dia em que um dos dois muda.                                 │
+          └───────────────────────────────────────────────────────────────┘ */}
+      <div className="faixa-accent mt-10 flex flex-col gap-8 p-8 md:flex-row md:items-center md:justify-between md:p-12">
+        <div className="min-w-0">
+          <p className="sobretitulo mb-3">Pacote completo</p>
           <h3 className="font-display text-[28px] font-bold text-brand-cream md:text-[34px]">
             Trilogia IBSDH
           </h3>
-          <p className="mt-3 max-w-xl leading-relaxed">
-            Practitioner, Hipnoterapia e Master PNL juntos por{' '}
-            <strong className="text-brand-cream">{courses.trilogia.price}</strong> — R$ 338 a
-            menos do que a soma das três matrículas separadas.
+          <p className="mt-3 max-w-lg leading-relaxed">
+            Practitioner, Hipnoterapia e Master PNL juntos, com os três certificados.
           </p>
         </div>
-        <Link to={courses.trilogia.route} className="btn-primary shrink-0">
-          Ver a Trilogia <ArrowRight size={17} aria-hidden="true" />
-        </Link>
+
+        <div className="shrink-0 md:text-right">
+          {courses.trilogia.priceFrom && (
+            <p className="text-[13.5px] text-brand-quiet line-through">
+              De {courses.trilogia.priceFrom}
+            </p>
+          )}
+          <p className="mt-1 font-display text-[38px] leading-none font-extrabold text-brand-cream md:text-[44px]">
+            12x {courses.trilogia.installment}
+          </p>
+          <p className="mt-2 text-[14px]">ou {courses.trilogia.price} à vista</p>
+          {economiaDaTrilogia && (
+            <p className="mt-2 text-[13.5px] font-bold text-brand-accent">
+              Economia de {economiaDaTrilogia} sobre as três matrículas separadas
+            </p>
+          )}
+          <Link to={courses.trilogia.route} className="btn-primary mt-6 w-full md:w-auto">
+            Ver a Trilogia <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        </div>
       </div>
 
       <div className="cartao mt-6 p-7 text-center md:p-8">
@@ -731,8 +761,6 @@ function PagamentoSeguro() {
 /* ── Depoimentos ──────────────────────────────────────────────────────────── */
 
 function Depoimentos() {
-  const comVideo = depoimentosComVideo;
-
   return (
     <Secao id="depoimentos" cor="blue" brilho brilhoEm="esquerda" elevada>
       <Cabecalho
@@ -741,52 +769,29 @@ function Depoimentos() {
         titulo="O que acontece quando você aplica o método"
         centralizado
       >
-        {comVideo.length > 0
-          ? 'Alunos contando, com as próprias palavras, o que mudou depois da formação.'
-          : 'Resultados de alunos que aplicaram as técnicas de PNL e Hipnoterapia nas suas vidas e profissões.'}
+        Alunos contando, com as próprias palavras, o que mudou depois da formação.
       </Cabecalho>
 
       {/* ┌───────────────────────────────────────────────────────────────┐
-          │  A SEÇÃO TEM DUAS FORMAS, E ESCOLHE SOZINHA                   │
+          │  A MOLDURA DE CELULAR APARECE SEMPRE                          │
           │                                                               │
-          │  Havendo depoimento com vídeo, entram os celulares — o        │
-          │  formato da referência do Instituto Mix. Não havendo, ficam   │
-          │  as citações, como antes.                                     │
+          │  A primeira versão desta seção só trocava de formato quando   │
+          │  houvesse vídeo preenchido. Como não há nenhum gravado ainda, │
+          │  na prática a página continuava idêntica à de antes — o       │
+          │  formato novo existia só no código.                           │
           │                                                               │
-          │  Não existe meio-termo com moldura vazia esperando arquivo:   │
-          │  celular sem vídeo dentro anuncia o que falta em vez de       │
-          │  mostrar o que existe.                                        │
+          │  Agora o celular aparece sempre. Sem vídeo, ele mostra a      │
+          │  citação como um post; com vídeo, mostra o quadro de abertura │
+          │  e o play. A troca é por aluno, e acontece sozinha ao         │
+          │  preencher `video` em `config/depoimentos.ts`.                │
           └───────────────────────────────────────────────────────────────┘ */}
-      {comVideo.length > 0 ? (
-        <div className="mt-14 grid justify-items-center gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {comVideo.map((dep, i) => (
-            <Revela key={dep.id} atraso={(i % 3) * 0.07}>
-              <DepoimentoVideo dep={dep} />
-            </Revela>
-          ))}
-        </div>
-      ) : (
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {depoimentos.map((dep, i) => (
-            <Revela key={dep.id} atraso={(i % 3) * 0.07} className="h-full">
-              <figure className="cartao flex h-full flex-col p-7 hover:border-brand-blue/35">
-                <blockquote className="mb-7 flex-1 text-[15.5px] leading-relaxed text-brand-platinum">
-                  “{dep.texto}”
-                </blockquote>
-                <figcaption className="flex items-center gap-3.5">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-brand-blue/25 bg-brand-blue/10 font-display text-[13px] font-bold text-brand-blue">
-                    {dep.iniciais}
-                  </span>
-                  <span>
-                    <span className="block font-bold text-brand-cream">{dep.nome}</span>
-                    <span className="block text-[13px] text-brand-quiet">{dep.papel}</span>
-                  </span>
-                </figcaption>
-              </figure>
-            </Revela>
-          ))}
-        </div>
-      )}
+      <div className="mt-14 grid justify-items-center gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+        {depoimentos.map((dep, i) => (
+          <Revela key={dep.id} atraso={(i % 3) * 0.07} className="w-full">
+            <DepoimentoVideo dep={dep} />
+          </Revela>
+        ))}
+      </div>
     </Secao>
   );
 }
@@ -1069,12 +1074,19 @@ function InCompany() {
         </div>
 
         <Revela>
+          {/* A foto chegou e substitui a reserva "imagem pendente".
+              A proporção deixou de ser quadrada: a original é deitada, e
+              recortada para o quadrado perdia metade da mesa — que é
+              justamente o que a foto tem para mostrar, uma sala com gente
+              dentro. */}
           <div className="overflow-hidden rounded-[22px] border border-brand-emerald/20">
             <CourseImage
-              src={undefined}
-              alt="Treinamento corporativo in company"
+              src="/in-company.webp"
+              alt="Treinamento corporativo em andamento: uma facilitadora conduz uma equipe reunida em torno da mesa, diante de uma apresentação sobre engajamento, liderança e inteligência emocional"
               title="Treinamentos In Company"
-              className="aspect-square"
+              className="aspect-[16/11]"
+              width={1120}
+              height={611}
             />
           </div>
         </Revela>
