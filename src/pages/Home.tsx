@@ -12,6 +12,7 @@ import {
   Instagram,
   Leaf,
   Lock,
+  Mail,
   ShieldCheck,
   Sparkles,
   Stethoscope,
@@ -36,7 +37,14 @@ import { courses, economiaDe, eixosComCurso, listaCursos } from '../config/cours
 import { depoimentos } from '../config/depoimentos';
 import { midia } from '../config/midia';
 import { meiosPagamento } from '../config/pagamento';
-import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
+import {
+  emailSubjects,
+  mailtoLink,
+  routes,
+  site,
+  whatsappLink,
+  whatsappMessages,
+} from '../config/site';
 import { paletas } from '../lib/cores';
 import {
   fundador,
@@ -1146,14 +1154,29 @@ function InCompany() {
             ))}
           </ul>
 
-          <a
-            href={whatsappLink(whatsappMessages.inCompany)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-emerald mt-10"
-          >
-            Solicitar proposta <ArrowRight size={17} aria-hidden="true" />
-          </a>
+          {/* Dois caminhos, de propósito. O WhatsApp continua sendo o
+              principal, mas quem compra treinamento corporativo quase nunca
+              é quem decide sozinho: o pedido precisa circular por escrito
+              dentro da empresa, e muita rede corporativa bloqueia o
+              WhatsApp. Sem o e-mail aqui, esse contato — o de maior valor
+              do site — simplesmente não tinha por onde chegar. */}
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <a
+              href={whatsappLink(whatsappMessages.inCompany)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-emerald"
+            >
+              Solicitar proposta <ArrowRight size={17} aria-hidden="true" />
+            </a>
+            <a
+              href={mailtoLink(site.email.partnerships, emailSubjects.inCompany)}
+              className="inline-flex items-center gap-2.5 text-[14.5px] text-brand-platinum transition-colors hover:text-brand-cream"
+            >
+              <Mail size={17} aria-hidden="true" className="text-brand-emerald" />
+              {site.email.partnerships}
+            </a>
+          </div>
         </div>
 
         <Revela>
