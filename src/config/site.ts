@@ -128,6 +128,13 @@ export const routes = {
   formacoes: '/formacoes',
   /** A lista de artigos. Cada artigo mora em `/artigos/<slug>`. */
   artigos: '/artigos',
+  /**
+   * Os materiais entregues em troca de contato. Cada um mora em
+   * `/materiais/<id>`; não existe índice em `/materiais`, e é de
+   * propósito: a página é `noindex`, fica fora do sitemap e se chega a
+   * ela pelo formulário do artigo. Ver `config/materiais.ts`.
+   */
+  materiais: '/materiais',
   pnlPractitioner: '/pnl-practitioner',
   masterPnl: '/master-pnl',
   hipnoterapia: '/hipnoterapia',

@@ -26,6 +26,7 @@ export default function VideoPlayer({
   titulo,
   cor = 'accent',
   posterAlternativo,
+  capaPrioritaria = false,
   className,
 }: {
   video: Video;
@@ -34,6 +35,29 @@ export default function VideoPlayer({
   cor?: NomeCor;
   /** Imagem usada quando o vídeo não traz `poster` */
   posterAlternativo?: string;
+  /**
+   * Marca a capa como o elemento que abre a página.
+   *
+   * ┌─────────────────────────────────────────────────────────────────────┐
+   * │  POR QUE ISTO É UMA PROPRIEDADE, E NÃO UMA LINHA NO index.html      │
+   * │                                                                     │
+   * │  A capa do vídeo de boas-vindas era pré-carregada por um            │
+   * │  `<link rel="preload" ... fetchpriority="high">` escrito no          │
+   * │  `index.html` — que é o molde de TODAS as rotas. As 14 páginas do    │
+   * │  site buscavam com prioridade máxima uma imagem que só a home usa.   │
+   * │  Nas outras 13 não era só o desperdício de 41 kB: a etiqueta         │
+   * │  passava à frente, na fila do navegador, da imagem que aquela        │
+   * │  página ia de fato desenhar.                                        │
+   * │                                                                     │
+   * │  Com a marca no próprio <img>, o React 19 emite o preload sozinho —  │
+   * │  e só na rota que renderiza este vídeo. É o mesmo mecanismo que as   │
+   * │  páginas de curso já usam para as suas capas.                       │
+   * │                                                                     │
+   * │  Deixe `false` em todo vídeo abaixo da dobra. Prioridade que se dá   │
+   * │  a tudo não prioriza nada.                                          │
+   * └─────────────────────────────────────────────────────────────────────┘
+   */
+  capaPrioritaria?: boolean;
   className?: string;
 }) {
   const [tocando, setTocando] = useState(false);
@@ -90,6 +114,9 @@ export default function VideoPlayer({
             <img
               src={poster}
               alt=""
+              loading={capaPrioritaria ? 'eager' : 'lazy'}
+              fetchPriority={capaPrioritaria ? 'high' : 'auto'}
+              decoding="async"
               className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transform-none"
             />
           ) : (

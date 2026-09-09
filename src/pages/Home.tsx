@@ -198,6 +198,11 @@ function Hero() {
                 video={midia.boasVindas}
                 titulo="Bruno Sena — boas-vindas ao instituto"
                 posterAlternativo="/capa-boas-vindas.webp"
+                /* Esta capa é o elemento LCP da home — e só da home. O
+                   preload dela era uma linha no `index.html`, e por isso
+                   saía nas 14 rotas do site; aqui ele nasce da própria
+                   imagem, na única rota que a mostra. */
+                capaPrioritaria
               />
             ) : (
               <img

@@ -96,5 +96,34 @@ service cloud.firestore {
       // Ninguém edita nem apaga pelo site; use o console do Firebase.
       allow update, delete: if false;
     }
+
+    // Leads captados pelos artigos, em troca de um material.
+    //
+    // Coleção separada da `waitlist` de propósito: são duas listas com
+    // significados diferentes. Quem entra na lista de espera está
+    // esperando UM curso abrir; quem baixa um material está lendo sobre o
+    // assunto e ainda não escolheu nada. Misturá-las faria a primeira
+    // lista — que é a de quem está mais perto de comprar — perder o
+    // sentido no meio da segunda.
+    //
+    // `origem` é a rota em que a pessoa preencheu o formulário. É o campo
+    // que diz QUAL artigo trouxe o lead, e portanto sobre o que vale a
+    // pena escrever o próximo.
+    function isValidLead(data) {
+      return hasOnlyAllowedFields(['name', 'email', 'materialId', 'origem', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.email is string && data.email.size() > 3 && data.email.size() <= 200 &&
+             data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
+             data.materialId is string && data.materialId.size() > 0 && data.materialId.size() < 100 &&
+             data.origem is string && data.origem.size() > 0 && data.origem.size() <= 200 &&
+             data.createdAt is timestamp;
+    }
+
+    match /leads/{entryId} {
+      // Mesma regra da lista de espera: nome e e-mail são dados pessoais.
+      allow read: if isAdmin();
+      allow create: if isValidLead(request.resource.data);
+      allow update, delete: if false;
+    }
   }
 }

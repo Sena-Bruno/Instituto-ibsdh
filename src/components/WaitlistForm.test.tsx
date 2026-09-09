@@ -4,18 +4,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import WaitlistForm from './WaitlistForm';
 
 /*
-  O Firestore é substituído inteiro: o objetivo é verificar o que o
+  O Firestore (a variante `lite`, que é a que o site público usa) é
+  substituído inteiro: o objetivo é verificar o que o
   componente FAZ com o resultado, não falar com o banco de verdade. Um teste
   que escrevesse na coleção real encheria a lista de espera de lixo a cada
   execução — e a lista é o produto deste formulário.
 */
 const addDoc = vi.hoisted(() => vi.fn());
-vi.mock('firebase/firestore', () => ({
+vi.mock('firebase/firestore/lite', () => ({
   addDoc,
   collection: vi.fn((_db, nome: string) => ({ nome })),
   serverTimestamp: vi.fn(() => 'HORA-DO-SERVIDOR'),
 }));
-vi.mock('../firebase', () => ({ db: {} }));
+vi.mock('../firebase/banco', () => ({ db: {} }));
 
 /**
  * Testes do formulário da lista de espera.
@@ -129,7 +130,11 @@ describe('WaitlistForm', () => {
     expect(JSON.parse(opcoes.body)).toEqual({
       name: 'Maria Silva',
       email: 'maria@exemplo.com',
-      courseId: 'master-coach',
+      /* `tipo` e `referencia` no lugar de `courseId`: a mesma função avisa
+         a lista de espera e a captação de material dos artigos, e é o
+         `tipo` que decide o assunto do e-mail. */
+      tipo: 'lista-de-espera',
+      referencia: 'master-coach',
     });
   });
 
@@ -166,7 +171,7 @@ describe('WaitlistForm', () => {
   });
 
   it('grava na coleção waitlist, e não em outra', async () => {
-    const { collection } = await import('firebase/firestore');
+    const { collection } = await import('firebase/firestore/lite');
     render(<WaitlistForm courseId="master-coach" />);
     await preencherEEnviar();
 

@@ -1,5 +1,9 @@
 /**
- * Avisa o instituto por e-mail quando alguém entra na lista de espera.
+ * Avisa o instituto por e-mail quando um lead entra.
+ *
+ * Serve os dois pontos de captação do site: a lista de espera de um curso
+ * e a troca de contato por um material, no fim dos artigos. O que muda
+ * entre eles é `tipo` e `referencia`; o resto do caminho é o mesmo.
  *
  * Chamada pelo formulário depois que o cadastro já foi gravado no
  * Firestore — o e-mail é só a notificação. Se este envio falhar, o lead
@@ -86,6 +90,25 @@ export function diagnostico(status, corpo, remetente, destinatario) {
   return 'Resposta inesperada do Resend.';
 }
 
+/**
+ * O que cada tipo de captação vira no e-mail.
+ *
+ * Escrito aqui, e não montado com o que vem no pedido: assunto e título
+ * de e-mail são texto que sai em nome do instituto, e texto assim nunca
+ * deve poder ser escrito por quem chama o endpoint.
+ */
+export const ASSUNTOS = {
+  'lista-de-espera': {
+    assunto: 'Novo cadastro na lista de espera',
+    /** O rótulo da terceira linha do corpo. */
+    campo: 'Curso',
+  },
+  material: {
+    assunto: 'Novo lead — material baixado',
+    campo: 'Material',
+  },
+};
+
 export default async (request) => {
   if (request.method !== 'POST') {
     return new Response('Método não permitido', { status: 405 });
@@ -103,20 +126,32 @@ export default async (request) => {
     return new Response('JSON inválido', { status: 400 });
   }
 
-  // Só os três campos esperados, com limite de tamanho. O destinatário
-  // nunca vem do pedido: é sempre NOTIFY_EMAIL, então este endpoint não
-  // pode ser usado para enviar e-mail a terceiros.
-  const name = String(payload?.name ?? '')
-    .trim()
-    .slice(0, 100);
-  const email = String(payload?.email ?? '')
-    .trim()
-    .slice(0, 200);
-  const courseId = String(payload?.courseId ?? '')
-    .trim()
-    .slice(0, 100);
+  // Só os campos esperados, com limite de tamanho. O destinatário nunca
+  // vem do pedido: é sempre NOTIFY_EMAIL, então este endpoint não pode ser
+  // usado para enviar e-mail a terceiros.
+  const texto = (valor, limite) =>
+    String(valor ?? '')
+      .trim()
+      .slice(0, limite);
 
-  if (!name || !email || !courseId || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+  const name = texto(payload?.name, 100);
+  const email = texto(payload?.email, 200);
+  const referencia = texto(payload?.referencia, 100);
+  /* De qual página o cadastro veio. Só a captação por material tem — é o
+     campo que diz qual artigo trouxe o lead. */
+  const origem = texto(payload?.origem, 200);
+  /* `tipo` decide o assunto e o texto do corpo. Fora da lista conhecida,
+     o pedido é recusado: sem isso, um valor inventado viraria assunto de
+     e-mail escrito por quem chamou.
+
+     `Object.hasOwn`, e não `ASSUNTOS[tipo]`: com o acesso direto, um
+     `tipo: "constructor"` passaria pela guarda — a propriedade existe em
+     todo objeto, herdada de Object.prototype — e o e-mail sairia com
+     "undefined" no assunto. */
+  const tipoPedido = texto(payload?.tipo, 40);
+  const tipo = Object.hasOwn(ASSUNTOS, tipoPedido) ? tipoPedido : '';
+
+  if (!name || !email || !referencia || !tipo || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return new Response('Dados inválidos', { status: 400 });
   }
 
@@ -131,13 +166,17 @@ export default async (request) => {
         from,
         to,
         reply_to: email,
-        subject: `Novo cadastro na lista de espera — ${courseId}`,
+        subject: `${ASSUNTOS[tipo].assunto} — ${referencia}`,
         html:
-          `<h2>Novo cadastro na lista de espera</h2>` +
+          `<h2>${escapeHtml(ASSUNTOS[tipo].assunto)}</h2>` +
           `<p><strong>Nome:</strong> ${escapeHtml(name)}</p>` +
           `<p><strong>E-mail:</strong> ${escapeHtml(email)}</p>` +
-          `<p><strong>Curso:</strong> ${escapeHtml(courseId)}</p>` +
-          `<p style="color:#666;font-size:13px">A lista completa fica em /admin.</p>`,
+          `<p><strong>${escapeHtml(ASSUNTOS[tipo].campo)}:</strong> ${escapeHtml(referencia)}</p>` +
+          /* A origem só aparece quando existe. Uma linha "Veio de: —" em
+             todo aviso da lista de espera seria ruído numa mensagem que
+             precisa ser lida de relance no celular. */
+          (origem ? `<p><strong>Veio de:</strong> ${escapeHtml(origem)}</p>` : '') +
+          `<p style="color:#666;font-size:13px">As listas completas ficam em /admin.</p>`,
       }),
     });
 

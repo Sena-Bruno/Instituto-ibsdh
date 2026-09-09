@@ -1,11 +1,13 @@
 import { ArrowLeft } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import CorpoArtigo from '../components/CorpoArtigo';
+import OfertaDeMaterial from '../components/OfertaDeMaterial';
 import Secao, { Cabecalho } from '../components/Secao';
 import Seo from '../components/Seo';
 import { artigoPorSlug } from '../config/artigos';
 import { listaCursos } from '../config/courses';
 import { eixos } from '../config/eixos';
+import { materialParaOEixo } from '../config/materiais';
 import { routes, site } from '../config/site';
 import { paletas } from '../lib/cores';
 import { artigoComoSchema, organizacao, trilhaDeNavegacao } from '../lib/schema';
@@ -44,6 +46,10 @@ export default function Artigo() {
   const p = paletas[cor];
   const rota = `${routes.artigos}/${artigo.slug}`;
   const curso = listaCursos.find((c) => c.route === artigo.cursoRelacionado);
+  /* Rascunho não oferece nada: o texto ainda não foi conferido, e um
+     material entregue a partir dele começaria a relação pedindo o
+     e-mail em troca de uma página que o instituto ainda não assinou. */
+  const material = artigo.revisado ? materialParaOEixo(artigo.eixo) : undefined;
 
   return (
     <>
@@ -118,6 +124,12 @@ export default function Artigo() {
             <div className="mt-12">
               <CorpoArtigo blocos={artigo.corpo} cor={cor} />
             </div>
+
+            {/* A caixa vem DEPOIS do texto, e não antes nem no meio. Quem
+                acabou de ler é quem tem motivo para deixar o e-mail; quem
+                ainda não leu só encontra um obstáculo entre ele e a
+                resposta que veio buscar. */}
+            {material ? <OfertaDeMaterial material={material} origem={rota} /> : null}
           </div>
         </article>
 

@@ -32,13 +32,12 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Elemento LCP da home: a capa do vídeo de boas-vindas.
-         Era `/brunosena.webp`, que desde que o vídeo entrou no hero só
-         aparece lá embaixo, na seção do mentor — o preload buscava 147 kB
-         fora da dobra e deixava a imagem que realmente abre a página na
-         fila comum. Se o vídeo sair de `midia.ts`, o retrato volta ao hero
-         e este href volta com ele. -->
-    <link rel="preload" as="image" href="/capa-boas-vindas.webp" fetchpriority="high" />
+    <!-- Aqui NÃO entra preload de imagem: este arquivo é o molde das 14
+         rotas, e uma imagem prioritária é sempre de UMA página. Havia um,
+         da capa do vídeo da home, e nas outras 13 rotas ele furava a fila
+         na frente da imagem que a página ia realmente desenhar. Cada
+         página marca a sua com `fetchPriority` no próprio <img>, e o React
+         emite o preload — ver `capaPrioritaria` em components/Video.tsx. -->
 
     <!-- Oswald no display e Lato no texto.
 
