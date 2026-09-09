@@ -31,7 +31,10 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/teste/setup.ts'],
-    include: ['src/**/*.test.{ts,tsx}'],
+    /* `netlify/` entra porque a função de aviso de lead tem lógica de
+       diagnóstico que vale testar — ela é o que transforma um 502 mudo em
+       causa escrita no log. */
+    include: ['src/**/*.test.{ts,tsx}', 'netlify/**/*.test.{ts,mjs}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],

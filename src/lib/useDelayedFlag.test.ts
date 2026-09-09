@@ -56,11 +56,37 @@ describe('useDelayedFlag', () => {
     Sem o `clearTimeout` no cleanup, um componente desmontado durante a
     espera dispara `setShow` sobre estado que não existe mais. O React 19
     não avisa mais em console, então isso passaria calado.
+
+    ⚠ A ORDEM DAS DUAS LINHAS É O TESTE. A primeira versão avançava 500ms
+    antes de contar os timers — e aí o timer de 220ms já havia disparado e
+    saído da fila sozinho, então a contagem dava zero com ou sem
+    `clearTimeout`. O teste passava com o cleanup removido, o que o
+    `npm run mutation` mostrou: o mutante que troca o cleanup por
+    `() => undefined` sobrevivia. Contar ANTES de avançar é o que pega.
   */
   it('cancela o timer ao desmontar', () => {
     const { unmount } = renderHook(() => useDelayedFlag(true));
+    expect(vi.getTimerCount()).toBe(1);
     unmount();
-    expect(() => act(() => vi.advanceTimersByTime(500))).not.toThrow();
     expect(vi.getTimerCount()).toBe(0);
+  });
+
+  /*
+    A lista de dependências do efeito. Com `[]` no lugar de
+    `[active, delayMs]`, o efeito não roda de novo quando a condição muda: o
+    indicador que apareceu uma vez nunca mais some, e o atraso passa a valer
+    só para a primeira vez. Trocar o `delayMs` no meio do caminho é o que
+    distingue as duas listas.
+  */
+  it('refaz a espera quando o atraso muda', () => {
+    const { result, rerender } = renderHook(({ ms }) => useDelayedFlag(true, ms), {
+      initialProps: { ms: 1000 },
+    });
+    act(() => vi.advanceTimersByTime(400));
+    expect(result.current).toBe(false);
+
+    rerender({ ms: 100 });
+    act(() => vi.advanceTimersByTime(100));
+    expect(result.current).toBe(true);
   });
 });

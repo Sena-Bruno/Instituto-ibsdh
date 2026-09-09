@@ -1,0 +1,14 @@
+# Só formatação e lint, e só nos arquivos que entram no commit.
+#
+# O `husky init` põe `npm test` aqui por padrão, e isso é a receita para o
+# gancho ser contornado: um pre-commit que roda a suíte inteira leva alguns
+# segundos a cada commit, e alguns segundos repetidos vinte vezes por dia
+# terminam em `--no-verify` — que desliga também o commitlint.
+#
+# Os testes rodam no CI, onde a demora não interrompe ninguém. Aqui fica o
+# que conserta sozinho e em milissegundos.
+npx --no -- biome check --write --staged --no-errors-on-unmatched
+
+# Reinclui o que o Biome corrigiu, senão a correção fica fora do commit —
+# o arquivo no disco passa a divergir do que foi gravado.
+git update-index --again

@@ -12,6 +12,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # As mensagens de commit do PR, verificadas contra commitlint.config.mjs.
+  # Fica em job próprio: é a checagem mais rápida de todas e não depende de
+  # build, então aparece vermelha em segundos em vez de no fim da fila.
+  #
+  # `if` limita ao PR de propósito. Num push para a main o histórico já está
+  # escrito, e reprovar mensagem que não há mais como corrigir só produziria
+  # CI vermelho permanente.
+  mensagens:
+    name: Mensagens de commit
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # O commitlint compara a base com a cabeça do PR, e para isso precisa
+          # do histórico completo — o checkout raso traz um commit só.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Verificar as mensagens do PR
+        run: >-
+          npx commitlint
+          --from ${{ github.event.pull_request.base.sha }}
+          --to ${{ github.event.pull_request.head.sha }}
+          --verbose
+
   qualidade:
     name: Tipos, lint e build
     runs-on: ubuntu-latest
@@ -36,6 +68,13 @@ jobs:
 
       - name: Código e dependências mortas
         run: npx knip --no-config-hints
+
+      # Direção das dependências entre pastas — o que o lint não vê, porque
+      # olha arquivo por arquivo. Pega ciclo, config importando componente e
+      # página importando página (que junta dois chunks e desfaz o code
+      # splitting sem que o build acuse nada).
+      - name: Contrato de arquitetura
+        run: npm run arch
 
       # Antes do build de propósito: os testes rodam em segundos e cobrem a
       # lógica de preço, checkout e captação de lead. Falhar aqui evita

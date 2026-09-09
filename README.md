@@ -205,10 +205,41 @@ aparece e some incomoda mais do que a espera.
 
 ## Qualidade e monitoramento
 
-**CI** (`.github/workflows/ci.yml`) roda em todo PR: tipos, Biome, Knip,
-build e o teste de navegador sobre o build real. Usa `npm ci`, que falha se
-o `package-lock.json` sair de sincronia com o `package.json` — o tipo exato
-de problema que já quebrou um deploy aqui.
+**CI** (`.github/workflows/ci.yml`) roda em todo PR: mensagens de commit,
+tipos, Biome, Knip, contrato de arquitetura, testes com cobertura, build e o
+teste de navegador sobre o build real. Usa `npm ci`, que falha se o
+`package-lock.json` sair de sincronia com o `package.json` — o tipo exato de
+problema que já quebrou um deploy aqui.
+
+### Os testes
+
+| Comando | O que cobre |
+| --- | --- |
+| `npm test` | Vitest: 72 testes de unidade e integração |
+| `npm run test:watch` | O mesmo, reexecutando ao salvar |
+| `npm run test:coverage` | Com cobertura (85% de comandos no alvo) |
+| `npm run smoke` | Navegador real, nas rotas públicas |
+| `npm run arch` | Direção das dependências entre pastas |
+| `npm run mutation` | Teste de mutação (lento, sob demanda) |
+
+**O que os testes de unidade cuidam** é a lógica que decide dinheiro e
+acesso: preço, checkout, quem é administrador, dados estruturados e o
+formulário de captação. São as falhas que ninguém vê acontecer, porque
+continuam produzindo tela plausível quando estão erradas — e as três que
+este site já teve eram exatamente assim: o formulário que descartava todo
+lead com um `alert()` de confirmação, a página que anunciava R$ 997 no topo
+e R$ 397 no checkout, e os botões de compra sem destino.
+
+Um deles merece nota: `src/config/admin.test.ts` compara a lista de UID em
+`config/admin.ts` com a função `isAdmin()` de `firestore.rules`. As duas
+precisam bater, nada além de disciplina as mantinha iguais, e a disciplina
+já falhou. Os dois modos de errar têm sintomas opostos e nenhum é óbvio.
+
+**O que o smoke cuida** é o site montado num navegador: rota, CTA com
+destino, imagem que carrega, movimento, e o HTML que chega a quem não
+executa JavaScript. Coisas que DOM simulado não alcança.
+
+### Ferramentas
 
 **Biome** cobre lint e formatação num binário só. As decisões de regra
 estão em [BIOME.md](./BIOME.md), com o motivo de cada uma.
@@ -218,12 +249,54 @@ estão em [BIOME.md](./BIOME.md), com o motivo de cada uma.
 fumaça e não pode entrar no `package.json`, senão todo build de produção
 baixaria centenas de MB de navegadores.
 
+**dependency-cruiser** (`npm run arch`) guarda a direção das dependências,
+que é o que o lint não vê por olhar arquivo por arquivo: proíbe ciclo,
+`config/` importando componente, `lib/` deixando de ser folha e — o mais
+fácil de fazer sem perceber — uma página importando outra, o que junta os
+dois chunks e desfaz o code splitting por rota sem que o build acuse nada.
+
+**Commitlint** verifica a mensagem de commit. As regras são de higiene, não
+de padrão: o histórico usa dois estilos em partes quase iguais, metade com
+prefixo (`feat:`) e metade em frase imperativa, e exigir o prefixo hoje
+reprovaria metade dos commits que já estão aqui. O arquivo
+`commitlint.config.mjs` explica como ligar Conventional Commits se um dia
+você quiser gerar changelog a partir das mensagens.
+
+**Stryker** (`npm run mutation`) mede se os testes PEGAM defeito, e não
+quanto código eles visitam: altera o código de propósito e vê se algum teste
+reclama. Fica fora do CI porque leva minutos.
+
+Ele já se pagou. O teste "cancela o timer ao desmontar" de `useDelayedFlag`
+**passava com o cleanup do hook removido**: avançava 500ms antes de contar os
+timers, e nesse avanço o timer disparava sozinho e saía da fila — a contagem
+dava zero com ou sem `clearTimeout`. Cobertura de 100% na linha, verificação
+nenhuma. Depois da correção, o arquivo mata 12 de 12 mutantes.
+
+O score total é 27%, e o `stryker.config.json` explica por quê em detalhe: o
+`schema.ts` tem metade das funções sem teste (parte legítima, é por onde
+subir) e outra metade dos mutantes em literais do vocabulário do schema.org,
+que só morreriam com um teste que copiasse o arquivo. O limite de reprovação
+está logo abaixo do medido, para pegar piora — um verificador que nasce
+vermelho é um verificador que todos aprendem a ignorar.
+
 **Sentry** reporta erros de produção — antes, um erro só chegava até o
 instituto se algum visitante avisasse. É opcional: sem `VITE_SENTRY_DSN`
 definido, o Vite elimina o SDK inteiro no build e o custo é zero. Quando
 ativo, o SDK (490 kB) **só é baixado se um erro acontecer** — quem navega
 sem problema nunca paga por ele. Configure `VITE_SENTRY_DSN` em
 *Netlify → Site settings → Environment variables*.
+
+O rastreamento de desempenho fica desligado de propósito, e vale registrar
+por quê: ligá-lo obriga o SDK a carregar em **toda** visita, e o que ele
+mediria — Core Web Vitals — o Search Console já entrega de graça, com dados
+de campo de visitantes reais. Seria 490 kB cobrados de todo mundo para
+duplicar um relatório que já existe.
+
+Datadog, New Relic e OpenTelemetry não entram por um motivo de forma: são
+feitos para rastrear requisição atravessando vários serviços. Este site é
+estático, com uma função serverless — não há trecho distribuído para
+rastrear, e o custo de instrumentação não compraria informação nenhuma que
+o log da função e o Sentry já não deem.
 
 ## Busca e indexação
 
@@ -559,6 +632,41 @@ domínio verificado por você. São dois caminhos:
 O destinatário nunca vem do formulário — é sempre `NOTIFY_EMAIL`, ou o
 contato do instituto —, então o endereço não pode ser usado para disparar
 e-mail a terceiros.
+
+#### ⚠ Estado atual: o aviso não está sendo entregue
+
+Diagnosticado nas variáveis de ambiente do Netlify. Hoje está assim:
+
+| Variável | Valor em produção |
+| --- | --- |
+| `RESEND_API_KEY` | definida |
+| `NOTIFY_FROM` | `onboarding@resend.dev` |
+| `NOTIFY_EMAIL` | não definida → cai em `contato@institutobrunosena.com.br` |
+
+`onboarding@resend.dev` é o remetente de teste do Resend, e ele **só entrega
+para o e-mail dono da conta do Resend**. Como o destinatário é o contato do
+instituto, o Resend recusa o envio e a função responde 502. O cadastro
+continua sendo salvo no Firestore e aparece em `/admin` — só o aviso não sai.
+
+**Para resolver, escolha um caminho:**
+
+1. **Definitivo.** Em *Resend → Domains*, acrescente
+   `institutobrunosena.com.br` e publique os registros DNS que ele indicar.
+   Depois troque `NOTIFY_FROM` para `avisos@institutobrunosena.com.br`. A
+   partir daí o aviso entrega para qualquer destinatário.
+2. **Para funcionar hoje.** Defina `NOTIFY_EMAIL` com o e-mail que é dono da
+   conta do Resend. O remetente de teste consegue entregar para ele. Serve
+   para confirmar que o caminho funciona; não serve em produção, porque o
+   aviso passa a ir para uma caixa pessoal em vez da do instituto.
+
+**Independente disso: troque a `RESEND_API_KEY`.** A chave atual apareceu
+numa captura de tela durante a configuração. Gere outra em *Resend → API
+Keys*, atualize a variável no Netlify e revogue a antiga.
+
+A partir desta versão a função **explica a própria falha**: o log registra
+uma linha JSON com `evento: "aviso-de-lead-recusado"`, o status do Resend e
+um campo `causa` em português dizendo o que corrigir. Antes era um 502 mudo,
+e descobrir o motivo exigiu inspecionar a configuração à mão.
 
 O aviso é uma conveniência, não o registro: quem guarda os cadastros é o
 Firestore, e a lista completa fica em `/admin`. Se o e-mail falhar, nenhum

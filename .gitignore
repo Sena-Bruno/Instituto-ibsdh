@@ -7,3 +7,7 @@ coverage/
 .env*
 !.env.example
 dist-ssr/
+
+# Sandboxes e relatório do teste de mutação (npm run mutation)
+.stryker-tmp/
+reports/

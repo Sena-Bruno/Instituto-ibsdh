@@ -16,7 +16,10 @@
     "smoke": "node scripts/smoke.mjs",
     "check": "biome check",
     "check:fix": "biome check --write",
-    "knip": "knip --no-config-hints"
+    "knip": "knip --no-config-hints",
+    "arch": "depcruise src --config .dependency-cruiser.cjs",
+    "mutation": "stryker run",
+    "prepare": "husky"
   },
   "dependencies": {
     "@dr.pogodin/react-helmet": "^3.2.3",
@@ -34,6 +37,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.12",
+    "@commitlint/cli": "^21.2.2",
+    "@stryker-mutator/core": "^10.0.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
@@ -41,6 +46,8 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitest/coverage-v8": "^5.0.0",
+    "dependency-cruiser": "^18.2.0",
+    "husky": "^9.1.7",
     "jsdom": "^30.0.1",
     "knip": "^6.34.0",
     "tailwindcss": "^4.1.14",
