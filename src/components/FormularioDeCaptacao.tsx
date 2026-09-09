@@ -2,6 +2,7 @@ import { Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
 import { type ReactNode, useState } from 'react';
+import { diagnosticoDeGravacao, mensagemDeGravacao } from '../lib/erroDeFirestore';
 import { collapse } from '../lib/motion';
 import Troca from './Troca';
 
@@ -41,9 +42,10 @@ export interface DadosDoLead {
 
 export default function FormularioDeCaptacao({
   id,
+  colecao,
+  assunto,
   gravar,
   chamada,
-  erroAoGravar,
   sucesso,
   children,
   rodape,
@@ -56,12 +58,20 @@ export default function FormularioDeCaptacao({
    * outro, e o leitor de tela anuncia o campo errado.
    */
   id: string;
+  /**
+   * A coleção do Firestore em que este formulário grava.
+   *
+   * Não é usada para gravar — quem grava é `gravar`. Serve ao diagnóstico
+   * que vai para o console quando a gravação falha: sem o nome da coleção,
+   * a linha de log diz que algo deu errado e não onde procurar.
+   */
+  colecao: string;
+  /** O que não foi registrado, na voz do visitante: "seu cadastro". */
+  assunto: string;
   /** Onde o lead é gravado. Um erro daqui vira a mensagem de falha. */
   gravar: (dados: DadosDoLead) => Promise<void>;
   /** Texto do botão em repouso. */
   chamada: string;
-  /** A frase que aparece quando `gravar` falha. */
-  erroAoGravar: string;
   /** O que substitui o formulário depois do envio. */
   sucesso: ReactNode;
   /** O título e a promessa, acima dos campos. */
@@ -92,9 +102,15 @@ export default function FormularioDeCaptacao({
       setName('');
       setEmail('');
     } catch (err) {
-      console.error('Erro ao gravar o cadastro:', err);
+      /* A mensagem da tela e a do log são DIFERENTES, e de propósito: a
+         primeira é para quem preencheu o formulário e não tem o que
+         consertar; a segunda diz a causa e o comando que a resolve. Ver
+         `lib/erroDeFirestore.ts` — ele nasceu de uma recusa em produção
+         que mandava o visitante conferir a conexão, que era a única coisa
+         que estava funcionando. */
+      console.error(diagnosticoDeGravacao(err, colecao), err);
       setStatus('error');
-      setError(erroAoGravar);
+      setError(mensagemDeGravacao(err, assunto));
     }
   };
 

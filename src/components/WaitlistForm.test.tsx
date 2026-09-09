@@ -88,12 +88,21 @@ describe('WaitlistForm', () => {
   });
 
   it('avisa que falhou quando o Firestore recusa, sem dizer que deu certo', async () => {
-    addDoc.mockRejectedValue(new Error('permission-denied'));
+    addDoc.mockRejectedValue(
+      Object.assign(new Error('recusado'), { code: 'permission-denied' }),
+    );
     vi.spyOn(console, 'error').mockImplementation(() => {});
     render(<WaitlistForm courseId="master-coach" />);
     await preencherEEnviar();
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(/não conseguimos concluir/i);
+    const aviso = await screen.findByRole('alert');
+    expect(aviso).toHaveTextContent(/não conseguimos registrar seu cadastro/i);
+    /* Uma recusa do servidor NÃO é problema de conexão. A mensagem antiga
+       dizia "verifique sua conexão" para toda falha, e mandava a pessoa
+       procurar o problema no lugar em que ele não estava. */
+    expect(aviso).not.toHaveTextContent(/conexão/i);
+    // E dá a saída, para o cadastro não se perder num defeito nosso.
+    expect(aviso).toHaveTextContent(/contato@institutobrunosena\.com\.br/);
     expect(screen.queryByText(/cadastro confirmado/i)).not.toBeInTheDocument();
     // O formulário continua na tela, com o que foi digitado, para tentar de novo.
     expect(screen.getByLabelText(/seu nome/i)).toBeInTheDocument();

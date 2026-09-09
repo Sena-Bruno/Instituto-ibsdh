@@ -32,9 +32,10 @@ export default function WaitlistForm({ courseId }: { courseId: string }) {
   return (
     <FormularioDeCaptacao
       id="waitlist"
+      colecao="waitlist"
+      assunto="seu cadastro"
       gravar={gravar}
       chamada="Quero notificação prioritária"
-      erroAoGravar="Não conseguimos concluir seu cadastro. Verifique sua conexão e tente novamente."
       sucesso={
         <>
           <CheckCircle2 className="mb-4 text-brand-accent" size={28} aria-hidden="true" />

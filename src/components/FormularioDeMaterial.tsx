@@ -56,9 +56,10 @@ export default function FormularioDeMaterial({
   return (
     <FormularioDeCaptacao
       id={`material-${material.id}`}
+      colecao="leads"
+      assunto="seu pedido"
       gravar={gravar}
       chamada={material.chamada}
-      erroAoGravar="Não conseguimos registrar seu e-mail. Verifique sua conexão e tente novamente."
       sucesso={
         <>
           <h3 className="mb-2 font-display text-xl font-semibold text-brand-cream">

@@ -572,6 +572,26 @@ formulário foi preenchido, e é ele que diz **qual artigo** trouxe o lead.
 firebase deploy --only firestore:rules,firestore:indexes
 ```
 
+> ### ⚠ Publicar as regras é um passo À PARTE do deploy do site
+>
+> O Netlify sobe HTML e JavaScript. Ele **não toca no Firestore**. Sempre
+> que `firestore.rules` mudar, rode o comando acima — senão o site novo
+> conversa com as regras velhas.
+>
+> **Isto já quebrou em produção.** A captação de material subiu com a
+> coleção `leads`, cuja regra estava escrita no arquivo e não havia sido
+> publicada. O Firestore nega por padrão o que nenhuma regra autoriza, e
+> **todo cadastro foi recusado** — sem erro no build, sem erro no deploy, e
+> com uma mensagem genérica na tela do visitante.
+>
+> Dois guardas foram postos depois disso, e nenhum substitui o comando:
+>
+> - `src/config/colecoes.test.ts` falha se o código usar uma coleção que o
+>   arquivo de regras não declara. Ele compara o código com o **arquivo**,
+>   não com o que está publicado.
+> - `src/lib/erroDeFirestore.ts` escreve no console do navegador a causa
+>   provável e este comando, na própria linha do erro.
+
 O índice composto em `firestore.indexes.json` é obrigatório: sem ele a
 consulta de avaliações falha e a lista fica vazia para sempre.
 
@@ -610,6 +630,22 @@ seria a primeira coisa que a pessoa aprende sobre o instituto.
 ⚠ **Leia e corrija o texto do material antes de divulgar.** Ele sai
 assinado pelo instituto, e vale a mesma regra dos artigos: material que não
 traz nada que só este instituto pode dizer é melhor não entregar.
+
+### Antes de divulgar: publique as regras
+
+A coleção `leads` só aceita gravação depois de:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Sem isso o formulário aparece, aceita o que a pessoa digita e o Firestore
+recusa — que foi o que aconteceu quando a captação subiu pela primeira vez.
+Para conferir que está de pé, preencha o formulário no fim de um artigo e
+veja o cadastro aparecer na aba **Materiais** do `/admin`.
+
+Se falhar, **abra o console do navegador**: a linha de erro diz a causa
+provável e o comando que a conserta.
 
 ### Ver os cadastros
 

@@ -69,6 +69,7 @@ export default defineConfig({
         'src/components/FormularioDeCaptacao.tsx',
         'src/components/FormularioDeMaterial.tsx',
         'src/lib/erroDeLogin.ts',
+        'src/lib/erroDeFirestore.ts',
       ],
     },
   },
