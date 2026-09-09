@@ -138,8 +138,16 @@ export default function Artigo() {
             <Cabecalho sobretitulo="Formação relacionada" cor={cor} titulo={curso.title}>
               {curso.resumo}
             </Cabecalho>
+            {/* Um curso ainda não lançado não tem ementa para ver: o
+                Master Coach está como `emBreve` e o que existe na página
+                dele é a lista de espera. "Ver a ementa completa" ali
+                prometeria uma tabela que não está publicada — e a promessa
+                quebrada apareceria só depois do clique. O rótulo é o mesmo
+                que o card do curso já usa, em `CardCurso.tsx`. */}
             <Link to={curso.route} className={`${p.botao} mt-8 inline-flex`}>
-              Ver a ementa completa
+              {curso.situacao === 'emBreve'
+                ? 'Entrar na lista de espera'
+                : 'Ver a ementa completa'}
             </Link>
           </Secao>
         ) : null}
