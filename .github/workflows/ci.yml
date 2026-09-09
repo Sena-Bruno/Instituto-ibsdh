@@ -37,6 +37,22 @@ jobs:
       - name: Código e dependências mortas
         run: npx knip --no-config-hints
 
+      # Antes do build de propósito: os testes rodam em segundos e cobrem a
+      # lógica de preço, checkout e captação de lead. Falhar aqui evita
+      # gastar o build e o job de navegador para descobrir o mesmo problema.
+      - name: Testes unitários e de integração
+        run: npm run test:coverage
+
+      # O token só é exigido em repositório privado. Sem ele configurado o
+      # passo avisa e segue: cobertura não publicada não é motivo para
+      # reprovar um PR cujos testes passaram.
+      - name: Publicar cobertura no Codecov
+        uses: codecov/codecov-action@v5
+        continue-on-error: true
+        with:
+          files: ./coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Build
         run: npm run build
 

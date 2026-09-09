@@ -259,7 +259,6 @@
   @apply inline-flex items-center justify-center gap-2.5 rounded-full px-8 py-4 font-display text-[15px] font-semibold tracking-[0.06em] uppercase transition-[color,background-color,border-color,box-shadow,transform,filter] duration-200 motion-reduce:transform-none;
 }
 
-
 .btn-primary {
   @apply bg-brand-accent text-brand-dark;
 }
