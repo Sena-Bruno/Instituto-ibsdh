@@ -16,7 +16,8 @@
  *   firebase deploy --only firestore:rules
  */
 const ADMIN_UIDS: readonly string[] = [
-  // 'cole-aqui-o-uid-mostrado-na-tela',
+  // Bruno Sena
+  'kKJkk1MFh9Rw5xm51BwZIYD5Tin2',
 ];
 
 export function isAdmin(uid: string | undefined | null): boolean {
