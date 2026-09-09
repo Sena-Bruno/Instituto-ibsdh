@@ -112,12 +112,29 @@ describe('FormularioDeMaterial', () => {
   });
 
   it('avisa que falhou quando o Firestore recusa, sem dizer que deu certo', async () => {
-    addDoc.mockRejectedValue(new Error('permission-denied'));
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    /*
+      Este é o caso que aconteceu em produção: a coleção `leads` era nova e
+      as regras dela não tinham sido publicadas, então o Firestore recusou
+      TODA gravação com `permission-denied`.
+    */
+    addDoc.mockRejectedValue(
+      Object.assign(new Error('recusado'), { code: 'permission-denied' }),
+    );
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
     montar();
     await preencherEEnviar();
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(/não conseguimos registrar/i);
+    const aviso = await screen.findByRole('alert');
+    expect(aviso).toHaveTextContent(/não conseguimos registrar seu pedido/i);
+    expect(aviso).not.toHaveTextContent(/conexão/i);
+    expect(aviso).toHaveTextContent(/contato@institutobrunosena\.com\.br/);
+
+    /* E o console diz onde procurar. Sem esta linha, descobrir a causa
+       exigiu ler o código: a tela mandava conferir a conexão, que era a
+       única coisa que estava funcionando. */
+    const diagnostico = log.mock.calls.map((c) => String(c[0])).join('\n');
+    expect(diagnostico).toContain('leads');
+    expect(diagnostico).toContain('firebase deploy --only firestore:rules');
     expect(screen.queryByRole('link', { name: /7 perguntas/i })).not.toBeInTheDocument();
     // O formulário continua na tela para tentar de novo.
     expect(screen.getByLabelText(/seu nome/i)).toBeInTheDocument();
