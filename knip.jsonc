@@ -10,7 +10,11 @@
     "src/entry-server.tsx",
     "netlify/functions/*.mjs",
     "src/**/*.test.{ts,tsx}",
-    "netlify/**/*.test.mjs"
+
+    // Os testes das funções ficam numa pasta vizinha, e não dentro de
+    // `netlify/functions/`: o Netlify trata todo .mjs de lá como função
+    // serverless e recusa nome com ponto, derrubando o deploy inteiro.
+    "netlify/testes/**/*.test.mjs"
   ],
 
   "project": ["src/**/*.{ts,tsx}", "scripts/**/*.mjs", "netlify/**/*.mjs"],

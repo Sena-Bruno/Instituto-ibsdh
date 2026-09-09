@@ -1,8 +1,61 @@
+import { readdirSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { diagnostico } from './notificar-lead.mjs';
+import { diagnostico } from '../functions/notificar-lead.mjs';
+
+const pastaDeFuncoes = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../functions',
+);
+
+/**
+ * Guarda a regra de nome do Netlify.
+ *
+ * O deploy do PR #18 falhou inteiro — não o teste, o DEPLOY — porque este
+ * arquivo de teste nasceu dentro de `netlify/functions/`. O Netlify trata
+ * todo .mjs de lá como função serverless, e nome de função aceita apenas
+ * letras, números, hífen e sublinhado. O ponto de `.test.mjs` bastou:
+ *
+ *   Incorrect function names. Name should consist of only alphanumeric
+ *   characters, hyphen & underscores
+ *
+ * Nada no repositório dizia isso, e todos os verificadores locais passavam:
+ * tipos, lint, Knip, arquitetura, 72 testes e o build. A restrição só existia
+ * no Netlify, e só apareceu depois do push.
+ *
+ * Agora existe aqui.
+ */
+describe('nomes dos arquivos em netlify/functions', () => {
+  it('só usam letras, números, hífen e sublinhado', () => {
+    for (const arquivo of readdirSync(pastaDeFuncoes)) {
+      const semExtensao = arquivo.replace(/\.(mjs|js|ts)$/, '');
+      expect(
+        semExtensao,
+        `"${arquivo}" viraria uma função de nome inválido e o Netlify recusaria o deploy inteiro. ` +
+          'Se for teste ou utilitário, mova para netlify/testes/.',
+      ).toMatch(/^[A-Za-z0-9_-]+$/);
+    }
+  });
+});
 
 /**
  * Testes do diagnóstico de falha no aviso de lead.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  ⚠  ESTE ARQUIVO NÃO PODE MORAR EM netlify/functions/                 │
+ * │                                                                       │
+ * │  O Netlify trata TODO arquivo .mjs dentro da pasta declarada em        │
+ * │  `functions` (netlify.toml) como uma função serverless, e o nome de    │
+ * │  função só aceita letras, números, hífen e sublinhado. O ponto de      │
+ * │  `notificar-lead.test.mjs` faz o deploy inteiro falhar com            │
+ * │  "Incorrect function names" — não é um aviso: o site não publica.      │
+ * │                                                                       │
+ * │  Descoberto do jeito difícil, com o deploy de preview do PR #18        │
+ * │  quebrado enquanto os testes passavam em toda parte. Por isso os       │
+ * │  testes das funções ficam nesta pasta vizinha, fora do alcance do      │
+ * │  scanner.                                                             │
+ * └───────────────────────────────────────────────────────────────────────┘
  *
  * ┌───────────────────────────────────────────────────────────────────────┐
  * │  O CASO REAL QUE ESTES TESTES DESCREVEM                                │
