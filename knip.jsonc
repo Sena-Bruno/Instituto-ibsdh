@@ -1,0 +1,41 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+
+  // Os arquivos de teste entram como ponto de entrada, e não como projeto:
+  // ninguém os importa, então sem isto o Knip os reportaria como código morto
+  // — e as dependências que só eles usam (Testing Library, jsdom) como
+  // dependências não usadas.
+  "entry": [
+    "src/main.tsx",
+    "src/entry-server.tsx",
+    "netlify/functions/*.mjs",
+    "src/**/*.test.{ts,tsx}",
+
+    // Os testes das funções ficam numa pasta vizinha, e não dentro de
+    // `netlify/functions/`: o Netlify trata todo .mjs de lá como função
+    // serverless e recusa nome com ponto, derrubando o deploy inteiro.
+    "netlify/testes/**/*.test.mjs"
+  ],
+
+  "project": ["src/**/*.{ts,tsx}", "scripts/**/*.mjs", "netlify/**/*.mjs"],
+
+  "ignoreDependencies": [
+    // O Tailwind v4 entra pelo plugin do Vite, não por import.
+    "tailwindcss",
+
+    // Instalado sob demanda para o `npm run smoke`. Não pode entrar no
+    // package.json: baixa centenas de MB de navegadores em todo build.
+    "playwright",
+
+    // NÃO É UM PACOTE. O Knip lê a string "command" em
+    // `stryker.config.json` → `testRunner` e infere um pacote
+    // `@stryker-mutator/command-runner`, que não existe: esse runner é
+    // embutido no @stryker-mutator/core. Sem esta linha, o Knip acusa uma
+    // dependência não declarada que não há como declarar.
+    "@stryker-mutator/command-runner"
+  ],
+
+  // Sandboxes e relatório do teste de mutação. O Stryker copia o projeto
+  // inteiro para dentro de .stryker-tmp a cada execução.
+  "ignore": [".stryker-tmp/**", "reports/**"]
+}

@@ -35,6 +35,57 @@ const CONTATO_PADRAO = 'contato@institutobrunosena.com.br';
 const ESCAPE = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const escapeHtml = (v) => String(v).replace(/[&<>"']/g, (c) => ESCAPE[c]);
 
+/**
+ * Traduz a recusa do Resend para o que fazer a respeito.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE ISTO EXISTE                                                  │
+ * │                                                                       │
+ * │  A função registrava `console.error('Resend respondeu', status, texto)`│
+ * │  e devolvia 502. O texto cru do Resend diz o que houve, mas não o que  │
+ * │  fazer — e para ler esse log é preciso saber que ele existe, achar a   │
+ * │  função certa no painel do Netlify e interpretar o corpo do erro.     │
+ * │                                                                       │
+ * │  O caso real: com `NOTIFY_FROM=onboarding@resend.dev`, que é o         │
+ * │  remetente de teste, o Resend só entrega para o e-mail dono da conta.  │
+ * │  Enviando para o contato do instituto ele recusa com 403, e o efeito   │
+ * │  visível era um 502 sem explicação — o cadastro salvo, o aviso nunca   │
+ * │  enviado, e nada em lugar nenhum dizendo por quê.                     │
+ * │                                                                       │
+ * │  Agora o log diz a causa e a correção, em português, na linha do erro. │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+export function diagnostico(status, corpo, remetente, destinatario) {
+  const deTeste = remetente.endsWith('@resend.dev');
+
+  if (status === 401 || status === 403) {
+    if (/testing emails|own email|verify a domain/i.test(corpo) || deTeste) {
+      return (
+        `O remetente ${remetente} é o endereço de teste do Resend, que só entrega ` +
+        `para o e-mail dono da conta — e está tentando entregar para ${destinatario}. ` +
+        'Duas saídas: verifique o domínio institutobrunosena.com.br em Resend → Domains ' +
+        'e use avisos@institutobrunosena.com.br em NOTIFY_FROM (definitivo), ou defina ' +
+        'NOTIFY_EMAIL com o e-mail da conta do Resend (funciona hoje, só para teste).'
+      );
+    }
+    if (status === 401) {
+      return 'A RESEND_API_KEY foi recusada: chave inválida, revogada ou de outra conta. Gere outra em Resend → API Keys e atualize a variável no Netlify.';
+    }
+    return `O Resend recusou o envio de ${remetente}. Confirme que esse domínio está verificado em Resend → Domains.`;
+  }
+
+  if (status === 422) {
+    return 'O Resend recusou os dados do e-mail. Confira o formato de NOTIFY_FROM: ele precisa ser um endereço, opcionalmente como "Nome <endereco@dominio>".';
+  }
+  if (status === 429) {
+    return 'Limite de envio do Resend atingido. O plano gratuito cobre o volume de uma lista de espera, então isto costuma indicar laço de reenvio.';
+  }
+  if (status >= 500) {
+    return 'A falha é do lado do Resend. O cadastro está salvo; só o aviso não saiu.';
+  }
+  return 'Resposta inesperada do Resend.';
+}
+
 export default async (request) => {
   if (request.method !== 'POST') {
     return new Response('Método não permitido', { status: 405 });
@@ -91,12 +142,38 @@ export default async (request) => {
     });
 
     if (!res.ok) {
-      console.error('Resend respondeu', res.status, await res.text());
+      const corpo = await res.text();
+
+      /* Log estruturado: o painel do Netlify permite buscar por texto, e
+         `evento` dá um termo único para filtrar todas as falhas de aviso sem
+         esbarrar no resto do log da função. */
+      console.error(
+        JSON.stringify({
+          evento: 'aviso-de-lead-recusado',
+          status: res.status,
+          remetente: from,
+          destinatario: to,
+          causa: diagnostico(res.status, corpo, from, to),
+          respostaDoResend: corpo.slice(0, 500),
+        }),
+      );
+
+      /* 502 continua sendo a resposta, e de propósito: quem chama é o
+         formulário, que ignora esta falha porque o cadastro já está no
+         Firestore. O diagnóstico é para o log, não para o visitante — a
+         causa cita configuração e nomes de variável, que não devem sair
+         numa resposta HTTP pública. */
       return new Response('Falha ao enviar', { status: 502 });
     }
     return new Response(null, { status: 204 });
   } catch (err) {
-    console.error('Erro ao notificar lead:', err);
+    console.error(
+      JSON.stringify({
+        evento: 'aviso-de-lead-recusado',
+        causa: 'A requisição ao Resend não completou: rede, DNS ou tempo esgotado.',
+        erro: err instanceof Error ? err.message : String(err),
+      }),
+    );
     return new Response('Falha ao enviar', { status: 502 });
   }
 };

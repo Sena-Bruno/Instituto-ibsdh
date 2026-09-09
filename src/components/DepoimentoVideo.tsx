@@ -1,6 +1,7 @@
 import { Play } from 'lucide-react';
 import { useState } from 'react';
 import type { Depoimento } from '../config/depoimentos';
+import Troca from './Troca';
 
 /**
  * Um depoimento dentro de uma moldura de celular.
@@ -105,74 +106,82 @@ export default function DepoimentoVideo({ dep }: { dep: Depoimento }) {
         />
 
         <div className="relative aspect-[9/16] overflow-hidden rounded-[31px]">
-          {tocando && src ? (
-            <iframe
-              title={`Depoimento de ${dep.nome}`}
-              src={src}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="h-full w-full border-0 bg-black"
-            />
-          ) : tocando && video?.tipo === 'arquivo' ? (
-            <video
-              src={video.src}
-              poster={poster}
-              controls
-              autoPlay
-              playsInline
-              className="h-full w-full bg-black object-cover"
-            >
-              {/* Declarada mesmo vazia: havendo um .vtt, é só apontar o src. */}
-              <track kind="captions" />
-            </video>
-          ) : video ? (
-            <button
-              type="button"
-              onClick={() => setTocando(true)}
-              className="group block h-full w-full"
-              aria-label={`Assistir ao depoimento de ${dep.nome}, ${dep.papel}`}
-            >
-              {/* O monograma fica ATRÁS da miniatura, sempre desenhado, e não
+          {/* `h-full w-full` no <Troca> porque ele insere uma div entre este
+              contêiner e os filhos, e todos eles se dimensionam por `h-full`:
+              sem isso a moldura do celular colapsaria. */}
+          <Troca
+            chave={tocando ? 'player' : video ? 'fachada' : 'citacao'}
+            className="h-full w-full"
+          >
+            {tocando && src ? (
+              <iframe
+                title={`Depoimento de ${dep.nome}`}
+                src={src}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="h-full w-full border-0 bg-black"
+              />
+            ) : tocando && video?.tipo === 'arquivo' ? (
+              <video
+                src={video.src}
+                poster={poster}
+                controls
+                autoPlay
+                playsInline
+                className="h-full w-full bg-black object-cover"
+              >
+                {/* Declarada mesmo vazia: havendo um .vtt, é só apontar o src. */}
+                <track kind="captions" />
+              </video>
+            ) : video ? (
+              <button
+                type="button"
+                onClick={() => setTocando(true)}
+                className="group block h-full w-full"
+                aria-label={`Assistir ao depoimento de ${dep.nome}, ${dep.papel}`}
+              >
+                {/* O monograma fica ATRÁS da miniatura, sempre desenhado, e não
                   num ramo alternativo do `if`. Com `onError` sozinho a moldura
                   ficava preta quando a requisição travava em vez de falhar — e
                   travar é o que uma rede ruim faz com mais frequência do que
                   devolver erro. */}
-              {monograma}
-              {poster && (
-                <img
-                  src={poster}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                  onError={() => setPosterFalhou(true)}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              )}
-              <span className="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-transparent to-brand-dark/20" />
-              <span className="absolute inset-0 flex items-center justify-center">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/70 bg-brand-dark/35 pl-0.5 backdrop-blur-sm transition-transform duration-200 group-hover:scale-110 motion-reduce:transform-none">
-                  <Play
-                    size={22}
-                    fill="currentColor"
-                    className="text-white"
-                    aria-hidden="true"
+                {monograma}
+                {poster && (
+                  <img
+                    src={poster}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    onError={() => setPosterFalhou(true)}
+                    className="absolute inset-0 h-full w-full object-cover"
                   />
+                )}
+                <span className="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-transparent to-brand-dark/20" />
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <span className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/70 bg-brand-dark/35 pl-0.5 backdrop-blur-sm transition-transform duration-200 group-hover:scale-110 motion-reduce:transform-none">
+                    <Play
+                      size={22}
+                      fill="currentColor"
+                      className="text-white"
+                      aria-hidden="true"
+                    />
+                  </span>
                 </span>
-              </span>
-              {rodape}
-            </button>
-          ) : (
-            /* Sem vídeo: a citação ocupa a tela do celular, como um post.
+                {rodape}
+              </button>
+            ) : (
+              /* Sem vídeo: a citação ocupa a tela do celular, como um post.
                Sem botão de play, porque não há o que tocar. */
-            <div className="relative h-full w-full">
-              {monograma}
-              <span className="absolute inset-0 bg-gradient-to-t from-brand-dark/92 via-brand-dark/25 to-transparent" />
-              <blockquote className="absolute inset-x-5 top-7 bottom-24 flex items-center text-center text-[14.5px] leading-relaxed text-brand-cream">
-                <p>“{dep.texto}”</p>
-              </blockquote>
-              {rodape}
-            </div>
-          )}
+              <div className="relative h-full w-full">
+                {monograma}
+                <span className="absolute inset-0 bg-gradient-to-t from-brand-dark/92 via-brand-dark/25 to-transparent" />
+                <blockquote className="absolute inset-x-5 top-7 bottom-24 flex items-center text-center text-[14.5px] leading-relaxed text-brand-cream">
+                  <p>“{dep.texto}”</p>
+                </blockquote>
+                {rodape}
+              </div>
+            )}
+          </Troca>
         </div>
       </div>
 

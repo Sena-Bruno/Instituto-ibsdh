@@ -250,7 +250,13 @@
 .btn-warm,
 .btn-outline,
 .btn-ghost {
-  @apply inline-flex items-center justify-center gap-2.5 rounded-full px-8 py-4 font-display text-[15px] font-semibold tracking-[0.06em] uppercase transition-all duration-200 motion-reduce:transform-none;
+  /* As propriedades animadas estão listadas uma a uma em vez de `transition-all`.
+     `all` inclui as de layout — largura, altura, padding —, e animar layout
+     obriga o navegador a recalcular a página a cada quadro, em vez de deixar
+     transform e opacity na placa de vídeo. Aqui nenhuma delas muda no hover,
+     então `all` só cobrava o risco de que uma passasse a mudar sem ninguém
+     notar. */
+  @apply inline-flex items-center justify-center gap-2.5 rounded-full px-8 py-4 font-display text-[15px] font-semibold tracking-[0.06em] uppercase transition-[color,background-color,border-color,box-shadow,transform,filter] duration-200 motion-reduce:transform-none;
 }
 
 .btn-primary {
@@ -297,12 +303,48 @@
   @apply px-0 py-1 tracking-[0.04em] text-brand-accent hover:text-brand-accent-light;
 }
 
+/* ── Resposta ao toque ─────────────────────────────────────────────────────
+   O botão afunda de leve enquanto está pressionado.
+
+   É o que faltava para o clique ter resposta física: até aqui o botão subia
+   2px no hover e depois não reagia mais, então em tela de toque — onde não
+   existe hover — apertar não produzia retorno visual nenhum. Quem toca e não
+   vê nada acontecer toca de novo, e num formulário isso é envio duplicado.
+
+   0,97 é o valor da auditoria de movimento: abaixo disso o botão parece
+   afundar de verdade e chama atenção para si; acima, não se percebe.
+
+   ⚠ A ORDEM IMPORTA, E É POR ISSO QUE ESTE BLOCO ESTÁ NO FIM.
+   `:hover` e `:active` têm a mesma especificidade, e no mouse os dois valem
+   ao mesmo tempo — quem estiver declarado depois ganha. Declarado antes dos
+   `:hover` acima, o afundamento simplesmente não aconteceria com o ponteiro:
+   só no toque, onde não há hover. Aqui embaixo, a escala substitui o
+   `translateY(-2px)` do hover em vez de disputar com ele.
+
+   A duração cai para 100ms: pressão precisa de retorno quase imediato — os
+   200ms do hover fariam o botão parecer mole. */
+.btn-primary:active,
+.btn-blue:active,
+.btn-purple:active,
+.btn-emerald:active,
+.btn-warm:active,
+.btn-outline:active {
+  transform: scale(0.97);
+  transition-duration: 100ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-primary:hover,
   .btn-blue:hover,
   .btn-purple:hover,
   .btn-emerald:hover,
-  .btn-warm:hover {
+  .btn-warm:hover,
+  .btn-primary:active,
+  .btn-blue:active,
+  .btn-purple:active,
+  .btn-emerald:active,
+  .btn-warm:active,
+  .btn-outline:active {
     transform: none;
   }
 }

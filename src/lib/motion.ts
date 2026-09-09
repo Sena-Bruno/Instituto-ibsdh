@@ -25,8 +25,15 @@ export const ease = {
 } as const;
 
 export const duration = {
-  /** Retorno imediato: hover, foco, troca de cor */
-  instant: 0.12,
+  /**
+   * Retorno imediato: hover, foco, troca de cor.
+   *
+   * 150ms é piso, não escolha estética: abaixo disso a transição de hover
+   * é percebida como corte, e a checklist de auditoria do
+   * design-motion-principles trata 150–200ms como o mínimo para mudança
+   * de estado no ponteiro. Estava em 120ms.
+   */
+  instant: 0.15,
   /** Padrão de interface: abrir menu, revelar painel */
   fast: 0.2,
   /** Entrada de conteúdo ao rolar a página */
@@ -77,6 +84,43 @@ export const collapse: Variants = {
     opacity: 1,
     height: 'auto',
     transition: { duration: duration.base, ease: ease.out },
+  },
+};
+
+/**
+ * Substituição de conteúdo no mesmo lugar da tela.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  O QUE ISTO RESOLVE                                                   │
+ * │                                                                       │
+ * │  O padrão que faltava no site. Quatro lugares trocavam a tela inteira │
+ * │  num corte seco: o formulário da lista de espera virando confirmação, │
+ * │  as quatro telas do /admin, e as duas fachadas de vídeo virando       │
+ * │  player. Em todos, um `if (estado) return outraCoisa` — o bloco       │
+ * │  anterior desaparecia no mesmo quadro em que o novo aparecia.         │
+ * │                                                                       │
+ * │  Corte seco depois de uma ação é lido como falha, não como conclusão: │
+ * │  quem enviou o formulário não vê o envio terminar, vê a tela pular.   │
+ * │  É o item "loading-to-content: smooth handoff, not instantaneous      │
+ * │  replacement" da auditoria de movimento.                              │
+ * └───────────────────────────────────────────────────────────────────────┘
+ *
+ * A saída é mais curta e não desloca: só opacidade. Quem sai não deve
+ * disputar atenção com quem entra — e um `y` na saída, somado ao `y` da
+ * entrada, faz o bloco parecer que escorrega.
+ *
+ * Usado pelo componente `Troca`, que é o que o JSX chama.
+ */
+export const troca: Variants = {
+  hidden: { opacity: 0, y: 6 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: duration.fast, ease: ease.out },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: duration.instant, ease: ease.in },
   },
 };
 

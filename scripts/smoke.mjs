@@ -139,6 +139,71 @@ const environmental =
   console.log(`  reduced-motion abre sem animação: ${instantaneo ? 'sim' : 'NÃO'}`);
   if (!instantaneo) failures++;
   await ctx.close();
+
+  /*
+    Troca de conteúdo no mesmo lugar (componente `Troca`).
+
+    O site tinha quatro lugares que substituíam a tela num corte seco, todos
+    no formato `if (estado) return <outraCoisa/>`: o formulário da lista de
+    espera virando confirmação, as quatro telas do /admin e as duas fachadas
+    de vídeo virando player. A fachada da home é a única das quatro que dá
+    para disparar sem autenticar nem gravar dado, então é ela que guarda o
+    padrão contra regressão.
+
+    O que prova que o <Troca> está funcionando é a fachada SAIR DO DOM depois
+    do clique: se ela desaparecesse no mesmo quadro, o AnimatePresence não
+    estaria no caminho — e é justamente esse caminho que se perde ao voltar a
+    escrever dois `return` separados, cada um com sua própria instância.
+  */
+  const p5 = await browser.newPage();
+  await p5.goto(base, { waitUntil: 'domcontentloaded' });
+  await p5.waitForSelector('h1', { timeout: 20000 });
+  await p5.waitForTimeout(700);
+
+  const fachada = p5.locator('button:has(svg.lucide-play)').first();
+  const temFachada = (await fachada.count()) > 0;
+
+  if (temFachada) {
+    await fachada.click();
+    // Meio da transição: com mode="wait" a fachada ainda está saindo aqui.
+    await p5.waitForTimeout(500);
+    const fachadaSaiu = (await p5.locator('button:has(svg.lucide-play)').count()) === 0;
+    const playerEntrou = (await p5.locator('iframe, video').count()) > 0;
+    console.log(`  fachada de vídeo sai do DOM na troca: ${fachadaSaiu ? 'sim' : 'NÃO'}`);
+    console.log(`  player entra no lugar: ${playerEntrou ? 'sim' : 'NÃO'}`);
+    if (!fachadaSaiu) failures++;
+    if (!playerEntrou) failures++;
+  } else {
+    // Sem vídeo em `config/midia.ts` não há fachada para trocar. Não é falha:
+    // é o estado documentado de quando os vídeos ainda não foram gravados.
+    console.log('  fachada de vídeo: nenhuma na home (midia.ts sem vídeo)');
+  }
+
+  /*
+    Resposta ao toque. O botão afunda enquanto está pressionado — o retorno
+    que faltava em tela de toque, onde não existe hover. A ordem no CSS é o
+    que quebra fácil: `:active` declarado antes dos `:hover` perde a cascata
+    com o ponteiro, e o afundamento passa a acontecer só no toque, onde
+    ninguém está olhando o computed style.
+  */
+  const botao = p5.locator('.btn-primary').first();
+  let afunda = false;
+  if ((await botao.count()) > 0) {
+    const caixa = await botao.boundingBox();
+    if (caixa) {
+      await p5.mouse.move(caixa.x + caixa.width / 2, caixa.y + caixa.height / 2);
+      await p5.mouse.down();
+      await p5.waitForTimeout(200);
+      const t = await botao.evaluate((el) => getComputedStyle(el).transform);
+      await p5.mouse.up();
+      // scale(0.97) vira matrix(0.97, 0, 0, 0.97, …); o hover sozinho seria
+      // matrix(1, 0, 0, 1, 0, -2).
+      afunda = /^matrix\(0\.9/.test(t);
+    }
+  }
+  console.log(`  botão afunda ao ser pressionado: ${afunda ? 'sim' : 'NÃO'}`);
+  if (!afunda) failures++;
+  await p5.close();
 }
 
 // --- O que o robô lê ---

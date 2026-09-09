@@ -14,7 +14,9 @@
       "*.json",
       "!package-lock.json",
       "!dist",
-      "!node_modules"
+      "!node_modules",
+      "!.stryker-tmp",
+      "!reports"
     ]
   },
   "formatter": {
