@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { Video } from '../config/midia';
 import { type NomeCor, paletas } from '../lib/cores';
 import { cn } from '../lib/utils';
+import Troca from './Troca';
 
 /**
  * Reprodutor de vídeo com fachada.
@@ -39,77 +40,81 @@ export default function VideoPlayer({
   const p = paletas[cor];
   const poster = video.poster ?? posterAlternativo;
 
-  if (tocando) {
-    return (
-      <div className={cn('relative aspect-video overflow-hidden rounded-[22px]', className)}>
-        {video.tipo === 'arquivo' ? (
-          <video
-            src={video.src}
-            poster={poster}
-            controls
-            autoPlay
-            playsInline
-            className="h-full w-full bg-black object-cover"
-          >
-            {/* A faixa de legenda fica declarada mesmo vazia: quando houver
-                um arquivo .vtt, é só apontar o `src` aqui. */}
-            <track kind="captions" />
-          </video>
-        ) : (
-          <iframe
-            title={titulo}
-            src={
-              video.tipo === 'youtube'
-                ? `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0`
-                : `https://player.vimeo.com/video/${video.id}?autoplay=1`
-            }
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="h-full w-full border-0 bg-black"
-          />
-        )}
-      </div>
-    );
-  }
-
+  /* A fachada e o player passam pelo mesmo <Troca>: sem ele, clicar em play
+     apagava a imagem e o botão no mesmo quadro em que o iframe entrava —
+     e o iframe leva um instante para pintar, então o que se via era um
+     retângulo preto aparecendo do nada. */
   return (
-    <button
-      type="button"
-      onClick={() => setTocando(true)}
-      className={cn(
-        'group relative block aspect-video w-full overflow-hidden rounded-[22px] border bg-brand-surface',
-        p.borda,
-        p.bordaHover,
-        className,
-      )}
-    >
-      {poster ? (
-        <img
-          src={poster}
-          alt=""
-          className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transform-none"
-        />
+    <Troca chave={tocando ? 'player' : 'fachada'}>
+      {tocando ? (
+        <div className={cn('relative aspect-video overflow-hidden rounded-[22px]', className)}>
+          {video.tipo === 'arquivo' ? (
+            <video
+              src={video.src}
+              poster={poster}
+              controls
+              autoPlay
+              playsInline
+              className="h-full w-full bg-black object-cover"
+            >
+              {/* A faixa de legenda fica declarada mesmo vazia: quando houver
+                um arquivo .vtt, é só apontar o `src` aqui. */}
+              <track kind="captions" />
+            </video>
+          ) : (
+            <iframe
+              title={titulo}
+              src={
+                video.tipo === 'youtube'
+                  ? `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0`
+                  : `https://player.vimeo.com/video/${video.id}?autoplay=1`
+              }
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="h-full w-full border-0 bg-black"
+            />
+          )}
+        </div>
       ) : (
-        <span className={cn('absolute inset-0 bg-gradient-to-br', p.capa)} />
-      )}
-
-      {/* A camada escura garante contraste do botão sobre qualquer imagem. */}
-      <span className="absolute inset-0 bg-gradient-to-t from-brand-dark/85 via-brand-dark/20 to-transparent" />
-
-      <span className="absolute inset-0 flex items-center justify-center">
-        <span
+        <button
+          type="button"
+          onClick={() => setTocando(true)}
           className={cn(
-            'flex h-16 w-16 items-center justify-center rounded-full pl-1 text-brand-dark shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-transform duration-200 group-hover:scale-105 motion-reduce:transform-none',
-            p.fundo,
+            'group relative block aspect-video w-full overflow-hidden rounded-[22px] border bg-brand-surface',
+            p.borda,
+            p.bordaHover,
+            className,
           )}
         >
-          <Play size={26} fill="currentColor" aria-hidden="true" />
-        </span>
-      </span>
+          {poster ? (
+            <img
+              src={poster}
+              alt=""
+              className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transform-none"
+            />
+          ) : (
+            <span className={cn('absolute inset-0 bg-gradient-to-br', p.capa)} />
+          )}
 
-      <span className="absolute right-5 bottom-5 left-5 text-left text-[14.5px] font-semibold text-brand-cream">
-        {titulo}
-      </span>
-    </button>
+          {/* A camada escura garante contraste do botão sobre qualquer imagem. */}
+          <span className="absolute inset-0 bg-gradient-to-t from-brand-dark/85 via-brand-dark/20 to-transparent" />
+
+          <span className="absolute inset-0 flex items-center justify-center">
+            <span
+              className={cn(
+                'flex h-16 w-16 items-center justify-center rounded-full pl-1 text-brand-dark shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-transform duration-200 group-hover:scale-105 motion-reduce:transform-none',
+                p.fundo,
+              )}
+            >
+              <Play size={26} fill="currentColor" aria-hidden="true" />
+            </span>
+          </span>
+
+          <span className="absolute right-5 bottom-5 left-5 text-left text-[14.5px] font-semibold text-brand-cream">
+            {titulo}
+          </span>
+        </button>
+      )}
+    </Troca>
   );
 }

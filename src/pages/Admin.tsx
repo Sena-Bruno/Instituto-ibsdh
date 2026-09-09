@@ -1,12 +1,15 @@
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { Copy, Download, Loader2, LogIn, ShieldAlert } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
 import Seo from '../components/Seo';
 import { SkeletonRow } from '../components/Skeleton';
+import Troca from '../components/Troca';
 import { isAdmin } from '../config/admin';
 import { routes, site } from '../config/site';
 import { auth, db, loginWithGoogle, logout } from '../firebase';
+import { collapse } from '../lib/motion';
 import { useDelayedFlag } from '../lib/useDelayedFlag';
 
 interface Lead {
@@ -95,6 +98,17 @@ export default function Admin() {
   const allowed = isAdmin(user?.uid);
   const showSkeleton = useDelayedFlag(loadingLeads);
 
+  /* Nomeia a tela atual para o <Troca>. As quatro se substituíam num corte
+     seco: entrar com o Google fazia o painel de login desaparecer no mesmo
+     quadro em que a lista aparecia. */
+  const tela = checkingAuth
+    ? 'verificando'
+    : !user
+      ? 'login'
+      : !allowed
+        ? 'sem-acesso'
+        : 'lista';
+
   useEffect(() => {
     if (!allowed) return;
     const q = query(collection(db, 'waitlist'), orderBy('createdAt', 'desc'));
@@ -155,173 +169,210 @@ export default function Admin() {
           Lista de espera
         </h1>
 
-        {checkingAuth ? (
-          <p className="text-brand-platinum flex items-center gap-2" role="status">
-            <Loader2 className="animate-spin" size={18} aria-hidden="true" />
-            Verificando acesso…
-          </p>
-        ) : !user ? (
-          <div className="cartao p-8 text-center">
-            <p className="text-brand-platinum mb-6">
-              Entre com a conta Google autorizada para ver os cadastros.
+        <Troca chave={tela}>
+          {checkingAuth ? (
+            <p className="text-brand-platinum flex items-center gap-2" role="status">
+              <Loader2 className="animate-spin" size={18} aria-hidden="true" />
+              Verificando acesso…
             </p>
-            <button
-              type="button"
-              onClick={entrar}
-              disabled={entrando}
-              className="btn-primary mx-auto disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {entrando ? (
-                <Loader2 className="animate-spin" size={18} aria-hidden="true" />
-              ) : (
-                <LogIn size={18} aria-hidden="true" />
-              )}
-              {entrando ? 'Entrando…' : 'Entrar com Google'}
-            </button>
-
-            {erroLogin && (
-              <p
-                role="alert"
-                className="mx-auto mt-6 max-w-md text-left text-[13.5px] leading-relaxed text-brand-danger"
-              >
-                {erroLogin}
+          ) : !user ? (
+            <div className="cartao p-8 text-center">
+              <p className="text-brand-platinum mb-6">
+                Entre com a conta Google autorizada para ver os cadastros.
               </p>
-            )}
-          </div>
-        ) : !allowed ? (
-          <div className="border border-brand-danger/30 bg-brand-danger/[0.05] p-8">
-            <ShieldAlert className="text-brand-danger mb-4" size={32} aria-hidden="true" />
-            <h2 className="text-xl font-bold text-brand-cream mb-3">
-              Esta conta não tem acesso
-            </h2>
-            <p className="text-brand-platinum mb-6">
-              Para liberar, copie o identificador abaixo e adicione à lista{' '}
-              <code className="text-brand-accent">ADMIN_UIDS</code> em{' '}
-              <code className="text-brand-accent">src/config/admin.ts</code> e também em{' '}
-              <code className="text-brand-accent">firestore.rules</code>. Depois publique as
-              regras com{' '}
-              <code className="text-brand-accent">firebase deploy --only firestore:rules</code>.
-            </p>
-            <div className="flex flex-wrap items-center gap-3 mb-6">
-              <code className="border border-white/12 bg-brand-dark px-4 py-2 text-sm break-all text-brand-cream">
-                {user.uid}
-              </code>
               <button
                 type="button"
-                onClick={copyUid}
-                className="inline-flex items-center gap-2 text-sm text-brand-accent hover:underline"
+                onClick={entrar}
+                disabled={entrando}
+                className="btn-primary mx-auto disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <Copy size={16} aria-hidden="true" />
-                {copied ? 'Copiado!' : 'Copiar'}
-              </button>
-            </div>
-            <button
-              type="button"
-              onClick={logout}
-              className="text-sm text-brand-platinum underline"
-            >
-              Sair desta conta
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-              <p className="text-brand-platinum">
-                {leads.length} {leads.length === 1 ? 'cadastro' : 'cadastros'}
-                {user.email && <> · {user.email}</>}
-              </p>
-              <div className="flex items-center gap-4">
-                {leads.length > 0 && (
-                  <a
-                    href={csvHref}
-                    download={`lista-de-espera-${new Date().toISOString().slice(0, 10)}.csv`}
-                    className="inline-flex items-center gap-2 text-sm text-brand-accent hover:underline"
-                  >
-                    <Download size={16} aria-hidden="true" />
-                    Baixar CSV
-                  </a>
+                {entrando ? (
+                  <Loader2 className="animate-spin" size={18} aria-hidden="true" />
+                ) : (
+                  <LogIn size={18} aria-hidden="true" />
                 )}
+                {entrando ? 'Entrando…' : 'Entrar com Google'}
+              </button>
+
+              <AnimatePresence initial={false}>
+                {erroLogin && (
+                  <motion.div
+                    variants={collapse}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    className="overflow-hidden"
+                  >
+                    <p
+                      role="alert"
+                      className="mx-auto mt-6 max-w-md text-left text-[13.5px] leading-relaxed text-brand-danger"
+                    >
+                      {erroLogin}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : !allowed ? (
+            <div className="border border-brand-danger/30 bg-brand-danger/[0.05] p-8">
+              <ShieldAlert className="text-brand-danger mb-4" size={32} aria-hidden="true" />
+              <h2 className="text-xl font-bold text-brand-cream mb-3">
+                Esta conta não tem acesso
+              </h2>
+              <p className="text-brand-platinum mb-6">
+                Para liberar, copie o identificador abaixo e adicione à lista{' '}
+                <code className="text-brand-accent">ADMIN_UIDS</code> em{' '}
+                <code className="text-brand-accent">src/config/admin.ts</code> e também em{' '}
+                <code className="text-brand-accent">firestore.rules</code>. Depois publique as
+                regras com{' '}
+                <code className="text-brand-accent">
+                  firebase deploy --only firestore:rules
+                </code>
+                .
+              </p>
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <code className="border border-white/12 bg-brand-dark px-4 py-2 text-sm break-all text-brand-cream">
+                  {user.uid}
+                </code>
                 <button
                   type="button"
-                  onClick={logout}
-                  className="text-sm text-brand-platinum underline"
+                  onClick={copyUid}
+                  className="inline-flex items-center gap-2 text-sm text-brand-accent hover:underline"
                 >
-                  Sair
+                  <Copy size={16} aria-hidden="true" />
+                  {copied ? 'Copiado!' : 'Copiar'}
                 </button>
               </div>
-            </div>
-
-            {error && (
-              <p
-                role="alert"
-                className="mb-6 border border-brand-danger/30 bg-brand-danger/[0.05] p-6 text-brand-danger"
+              <button
+                type="button"
+                onClick={logout}
+                className="text-sm text-brand-platinum underline"
               >
-                {error}
-              </p>
-            )}
-
-            {loadingLeads ? (
-              showSkeleton && (
-                <div
-                  role="status"
-                  aria-live="polite"
-                  className="overflow-x-auto border border-white/12"
-                >
-                  <span className="sr-only">Carregando cadastros…</span>
-                  <table className="w-full">
-                    <tbody>
-                      {Array.from({ length: 4 }, (_, i) => (
-                        <SkeletonRow key={i} />
-                      ))}
-                    </tbody>
-                  </table>
+                Sair desta conta
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <p className="text-brand-platinum">
+                  {leads.length} {leads.length === 1 ? 'cadastro' : 'cadastros'}
+                  {user.email && <> · {user.email}</>}
+                </p>
+                <div className="flex items-center gap-4">
+                  {leads.length > 0 && (
+                    <a
+                      href={csvHref}
+                      download={`lista-de-espera-${new Date().toISOString().slice(0, 10)}.csv`}
+                      className="inline-flex items-center gap-2 text-sm text-brand-accent hover:underline"
+                    >
+                      <Download size={16} aria-hidden="true" />
+                      Baixar CSV
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={logout}
+                    className="text-sm text-brand-platinum underline"
+                  >
+                    Sair
+                  </button>
                 </div>
-              )
-            ) : leads.length === 0 ? (
-              <p className="border border-white/10 p-8 text-center">Nenhum cadastro ainda.</p>
-            ) : (
-              <div className="overflow-x-auto border border-white/12">
-                <table className="w-full text-left text-sm">
-                  <caption className="sr-only">Cadastros na lista de espera</caption>
-                  <thead className="bg-white/5 text-brand-cream">
-                    <tr>
-                      <th scope="col" className="p-4 font-bold">
-                        Nome
-                      </th>
-                      <th scope="col" className="p-4 font-bold">
-                        E-mail
-                      </th>
-                      <th scope="col" className="p-4 font-bold">
-                        Curso
-                      </th>
-                      <th scope="col" className="p-4 font-bold">
-                        Data
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-brand-platinum">
-                    {leads.map((lead) => (
-                      <tr key={lead.id} className="border-t border-white/5">
-                        <td className="p-4 text-brand-cream">{lead.name}</td>
-                        <td className="p-4">
-                          <a href={`mailto:${lead.email}`} className="hover:text-brand-accent">
-                            {lead.email}
-                          </a>
-                        </td>
-                        <td className="p-4">{lead.courseId}</td>
-                        <td className="p-4 whitespace-nowrap">
-                          {lead.createdAt
-                            ? lead.createdAt.toDate().toLocaleString('pt-BR')
-                            : '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
-            )}
-          </>
-        )}
+
+              <AnimatePresence initial={false}>
+                {error && (
+                  <motion.div
+                    variants={collapse}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    className="overflow-hidden"
+                  >
+                    <p
+                      role="alert"
+                      className="mb-6 border border-brand-danger/30 bg-brand-danger/[0.05] p-6 text-brand-danger"
+                    >
+                      {error}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Skeleton → tabela também passa pelo <Troca>: o esqueleto
+                  sendo substituído no mesmo quadro pela tabela real é o
+                  "instantaneous replacement" que a auditoria aponta. */}
+              <Troca
+                chave={loadingLeads ? 'carregando' : leads.length === 0 ? 'vazio' : 'tabela'}
+              >
+                {loadingLeads ? (
+                  showSkeleton && (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="overflow-x-auto border border-white/12"
+                    >
+                      <span className="sr-only">Carregando cadastros…</span>
+                      <table className="w-full">
+                        <tbody>
+                          {Array.from({ length: 4 }, (_, i) => (
+                            <SkeletonRow key={i} />
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )
+                ) : leads.length === 0 ? (
+                  <p className="border border-white/10 p-8 text-center">
+                    Nenhum cadastro ainda.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto border border-white/12">
+                    <table className="w-full text-left text-sm">
+                      <caption className="sr-only">Cadastros na lista de espera</caption>
+                      <thead className="bg-white/5 text-brand-cream">
+                        <tr>
+                          <th scope="col" className="p-4 font-bold">
+                            Nome
+                          </th>
+                          <th scope="col" className="p-4 font-bold">
+                            E-mail
+                          </th>
+                          <th scope="col" className="p-4 font-bold">
+                            Curso
+                          </th>
+                          <th scope="col" className="p-4 font-bold">
+                            Data
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-brand-platinum">
+                        {leads.map((lead) => (
+                          <tr key={lead.id} className="border-t border-white/5">
+                            <td className="p-4 text-brand-cream">{lead.name}</td>
+                            <td className="p-4">
+                              <a
+                                href={`mailto:${lead.email}`}
+                                className="hover:text-brand-accent"
+                              >
+                                {lead.email}
+                              </a>
+                            </td>
+                            <td className="p-4">{lead.courseId}</td>
+                            <td className="p-4 whitespace-nowrap">
+                              {lead.createdAt
+                                ? lead.createdAt.toDate().toLocaleString('pt-BR')
+                                : '—'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Troca>
+            </>
+          )}
+        </Troca>
       </main>
     </>
   );
