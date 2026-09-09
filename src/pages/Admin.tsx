@@ -8,7 +8,9 @@ import { SkeletonRow } from '../components/Skeleton';
 import Troca from '../components/Troca';
 import { isAdmin } from '../config/admin';
 import { routes, site } from '../config/site';
-import { auth, db, loginWithGoogle, logout } from '../firebase';
+import { auth, loginWithGoogle, logout } from '../firebase/auth';
+import { bancoAoVivo } from '../firebase/banco-ao-vivo';
+import { codigoDoErro, mensagemDoErroDeLogin } from '../lib/erroDeLogin';
 import { collapse } from '../lib/motion';
 import { useDelayedFlag } from '../lib/useDelayedFlag';
 
@@ -18,36 +20,6 @@ interface Lead {
   email: string;
   courseId: string;
   createdAt?: { toDate: () => Date };
-}
-
-/**
- * Traduz o código de erro do Firebase para uma frase que diz o que fazer.
- *
- * O caso que motivou isto é o primeiro da lista. O Firebase só permite
- * login nos domínios que estão em Authentication → Settings → Authorized
- * domains, e um projeto novo traz ali apenas `localhost` e os endereços
- * `*.firebaseapp.com` / `*.web.app`. Publicar o site no domínio próprio
- * portanto quebra o login, e a mensagem crua do SDK
- * (`auth/unauthorized-domain`) não diz onde se conserta.
- */
-function mensagemDoErroDeLogin(codigo: string | undefined): string {
-  switch (codigo) {
-    case 'auth/unauthorized-domain':
-      return `Este endereço (${window.location.hostname}) não está autorizado no Firebase. No console do Firebase, em Authentication → Settings → Authorized domains, acrescente este domínio e tente de novo.`;
-    case 'auth/operation-not-allowed':
-      return 'O login com Google não está habilitado neste projeto do Firebase. Ative-o em Authentication → Sign-in method.';
-    case 'auth/popup-blocked':
-      return 'O navegador bloqueou a janela de login. Libere os pop-ups para este site e tente de novo.';
-    case 'auth/popup-closed-by-user':
-    case 'auth/cancelled-popup-request':
-      return 'A janela de login foi fechada antes de concluir.';
-    case 'auth/network-request-failed':
-      return 'Não foi possível falar com o Firebase. Verifique a conexão e tente de novo.';
-    default:
-      return codigo
-        ? `Não foi possível entrar (${codigo}).`
-        : 'Não foi possível entrar. Tente de novo.';
-  }
 }
 
 /**
@@ -76,11 +48,7 @@ export default function Admin() {
       await loginWithGoogle();
     } catch (err) {
       console.error('Erro ao entrar com o Google:', err);
-      const codigo =
-        typeof err === 'object' && err !== null && 'code' in err
-          ? String((err as { code: unknown }).code)
-          : undefined;
-      setErroLogin(mensagemDoErroDeLogin(codigo));
+      setErroLogin(mensagemDoErroDeLogin(codigoDoErro(err)));
     } finally {
       setEntrando(false);
     }
@@ -111,7 +79,7 @@ export default function Admin() {
 
   useEffect(() => {
     if (!allowed) return;
-    const q = query(collection(db, 'waitlist'), orderBy('createdAt', 'desc'));
+    const q = query(collection(bancoAoVivo, 'waitlist'), orderBy('createdAt', 'desc'));
     return onSnapshot(
       q,
       (snap) => {

@@ -1,9 +1,9 @@
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore/lite';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
 import { useState } from 'react';
-import { db } from '../firebase';
+import { db } from '../firebase/banco';
 import { collapse } from '../lib/motion';
 import Troca from './Troca';
 

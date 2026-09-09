@@ -75,10 +75,26 @@ export default defineConfig(({ isSsrBuild }) => ({
         manualChunks: isSsrBuild
           ? undefined
           : {
-              // Firebase só é usado pelas avaliações de curso. Isolá-lo impede que
-              // o SDK inteiro (Auth + Firestore) entre no chunk inicial da home,
-              // que nunca renderiza avaliação nenhuma.
-              firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+              /*
+                O Firebase é fatiado em DOIS pedaços, e a divisão é a mesma
+                que existe em `src/firebase/`.
+
+                Havia um pedaço só, com `firebase/app`, `firebase/auth` e o
+                `firebase/firestore` completo dentro. Ele pesava 652 kB
+                (166 kB comprimido) — mais do que todas as imagens do site
+                somadas — e era baixado inteiro por quem rolasse até as
+                avaliações de uma página de curso, onde tudo o que acontece
+                é ler uma lista.
+
+                Agora quem só lê e grava carrega `firebase-banco`, com a
+                variante `lite` do Firestore; o Auth só desce quando alguém
+                vai de fato escrever uma avaliação ou entrar no /admin. O
+                Firestore completo não é nomeado aqui de propósito: só o
+                /admin o importa, e o Rollup lhe dá um pedaço próprio, que
+                nunca aparece numa rota pública.
+              */
+              'firebase-banco': ['firebase/app', 'firebase/firestore/lite'],
+              'firebase-auth': ['firebase/auth'],
               vendor: ['react', 'react-dom', 'react-router-dom'],
               // O Sentry NÃO entra aqui de propósito: nomeá-lo em manualChunks
               // força o pacote inteiro para dentro do chunk e anula o

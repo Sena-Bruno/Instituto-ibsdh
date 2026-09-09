@@ -1,21 +1,21 @@
-import { onAuthStateChanged, type User } from 'firebase/auth';
 import {
   addDoc,
   collection,
   deleteDoc,
   doc,
-  onSnapshot,
+  getDocs,
   orderBy,
   query,
   serverTimestamp,
   where,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { LogIn, Star, Trash2, UserCircle2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
-import { useEffect, useState } from 'react';
-import { auth, db, loginWithGoogle, logout } from '../firebase';
+import { useCallback, useEffect, useState } from 'react';
+import { db } from '../firebase/banco';
 import { revealUp, staggerContainer } from '../lib/motion';
+import { useAutenticacao } from '../lib/useAutenticacao';
 import { useDelayedFlag } from '../lib/useDelayedFlag';
 import { SkeletonReview } from './Skeleton';
 
@@ -33,7 +33,9 @@ interface Review {
 
 export const CourseReviews = ({ courseId }: { courseId: string }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [user, setUser] = useState<User | null>(null);
+  /* O SDK de autenticação só desce se alguém for escrever — ver
+     `lib/useAutenticacao.ts`. Ler as avaliações não passa por login. */
+  const { usuario: user, entrando, erro: erroDeLogin, entrar, sair } = useAutenticacao();
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,44 +49,59 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
   // skeleton nesse intervalo incomoda mais do que a espera.
   const showSkeleton = useDelayedFlag(isLoading);
 
-  useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribeAuth();
-  }, []);
+  /**
+   * Lê a lista uma vez.
+   *
+   * Era um `onSnapshot`, que mantinha um canal aberto com o servidor e
+   * redesenhava a lista a cada gravação de qualquer visitante. O que isso
+   * comprava, na prática, era nada: ninguém fica parado numa página de
+   * curso esperando a avaliação de um desconhecido aparecer. O que custava
+   * era o cliente de tempo real do Firestore — a maior parte dos 652 kB
+   * que esta seção baixava só para exibir meia dúzia de comentários.
+   *
+   * Com uma leitura só, a versão `lite` do SDK basta, e ela é uma fração
+   * do tamanho. O único momento em que a lista precisa mudar sozinha é
+   * depois de o próprio visitante escrever ou apagar — e isso está logo
+   * abaixo, explícito.
+   */
+  const buscarAvaliacoes = useCallback(async () => {
+    const q = query(
+      collection(db, 'course_reviews'),
+      where('courseId', '==', courseId),
+      orderBy('createdAt', 'desc'),
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() })) as Review[];
+  }, [courseId]);
 
   useEffect(() => {
     // Ao trocar de curso, volta ao estado de carregamento: sem isto a
     // lista do curso anterior ficaria visível até a nova consulta chegar.
     setIsLoading(true);
 
-    const q = query(
-      collection(db, 'course_reviews'),
-      where('courseId', '==', courseId),
-      orderBy('createdAt', 'desc'),
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const fetchedReviews = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Review[];
-        setReviews(fetchedReviews);
-        setIsLoading(false);
+    /* A resposta de uma consulta abandonada não pode escrever na tela: se
+       o visitante trocar de curso antes de ela chegar, a lista do curso
+       anterior sobrescreveria a do curso atual. */
+    let atual = true;
+    buscarAvaliacoes()
+      .then((lista) => {
+        if (!atual) return;
+        setReviews(lista);
         setLoadError(false);
-      },
-      (error) => {
+      })
+      .catch((error) => {
+        if (!atual) return;
         console.error('Erro ao carregar avaliações:', error);
-        setIsLoading(false);
         setLoadError(true);
-      },
-    );
+      })
+      .finally(() => {
+        if (atual) setIsLoading(false);
+      });
 
-    return () => unsubscribe();
-  }, [courseId]);
+    return () => {
+      atual = false;
+    };
+  }, [buscarAvaliacoes]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,6 +121,16 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
       });
       setNewComment('');
       setNewRating(5);
+
+      /* A releitura é o que substitui o tempo real: a avaliação recém
+         escrita precisa aparecer na lista, e é a única atualização que o
+         visitante espera ver. Se ela falhar, o comentário já está gravado
+         — recarregar a página mostra tudo —, então não vira erro na tela. */
+      try {
+        setReviews(await buscarAvaliacoes());
+      } catch (error) {
+        console.error('Avaliação gravada, mas a lista não recarregou:', error);
+      }
     } catch (error) {
       console.error('Erro ao enviar avaliação:', error);
       setSubmitError('Não foi possível enviar sua avaliação. Tente novamente.');
@@ -115,6 +142,9 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
   const handleDelete = async (reviewId: string) => {
     try {
       await deleteDoc(doc(db, 'course_reviews', reviewId));
+      // Tirar da lista aqui, e não numa releitura: o item some com a
+      // animação de saída, que é o retorno visível de ter apagado.
+      setReviews((atuais) => atuais.filter((r) => r.id !== reviewId));
     } catch (error) {
       console.error('Error deleting review:', error);
     }
@@ -160,7 +190,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                   <p className="text-brand-cream font-medium">{user.displayName}</p>
                   <button
                     type="button"
-                    onClick={logout}
+                    onClick={sair}
                     className="text-xs text-brand-platinum hover:text-brand-accent transition-colors underline"
                   >
                     Sair
@@ -221,12 +251,26 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
             </p>
             <button
               type="button"
-              onClick={loginWithGoogle}
-              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-bold text-brand-dark transition-colors hover:bg-brand-platinum"
+              onClick={entrar}
+              disabled={entrando}
+              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-bold text-brand-dark transition-colors hover:bg-brand-platinum disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <LogIn size={20} />
-              Entrar com Google
+              <LogIn size={20} aria-hidden="true" />
+              {entrando ? 'Entrando…' : 'Entrar com Google'}
             </button>
+
+            {/* O botão era `onClick={loginWithGoogle}`, com a promessa
+                solta: num domínio não autorizado no Firebase, clicar não
+                fazia nada — nem janela, nem mensagem. Agora a recusa vira
+                uma frase que diz onde se conserta. */}
+            {erroDeLogin && (
+              <p
+                role="alert"
+                className="mx-auto mt-6 max-w-md text-left text-[13.5px] leading-relaxed text-brand-danger"
+              >
+                {erroDeLogin}
+              </p>
+            )}
           </div>
         )}
       </div>
