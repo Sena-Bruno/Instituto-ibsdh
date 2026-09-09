@@ -9,13 +9,18 @@ export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-export const loginWithGoogle = async () => {
-  try {
-    await signInWithPopup(auth, googleProvider);
-  } catch (error) {
-    console.error('Error signing in with Google:', error);
-  }
-};
+/**
+ * Entra com a conta Google.
+ *
+ * O erro sobe para quem chamou, de propósito. Antes ele era engolido num
+ * `console.error` daqui, e o efeito prático era o pior possível: num
+ * domínio ainda não autorizado no Firebase, clicar em "Entrar com Google"
+ * não fazia absolutamente nada — nem janela, nem mensagem, nem pista. Só
+ * abrindo o console do navegador dava para descobrir o motivo.
+ *
+ * Quem chama traduz o código do erro para uma frase que diz o que fazer.
+ */
+export const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
 
 export const logout = async () => {
   try {
