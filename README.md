@@ -553,9 +553,20 @@ inventado responde **404**, não 200. `npm run smoke` verifica as duas.
 
 ### Firestore
 
-Duas coleções: `course_reviews` (avaliações, leitura pública, escrita só
-autenticada pelo autor) e `waitlist` (lista de espera — criação livre,
-**leitura bloqueada**, por serem dados pessoais sob a LGPD).
+Três coleções:
+
+| Coleção | Quem lê | Quem escreve |
+| --- | --- | --- |
+| `course_reviews` | qualquer um | o autor, autenticado |
+| `waitlist` | só os UID de `isAdmin()` | qualquer visitante (criação) |
+| `leads` | só os UID de `isAdmin()` | qualquer visitante (criação) |
+
+`waitlist` e `leads` têm **leitura bloqueada**: são nome e e-mail, dados
+pessoais sob a LGPD. São duas listas e não uma porque significam coisas
+diferentes — quem entra na lista de espera já escolheu um curso e espera
+ele abrir; quem deixa o contato por um material chegou por um artigo e
+ainda não escolheu nada. O campo `origem` dos leads guarda a rota em que o
+formulário foi preenchido, e é ele que diz **qual artigo** trouxe o lead.
 
 ```bash
 firebase deploy --only firestore:rules,firestore:indexes
@@ -564,13 +575,47 @@ firebase deploy --only firestore:rules,firestore:indexes
 O índice composto em `firestore.indexes.json` é obrigatório: sem ele a
 consulta de avaliações falha e a lista fica vazia para sempre.
 
-## Lista de espera e avaliações
+## Captação de leads
+
+O site tem dois pontos de captação, e eles compartilham tudo o que vem
+depois: gravação no Firestore, aviso por e-mail, painel `/admin` e CSV.
+
+| Onde | O que oferece | Coleção |
+| --- | --- | --- |
+| Fim de cada página de curso sem turma aberta | lista de espera | `waitlist` |
+| Fim de cada artigo publicado | um material gratuito | `leads` |
+
+### O material dos artigos
+
+Os artigos são a única porta de entrada de quem **ainda não decidiu
+comprar**, e até aqui não captavam ninguém: quem lia, gostava e ia embora
+não deixava contato. O material resolve isso — a caixa no fim do artigo
+troca nome e e-mail por um guia que a pessoa levaria mesmo que nunca
+comprasse nada.
+
+Os materiais ficam em `src/config/materiais.ts`, no mesmo formato de bloco
+dos artigos (e com o mesmo renderizador), então escrever um não exige
+programar. Cada um vira uma página em `/materiais/<id>`.
+
+**A página do material é `noindex` e fica fora do sitemap, de propósito.**
+Se aparecesse na busca, chegaria a todo mundo sem passar pelo formulário —
+e o formulário é a razão de ela existir. Não é um cofre: quem tiver o
+endereço abre, e não precisa ser mais que isso.
+
+**O material abre na hora, no mesmo clique — não "chega no seu e-mail".**
+O aviso por e-mail depende de uma chave do Resend e de um domínio
+verificado; enquanto isso não estiver de pé, prometer entrega por e-mail
+seria a primeira coisa que a pessoa aprende sobre o instituto.
+
+⚠ **Leia e corrija o texto do material antes de divulgar.** Ele sai
+assinado pelo instituto, e vale a mesma regra dos artigos: material que não
+traz nada que só este instituto pode dizer é melhor não entregar.
 
 ### Ver os cadastros
 
-A página `/admin` mostra quem entrou na lista de espera, com exportação em
-CSV. A coleção `waitlist` é **fechada para leitura pública** — são dados
-pessoais sob a LGPD — então o acesso precisa ser liberado para a sua conta:
+A página `/admin` mostra as duas listas, em abas, com exportação em CSV.
+As coleções são **fechadas para leitura pública** — são dados pessoais sob
+a LGPD — então o acesso precisa ser liberado para a sua conta:
 
 1. Acesse `/admin` e entre com a conta Google que vai administrar.
 2. A página informa que a conta não tem acesso e mostra o seu **UID**.
@@ -586,6 +631,33 @@ firebase deploy --only firestore:rules
 
 Só o passo 3 na interface não libera nada: sem a regra, o Firestore recusa
 a leitura — que é justamente o comportamento desejado.
+
+### O SDK do Firebase é fatiado por uso
+
+`src/firebase/` tem cinco arquivos, e a divisão não é organizacional: é o
+que impede o SDK inteiro de descer para quem não precisa dele.
+
+| Arquivo | O que traz | Quem carrega |
+| --- | --- | --- |
+| `app.ts` | a instância | todos |
+| `banco.ts` | Firestore **`lite`** — ler e gravar | site público |
+| `banco-ao-vivo.ts` | Firestore completo, com `onSnapshot` | só `/admin` |
+| `auth.ts` | login com Google | por `import()`, sob demanda |
+| `sessao.ts` | a marca que decide se vale baixar o Auth | todos (é minúsculo) |
+
+Antes havia um `src/firebase.ts` que inicializava app, Firestore completo e
+Auth nas três primeiras linhas. Como as três chamadas têm efeito colateral,
+o empacotador não podia descartar nenhuma: o pedaço `firebase` do site
+pesava **652 kB (166 kB comprimido)** — mais que todas as imagens somadas —
+e caía sobre quem apenas rolava até as avaliações de uma página de curso.
+
+Medido no build, no caminho de quem rola até as avaliações: **666.694 B →
+118.829 B** (165.144 → 27.164 comprimido), **−82%**.
+
+⚠ **Não importe `banco-ao-vivo.ts` de um componente público.** Isso traz o
+cliente de tempo real de volta para o pacote do site e desfaz a separação
+em silêncio. Os tipos ajudam: o `Firestore` completo e o `lite` são tipos
+distintos, então a troca não compila.
 
 ### Destravar as avaliações de curso
 

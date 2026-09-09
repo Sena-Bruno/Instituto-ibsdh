@@ -14,27 +14,78 @@ import { codigoDoErro, mensagemDoErroDeLogin } from '../lib/erroDeLogin';
 import { collapse } from '../lib/motion';
 import { useDelayedFlag } from '../lib/useDelayedFlag';
 
-interface Lead {
+/**
+ * Um cadastro, seja de qual lista for.
+ *
+ * As duas coleções guardam a mesma coisa (nome, e-mail, quando, e a que
+ * respeito), com um nome de campo diferente para o "a que respeito":
+ * `courseId` na lista de espera, `materialId` nos leads dos artigos. A
+ * leitura normaliza esse campo em `referencia` para que a tabela, o CSV e
+ * a contagem existam uma vez só, e não duas quase iguais.
+ */
+interface Cadastro {
   id: string;
   name: string;
   email: string;
-  courseId: string;
+  /** O curso esperado, ou o material baixado. */
+  referencia: string;
+  /** A rota em que o formulário foi preenchido. Só os leads têm. */
+  origem?: string;
   createdAt?: { toDate: () => Date };
 }
 
 /**
- * Painel da lista de espera.
+ * As duas listas, e o que muda entre elas.
  *
- * A coleção `waitlist` é fechada para leitura pública — são dados
- * pessoais sob a LGPD. Só os UID listados em config/admin.ts (e na mesma
- * lista dentro de firestore.rules) conseguem ler.
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE SÃO DUAS COLEÇÕES, E NÃO UMA COM UM CAMPO "TIPO"             │
+ * │                                                                       │
+ * │  Porque significam coisas diferentes. Quem entra na lista de espera   │
+ * │  já escolheu um curso e está esperando ele abrir — é a lista de quem  │
+ * │  está mais perto de comprar. Quem baixa um material chegou por um     │
+ * │  artigo e ainda não escolheu nada.                                    │
+ * │                                                                       │
+ * │  Misturadas, a primeira lista se perderia dentro da segunda, que      │
+ * │  tende a ser muito maior. Separadas, cada uma responde à sua          │
+ * │  pergunta — e o CSV sai pronto para o que se vai fazer com ele.       │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+const LISTAS = {
+  waitlist: {
+    rotulo: 'Lista de espera',
+    colecao: 'waitlist',
+    /** O cabeçalho da terceira coluna, e do CSV. */
+    coluna: 'Curso',
+    campo: 'courseId',
+    vazio: 'Nenhum cadastro na lista de espera ainda.',
+    arquivo: 'lista-de-espera',
+  },
+  leads: {
+    rotulo: 'Materiais',
+    colecao: 'leads',
+    coluna: 'Material',
+    campo: 'materialId',
+    vazio: 'Nenhum material foi baixado ainda.',
+    arquivo: 'leads-de-material',
+  },
+} as const;
+
+type NomeDaLista = keyof typeof LISTAS;
+
+/**
+ * Painel dos cadastros: a lista de espera e os leads dos materiais.
+ *
+ * As duas coleções são fechadas para leitura pública — são dados pessoais
+ * sob a LGPD. Só os UID listados em config/admin.ts (e na mesma lista
+ * dentro de firestore.rules) conseguem ler.
  *
  * A rota é noindex: não deve aparecer em busca.
  */
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
-  const [leads, setLeads] = useState<Lead[]>([]);
+  const [aba, setAba] = useState<NomeDaLista>('waitlist');
+  const [leads, setLeads] = useState<Cadastro[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [error, setError] = useState('');
   const [erroLogin, setErroLogin] = useState('');
@@ -77,25 +128,48 @@ export default function Admin() {
         ? 'sem-acesso'
         : 'lista';
 
+  const lista = LISTAS[aba];
+
   useEffect(() => {
     if (!allowed) return;
-    const q = query(collection(bancoAoVivo, 'waitlist'), orderBy('createdAt', 'desc'));
+
+    /* Trocar de aba volta ao estado de carregamento: sem isto a lista
+       anterior fica na tela, com o cabeçalho da nova, até a consulta
+       chegar — e por um instante o painel mostra dados de uma lista sob o
+       rótulo da outra. */
+    setLoadingLeads(true);
+
+    const q = query(collection(bancoAoVivo, lista.colecao), orderBy('createdAt', 'desc'));
     return onSnapshot(
       q,
       (snap) => {
-        setLeads(snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Lead[]);
+        setLeads(
+          snap.docs.map((d) => {
+            const dados = d.data();
+            return {
+              id: d.id,
+              name: dados.name,
+              email: dados.email,
+              referencia: dados[lista.campo] ?? '',
+              origem: dados.origem,
+              createdAt: dados.createdAt,
+            };
+          }),
+        );
         setLoadingLeads(false);
         setError('');
       },
       (err) => {
-        console.error('Erro ao carregar a lista de espera:', err);
+        console.error(`Erro ao carregar a coleção ${lista.colecao}:`, err);
         setLoadingLeads(false);
         setError(
           'Não foi possível ler a lista. Confira se o seu UID também está em firestore.rules e se as regras foram publicadas.',
         );
       },
     );
-  }, [allowed]);
+  }, [allowed, lista.colecao, lista.campo]);
+
+  const mostraOrigem = aba === 'leads';
 
   const csv = useMemo(() => {
     const aspas = (v: string) => `"${String(v ?? '').replace(/"/g, '""')}"`;
@@ -103,12 +177,20 @@ export default function Admin() {
       [
         aspas(l.name),
         aspas(l.email),
-        aspas(l.courseId),
+        aspas(l.referencia),
+        ...(mostraOrigem ? [aspas(l.origem ?? '')] : []),
         aspas(l.createdAt ? l.createdAt.toDate().toLocaleString('pt-BR') : ''),
       ].join(','),
     );
-    return ['nome,email,curso,data', ...rows].join('\n');
-  }, [leads]);
+    const cabecalho = [
+      'nome',
+      'email',
+      lista.coluna.toLowerCase(),
+      ...(mostraOrigem ? ['origem'] : []),
+      'data',
+    ].join(',');
+    return [cabecalho, ...rows].join('\n');
+  }, [leads, lista.coluna, mostraOrigem]);
 
   const csvHref = useMemo(
     // O BOM faz o Excel abrir o arquivo com a acentuação correta.
@@ -127,15 +209,13 @@ export default function Admin() {
     <>
       <Seo
         rota={routes.admin}
-        titulo={`Lista de espera | ${site.name}`}
+        titulo={`Cadastros | ${site.name}`}
         descricao="Painel interno do Instituto Bruno Sena."
         indexar={false}
       />
 
       <main className="max-w-5xl mx-auto px-6 pt-36 pb-24">
-        <h1 className="font-display text-4xl font-bold text-brand-cream mb-8">
-          Lista de espera
-        </h1>
+        <h1 className="font-display text-4xl font-bold text-brand-cream mb-8">Cadastros</h1>
 
         <Troca chave={tela}>
           {checkingAuth ? (
@@ -221,6 +301,31 @@ export default function Admin() {
             </div>
           ) : (
             <>
+              {/* As abas. São <button> e não link: trocar de lista não é
+                  navegar — o endereço do painel é um só, e ele é privado. */}
+              <div
+                role="tablist"
+                aria-label="Listas de cadastro"
+                className="mb-6 flex gap-1 border-b border-white/10"
+              >
+                {(Object.keys(LISTAS) as NomeDaLista[]).map((nome) => (
+                  <button
+                    key={nome}
+                    type="button"
+                    role="tab"
+                    aria-selected={aba === nome}
+                    onClick={() => setAba(nome)}
+                    className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${
+                      aba === nome
+                        ? 'border-brand-accent text-brand-cream'
+                        : 'border-transparent text-brand-platinum hover:text-brand-cream'
+                    }`}
+                  >
+                    {LISTAS[nome].rotulo}
+                  </button>
+                ))}
+              </div>
+
               <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <p className="text-brand-platinum">
                   {leads.length} {leads.length === 1 ? 'cadastro' : 'cadastros'}
@@ -230,7 +335,7 @@ export default function Admin() {
                   {leads.length > 0 && (
                     <a
                       href={csvHref}
-                      download={`lista-de-espera-${new Date().toISOString().slice(0, 10)}.csv`}
+                      download={`${lista.arquivo}-${new Date().toISOString().slice(0, 10)}.csv`}
                       className="inline-flex items-center gap-2 text-sm text-brand-accent hover:underline"
                     >
                       <Download size={16} aria-hidden="true" />
@@ -269,8 +374,11 @@ export default function Admin() {
               {/* Skeleton → tabela também passa pelo <Troca>: o esqueleto
                   sendo substituído no mesmo quadro pela tabela real é o
                   "instantaneous replacement" que a auditoria aponta. */}
+              {/* A aba entra na chave: sem ela, trocar de lista redesenha a
+                  tabela no mesmo quadro, que é o corte seco que o <Troca>
+                  existe para evitar. */}
               <Troca
-                chave={loadingLeads ? 'carregando' : leads.length === 0 ? 'vazio' : 'tabela'}
+                chave={`${aba}-${loadingLeads ? 'carregando' : leads.length === 0 ? 'vazio' : 'tabela'}`}
               >
                 {loadingLeads ? (
                   showSkeleton && (
@@ -290,13 +398,11 @@ export default function Admin() {
                     </div>
                   )
                 ) : leads.length === 0 ? (
-                  <p className="border border-white/10 p-8 text-center">
-                    Nenhum cadastro ainda.
-                  </p>
+                  <p className="border border-white/10 p-8 text-center">{lista.vazio}</p>
                 ) : (
                   <div className="overflow-x-auto border border-white/12">
                     <table className="w-full text-left text-sm">
-                      <caption className="sr-only">Cadastros na lista de espera</caption>
+                      <caption className="sr-only">{lista.rotulo}</caption>
                       <thead className="bg-white/5 text-brand-cream">
                         <tr>
                           <th scope="col" className="p-4 font-bold">
@@ -306,8 +412,13 @@ export default function Admin() {
                             E-mail
                           </th>
                           <th scope="col" className="p-4 font-bold">
-                            Curso
+                            {lista.coluna}
                           </th>
+                          {mostraOrigem && (
+                            <th scope="col" className="p-4 font-bold">
+                              Origem
+                            </th>
+                          )}
                           <th scope="col" className="p-4 font-bold">
                             Data
                           </th>
@@ -325,7 +436,13 @@ export default function Admin() {
                                 {lead.email}
                               </a>
                             </td>
-                            <td className="p-4">{lead.courseId}</td>
+                            <td className="p-4">{lead.referencia}</td>
+                            {mostraOrigem && (
+                              /* A rota que trouxe o lead. É o dado que diz
+                                 qual artigo converte — e portanto sobre o
+                                 que vale a pena escrever o próximo. */
+                              <td className="p-4 whitespace-nowrap">{lead.origem ?? '—'}</td>
+                            )}
                             <td className="p-4 whitespace-nowrap">
                               {lead.createdAt
                                 ? lead.createdAt.toDate().toLocaleString('pt-BR')

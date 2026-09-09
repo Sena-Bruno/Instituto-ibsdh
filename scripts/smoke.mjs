@@ -28,7 +28,24 @@ const routes = [
   '/master-coach',
   '/artigos',
   '/artigos/o-que-e-pnl',
+  /* A página do material é `noindex` e fica fora do sitemap, mas PRECISA
+     existir em disco: é o link que o formulário do artigo entrega no
+     mesmo clique. Sem arquivo, o servidor devolve 404 para o endereço que
+     o site acabou de prometer — e é justamente o tipo de quebra que só
+     aparece em produção. */
+  '/materiais/sete-perguntas',
 ];
+
+/*
+  As rotas que existem de propósito fora do índice de busca.
+
+  A página do material é `noindex` e fica fora do sitemap: se aparecesse na
+  busca, chegaria a todo mundo sem passar pelo formulário — e o formulário é
+  a razão de ela existir. Mesmo assim ela É verificada aqui, porque é o link
+  que o formulário do artigo entrega no mesmo clique: se ela deixar de ser
+  gerada, o site promete um endereço que responde 404.
+*/
+const SEM_INDICE = new Set(['/materiais/sete-perguntas']);
 
 // O ambiente traz um Chromium pré-instalado que pode não bater com a build
 // esperada pela versão do Playwright; apontar direto evita baixar outro.
@@ -93,10 +110,19 @@ for (const route of routes) {
   failures += brokenImages.length + deadCtas.length;
 }
 
-// Ruído de ambiente, não defeito do site: rede restrita bloqueia recursos
-// de terceiros e o backend do Firestore.
+/*
+  Ruído de ambiente, não defeito do site: a rede restrita em que o smoke roda
+  bloqueia recursos de terceiros e o backend do Firestore.
+
+  As duas últimas alternativas entraram quando as avaliações passaram a usar
+  `firebase/firestore/lite`. O SDK completo, ao não alcançar o servidor,
+  escrevia "Could not reach Cloud Firestore backend"; o `lite` fala por HTTP
+  comum e a mesma falha sai como `RPC_ERROR` e "Request failed with error:
+  undefined". Sem estas duas linhas, o smoke passa a reprovar toda execução
+  em rede fechada — e um filtro que reprova sempre deixa de ser lido.
+*/
 const environmental =
-  /ERR_CONNECTION|ERR_NAME_NOT_RESOLVED|ERR_INTERNET|Could not reach Cloud Firestore|offline mode|net::ERR_/i;
+  /ERR_CONNECTION|ERR_NAME_NOT_RESOLVED|ERR_INTERNET|Could not reach Cloud Firestore|offline mode|net::ERR_|@firebase\/firestore.*RPC_ERROR|Request failed with error: undefined/i;
 
 // --- Movimento ---
 // Verifica o que é fácil regredir sem ninguém notar: o painel que volta a
@@ -265,7 +291,15 @@ const environmental =
     if (!dados.titulo) problemas.push('sem <title>');
     if (!dados.canonico) problemas.push('sem canônico');
     if (!dados.descricao) problemas.push('sem descrição');
-    if (dados.dadosEstruturados === 0) problemas.push('sem JSON-LD');
+    /* Dados estruturados existem para o resultado de busca. Numa página
+       `noindex` — a do material entregue em troca de contato — não há
+       resultado de busca para enriquecer, e exigi-los ali seria cobrar
+       trabalho que não produz efeito nenhum. O resto da verificação vale
+       igual: a página precisa responder 200, ter título e trazer o texto
+       no HTML, senão o link que o formulário entrega não leva a nada. */
+    if (dados.dadosEstruturados === 0 && !SEM_INDICE.has(route)) {
+      problemas.push('sem JSON-LD');
+    }
     if (dados.h1 !== 1) problemas.push(`${dados.h1} <h1> (esperado 1)`);
     // Abaixo disto, o que veio foi casca: título e menu, sem conteúdo.
     if (dados.texto < 1500) problemas.push(`só ${dados.texto} caracteres de texto`);

@@ -130,7 +130,11 @@ describe('WaitlistForm', () => {
     expect(JSON.parse(opcoes.body)).toEqual({
       name: 'Maria Silva',
       email: 'maria@exemplo.com',
-      courseId: 'master-coach',
+      /* `tipo` e `referencia` no lugar de `courseId`: a mesma função avisa
+         a lista de espera e a captação de material dos artigos, e é o
+         `tipo` que decide o assunto do e-mail. */
+      tipo: 'lista-de-espera',
+      referencia: 'master-coach',
     });
   });
 

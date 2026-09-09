@@ -83,6 +83,11 @@ export default function Privacidade() {
                 quando você se cadastra para ser avisado sobre uma formação.
               </li>
               <li>
+                <strong className="text-brand-cream">Materiais gratuitos:</strong> nome, e-mail
+                e a página em que você pediu o material, quando você o solicita ao final de um
+                artigo.
+              </li>
+              <li>
                 <strong className="text-brand-cream">Avaliações de curso:</strong> ao entrar com
                 sua Conta Google, recebemos seu nome, foto de perfil e um identificador de
                 usuário, associados à avaliação que você publica.
@@ -99,10 +104,12 @@ export default function Privacidade() {
               3. Para que usamos
             </h2>
             <p>
-              Para avisar sobre turmas e formações que você pediu para acompanhar, publicar as
-              avaliações que você escolheu tornar públicas e responder ao seu contato. Não
-              vendemos seus dados e não os usamos para finalidade diferente da que motivou a
-              coleta.
+              Para avisar sobre turmas e formações que você pediu para acompanhar, enviar o
+              material que você solicitou e conteúdos relacionados a ele, publicar as avaliações
+              que você escolheu tornar públicas e responder ao seu contato. A página de origem
+              registrada com o material serve para sabermos qual texto foi útil, e não para
+              criar perfil de comportamento. Não vendemos seus dados e não os usamos para
+              finalidade diferente da que motivou a coleta.
             </p>
           </section>
 
@@ -143,7 +150,7 @@ export default function Privacidade() {
             <p>
               Guardamos os dados pelo tempo necessário às finalidades acima ou até que você peça
               a exclusão. O acesso é restrito e protegido por regras de segurança que impedem a
-              leitura pública da lista de espera.
+              leitura pública da lista de espera e da lista de quem pediu materiais.
             </p>
           </section>
         </div>

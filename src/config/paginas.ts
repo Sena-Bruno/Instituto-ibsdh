@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import { artigos, artigosPublicados } from './artigos';
+import { materiais } from './materiais';
 import { routes } from './site';
 
 /**
@@ -175,6 +176,31 @@ export const paginas: Pagina[] = [
        a ausência dele no sitemap, logo abaixo. */
     expandir: () => artigos.map((a) => `${routes.artigos}/${a.slug}`),
     expandirSitemap: () => artigosPublicados.map((a) => `${routes.artigos}/${a.slug}`),
+  },
+  /*
+    Os materiais entregues em troca de contato.
+
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  `expandirSitemap: () => []` NÃO É ESQUECIMENTO                     │
+    │                                                                     │
+    │  Cada material PRECISA de arquivo HTML próprio: o formulário do      │
+    │  artigo entrega o link na hora, e sem arquivo em disco o servidor    │
+    │  devolveria 404 para o endereço que o site acabou de prometer.       │
+    │                                                                     │
+    │  E nenhum deles pode ser anunciado. Se o material aparecesse na      │
+    │  busca, ele chegaria a todo mundo sem passar pelo formulário — e o   │
+    │  formulário é a razão de ele existir. A página sai com `noindex`     │
+    │  (ver `pages/Material.tsx`) e a lista vazia aqui a mantém fora do    │
+    │  sitemap. É a mesma mecânica dos rascunhos de artigo, logo acima.    │
+    └─────────────────────────────────────────────────────────────────────┘
+  */
+  {
+    rota: `${routes.materiais}/:id`,
+    carregar: () => import('../pages/Material'),
+    fonte: 'src/config/materiais.ts',
+    publica: true,
+    expandir: () => materiais.map((m) => `${routes.materiais}/${m.id}`),
+    expandirSitemap: () => [],
   },
   {
     rota: routes.privacidade,

@@ -1,8 +1,8 @@
 import { readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, expect, it } from 'vitest';
-import { diagnostico } from '../functions/notificar-lead.mjs';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import notificarLead, { diagnostico } from '../functions/notificar-lead.mjs';
 
 const pastaDeFuncoes = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -146,5 +146,140 @@ describe('diagnostico', () => {
       expect(msg).not.toContain('re_chave_secreta');
       expect(msg).not.toContain('zyA7');
     }
+  });
+});
+
+/**
+ * Testes da validação do pedido.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  O QUE ESTA FUNÇÃO PRECISA GARANTIR                                   │
+ * │                                                                       │
+ * │  Ela é um endereço público que manda e-mail. Duas coisas, portanto,    │
+ * │  não podem depender de quem chama:                                     │
+ * │                                                                       │
+ * │   · PARA QUEM vai — é sempre NOTIFY_EMAIL, nunca um campo do pedido,   │
+ * │     senão o site vira relé de spam de terceiros;                       │
+ * │   · O QUE ESTÁ ESCRITO no assunto — sai em nome do instituto, então    │
+ * │     vem de uma tabela fechada aqui dentro.                            │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+describe('notificar-lead', () => {
+  const pedido = (corpo) =>
+    new Request('https://exemplo/.netlify/functions/notificar-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(corpo),
+    });
+
+  const leadValido = {
+    name: 'Maria Silva',
+    email: 'maria@exemplo.com',
+    tipo: 'material',
+    referencia: 'sete-perguntas',
+    origem: '/artigos/o-que-e-pnl',
+  };
+
+  /** O corpo JSON que a função mandou para o Resend na última chamada. */
+  const enviado = () => JSON.parse(globalThis.fetch.mock.calls[0][1].body);
+
+  beforeEach(() => {
+    process.env.RESEND_API_KEY = 're_chave_de_teste';
+    process.env.NOTIFY_FROM = 'avisos@institutobrunosena.com.br';
+    process.env.NOTIFY_EMAIL = 'bruno@exemplo.com';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, status: 200 }));
+  });
+
+  afterEach(() => {
+    process.env.RESEND_API_KEY = undefined;
+    process.env.NOTIFY_FROM = undefined;
+    process.env.NOTIFY_EMAIL = undefined;
+    vi.unstubAllGlobals();
+  });
+
+  it('manda o aviso do material com a origem no corpo', async () => {
+    const res = await notificarLead(pedido(leadValido));
+
+    expect(res.status).toBe(204);
+    const email = enviado();
+    expect(email.to).toBe('bruno@exemplo.com');
+    expect(email.subject).toContain('material');
+    expect(email.subject).toContain('sete-perguntas');
+    // A origem é o dado que diz QUAL artigo trouxe o lead.
+    expect(email.html).toContain('/artigos/o-que-e-pnl');
+    // `reply_to` no lead: responder ao aviso responde à pessoa.
+    expect(email.reply_to).toBe('maria@exemplo.com');
+  });
+
+  it('não escreve a linha de origem quando não há origem', async () => {
+    await notificarLead(
+      pedido({
+        name: 'Maria Silva',
+        email: 'maria@exemplo.com',
+        tipo: 'lista-de-espera',
+        referencia: 'master-coach',
+      }),
+    );
+
+    const email = enviado();
+    expect(email.subject).toContain('lista de espera');
+    expect(email.html).not.toContain('Veio de');
+    expect(email.html).toContain('Curso');
+  });
+
+  it('recusa um tipo que não está na tabela', async () => {
+    const res = await notificarLead(pedido({ ...leadValido, tipo: 'promocao' }));
+
+    expect(res.status).toBe(400);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('recusa "constructor" como tipo', async () => {
+    /*
+      A guarda era `ASSUNTOS[tipo] ? tipo : ''`, e `ASSUNTOS['constructor']`
+      é verdadeiro em qualquer objeto — a propriedade vem herdada de
+      Object.prototype. O pedido passava, e o e-mail saía com "undefined"
+      no assunto e no corpo. Agora a checagem é `Object.hasOwn`.
+    */
+    const res = await notificarLead(pedido({ ...leadValido, tipo: 'constructor' }));
+
+    expect(res.status).toBe(400);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('recusa e-mail malformado e campos vazios', async () => {
+    for (const invalido of [
+      { ...leadValido, email: 'maria@exemplo' },
+      { ...leadValido, name: '   ' },
+      { ...leadValido, referencia: '' },
+    ]) {
+      expect((await notificarLead(pedido(invalido))).status).toBe(400);
+    }
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('nunca manda para um destinatário vindo do pedido', async () => {
+    /* Sem isto, o endpoint seria um relé aberto: qualquer pessoa poderia
+       mandar e-mail em nome do instituto para quem quisesse. */
+    await notificarLead(pedido({ ...leadValido, to: 'vitima@exemplo.com' }));
+
+    const email = enviado();
+    expect(email.to).toBe('bruno@exemplo.com');
+    expect(JSON.stringify(email)).not.toContain('vitima@exemplo.com');
+  });
+
+  it('responde 204 sem fazer nada quando o Resend não está configurado', async () => {
+    process.env.RESEND_API_KEY = '';
+    const res = await notificarLead(pedido(leadValido));
+
+    expect(res.status).toBe(204);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('recusa método que não seja POST', async () => {
+    const res = await notificarLead(
+      new Request('https://exemplo/.netlify/functions/notificar-lead'),
+    );
+    expect(res.status).toBe(405);
   });
 });
