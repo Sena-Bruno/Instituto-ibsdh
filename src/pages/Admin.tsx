@@ -18,6 +18,36 @@ interface Lead {
 }
 
 /**
+ * Traduz o código de erro do Firebase para uma frase que diz o que fazer.
+ *
+ * O caso que motivou isto é o primeiro da lista. O Firebase só permite
+ * login nos domínios que estão em Authentication → Settings → Authorized
+ * domains, e um projeto novo traz ali apenas `localhost` e os endereços
+ * `*.firebaseapp.com` / `*.web.app`. Publicar o site no domínio próprio
+ * portanto quebra o login, e a mensagem crua do SDK
+ * (`auth/unauthorized-domain`) não diz onde se conserta.
+ */
+function mensagemDoErroDeLogin(codigo: string | undefined): string {
+  switch (codigo) {
+    case 'auth/unauthorized-domain':
+      return `Este endereço (${window.location.hostname}) não está autorizado no Firebase. No console do Firebase, em Authentication → Settings → Authorized domains, acrescente este domínio e tente de novo.`;
+    case 'auth/operation-not-allowed':
+      return 'O login com Google não está habilitado neste projeto do Firebase. Ative-o em Authentication → Sign-in method.';
+    case 'auth/popup-blocked':
+      return 'O navegador bloqueou a janela de login. Libere os pop-ups para este site e tente de novo.';
+    case 'auth/popup-closed-by-user':
+    case 'auth/cancelled-popup-request':
+      return 'A janela de login foi fechada antes de concluir.';
+    case 'auth/network-request-failed':
+      return 'Não foi possível falar com o Firebase. Verifique a conexão e tente de novo.';
+    default:
+      return codigo
+        ? `Não foi possível entrar (${codigo}).`
+        : 'Não foi possível entrar. Tente de novo.';
+  }
+}
+
+/**
  * Painel da lista de espera.
  *
  * A coleção `waitlist` é fechada para leitura pública — são dados
@@ -32,7 +62,26 @@ export default function Admin() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [error, setError] = useState('');
+  const [erroLogin, setErroLogin] = useState('');
+  const [entrando, setEntrando] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const entrar = async () => {
+    setErroLogin('');
+    setEntrando(true);
+    try {
+      await loginWithGoogle();
+    } catch (err) {
+      console.error('Erro ao entrar com o Google:', err);
+      const codigo =
+        typeof err === 'object' && err !== null && 'code' in err
+          ? String((err as { code: unknown }).code)
+          : undefined;
+      setErroLogin(mensagemDoErroDeLogin(codigo));
+    } finally {
+      setEntrando(false);
+    }
+  };
 
   useEffect(
     () =>
@@ -116,10 +165,28 @@ export default function Admin() {
             <p className="text-brand-platinum mb-6">
               Entre com a conta Google autorizada para ver os cadastros.
             </p>
-            <button type="button" onClick={loginWithGoogle} className="btn-primary mx-auto">
-              <LogIn size={18} aria-hidden="true" />
-              Entrar com Google
+            <button
+              type="button"
+              onClick={entrar}
+              disabled={entrando}
+              className="btn-primary mx-auto disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {entrando ? (
+                <Loader2 className="animate-spin" size={18} aria-hidden="true" />
+              ) : (
+                <LogIn size={18} aria-hidden="true" />
+              )}
+              {entrando ? 'Entrando…' : 'Entrar com Google'}
             </button>
+
+            {erroLogin && (
+              <p
+                role="alert"
+                className="mx-auto mt-6 max-w-md text-left text-[13.5px] leading-relaxed text-brand-danger"
+              >
+                {erroLogin}
+              </p>
+            )}
           </div>
         ) : !allowed ? (
           <div className="border border-brand-danger/30 bg-brand-danger/[0.05] p-8">

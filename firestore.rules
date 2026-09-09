@@ -84,7 +84,8 @@ service cloud.firestore {
     // página mostra o identificador na tela.
     function isAdmin() {
       return isAuthenticated() && request.auth.uid in [
-        // 'cole-aqui-o-uid-mostrado-na-tela',
+        // Bruno Sena
+        'kKJkk1MFh9Rw5xm51BwZIYD5Tin2',
       ];
     }
 
