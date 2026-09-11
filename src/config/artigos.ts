@@ -441,33 +441,34 @@ export const artigos: Artigo[] = [
     ],
   },
   /* ──────────────────────────────────────────────────────────────────────
-     RASCUNHOS — AGUARDANDO A LEITURA FINAL DO BRUNO
+     OS QUATRO DE SETEMBRO DE 2026
 
-     Os quatro abaixo saem com `revisado: false`: ficam fora da listagem,
-     fora do sitemap, com `noindex` e sem a caixa de captação de material.
-     Viram publicação com a troca de uma palavra.
-
-     O que faltava neles já entrou. Cada um tem agora um atendimento real,
-     escrito pelo Bruno em primeira pessoa, e o de regressão traz também a
-     posição do instituto sobre vidas passadas. Era a parte que não dava
-     para redigir de fora, e é o que separa estes textos do que qualquer
-     site da área escreve.
-
-     Falta só o Bruno ler o resultado montado antes de ir ao índice de
-     busca. É o que o `revisado` significa neste arquivo.
+     Publicados em 11/09/2026, depois de o Bruno escrever o que só ele podia
+     escrever: um atendimento real em cada um, em primeira pessoa, e a
+     posição do instituto sobre vidas passadas no de regressão. Era a parte
+     que não dava para redigir de fora, e é o que separa estes textos do que
+     qualquer site da área escreve.
 
      ── O PADRÃO DE ESCRITA ────────────────────────────────────────────────
 
-     Definido pelo Bruno e aplicado nos quatro: português conversacional,
-     como alguém inteligente explicando com simplicidade. Frases de tamanhos
-     variados. Nada de travessão. Nada de "não é sobre X, é sobre Y", "e
-     isso muda tudo", "é aqui que a maioria erra", "vale ressaltar". Palavra
-     simples quando ela resolve. Sem adjetivo grandioso, sem metáfora vazia,
-     sem introdução que não leva a lugar nenhum. Nada de repetir a mesma
-     ideia com outras palavras só para alongar. Frase escrita para
-     impressionar em vez de comunicar, reescreve mais simples.
+     Definido pelo Bruno e aplicado a estes quatro. Vale para o próximo
+     artigo, para que ele nasça assim em vez de ser corrigido depois:
 
-     Os três artigos publicados ainda não passaram por este padrão.
+       · português conversacional, como alguém inteligente explicando com
+         simplicidade, e não como texto publicitário ou corporativo;
+       · frases de tamanhos variados, sem estrutura previsível;
+       · NADA DE TRAVESSÃO;
+       · nada de "não é sobre X, é sobre Y", "e isso muda tudo", "é aqui que
+         a maioria erra", "vale ressaltar", nem conclusão genérica;
+       · palavra simples quando ela resolve; sem jargão, sem adjetivo
+         grandioso, sem metáfora vazia, sem introdução desnecessária;
+       · nada de repetir a mesma ideia com outras palavras para alongar;
+       · listas e parágrafos menos simétricos;
+       · exemplo concreto quando ele ajuda a explicar;
+       · frase escrita para impressionar em vez de comunicar, reescreve mais
+         simples.
+
+     Os três artigos de 07/09/2026, acima, ainda não passaram por ele.
      ────────────────────────────────────────────────────────────────────── */
 
   {
@@ -480,7 +481,7 @@ export const artigos: Artigo[] = [
     publicadoEm: '2026-09-11',
     eixo: 'coaching',
     cursoRelacionado: '/master-coach',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
@@ -607,7 +608,7 @@ export const artigos: Artigo[] = [
     publicadoEm: '2026-09-11',
     eixo: 'coaching',
     cursoRelacionado: '/master-coach',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
@@ -736,7 +737,7 @@ export const artigos: Artigo[] = [
     publicadoEm: '2026-09-11',
     eixo: 'hipnoterapia',
     cursoRelacionado: '/hipnoterapia',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
@@ -875,7 +876,7 @@ export const artigos: Artigo[] = [
     publicadoEm: '2026-09-11',
     eixo: 'pnl',
     cursoRelacionado: '/pnl-practitioner',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
