@@ -60,6 +60,15 @@ export interface Material {
   formato: string;
   /** Texto do botão que envia o formulário. */
   chamada: string;
+  /**
+   * A linha de chamada do convite que aparece sozinho no site.
+   *
+   * Existe separada da `promessa` porque o contexto é outro. No fim de um
+   * artigo a pessoa acabou de ler dois mil caracteres nossos e já sabe do
+   * que se trata; no meio de uma página de curso ela não pediu nada, e a
+   * primeira linha precisa justificar a interrupção em si.
+   */
+  convite: string;
   /** Eixo a que o material pertence; define a cor da caixa e da página. */
   eixo: IdEixo;
   corpo: Bloco[];
@@ -83,6 +92,7 @@ export const materiais: Material[] = [
     promessa:
       'O roteiro que separa uma formação séria de um certificado caro — para usar com qualquer escola, inclusive com a nossa.',
     chamada: 'Quero o guia',
+    convite: 'Antes de escolher qualquer formação, faça estas 7 perguntas',
     eixo: 'jornadas',
     corpo: [
       {

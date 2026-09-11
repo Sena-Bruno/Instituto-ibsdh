@@ -25,6 +25,7 @@ const material: Material = {
   formato: 'Guia gratuito',
   promessa: 'O roteiro que separa uma formação séria de um certificado caro.',
   chamada: 'Quero o guia',
+  convite: 'Antes de escolher qualquer formação, faça estas 7 perguntas',
   eixo: 'jornadas',
   corpo: [{ tipo: 'paragrafo', texto: 'Conteúdo.' }],
 };
