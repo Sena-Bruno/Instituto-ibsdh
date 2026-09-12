@@ -65,12 +65,19 @@ service cloud.firestore {
     // publicamente: são dados pessoais (nome e e-mail) sob a LGPD.
     // A leitura acontece só pelo console do Firebase ou pelo Admin SDK,
     // que ignoram estas regras.
+    //
+    // `origem` e `campanha` são OPCIONAIS, e é isso que permite publicar
+    // estas regras antes ou depois do deploy do site sem recusar cadastro
+    // nenhum: a versão antiga do site, que não envia os dois campos,
+    // continua passando por aqui.
     function isValidWaitlistEntry(data) {
-      return hasOnlyAllowedFields(['name', 'email', 'courseId', 'createdAt']) &&
+      return hasOnlyAllowedFields(['name', 'email', 'courseId', 'origem', 'campanha', 'createdAt']) &&
              data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
              data.email is string && data.email.size() > 3 && data.email.size() <= 200 &&
              data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
              data.courseId is string && data.courseId.size() > 0 && data.courseId.size() < 100 &&
+             (!('origem' in data) || (data.origem is string && data.origem.size() <= 200)) &&
+             (!('campanha' in data) || (data.campanha is string && data.campanha.size() <= 200)) &&
              data.createdAt is timestamp;
     }
 
@@ -109,13 +116,19 @@ service cloud.firestore {
     // `origem` é a rota em que a pessoa preencheu o formulário. É o campo
     // que diz QUAL artigo trouxe o lead, e portanto sobre o que vale a
     // pena escrever o próximo.
+    //
+    // `campanha` guarda a etiqueta `utm_` da entrada — `instagram / cpc /
+    // setembro`. Opcional porque a maioria dos visitantes chega sem
+    // campanha nenhuma, e porque um campo obrigatório aqui recusaria todo
+    // cadastro feito pela versão do site anterior a ele.
     function isValidLead(data) {
-      return hasOnlyAllowedFields(['name', 'email', 'materialId', 'origem', 'createdAt']) &&
+      return hasOnlyAllowedFields(['name', 'email', 'materialId', 'origem', 'campanha', 'createdAt']) &&
              data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
              data.email is string && data.email.size() > 3 && data.email.size() <= 200 &&
              data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
              data.materialId is string && data.materialId.size() > 0 && data.materialId.size() < 100 &&
              data.origem is string && data.origem.size() > 0 && data.origem.size() <= 200 &&
+             (!('campanha' in data) || (data.campanha is string && data.campanha.size() <= 200)) &&
              data.createdAt is timestamp;
     }
 

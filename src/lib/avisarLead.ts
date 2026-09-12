@@ -22,8 +22,13 @@ export interface AvisoDeLead {
   tipo: 'lista-de-espera' | 'material';
   /** O curso, na lista de espera; o material, na captação por artigo. */
   referencia: string;
-  /** De qual página do site o cadastro veio. Só a captação por artigo tem. */
+  /** De qual página do site o cadastro veio. */
   origem?: string;
+  /**
+   * A etiqueta `utm_` da entrada, já formatada — `instagram / cpc / setembro`.
+   * Ausente para quem chegou sem campanha, que é a maioria.
+   */
+  campanha?: string;
 }
 
 export function avisarLead(aviso: AvisoDeLead): void {

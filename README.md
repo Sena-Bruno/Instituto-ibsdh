@@ -298,6 +298,135 @@ estático, com uma função serverless — não há trecho distribuído para
 rastrear, e o custo de instrumentação não compraria informação nenhuma que
 o log da função e o Sentry já não deem.
 
+## Medição de conversão
+
+O site vende, capta lead e manda gente para o WhatsApp. Até aqui, não
+contava nada disso.
+
+O que já existia respondia as pontas e deixava o meio vazio:
+
+| Pergunta | Quem responde |
+| --- | --- |
+| Como as pessoas me acham? | Search Console |
+| O que elas fazem depois de chegar? | **nada, até agora** |
+| Quanto virou venda? | Kiwify — sem dizer de onde veio |
+
+O Search Console acaba no instante em que o visitante entra no site, e só
+enxerga busca orgânica do Google: Instagram, WhatsApp e anúncio pago são
+invisíveis para ele. A Kiwify sabe que vendeu e não sabe qual página
+vendeu. Sem a camada do meio não havia como responder se o simulador do
+SENA converte, se o vídeo de boas-vindas é assistido ou qual artigo gera
+matrícula.
+
+### Como ligar
+
+Defina `VITE_GA4_ID` (o fluxo de dados do GA4, `G-XXXXXXXXXX`) em
+*Netlify → Site settings → Environment variables*. **Sem ela o custo é
+zero**: o Vite substitui `import.meta.env` no build, e o Rollup elimina o
+módulo inteiro — a string `googletagmanager` não aparece no pacote.
+
+### O que é medido
+
+| Evento | Quando |
+| --- | --- |
+| `page_view` | troca de rota (a primeira vem do `config`) |
+| `begin_checkout` | clique em qualquer link da Kiwify, com `value` e `currency` |
+| `generate_lead` | cadastro gravado — nunca antes da gravação |
+| `clique_whatsapp` | clique em qualquer `wa.me` |
+| `clique_email` | clique em qualquer `mailto:` |
+| `clique_externo` | saída para outro domínio |
+| `video_play` | play na fachada de vídeo |
+| `sena_respondeu` / `sena_concluido` | a amostra do SENA, no meio e no fim |
+
+Os dois primeiros nomes são **eventos recomendados do GA4**, em inglês de
+propósito: o GA4 os encaixa sozinho nos relatórios de funil e de geração de
+lead. Um nome em português no lugar deles seria mais bonito no código e
+mudo no painel.
+
+### Nenhum botão tem código de medição
+
+Os botões de compra e de WhatsApp estão em quinze pontos do site — cartões
+de curso, trilho de compra, jornada, rodapé, 404, o flutuante. Nenhum deles
+foi tocado.
+
+Quem mede é **um ouvinte só, no documento**, que reconhece o DESTINO em vez
+do botão: `pay.kiwify.com.br` é compra, `wa.me` é WhatsApp, `mailto:` é
+e-mail. O curso e o preço saem da tabela do catálogo, pelo próprio endereço
+do checkout.
+
+O motivo é o dia seguinte: instrumentar quinze botões significaria lembrar
+de instrumentar o décimo sexto. A medição furaria em silêncio no dia em que
+alguém acrescentasse um botão — que é o dia em que ela mais importaria.
+
+### O gtag.js não entra no caminho crítico
+
+O script pesa mais de 100 kB. Ele é buscado no tempo ocioso **depois** do
+`load` (teto de 2s) ou na primeira interação de verdade, o que vier
+primeiro. Os eventos disparados antes disso não se perdem: vão para a fila
+`dataLayer`, que o Google processa quando o script chega.
+
+As duas largadas existem juntas por um motivo: só a interação deixaria de
+contar quem lê parado e vai embora, e a taxa de rejeição apareceria menor
+do que é — o pior tipo de erro, porque é o que agrada.
+
+### ⚠ Consentimento: uma decisão que ainda é sua
+
+O GA4 grava cookie. Sob a LGPD isso pede base legal, e a prática corrente
+no Brasil é o aviso de cookies com recusa possível. **O site não desenha
+esse aviso** — ele mudaria a primeira tela de todo visitante, e essa é uma
+escolha de negócio, não de código.
+
+O código está preparado: `iniciarMedicao()` é o único ponto de entrada, e
+basta chamá-lo depois do "aceitar" em vez de no arranque. Enquanto a
+decisão não vier, a `/privacidade` precisa passar a dizer que o site usa
+medição de audiência do Google — hoje ela ainda não diz.
+
+## De onde veio cada lead
+
+Medição responde em agregado: "o anúncio A trouxe 40 sessões". Nunca diz
+QUEM — relatório de analytics não identifica pessoa, e isso é projeto, não
+falta.
+
+A outra metade é o cadastro. A Maria, que entrou na lista de espera às 14h,
+veio do anúncio A ou do artigo sobre hipnose? Agora os dois formulários
+gravam dois campos a mais:
+
+- **`origem`** — a rota em que o formulário foi preenchido. A captação de
+  material já tinha; a lista de espera, **não** — e ela é justamente a de
+  quem está mais perto de comprar.
+- **`campanha`** — a etiqueta `utm_` da URL de entrada, na forma
+  `instagram / cpc / setembro`. As faltas viram `-` para que a posição de
+  cada parte não mude no CSV.
+
+As duas colunas aparecem no `/admin`, nas duas abas, e saem no CSV. Também
+entram no aviso por e-mail de lead novo.
+
+A etiqueta é de **primeiro toque** e mora em `sessionStorage`: quem chegou
+pelo anúncio chegou pelo anúncio, mesmo que depois navegue por links sem
+etiqueta. Fechar a aba apaga — o dado não sobrevive semanas no aparelho de
+ninguém, e nada é gravado em servidor enquanto a pessoa não preenche o
+formulário por vontade própria.
+
+### ⚠ Publique as regras junto
+
+`firestore.rules` valida por lista fechada: um campo que a regra não
+conhece faz o Firestore recusar o **documento inteiro**. E publicar regra é
+um passo à PARTE do deploy — o Netlify sobe o site sozinho, no merge; o
+Firestore só muda quando alguém roda:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Entre um e outro há uma janela em que o site já envia `campanha` e as
+regras ainda não a aceitam. Por isso a gravação tem rede: se o Firestore
+recusar por campo desconhecido, o cadastro é gravado **sem** os campos
+novos, e o console diz o comando que resolve. Perder a etiqueta custa um
+dado de análise; perder o cadastro custa o lead.
+
+(Os campos novos são opcionais nas regras, então publicá-las antes do site
+também funciona — e é a ordem preferível.)
+
 ## Busca e indexação
 
 O site é pré-renderizado: `npm run build` gera **um arquivo HTML por
@@ -865,6 +994,19 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
 
 ### Precisam de decisão sua
 
+- **Ligar o GA4, e decidir o aviso de cookies.** A medição está pronta e
+  desligada: crie `VITE_GA4_ID` no Netlify e ela começa a contar (ver
+  [Medição de conversão](#medição-de-conversão)). Junto vem uma decisão que
+  é sua: o GA4 grava cookie, a LGPD pede base legal, e a prática corrente é
+  o aviso com recusa possível. O site não desenha esse aviso — ele mudaria
+  a primeira tela de todo visitante. Decidido isso, a `/privacidade`
+  precisa passar a dizer que o site usa medição de audiência do Google.
+- **Etiquetar os links que você divulga.** A coluna `campanha` do `/admin`
+  só se preenche se o link levar `utm_`. Um link de anúncio útil é
+  `institutobrunosena.com.br/pnl-practitioner?utm_source=instagram&utm_medium=cpc&utm_campaign=setembro`
+  — e o `utm_content` distingue uma arte da outra, que é a pergunta de quem
+  testa três criativos. Link sem etiqueta continua funcionando; só chega
+  anônimo quanto à origem.
 - **Gravar os dois vídeos.** O de boas-vindas é o espaço mais valioso da
   home: em 60 a 90 segundos, quem você é, por que o instituto existe e o que
   a pessoa leva ao final. A amostra do SENA é uma gravação de tela de uma

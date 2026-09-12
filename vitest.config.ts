@@ -71,11 +71,14 @@ export default defineConfig({
         'src/lib/erroDeLogin.ts',
         'src/lib/erroDeFirestore.ts',
         'src/lib/useConvite.ts',
-        /* A medição entra pelo mesmo critério: decide algo e a falha é
-           silenciosa. Um checkout que deixa de ser reconhecido não muda
-           nada na tela — o site segue vendendo e só o relatório fica
-           errado. */
+        /* A medição entra pelo mesmo critério: são três arquivos que
+           decidem algo e cuja falha é silenciosa. Uma etiqueta de campanha
+           que se perde, um checkout que deixa de ser reconhecido e um lead
+           recusado por campo novo não mudam nada na tela — o site segue
+           funcionando e só o relatório fica errado. */
+        'src/lib/campanha.ts',
         'src/lib/medir.ts',
+        'src/lib/gravarComExtras.ts',
       ],
     },
   },

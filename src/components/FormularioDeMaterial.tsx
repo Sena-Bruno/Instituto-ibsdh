@@ -5,6 +5,9 @@ import type { Material } from '../config/materiais';
 import { routes } from '../config/site';
 import { db } from '../firebase/banco';
 import { avisarLead } from '../lib/avisarLead';
+import { campanhaDaVisita } from '../lib/campanha';
+import { gravarComExtras } from '../lib/gravarComExtras';
+import { evento } from '../lib/medir';
 import FormularioDeCaptacao from './FormularioDeCaptacao';
 
 /**
@@ -43,13 +46,24 @@ export default function FormularioDeMaterial({
   aoGravar?: () => void;
 }) {
   const gravar = async ({ name, email }: { name: string; email: string }) => {
-    await addDoc(collection(db, 'leads'), {
-      name,
-      email,
-      materialId: material.id,
-      origem,
-      createdAt: serverTimestamp(),
-    });
+    /* `origem` diz em QUE PÁGINA a pessoa preencheu; `campanha`, por qual
+       anúncio ela chegou ao site. São perguntas diferentes e as duas
+       moram no mesmo cadastro: o artigo que converte e a campanha que
+       paga podem não ser o mesmo mérito. */
+    const campanha = campanhaDaVisita();
+
+    await gravarComExtras(
+      (extras) =>
+        addDoc(collection(db, 'leads'), {
+          name,
+          email,
+          materialId: material.id,
+          origem,
+          createdAt: serverTimestamp(),
+          ...extras,
+        }),
+      { campanha },
+    );
 
     avisarLead({
       name,
@@ -57,6 +71,17 @@ export default function FormularioDeMaterial({
       tipo: 'material',
       referencia: material.id,
       origem,
+      campanha,
+    });
+
+    /* Depois da gravação, e nunca antes: um lead contado no relatório e
+       ausente da lista é pior do que um lead não contado — ele faz
+       procurar no lugar errado. */
+    evento('generate_lead', {
+      formulario: 'material',
+      referencia: material.id,
+      origem,
+      campanha,
     });
 
     aoGravar?.();

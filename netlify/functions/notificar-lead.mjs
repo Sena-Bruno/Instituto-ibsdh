@@ -137,9 +137,13 @@ export default async (request) => {
   const name = texto(payload?.name, 100);
   const email = texto(payload?.email, 200);
   const referencia = texto(payload?.referencia, 100);
-  /* De qual página o cadastro veio. Só a captação por material tem — é o
-     campo que diz qual artigo trouxe o lead. */
+  /* De qual página o cadastro veio — o artigo que trouxe o lead, ou a
+     página da formação em que a lista de espera foi preenchida. */
   const origem = texto(payload?.origem, 200);
+  /* Por qual anúncio a pessoa chegou ao site, quando veio por um. É a
+     linha que responde, no próprio aviso, se a campanha está trazendo
+     cadastro ou só clique. */
+  const campanha = texto(payload?.campanha, 200);
   /* `tipo` decide o assunto e o texto do corpo. Fora da lista conhecida,
      o pedido é recusado: sem isso, um valor inventado viraria assunto de
      e-mail escrito por quem chamou.
@@ -176,6 +180,7 @@ export default async (request) => {
              todo aviso da lista de espera seria ruído numa mensagem que
              precisa ser lida de relance no celular. */
           (origem ? `<p><strong>Veio de:</strong> ${escapeHtml(origem)}</p>` : '') +
+          (campanha ? `<p><strong>Campanha:</strong> ${escapeHtml(campanha)}</p>` : '') +
           `<p style="color:#666;font-size:13px">As listas completas ficam em /admin.</p>`,
       }),
     });

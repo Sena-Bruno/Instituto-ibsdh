@@ -144,7 +144,67 @@ describe('WaitlistForm', () => {
          `tipo` que decide o assunto do e-mail. */
       tipo: 'lista-de-espera',
       referencia: 'master-coach',
+      /* A página em que o formulário foi preenchido. Sem campanha na URL
+         do teste, `campanha` não existe no corpo — e é assim que ela sai
+         para quem chega ao site sem etiqueta, que é a maioria. */
+      origem: '/',
     });
+  });
+
+  /**
+   * ┌───────────────────────────────────────────────────────────────────────┐
+   * │  ESTA LISTA CHEGAVA ANÔNIMA QUANTO À PROCEDÊNCIA                      │
+   * │                                                                       │
+   * │  Gravava nome, e-mail e curso. Quem anunciasse no Instagram recebia   │
+   * │  o cadastro sem nenhuma forma de saber que ele veio do anúncio — e a  │
+   * │  lista de espera é justamente a de quem está mais perto de comprar.   │
+   * │                                                                       │
+   * │  A falha era invisível: o formulário funcionava, o lead entrava, e a  │
+   * │  informação que faltava só se percebia meses depois, ao tentar        │
+   * │  comparar duas campanhas.                                             │
+   * └───────────────────────────────────────────────────────────────────────┘
+   */
+  it('grava a origem e a campanha junto com o cadastro', async () => {
+    window.history.replaceState({}, '', '/master-coach?utm_source=instagram&utm_medium=cpc');
+
+    render(<WaitlistForm courseId="master-coach" />);
+    await preencherEEnviar();
+
+    await waitFor(() => expect(addDoc).toHaveBeenCalled());
+    expect(addDoc.mock.calls[0][1]).toMatchObject({
+      courseId: 'master-coach',
+      origem: '/master-coach',
+      campanha: 'instagram / cpc / -',
+    });
+
+    window.history.replaceState({}, '', '/');
+  });
+
+  /**
+   * A rede contra a janela entre o deploy do site e a publicação das
+   * regras do Firestore. Publicar regra é um passo à parte, e entre um e
+   * outro o site já envia campos que as regras ainda não aceitam.
+   *
+   * Sem esta rede, TODO cadastro feito nessa janela seria recusado — que é
+   * exatamente o que já aconteceu neste site quando a coleção `leads`
+   * entrou no ar com a regra escrita e não publicada.
+   */
+  it('grava sem os campos novos se as regras ainda não os aceitam', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    addDoc
+      .mockRejectedValueOnce(
+        Object.assign(new Error('recusado'), { code: 'permission-denied' }),
+      )
+      .mockResolvedValueOnce({ id: 'doc-novo' });
+
+    render(<WaitlistForm courseId="master-coach" />);
+    await preencherEEnviar();
+
+    // O lead entra na segunda tentativa, sem etiqueta — e o visitante vê
+    // a confirmação, não um erro.
+    expect(await screen.findByText(/cadastro confirmado/i)).toBeInTheDocument();
+    expect(addDoc).toHaveBeenCalledTimes(2);
+    expect(addDoc.mock.calls[1][1]).not.toHaveProperty('campanha');
   });
 
   it('não grava duas vezes com dois cliques seguidos', async () => {

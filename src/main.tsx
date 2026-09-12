@@ -4,6 +4,7 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { matchPath } from 'react-router-dom';
 import App from './App.tsx';
 import { paginas } from './config/paginas';
+import { registrarCampanha } from './lib/campanha';
 import { iniciarMedicao } from './lib/medir';
 import { initSentry } from './lib/sentry';
 import './index.css';
@@ -11,8 +12,16 @@ import './index.css';
 // Antes de renderizar, para capturar também erros da primeira pintura.
 initSentry();
 
-/* Só define a fila e agenda o download — o gtag.js em si não entra aqui,
-   e sem VITE_GA4_ID nada disso existe no pacote. */
+/*
+  Também antes de renderizar, e por motivos diferentes:
+
+  · `registrarCampanha` lê as etiquetas `utm_` da URL de ENTRADA. Depois
+    da primeira navegação interna essa URL não existe mais, e a origem
+    do lead se perderia;
+  · `iniciarMedicao` só define a fila e agenda o download — o gtag.js em
+    si não entra aqui, e sem VITE_GA4_ID nada disso existe no pacote.
+*/
+registrarCampanha();
 iniciarMedicao();
 
 const raiz = document.getElementById('root')!;
