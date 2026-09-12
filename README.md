@@ -456,6 +456,47 @@ dado de análise; perder o cadastro custa o lead.
 (Os campos novos são opcionais nas regras, então publicá-las antes do site
 também funciona — e é a ordem preferível.)
 
+## As duas páginas institucionais
+
+`/sobre` e `/contato` não existiam. O Bruno era uma SEÇÃO da home, entre
+dezesseis outras, numa página cujo assunto é vender formação — e os sete
+artigos declaram, nos dados estruturados, que ele é o autor, apontando
+para `/#sobre-mentor`.
+
+Isso era frágil onde o site precisa ser forte. O E-E-A-T pergunta "quem
+escreveu isto, e por que essa pessoa pode escrever sobre isto", e a
+resposta era uma âncora no meio de uma página de vendas. Conteúdo sobre
+saúde e comportamento é onde o Google mais pesa autoria. Agora
+`fundador()` aponta para `/sobre`, e quem seguir a autoria de um artigo
+cai numa página cujo assunto É a pessoa que assina.
+
+A `/sobre` **não repete** a seção "O seu mentor" da home, de propósito: a
+home responde "por que confiar em quem vende isto" no meio de uma decisão
+de compra; a `/sobre` responde quem é, o que o instituto defende e o que
+ele recusa fazer. Texto igual nas duas seria conteúdo duplicado, e o
+Google escolheria uma — provavelmente não esta.
+
+A `/contato` existe porque "instituto bruno sena contato" é uma busca que
+não tinha onde cair, e porque o botão flutuante oferece um caminho só. Quem
+prefere e-mail, quem escreve de dentro de uma empresa com WhatsApp
+bloqueado e quem quer proposta In Company são justamente os contatos de
+maior valor.
+
+As duas entraram em `config/paginas.ts`, e com isso ganharam rota, HTML
+pré-renderizado e linha no sitemap de uma vez. Estão no cabeçalho (onde "O
+instituto" deixou de ser âncora), no menu do celular e no rodapé.
+
+### O `<h1>` que o smoke pegou
+
+`Cabecalho` gerava `<h2>` fixo, então a `/contato` — cuja primeira seção é
+o título da página — nasceu **sem `<h1>` nenhum**. Passou em lint, em tipo
+e em teste de unidade; quem reprovou foi o `npm run smoke`, que conta
+títulos no HTML montado.
+
+O componente ganhou a propriedade `como`, que aceita `h1` para a seção que
+abre uma página. Não é detalhe de semântica: o `<h1>` é o que diz ao leitor
+de tela e ao rastreador qual é o assunto do documento.
+
 ## Busca e indexação
 
 O site é pré-renderizado: `npm run build` gera **um arquivo HTML por

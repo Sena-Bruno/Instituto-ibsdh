@@ -158,11 +158,16 @@ export default function SiteHeader() {
               </Link>
             </li>
             <li>
-              <Link
-                to={`${routes.home}#sobre-mentor`}
-                className="transition-colors hover:text-brand-cream"
-              >
+              {/* Apontava para `/#sobre-mentor`, uma âncora no meio da home.
+                  Agora leva à página que existe para responder isso — e é a
+                  mesma que os artigos declaram como autoria. */}
+              <Link to={routes.sobre} className="transition-colors hover:text-brand-cream">
                 O instituto
+              </Link>
+            </li>
+            <li>
+              <Link to={routes.contato} className="transition-colors hover:text-brand-cream">
+                Contato
               </Link>
             </li>
           </ul>
@@ -284,6 +289,26 @@ export default function SiteHeader() {
                   ))}
                 </div>
               ))}
+
+              {/* No celular a barra some inteira dentro deste painel, então
+                  as duas páginas institucionais precisam aparecer aqui —
+                  senão só o rodapé as alcança. */}
+              <div className="mb-5 flex flex-col">
+                <Link
+                  to={routes.sobre}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="border-b border-white/[0.07] py-3.5 text-[15.5px] font-medium text-brand-cream transition-colors hover:text-brand-accent"
+                >
+                  O instituto
+                </Link>
+                <Link
+                  to={routes.contato}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="border-b border-white/[0.07] py-3.5 text-[15.5px] font-medium text-brand-cream transition-colors hover:text-brand-accent"
+                >
+                  Contato
+                </Link>
+              </div>
 
               <Link
                 to={routes.formacoes}

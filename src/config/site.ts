@@ -140,6 +140,8 @@ export const routes = {
   hipnoterapia: '/hipnoterapia',
   jornada: '/jornada',
   masterCoach: '/master-coach',
+  sobre: '/sobre',
+  contato: '/contato',
   privacidade: '/privacidade',
   termos: '/termos',
   admin: '/admin',

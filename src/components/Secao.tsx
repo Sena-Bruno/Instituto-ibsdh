@@ -82,6 +82,7 @@ export function Cabecalho({
   sobretitulo,
   cor = 'accent',
   titulo,
+  como: Titulo = 'h2',
   children,
   centralizado = false,
   className,
@@ -89,6 +90,20 @@ export function Cabecalho({
   sobretitulo?: string;
   cor?: NomeCor;
   titulo: ReactNode;
+  /**
+   * O nível do título. `h2` serve a uma seção no meio da página; `h1`, à
+   * seção que ABRE uma página e carrega o título dela.
+   *
+   * Existe porque a marcação era `<h2>` fixa, e uma página cujo primeiro
+   * bloco é um `Cabecalho` saía sem `<h1>` nenhum. Não é detalhe de
+   * semântica: o `<h1>` é o que diz ao leitor de tela e ao rastreador
+   * qual é o assunto do documento, e uma página sem ele é uma página cujo
+   * título o Google escolhe por conta própria.
+   *
+   * (Foi assim que a /contato nasceu — e o `npm run smoke` a reprovou
+   * antes de ela chegar ao ar.)
+   */
+  como?: 'h1' | 'h2';
   /** Texto de apoio abaixo do título */
   children?: ReactNode;
   centralizado?: boolean;
@@ -110,7 +125,7 @@ export function Cabecalho({
           <p className="sobretitulo">{sobretitulo}</p>
         </div>
       )}
-      <h2 className="titulo-secao">{titulo}</h2>
+      <Titulo className="titulo-secao">{titulo}</Titulo>
       {children && (
         <p
           className={cn(

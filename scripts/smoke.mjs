@@ -30,6 +30,12 @@ const routes = [
   '/master-coach',
   '/artigos',
   '/artigos/o-que-e-pnl',
+  /* As duas páginas institucionais. A /sobre entra também por um motivo
+     que não é o dela: é o endereço que os sete artigos declaram como
+     autoria nos dados estruturados, então uma quebra aqui derruba o
+     E-E-A-T do conteúdo inteiro, e não só desta página. */
+  '/sobre',
+  '/contato',
   /* A página do material é `noindex` e fica fora do sitemap, mas PRECISA
      existir em disco: é o link que o formulário do artigo entrega no
      mesmo clique. Sem arquivo, o servidor devolve 404 para o endereço que
