@@ -602,6 +602,48 @@ nenhuma, e quem responde hoje são os concorrentes que estão no ar há anos.
 | Listagem | `/artigos` |
 | Artigo | `/artigos/<slug>` |
 | Renderização dos blocos | `src/components/CorpoArtigo.tsx` |
+| Sugestão de leitura | `artigosRelacionados()`, no mesmo arquivo |
+
+### A malha entre os textos
+
+Os sete artigos não se linkavam entre si. Cada um ligava ao **curso**
+relacionado e oferecia o material — e a mais nada. Sete textos sobre os
+mesmos três assuntos, e cada um era uma ilha.
+
+Isso custava dos dois lados. Para quem lê: acabou o texto, acabou o site, e
+a única saída oferecida era uma página de vendas. Para a busca: link
+interno é como o Google mede profundidade de tema, e sete páginas sem
+ligação nenhuma parecem sete assuntos avulsos em vez de um instituto que
+domina três.
+
+Agora cada artigo termina com **"Leia também"**, com três sugestões. A
+lista é **derivada**, não escrita à mão: primeiro o mesmo eixo — quem leu
+sobre transe quer ler sobre regressão, não sobre metas —, depois os demais,
+e o mais recente primeiro dentro de cada grupo.
+
+Derivada porque lista manual envelhece: no oitavo artigo alguém teria de
+voltar aos sete anteriores para incluí-lo, e não voltaria. Assim o artigo
+novo entra na malha no instante em que é publicado. Rascunho nunca entra —
+sugerir um texto `noindex` seria mandar o leitor a uma página que o próprio
+site pediu ao Google para ignorar.
+
+O bloco vem **depois** da caixa de material, e antes da formação
+relacionada. As duas posições são deliberadas: o e-mail vale mais que o
+clique para o próximo texto (três links atraentes acima da caixa a
+esvaziariam), e quem acabou de ler um artigo está lendo, não comprando.
+
+`src/config/artigos.test.ts` guarda as regras, inclusive a que justifica o
+recurso: **todo artigo publicado é alcançável a partir de outro**.
+
+### O filtro por eixo
+
+`/artigos` ganhou filtro por eixo, com a contagem em cada botão. Só
+aparecem eixos que têm artigo publicado: um filtro que devolve lista vazia
+é uma promessa quebrada em um clique.
+
+Ele começa em "Todos", e isso não é só o padrão óbvio — a página é
+pré-renderizada, e é essa primeira renderização que vira o HTML que o
+rastreador lê. Nascendo filtrada, o robô encontraria os links de um eixo só.
 
 ### Como escrever um artigo
 

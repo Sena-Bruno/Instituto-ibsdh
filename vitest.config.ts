@@ -62,6 +62,10 @@ export default defineConfig({
         'src/config/site.ts',
         'src/config/admin.ts',
         'src/config/eixos.ts',
+        /* A derivação dos artigos relacionados: erro aqui não aparece na
+           tela — o bloco continua com três cartões, apontando para o texto
+           errado ou para um rascunho `noindex`. */
+        'src/config/artigos.ts',
         'src/lib/schema.ts',
         'src/lib/useDelayedFlag.ts',
         'src/lib/motion.ts',

@@ -1,10 +1,11 @@
 import { ArrowLeft } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
+import ArtigosRelacionados from '../components/ArtigosRelacionados';
 import CorpoArtigo from '../components/CorpoArtigo';
 import OfertaDeMaterial from '../components/OfertaDeMaterial';
 import Secao, { Cabecalho } from '../components/Secao';
 import Seo from '../components/Seo';
-import { artigoPorSlug } from '../config/artigos';
+import { artigoPorSlug, artigosRelacionados } from '../config/artigos';
 import { listaCursos } from '../config/courses';
 import { eixos } from '../config/eixos';
 import { materialParaOEixo } from '../config/materiais';
@@ -46,6 +47,7 @@ export default function Artigo() {
   const p = paletas[cor];
   const rota = `${routes.artigos}/${artigo.slug}`;
   const curso = listaCursos.find((c) => c.route === artigo.cursoRelacionado);
+  const relacionados = artigosRelacionados(artigo);
   /* Rascunho não oferece nada: o texto ainda não foi conferido, e um
      material entregue a partir dele começaria a relação pedindo o
      e-mail em troca de uma página que o instituto ainda não assinou. */
@@ -132,6 +134,13 @@ export default function Artigo() {
             {material ? <OfertaDeMaterial material={material} origem={rota} /> : null}
           </div>
         </article>
+
+        {/* Os outros textos vêm ANTES da formação relacionada: quem acabou
+            de ler um artigo está lendo, não comprando. Oferecer o próximo
+            texto primeiro respeita o estado em que a pessoa está, e quem
+            quiser a formação encontra o bloco dela logo abaixo — além do
+            link que o próprio corpo do artigo já traz. */}
+        <ArtigosRelacionados artigos={relacionados} />
 
         {curso ? (
           <Secao elevada className="mt-10">
