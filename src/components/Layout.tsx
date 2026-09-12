@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { pageTransition } from '../lib/motion';
 import BarraAviso from './BarraAviso';
+import ConviteDeMaterial from './ConviteDeMaterial';
 import FixedWhatsApp from './FixedWhatsApp';
 import ScrollToTop from './ScrollToTop';
 import SiteFooter from './SiteFooter';
@@ -68,6 +69,11 @@ export default function Layout() {
       </motion.div>
       <SiteFooter />
       <FixedWhatsApp />
+      {/* O convite de material. Mora aqui porque precisa valer para o site
+          inteiro, e ele mesmo decide onde não aparecer e quando abrir. Não
+          renderiza nada no HTML pré-renderizado: quem chega da busca, e o
+          robô que rastreia, recebem só a página. */}
+      <ConviteDeMaterial />
     </div>
   );
 }

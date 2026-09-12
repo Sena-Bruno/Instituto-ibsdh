@@ -93,6 +93,29 @@ export default defineConfig(({ isSsrBuild }) => ({
                 /admin o importa, e o Rollup lhe dá um pedaço próprio, que
                 nunca aparece numa rota pública.
               */
+              /*
+                O NÚCLEO É NOMEADO À PARTE, E ISSO NÃO É ARRUMAÇÃO.
+
+                `@firebase/app`, `util`, `component` e `logger` são usados
+                pelo banco E pelo auth. Sem um pedaço próprio, o Rollup os
+                coloca onde o grafo do momento sugerir, e essa escolha muda
+                quando um componente novo aparece em outro ponto da árvore.
+
+                Aconteceu: pôr o convite de material no Layout empurrou 43 kB
+                de núcleo para dentro de `firebase-banco`, que é justamente o
+                pedaço que toda página de curso baixa para LER avaliações. O
+                caminho de leitura passou de 27 kB para 37 kB comprimidos sem
+                que nenhuma linha dele tivesse mudado.
+
+                Com o núcleo nomeado, quem lê baixa núcleo + firestore lite, e
+                mais nada. Mexer no Layout deixa de ter efeito colateral aqui.
+              */
+              'firebase-nucleo': [
+                '@firebase/app',
+                '@firebase/util',
+                '@firebase/component',
+                '@firebase/logger',
+              ],
               'firebase-banco': ['firebase/app', 'firebase/firestore/lite'],
               'firebase-auth': ['firebase/auth'],
               vendor: ['react', 'react-dom', 'react-router-dom'],

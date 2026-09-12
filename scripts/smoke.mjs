@@ -14,7 +14,9 @@
  *   npm run smoke
  */
 
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
+import { gzipSync } from 'node:zlib';
 import { chromium } from 'playwright';
 
 const base = process.env.SMOKE_URL || 'http://localhost:4173';
@@ -52,6 +54,30 @@ const SEM_INDICE = new Set(['/materiais/sete-perguntas']);
 const executablePath =
   process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const browser = await chromium.launch(existsSync(executablePath) ? { executablePath } : {});
+
+/*
+  O convite de material abre depois de meia página rolada, e o Playwright rola
+  sozinho para clicar em qualquer coisa. Nos testes de INTERAÇÃO ele passaria a
+  interceptar os cliques, e o smoke falharia por um motivo que não é defeito do
+  site. Aqui ele é calado antes de a página carregar, com a mesma marca que o
+  navegador de uma pessoa que já deixou o contato usaria.
+
+  O comportamento do convite não deixa de ser testado por isso: ele tem um
+  bloco só dele mais abaixo, e é lá que se verifica o que importa de verdade,
+  que é ele NÃO estar na tela na chegada.
+*/
+async function paginaSemConvite() {
+  const pagina = await browser.newPage();
+  await pagina.addInitScript(() => {
+    try {
+      localStorage.setItem('ibsdh:convite', JSON.stringify({ convertido: true }));
+    } catch {
+      // Sem armazenamento, o convite pode aparecer; o teste de interação
+      // abaixo falharia, e falhar alto é melhor que passar por acaso.
+    }
+  });
+  return pagina;
+}
 const page = await browser.newPage();
 const consoleErrors = [];
 page.on('console', (m) => m.type() === 'error' && consoleErrors.push(m.text()));
@@ -129,7 +155,7 @@ const environmental =
 // abrir num corte seco, e a preferência de menos movimento sendo ignorada
 // pelas animações em JavaScript (que a regra de CSS não alcança).
 {
-  const p2 = await browser.newPage();
+  const p2 = await paginaSemConvite();
   await p2.goto(`${base}/hipnoterapia`, { waitUntil: 'domcontentloaded' });
   await p2.waitForSelector('h1', { timeout: 20000 });
   await p2.waitForTimeout(700);
@@ -155,6 +181,13 @@ const environmental =
 
   const ctx = await browser.newContext({ reducedMotion: 'reduce' });
   const p3 = await ctx.newPage();
+  await p3.addInitScript(() => {
+    try {
+      localStorage.setItem('ibsdh:convite', JSON.stringify({ convertido: true }));
+    } catch {
+      /* ver paginaSemConvite */
+    }
+  });
   await p3.goto(`${base}/hipnoterapia`, { waitUntil: 'domcontentloaded' });
   await p3.waitForSelector('h1', { timeout: 20000 });
   await p3.waitForTimeout(700);
@@ -181,7 +214,7 @@ const environmental =
     estaria no caminho — e é justamente esse caminho que se perde ao voltar a
     escrever dois `return` separados, cada um com sua própria instância.
   */
-  const p5 = await browser.newPage();
+  const p5 = await paginaSemConvite();
   await p5.goto(base, { waitUntil: 'domcontentloaded' });
   await p5.waitForSelector('h1', { timeout: 20000 });
   await p5.waitForTimeout(700);
@@ -328,6 +361,126 @@ const environmental =
         (problemas.length ? `\n      ✗ ${problemas.join('; ')}` : ''),
     );
     failures += problemas.length;
+  }
+
+  /* ── O convite de material ─────────────────────────────────────────────
+     ┌───────────────────────────────────────────────────────────────────┐
+     │  O QUE ESTE BLOCO PROTEGE                                          │
+     │                                                                    │
+     │  Desde 2017 o Google rebaixa página cujo conteúdo principal é       │
+     │  coberto por um interstício quando a pessoa chega DA BUSCA. Os      │
+     │  sete artigos do site existem para trazer gente da busca orgânica.  │
+     │                                                                    │
+     │  "O convite não está na tela na chegada" é a linha que separa uma   │
+     │  captação boa de uma perda de posição, e é invisível no código: um  │
+     │  gatilho trocado passa em lint, em tipo e em teste de unidade, e    │
+     │  cobra a conta semanas depois, em ranking.                          │
+     │                                                                    │
+     │  `lib/useConvite.test.ts` já guarda a lógica. Aqui a verificação é  │
+     │  no produto montado, num navegador de verdade.                     │
+     └───────────────────────────────────────────────────────────────────┘ */
+  {
+    console.log('\n=== convite de material ===');
+    const p6 = await browser.newPage();
+    await p6.goto(`${base}/hipnoterapia`, { waitUntil: 'domcontentloaded' });
+    await p6.waitForSelector('h1', { timeout: 20000 });
+    await p6.waitForTimeout(2500);
+
+    const caixa = p6.locator('[aria-labelledby="convite-titulo"]');
+    const naChegada = await caixa.count();
+    console.log(`  na chegada: ${naChegada === 0 ? 'ausente' : 'PRESENTE'}`);
+    if (naChegada !== 0) {
+      console.log('      ✗ o convite abriu sozinho na chegada (interstício intrusivo)');
+      failures++;
+    }
+
+    // E aparece depois de a pessoa rolar metade da página, que é o sinal
+    // de que ela está lendo em vez de passando.
+    await p6.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight * 0.6));
+    await p6.waitForTimeout(1200);
+    const aposRolar = await caixa.count();
+    console.log(`  depois de rolar: ${aposRolar > 0 ? 'presente' : 'AUSENTE'}`);
+    if (aposRolar === 0) {
+      console.log('      ✗ o convite não apareceu nem depois de meia página rolada');
+      failures++;
+    }
+    await p6.close();
+  }
+
+  /* ── O grafo de pedaços do Firebase ────────────────────────────────────
+     ┌───────────────────────────────────────────────────────────────────┐
+     │  ESTA VERIFICAÇÃO EXISTE POR CAUSA DE DOIS ERROS SEGUIDOS         │
+     │                                                                   │
+     │  O caminho de LEITURA das avaliações, que é o que toda página de  │
+     │  curso baixa, deve carregar só o núcleo do Firebase e o Firestore  │
+     │  `lite`. O Auth é para quem vai ESCREVER, e desce por import()     │
+     │  dinâmico.                                                        │
+     │                                                                   │
+     │  Duas vezes isso quebrou em silêncio:                             │
+     │                                                                   │
+     │  1. `firebase-banco` importava `firebase-auth` sem que nada        │
+     │     dissesse, porque o núcleo compartilhado tinha caído dentro do  │
+     │     pedaço do Auth. O adiamento do Auth não entregava nada, e a    │
+     │     medição feita no pedaço nomeado (27 kB) escondia os 59 kB que  │
+     │     a página realmente baixava.                                   │
+     │  2. Pôr o convite de material no Layout mudou o grafo e empurrou   │
+     │     43 kB de núcleo para dentro do pedaço de leitura.              │
+     │                                                                   │
+     │  Nenhum dos dois aparece em teste de unidade, em tipo ou em lint:  │
+     │  o build passa, o site funciona, e a conta chega em quem abre a    │
+     │  página no celular.                                               │
+     │                                                                   │
+     │  MEÇA SEMPRE O FECHO TRANSITIVO, nunca o pedaço nomeado sozinho.   │
+     └───────────────────────────────────────────────────────────────────┘ */
+  {
+    console.log('\n=== pedaços do Firebase ===');
+    const pasta = path.resolve('dist/assets');
+    const arquivos = readdirSync(pasta);
+    const acha = (prefixo) => arquivos.find((n) => n.startsWith(prefixo));
+    const importesDe = (f) =>
+      [...readFileSync(path.join(pasta, f), 'utf8').matchAll(/from"\.\/([^"]+)"/g)].map(
+        (m) => m[1],
+      );
+
+    /** Tudo o que o navegador baixa ANTES de executar uma linha do módulo. */
+    const fechoEstatico = (inicio) => {
+      const vistos = new Set();
+      const fila = [inicio];
+      while (fila.length) {
+        const f = fila.pop();
+        if (!f || vistos.has(f)) continue;
+        vistos.add(f);
+        fila.push(...importesDe(f));
+      }
+      return [...vistos];
+    };
+
+    const leitura = acha('CourseReviews-');
+    if (!leitura) {
+      console.log('      ✗ não achei o pedaço de CourseReviews em dist/assets');
+      failures++;
+    } else {
+      const doFirebase = fechoEstatico(leitura).filter((f) => f.includes('firebase'));
+      const comprimido = doFirebase.reduce(
+        (soma, f) => soma + gzipSync(readFileSync(path.join(pasta, f)), { level: 9 }).length,
+        0,
+      );
+      const rotulos = doFirebase.map((f) => f.replace(/-[^-]+\.js$/, '')).sort();
+      console.log(`  ler avaliações: ${rotulos.join(' + ') || '(nenhum)'} · ${comprimido} B`);
+
+      if (rotulos.some((r) => r.includes('auth'))) {
+        console.log('      ✗ o Auth voltou para o caminho de LEITURA das avaliações');
+        failures++;
+      }
+      /* O teto é folgado de propósito: ele não existe para perseguir bytes,
+         e sim para acusar quando um pedaço inteiro reaparece aqui. Hoje são
+         ~37 kB; o Auth sozinho são 23 kB, então qualquer volta dele estoura. */
+      const TETO = 48 * 1024;
+      if (comprimido > TETO) {
+        console.log(`      ✗ ${comprimido} B comprimidos, acima do teto de ${TETO} B`);
+        failures++;
+      }
+    }
   }
 
   // Um endereço que não existe tem de responder 404 de verdade. Servido

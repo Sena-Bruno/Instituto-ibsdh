@@ -28,10 +28,19 @@ import FormularioDeCaptacao from './FormularioDeCaptacao';
 export default function FormularioDeMaterial({
   material,
   origem,
+  aoGravar,
 }: {
   material: Material;
   /** A rota em que este formulário está. Ex.: `/artigos/o-que-e-pnl`. */
   origem: string;
+  /**
+   * Avisa quem montou o formulário que o lead foi gravado.
+   *
+   * Serve ao convite que aparece sozinho: ele precisa saber que a pessoa
+   * converteu para não voltar a interromper quem já deixou o contato. Só
+   * roda depois da gravação, nunca numa tentativa que falhou.
+   */
+  aoGravar?: () => void;
 }) {
   const gravar = async ({ name, email }: { name: string; email: string }) => {
     await addDoc(collection(db, 'leads'), {
@@ -49,6 +58,8 @@ export default function FormularioDeMaterial({
       referencia: material.id,
       origem,
     });
+
+    aoGravar?.();
   };
 
   const destino = `${routes.materiais}/${material.id}`;

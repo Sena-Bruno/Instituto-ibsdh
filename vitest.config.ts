@@ -70,6 +70,7 @@ export default defineConfig({
         'src/components/FormularioDeMaterial.tsx',
         'src/lib/erroDeLogin.ts',
         'src/lib/erroDeFirestore.ts',
+        'src/lib/useConvite.ts',
       ],
     },
   },

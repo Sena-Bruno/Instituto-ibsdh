@@ -687,8 +687,29 @@ o empacotador não podia descartar nenhuma: o pedaço `firebase` do site
 pesava **652 kB (166 kB comprimido)** — mais que todas as imagens somadas —
 e caía sobre quem apenas rolava até as avaliações de uma página de curso.
 
-Medido no build, no caminho de quem rola até as avaliações: **666.694 B →
-118.829 B** (165.144 → 27.164 comprimido), **−82%**.
+Medido no caminho de quem rola até as avaliações, **somando o fecho
+transitivo** e não só o pedaço nomeado:
+
+| | comprimido |
+| --- | --- |
+| antes da separação | 165.144 B |
+| depois da separação | 59.622 B |
+| depois de nomear o núcleo | **37.554 B** (−77%) |
+
+> ### ⚠ Meça o fecho transitivo, nunca o pedaço nomeado
+>
+> A linha do meio da tabela já esteve documentada aqui como 27.164 B, e
+> estava errada. `firebase-banco` importava `firebase-auth` estaticamente,
+> porque o núcleo compartilhado (`@firebase/app`, `util`, `component`,
+> `logger`) tinha caído dentro do pedaço do Auth. Quem lia avaliações
+> baixava os dois, e o adiamento do Auth não entregava nada.
+>
+> O erro veio de medir `firebase-banco.js` sozinho. O navegador baixa o que
+> o pedaço importa também, e era ali que estavam os outros 32 kB.
+>
+> Nomear `firebase-nucleo` em `vite.config.ts` resolveu, e `npm run smoke`
+> passou a falhar se o Auth voltar ao caminho de leitura ou se o fecho
+> passar de 48 kB.
 
 ⚠ **Não importe `banco-ao-vivo.ts` de um componente público.** Isso traz o
 cliente de tempo real de volta para o pacote do site e desfaz a separação
