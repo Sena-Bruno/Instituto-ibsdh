@@ -35,19 +35,20 @@ import { precoEmNumero } from './schema';
  * └───────────────────────────────────────────────────────────────────────┘
  *
  * ┌───────────────────────────────────────────────────────────────────────┐
- * │  ⚠ CONSENTIMENTO — UMA DECISÃO QUE AINDA É SUA                        │
+ * │  NADA AQUI RODA SEM CONSENTIMENTO                                     │
  * │                                                                       │
- * │  O GA4 grava cookie no navegador do visitante. Sob a LGPD isso pede   │
- * │  base legal, e a prática corrente no Brasil é o aviso de cookies com  │
- * │  recusa possível. Este arquivo NÃO desenha esse aviso: ele mudaria a  │
- * │  primeira tela de todo visitante, e essa é uma escolha de negócio.    │
+ * │  O GA4 grava cookie no navegador do visitante, e sob a LGPD isso pede │
+ * │  base legal. `iniciarMedicao()` é o ÚNICO ponto de entrada, e quem o  │
+ * │  chama é o `AvisoDeCookies`, no clique em "Aceitar" — ou o            │
+ * │  `main.tsx`, quando a pessoa já aceitou numa visita anterior.         │
  * │                                                                       │
- * │  O arquivo está preparado para ela: `iniciarMedicao()` é o único      │
- * │  ponto de entrada, e basta chamá-lo depois do "aceitar" em vez de no  │
- * │  arranque para que nada seja carregado antes da autorização.          │
+ * │  Enquanto a resposta não vem, e para sempre se a resposta for não,    │
+ * │  nada disto existe: nem a fila, nem o script, nem um evento.          │
  * │                                                                       │
- * │  Enquanto a decisão não vier, a /privacidade precisa dizer que o site │
- * │  usa medição de audiência do Google — hoje ela ainda não diz.         │
+ * │  Se algum dia alguém mover esta chamada de volta para o arranque      │
+ * │  incondicional, o site volta a medir quem recusou — e é o tipo de     │
+ * │  regressão que não aparece em tela nenhuma. Ver                       │
+ * │  `lib/consentimento.ts` e `components/AvisoDeCookies.test.tsx`.       │
  * └───────────────────────────────────────────────────────────────────────┘
  */
 
@@ -101,7 +102,9 @@ function carregarGtag() {
 /**
  * Liga a medição: define a fila, agenda o download e escuta os cliques.
  *
- * Chamada no arranque, em `main.tsx`.
+ * Chamada em dois lugares, e só nestes dois: no `AvisoDeCookies`, quando a
+ * pessoa clica em "Aceitar", e no `main.tsx`, quando ela já havia aceitado
+ * numa visita anterior. Nunca incondicionalmente — ver o cabeçalho.
  */
 export function iniciarMedicao(): void {
   if (!ID || iniciado || typeof window === 'undefined') return;
