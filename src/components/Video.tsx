@@ -2,6 +2,7 @@ import { Play } from 'lucide-react';
 import { useState } from 'react';
 import type { Video } from '../config/midia';
 import { type NomeCor, paletas } from '../lib/cores';
+import { evento } from '../lib/medir';
 import { cn } from '../lib/utils';
 import Troca from './Troca';
 
@@ -102,7 +103,13 @@ export default function VideoPlayer({
       ) : (
         <button
           type="button"
-          onClick={() => setTocando(true)}
+          onClick={() => {
+            setTocando(true);
+            /* O play é o único sinal de que o vídeo foi visto. Sem ele, a
+               pergunta "vale gravar o segundo vídeo?" não tem resposta:
+               a página sabe quantos chegaram, e não quantos assistiram. */
+            evento('video_play', { titulo });
+          }}
           className={cn(
             'group relative block aspect-video w-full overflow-hidden rounded-[22px] border bg-brand-surface',
             p.borda,

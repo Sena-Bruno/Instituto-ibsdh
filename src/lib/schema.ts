@@ -35,8 +35,16 @@ const ids = {
   fundador: `${site.url}/#bruno-sena`,
 } as const;
 
-/** `R$ 1.353,00` → `1353.00`. Devolve `undefined` para "Em breve". */
-function precoEmNumero(valor: string): string | undefined {
+/**
+ * `R$ 1.353,00` → `1353.00`. Devolve `undefined` para "Em breve".
+ *
+ * Exportada porque `lib/medir.ts` precisa exatamente do mesmo parse: o
+ * preço que o JSON-LD anuncia ao Google e o valor que o GA4 registra como
+ * intenção de compra saem da mesma string do catálogo, e duas leituras
+ * diferentes da mesma string acabam divergindo no dia em que um preço
+ * ganhar um centavo.
+ */
+export function precoEmNumero(valor: string): string | undefined {
   const limpo = valor
     .replace(/[^\d,.]/g, '')
     .replace(/\./g, '')

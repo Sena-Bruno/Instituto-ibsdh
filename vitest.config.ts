@@ -71,6 +71,11 @@ export default defineConfig({
         'src/lib/erroDeLogin.ts',
         'src/lib/erroDeFirestore.ts',
         'src/lib/useConvite.ts',
+        /* A medição entra pelo mesmo critério: decide algo e a falha é
+           silenciosa. Um checkout que deixa de ser reconhecido não muda
+           nada na tela — o site segue vendendo e só o relatório fica
+           errado. */
+        'src/lib/medir.ts',
       ],
     },
   },

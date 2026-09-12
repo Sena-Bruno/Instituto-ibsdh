@@ -2,6 +2,7 @@ import { ArrowRight, Check, ExternalLink, Lock, RotateCcw } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useId, useState } from 'react';
 import { sena } from '../config/sena';
+import { evento } from '../lib/medir';
 import { collapse, duration, ease } from '../lib/motion';
 import { cn } from '../lib/utils';
 
@@ -144,7 +145,13 @@ export default function SenaSimulador() {
               <button
                 type="button"
                 disabled={!podeEnviar}
-                onClick={() => setEtapa('autoavaliar')}
+                onClick={() => {
+                  setEtapa('autoavaliar');
+                  /* Escrever a intervenção é o primeiro esforço real que a
+                     amostra pede, e o filtro mais duro do site: quem passa
+                     daqui está avaliando a formação, não navegando. */
+                  evento('sena_respondeu');
+                }}
                 className={cn(
                   'inline-flex items-center gap-2 rounded-full px-5 py-2.5 font-display text-[13px] font-semibold tracking-[0.06em] uppercase transition-colors',
                   podeEnviar
@@ -220,7 +227,13 @@ export default function SenaSimulador() {
                 {etapa === 'autoavaliar' && (
                   <button
                     type="button"
-                    onClick={() => setEtapa('referencia')}
+                    onClick={() => {
+                      setEtapa('referencia');
+                      /* Chegar à devolutiva é concluir a amostra. A razão
+                         entre este evento e o anterior diz se a mecânica
+                         prende ou se a pessoa desiste no meio. */
+                      evento('sena_concluido');
+                    }}
                     className="btn-primary mt-5 w-full"
                   >
                     Ver como o SENA avalia

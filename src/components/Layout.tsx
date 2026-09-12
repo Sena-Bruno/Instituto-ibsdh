@@ -5,6 +5,7 @@ import { pageTransition } from '../lib/motion';
 import BarraAviso from './BarraAviso';
 import ConviteDeMaterial from './ConviteDeMaterial';
 import FixedWhatsApp from './FixedWhatsApp';
+import Medicao from './Medicao';
 import ScrollToTop from './ScrollToTop';
 import SiteFooter from './SiteFooter';
 import SiteHeader from './SiteHeader';
@@ -37,6 +38,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-brand-dark text-brand-platinum font-sans">
       <ScrollToTop />
+      <Medicao />
       <a
         href="#conteudo"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-brand-accent focus:text-brand-dark focus:rounded-lg focus:font-bold"

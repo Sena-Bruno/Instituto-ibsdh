@@ -4,11 +4,16 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { matchPath } from 'react-router-dom';
 import App from './App.tsx';
 import { paginas } from './config/paginas';
+import { iniciarMedicao } from './lib/medir';
 import { initSentry } from './lib/sentry';
 import './index.css';
 
 // Antes de renderizar, para capturar também erros da primeira pintura.
 initSentry();
+
+/* Só define a fila e agenda o download — o gtag.js em si não entra aqui,
+   e sem VITE_GA4_ID nada disso existe no pacote. */
+iniciarMedicao();
 
 const raiz = document.getElementById('root')!;
 
