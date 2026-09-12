@@ -369,17 +369,46 @@ As duas largadas existem juntas por um motivo: só a interação deixaria de
 contar quem lê parado e vai embora, e a taxa de rejeição apareceria menor
 do que é — o pior tipo de erro, porque é o que agrada.
 
-### ⚠ Consentimento: uma decisão que ainda é sua
+### Nada é medido sem autorização
 
-O GA4 grava cookie. Sob a LGPD isso pede base legal, e a prática corrente
-no Brasil é o aviso de cookies com recusa possível. **O site não desenha
-esse aviso** — ele mudaria a primeira tela de todo visitante, e essa é uma
-escolha de negócio, não de código.
+O GA4 grava cookie, e sob a LGPD isso pede base legal. O site pede
+consentimento, e **não mede nada antes da resposta** — nem a fila do
+Google existe. O padrão do mercado é o contrário: carregar o rastreio e
+desligá-lo se a pessoa recusar, o que mede todo mundo ao menos uma vez,
+inclusive quem ia dizer não.
 
-O código está preparado: `iniciarMedicao()` é o único ponto de entrada, e
-basta chamá-lo depois do "aceitar" em vez de no arranque. Enquanto a
-decisão não vier, a `/privacidade` precisa passar a dizer que o site usa
-medição de audiência do Google — hoje ela ainda não diz.
+Três coisas fazem o aviso valer juridicamente, e cada uma tem teste:
+
+- **Recusar tem o mesmo peso que aceitar.** Dois botões, mesmo tamanho,
+  lado a lado. Não há X no canto nem fechar que funcione como aceite: um
+  aviso em que só uma saída é visível não coleta consentimento, coleta
+  cansaço — e consentimento assim não é livre, o que o invalida.
+- **A escolha é revogável.** A `/privacidade` mostra a decisão atual e tem
+  o botão "Rever minha escolha", que apaga a resposta e traz o aviso de
+  volta. Revogar precisa ser tão fácil quanto consentir.
+- **Não se pergunta de novo.** A resposta vive em `localStorage`. Um aviso
+  que reaparece a cada visita transforma a recusa em pergunta repetida até
+  a pessoa ceder.
+
+A `/privacidade` ganhou a seção 5, que descreve o que o Google Analytics
+recebe, diz que ele só existe com autorização e lista o que mais é
+guardado no navegador (a própria resposta ao aviso e, durante a visita, a
+campanha de origem).
+
+**A etiqueta de campanha não passa por aqui**, e é deliberado: é dado de
+primeira parte, vive só na aba, não identifica ninguém e só sai do
+aparelho dentro de um formulário que a própria pessoa envia. O GA4 é outra
+natureza — um terceiro recebendo cada página vista de quem não pediu nada.
+
+### Uma escolha de produto, para você conferir
+
+Enquanto o aviso espera resposta, **o convite de material não abre**. Os
+dois moram no mesmo canto inferior, e no celular o convite cobriria com
+uma oferta uma pergunta sobre dados pessoais.
+
+O custo: quem ignora o aviso a visita inteira não vê o convite. Achamos a
+troca certa — mas é troca, e você pode preferir o contrário. Está em
+`ConviteDeMaterial.tsx`, numa linha.
 
 ## De onde veio cada lead
 
@@ -994,13 +1023,13 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
 
 ### Precisam de decisão sua
 
-- **Ligar o GA4, e decidir o aviso de cookies.** A medição está pronta e
-  desligada: crie `VITE_GA4_ID` no Netlify e ela começa a contar (ver
-  [Medição de conversão](#medição-de-conversão)). Junto vem uma decisão que
-  é sua: o GA4 grava cookie, a LGPD pede base legal, e a prática corrente é
-  o aviso com recusa possível. O site não desenha esse aviso — ele mudaria
-  a primeira tela de todo visitante. Decidido isso, a `/privacidade`
-  precisa passar a dizer que o site usa medição de audiência do Google.
+- **Ligar o GA4.** A medição está pronta e desligada: crie `VITE_GA4_ID`
+  no Netlify e ela começa a contar (ver
+  [Medição de conversão](#medição-de-conversão)). O aviso de cookies e a
+  seção de privacidade já estão no ar, então não falta nada além da
+  variável. Confira a escolha de produto descrita em
+  [Uma escolha de produto](#uma-escolha-de-produto-para-você-conferir):
+  enquanto o aviso espera resposta, o convite de material não abre.
 - **Etiquetar os links que você divulga.** A coluna `campanha` do `/admin`
   só se preenche se o link levar `utm_`. Um link de anúncio útil é
   `institutobrunosena.com.br/pnl-practitioner?utm_source=instagram&utm_medium=cpc&utm_campaign=setembro`

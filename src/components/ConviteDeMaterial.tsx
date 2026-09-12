@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { materiais } from '../config/materiais';
 import { routes } from '../config/site';
+import { useDecisaoDeCookies } from '../lib/consentimento';
 import { useConvite } from '../lib/useConvite';
 import { useMontado } from '../lib/useMontado';
 
@@ -72,7 +73,13 @@ export default function ConviteDeMaterial() {
   const { pathname } = useLocation();
   const montado = useMontado();
   const permitido = !SEM_CONVITE.some((r) => pathname === r || pathname.startsWith(`${r}/`));
-  const { aberto, fechar, aoConverter } = useConvite(montado && permitido);
+
+  /* Enquanto o aviso de cookies espera resposta, o convite não abre: são
+     duas caixas no mesmo canto inferior, e a segunda a chegar cobriria a
+     primeira. Pior do que a sobreposição é o que ela faria — empurrar uma
+     decisão sobre dados para debaixo de uma oferta. */
+  const decidiuCookies = useDecisaoDeCookies() !== null;
+  const { aberto, fechar, aoConverter } = useConvite(montado && permitido && decidiuCookies);
 
   const caixaRef = useRef<HTMLDivElement>(null);
   const focoAnterior = useRef<Element | null>(null);

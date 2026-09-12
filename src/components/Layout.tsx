@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { pageTransition } from '../lib/motion';
+import AvisoDeCookies from './AvisoDeCookies';
 import BarraAviso from './BarraAviso';
 import ConviteDeMaterial from './ConviteDeMaterial';
 import FixedWhatsApp from './FixedWhatsApp';
@@ -76,6 +77,9 @@ export default function Layout() {
           renderiza nada no HTML pré-renderizado: quem chega da busca, e o
           robô que rastreia, recebem só a página. */}
       <ConviteDeMaterial />
+      {/* O aviso de cookies mora no fim, e é o que decide se a medição
+          existe nesta visita. Não desenha nada no HTML pré-renderizado. */}
+      <AvisoDeCookies />
     </div>
   );
 }

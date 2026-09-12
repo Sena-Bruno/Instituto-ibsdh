@@ -79,6 +79,12 @@ export default defineConfig({
         'src/lib/campanha.ts',
         'src/lib/medir.ts',
         'src/lib/gravarComExtras.ts',
+        /* O consentimento entra por um motivo à parte: a falha dele não é
+           um relatório errado, é medir quem recusou. Não há sintoma na
+           tela que denuncie, e o custo de descobrir tarde não é um defeito
+           — é uma infração à LGPD. */
+        'src/lib/consentimento.ts',
+        'src/components/AvisoDeCookies.tsx',
       ],
     },
   },

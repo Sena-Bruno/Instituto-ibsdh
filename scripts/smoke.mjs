@@ -384,6 +384,18 @@ const environmental =
     const p6 = await browser.newPage();
     await p6.goto(`${base}/hipnoterapia`, { waitUntil: 'domcontentloaded' });
     await p6.waitForSelector('h1', { timeout: 20000 });
+
+    /*
+      Responder o aviso de cookies primeiro, porque é o que um visitante
+      faz — e porque o convite espera essa resposta de propósito: os dois
+      moram no mesmo canto inferior, e o convite cobriria no celular uma
+      pergunta sobre dados pessoais com uma oferta.
+
+      "Recusar", e não "aceitar": assim este teste também prova que o
+      convite não depende de consentimento para funcionar. Quem recusa
+      medição continua vendo o site inteiro.
+    */
+    await p6.getByRole('button', { name: /^recusar$/i }).click({ timeout: 10000 });
     await p6.waitForTimeout(2500);
 
     const caixa = p6.locator('[aria-labelledby="convite-titulo"]');
