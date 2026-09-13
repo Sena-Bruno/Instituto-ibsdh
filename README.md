@@ -337,11 +337,29 @@ módulo inteiro — a string `googletagmanager` não aparece no pacote.
 | `clique_externo` | saída para outro domínio |
 | `video_play` | play na fachada de vídeo |
 | `sena_respondeu` / `sena_concluido` | a amostra do SENA, no meio e no fim |
+| `consentimento` | clique em **Aceitar** no aviso de cookies |
 
 Os dois primeiros nomes são **eventos recomendados do GA4**, em inglês de
 propósito: o GA4 os encaixa sozinho nos relatórios de funil e de geração de
 lead. Um nome em português no lugar deles seria mais bonito no código e
 mudo no painel.
+
+### Por que o painel conta aceites, e nunca a taxa de aceite
+
+`consentimento` só existe do lado do **aceitar**, e não é descuido: quem
+recusa não gera evento nenhum porque recusar **é** não falar com o Google.
+Mandar `consentimento: recusado` daria a taxa de aceite no painel ao preço
+de contatar o Google a respeito de quem acabou de dizer não — que é
+exatamente a infração que o aviso existe para evitar.
+
+Consequência prática, e ela é permanente: o GA4 mostra **quantas pessoas
+aceitaram**, nunca quantas recusaram nem a proporção entre as duas. O
+denominador mora fora do GA4 por desenho. Quem recusou é, para o painel,
+indistinguível de quem nunca entrou no site.
+
+O evento é disparado no clique, e não no carregamento de quem já havia
+aceitado antes: lá ele contaria a mesma pessoa em cada página, e um número
+inflado é pior do que número nenhum, porque parece confiável.
 
 ### Nenhum botão tem código de medição
 

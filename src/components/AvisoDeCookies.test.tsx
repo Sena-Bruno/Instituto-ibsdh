@@ -6,7 +6,8 @@ import { decisaoDeCookies, registrarDecisao } from '../lib/consentimento';
 import AvisoDeCookies from './AvisoDeCookies';
 
 const iniciarMedicao = vi.hoisted(() => vi.fn());
-vi.mock('../lib/medir', () => ({ iniciarMedicao }));
+const evento = vi.hoisted(() => vi.fn());
+vi.mock('../lib/medir', () => ({ iniciarMedicao, evento }));
 
 const desenhar = () =>
   render(
@@ -34,6 +35,7 @@ describe('AvisoDeCookies', () => {
   beforeEach(() => {
     localStorage.clear();
     iniciarMedicao.mockClear();
+    evento.mockClear();
   });
 
   it('aparece para quem ainda não respondeu', async () => {
@@ -78,6 +80,23 @@ describe('AvisoDeCookies', () => {
     expect(screen.queryByRole('region', { name: /cookies/i })).not.toBeInTheDocument();
   });
 
+  it('aceitar registra o consentimento no GA4', async () => {
+    /*
+      Sem este evento, aceitar é indistinguível no painel de ter chegado
+      antes de o aviso existir: o GA4 recebe `page_view` e mais nada que
+      diga que houve consentimento nesta visita. É o número que o instituto
+      abre o painel para ver.
+    */
+    const user = userEvent.setup();
+    desenhar();
+    await user.click(await screen.findByRole('button', { name: /^aceitar$/i }));
+
+    expect(evento).toHaveBeenCalledWith(
+      'consentimento',
+      expect.objectContaining({ decisao: 'aceito' }),
+    );
+  });
+
   it('recusar grava a escolha e não mede nada', async () => {
     const user = userEvent.setup();
     desenhar();
@@ -86,6 +105,20 @@ describe('AvisoDeCookies', () => {
     expect(decisaoDeCookies()).toBe('recusado');
     expect(iniciarMedicao).not.toHaveBeenCalled();
     expect(screen.queryByRole('region', { name: /cookies/i })).not.toBeInTheDocument();
+  });
+
+  it('recusar não manda NADA para o GA4, nem o próprio "recusou"', async () => {
+    /*
+      A tentação óbvia — mandar `consentimento: recusado` para ter a taxa de
+      aceite no painel — é exatamente a infração que o aviso existe para
+      evitar: seria contatar o Google a respeito de quem acabou de dizer
+      não. O denominador fica de fora, e é o preço correto.
+    */
+    const user = userEvent.setup();
+    desenhar();
+    await user.click(await screen.findByRole('button', { name: /^recusar$/i }));
+
+    expect(evento).not.toHaveBeenCalled();
   });
 
   it('não volta a perguntar para quem já respondeu', async () => {

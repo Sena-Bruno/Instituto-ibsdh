@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { routes } from '../config/site';
 import { registrarDecisao, useDecisaoDeCookies } from '../lib/consentimento';
-import { iniciarMedicao } from '../lib/medir';
+import { evento, iniciarMedicao } from '../lib/medir';
 import { useMontado } from '../lib/useMontado';
 
 /**
@@ -43,58 +42,31 @@ import { useMontado } from '../lib/useMontado';
 export default function AvisoDeCookies() {
   const montado = useMontado();
   const decisao = useDecisaoDeCookies();
-  const [confirmacao, setConfirmacao] = useState<'aceito' | 'recusado' | null>(null);
-
-  useEffect(() => {
-    if (confirmacao) {
-      const timer = setTimeout(() => setConfirmacao(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [confirmacao]);
 
   /* Como o `ConviteDeMaterial`: nada é desenhado na pré-renderização nem na
      primeira pintura. Sem isso, quem já respondeu veria a faixa piscar por
      um quadro antes de o navegador ler a escolha guardada — e o robô
      indexaria um aviso de cookie no meio do HTML de toda página. */
-  if (!montado) return null;
-
-  // Se há confirmação a mostrar, retorna só a confirmação
-  if (confirmacao) {
-    return (
-      <AnimatePresence>
-        <motion.div
-          role="status"
-          aria-live="polite"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 12 }}
-          transition={{ duration: 0.25 }}
-          className="cartao fixed right-0 bottom-0 left-0 z-[70] rounded-b-none border-x-0 border-b-0 p-5 sm:right-4 sm:bottom-4 sm:left-auto sm:w-[min(420px,calc(100vw-2rem))] sm:rounded-[18px] sm:border-x sm:border-b sm:p-6"
-        >
-          <p className="text-[14.5px] leading-relaxed text-brand-cream">
-            {confirmacao === 'aceito'
-              ? '✓ Cookies de medição aceitos. O site agora mede suas visitações.'
-              : '✓ Cookies de medição recusados. O site não mede nada.'}
-          </p>
-        </motion.div>
-      </AnimatePresence>
-    );
-  }
-
-  // Se já tem uma decisão gravada, não mostra o aviso
-  if (decisao !== null) return null;
+  if (!montado || decisao !== null) return null;
 
   const aceitar = () => {
-    setConfirmacao('aceito');
     registrarDecisao('aceito');
     /* Começa a medir agora, e não no próximo carregamento: quem aceita na
        home e navega para uma formação já é contado nessa navegação. */
     iniciarMedicao();
-  };
 
-  const recusar = () => {
-    setConfirmacao('recusado');
-    registrarDecisao('recusado');
+    /*
+      O único sinal de consentimento que chega ao GA4 — e só deste lado.
+
+      Quem RECUSA não gera evento nenhum, e não há como gerar: recusar é
+      justamente não falar com o Google. Por isso o painel conta aceites e
+      nunca a taxa de aceite — o denominador mora fora do GA4, por desenho.
+
+      Disparado aqui, no clique, e NÃO no `main.tsx` de quem já havia
+      aceitado: lá ele contaria a mesma pessoa a cada carregamento de
+      página, e um número inflado é pior do que número nenhum.
+    */
+    evento('consentimento', { decisao: 'aceito', origem: window.location.pathname });
   };
 
   return (
@@ -125,7 +97,11 @@ export default function AvisoDeCookies() {
           <button type="button" onClick={aceitar} className="btn-primary flex-1 justify-center">
             Aceitar
           </button>
-          <button type="button" onClick={recusar} className="btn-ghost flex-1 justify-center">
+          <button
+            type="button"
+            onClick={() => registrarDecisao('recusado')}
+            className="btn-ghost flex-1 justify-center"
+          >
             Recusar
           </button>
         </div>
