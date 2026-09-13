@@ -10,6 +10,7 @@ import { isAdmin } from '../config/admin';
 import { routes, site } from '../config/site';
 import { auth, loginWithGoogle, logout } from '../firebase/auth';
 import { bancoAoVivo } from '../firebase/banco-ao-vivo';
+import { linhaCsv } from '../lib/csv';
 import { codigoDoErro, mensagemDoErroDeLogin } from '../lib/erroDeLogin';
 import { collapse } from '../lib/motion';
 import { useDelayedFlag } from '../lib/useDelayedFlag';
@@ -190,25 +191,27 @@ export default function Admin() {
     perguntada.
   */
   const csv = useMemo(() => {
-    const aspas = (v: string) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    /* `linhaCsv`, e não um escape local com aspas: nome e origem são
+       escritos por quem preenche o formulário, e uma célula que comece com
+       `=` vira FÓRMULA na planilha, aspas ou não. Ver `lib/csv.ts`. */
     const rows = leads.map((l) =>
-      [
-        aspas(l.name),
-        aspas(l.email),
-        aspas(l.referencia),
-        aspas(l.origem ?? ''),
-        aspas(l.campanha ?? ''),
-        aspas(l.createdAt ? l.createdAt.toDate().toLocaleString('pt-BR') : ''),
-      ].join(','),
+      linhaCsv([
+        l.name,
+        l.email,
+        l.referencia,
+        l.origem ?? '',
+        l.campanha ?? '',
+        l.createdAt ? l.createdAt.toDate().toLocaleString('pt-BR') : '',
+      ]),
     );
-    const cabecalho = [
+    const cabecalho = linhaCsv([
       'nome',
       'email',
       lista.coluna.toLowerCase(),
       'origem',
       'campanha',
       'data',
-    ].join(',');
+    ]);
     return [cabecalho, ...rows].join('\n');
   }, [leads, lista.coluna]);
 

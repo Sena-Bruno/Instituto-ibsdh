@@ -83,6 +83,11 @@ export default defineConfig({
         'src/lib/campanha.ts',
         'src/lib/medir.ts',
         'src/lib/gravarComExtras.ts',
+        /* O CSV do painel entra pelo mesmo critério de falha silenciosa, e
+           com a consequência mais cara da lista: a célula que vira fórmula
+           não muda nada na tela do site — ela age dentro da planilha do
+           instituto, depois, com a lista de leads ao lado. */
+        'src/lib/csv.ts',
         /* O consentimento entra por um motivo à parte: a falha dele não é
            um relatório errado, é medir quem recusou. Não há sintoma na
            tela que denuncie, e o custo de descobrir tarde não é um defeito

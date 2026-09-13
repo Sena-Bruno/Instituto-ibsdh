@@ -5,22 +5,60 @@
   "headers": [
     {
       "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/fontes/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
         {
           "key": "Strict-Transport-Security",
           "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.googleusercontent.com https://img.youtube.com https://i.ytimg.com https://i.vimeocdn.com https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://gen-lang-client-0868573644.firebaseapp.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io; frame-src https://www.youtube-nocookie.com https://player.vimeo.com https://accounts.google.com https://gen-lang-client-0868573644.firebaseapp.com; media-src 'self'; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'self'"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "accelerometer=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), autoplay=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), encrypted-media=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), fullscreen=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), gyroscope=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), picture-in-picture=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), browsing-topics=(), camera=(), display-capture=(), geolocation=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=()"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin-allow-popups"
         }
       ]
     }

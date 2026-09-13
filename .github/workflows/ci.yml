@@ -140,3 +140,11 @@ jobs:
           done
           curl -sf -o /dev/null http://127.0.0.1:4173/ || { echo "servidor não subiu"; exit 1; }
           SMOKE_URL=http://127.0.0.1:4173 node scripts/smoke.mjs
+
+      # Os cabeçalhos de segurança não passam pelo `vite preview`: ele não
+      # conhece o netlify.toml. Este passo sobe o `dist` com os cabeçalhos
+      # lidos de lá e falha se o navegador recusar qualquer recurso — que é
+      # a única forma de uma política de conteúdo errada ser pega ANTES do
+      # deploy, e não por um formulário que parou de gravar em produção.
+      - name: Cabeçalhos de segurança
+        run: node scripts/cabecalhos.mjs
