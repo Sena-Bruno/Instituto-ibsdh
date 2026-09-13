@@ -14,7 +14,13 @@
     // Os testes das funções ficam numa pasta vizinha, e não dentro de
     // `netlify/functions/`: o Netlify trata todo .mjs de lá como função
     // serverless e recusa nome com ponto, derrubando o deploy inteiro.
-    "netlify/testes/**/*.test.mjs"
+    "netlify/testes/**/*.test.mjs",
+
+    // O teste das regras do Firestore roda DENTRO do emulador
+    // (`firebase emulators:exec "node scripts/regras.mjs"`), e o Knip não
+    // enxerga um comando escrito dentro de uma string. Sem esta linha ele
+    // reporta o arquivo como código morto.
+    "scripts/regras.mjs"
   ],
 
   "project": ["src/**/*.{ts,tsx}", "scripts/**/*.mjs", "netlify/**/*.mjs"],
@@ -27,6 +33,12 @@
     // package.json: baixa centenas de MB de navegadores em todo build.
     "playwright",
 
+    // Mesma coisa para o teste das regras do Firestore (`npm run regras`):
+    // o emulador baixa um .jar de dezenas de MB, que o build de produção
+    // não tem o que fazer com ele.
+    "firebase-tools",
+    "@firebase/rules-unit-testing",
+
     // NÃO É UM PACOTE. O Knip lê a string "command" em
     // `stryker.config.json` → `testRunner` e infere um pacote
     // `@stryker-mutator/command-runner`, que não existe: esse runner é
@@ -34,6 +46,10 @@
     // dependência não declarada que não há como declarar.
     "@stryker-mutator/command-runner"
   ],
+
+  // O `firebase` vem do firebase-tools, instalado sob demanda para
+  // `npm run regras` — ver ignoreDependencies.
+  "ignoreBinaries": ["firebase"],
 
   // Sandboxes e relatório do teste de mutação. O Stryker copia o projeto
   // inteiro para dentro de .stryker-tmp a cada execução.

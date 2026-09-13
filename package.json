@@ -15,6 +15,7 @@
     "test:coverage": "vitest run --coverage",
     "smoke": "node scripts/smoke.mjs",
     "cabecalhos": "node scripts/cabecalhos.mjs",
+    "regras": "firebase emulators:exec --only firestore --project regras-teste 'node scripts/regras.mjs'",
     "check": "biome check",
     "check:fix": "biome check --write",
     "knip": "knip --no-config-hints",
