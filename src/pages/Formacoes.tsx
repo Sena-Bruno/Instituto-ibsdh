@@ -6,7 +6,7 @@ import Seo from '../components/Seo';
 import { cursosDoEixo, eixosComCurso, listaCursos } from '../config/courses';
 import { routes, whatsappLink, whatsappMessages } from '../config/site';
 import { paletas } from '../lib/cores';
-import { listaDeCursos, organizacao, trilhaDeNavegacao } from '../lib/schema';
+import { listaDeCursos, trilhaDeNavegacao } from '../lib/schema';
 
 /**
  * O catálogo de formações.
@@ -44,7 +44,6 @@ export default function Formacoes() {
         descricao="Todas as formações do Instituto Bruno Sena, organizadas por eixo: PNL, Hipnoterapia, Coaching e jornadas completas. Certificação NLPEA e IBSDH."
         imagemAlt="Catálogo de formações do Instituto Bruno Sena"
         dados={[
-          organizacao(),
           listaDeCursos(listaCursos),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },

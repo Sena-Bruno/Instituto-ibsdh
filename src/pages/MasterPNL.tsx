@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ArtigosDoCurso from '../components/ArtigosDoCurso';
 import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
 import Ementa from '../components/Ementa';
 import Faq from '../components/Faq';
@@ -8,12 +9,7 @@ import Seo from '../components/Seo';
 import { corDoCurso, courses } from '../config/courses';
 import { contarAulas, curriculoMasterPnl } from '../config/curriculos';
 import { routes } from '../config/site';
-import {
-  cursoComoSchema,
-  organizacao,
-  perguntasFrequentes,
-  trilhaDeNavegacao,
-} from '../lib/schema';
+import { cursoComoSchema, perguntasFrequentes, trilhaDeNavegacao } from '../lib/schema';
 
 const curso = courses.masterPnl;
 /* A cor da página vem do eixo do curso, nunca do curso em si. */
@@ -98,10 +94,9 @@ export default function MasterPNL() {
         rota={routes.masterPnl}
         titulo="Formação Master PNL | Instituto Bruno Sena"
         descricao="Formação Master em PNL: modelagem comportamental, metaprogramas, Sleight of Mouth e Modelo Milton, com avaliação por competência no simulador SENA Avançado."
-        imagem="/capa-master-pnl.webp"
+        imagem="/og-master-pnl.jpg"
         imagemAlt="Arte da formação Master PNL do Instituto Bruno Sena"
         dados={[
-          organizacao(),
           cursoComoSchema(curso),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
@@ -255,6 +250,8 @@ export default function MasterPNL() {
 
           <img
             src="/Certificado-IBSDH.webp"
+            width={2339}
+            height={1653}
             alt="Certificado de competência Master emitido pelo IBSDH"
             className="mt-10 w-full border border-white/10"
             loading="lazy"
@@ -348,6 +345,8 @@ export default function MasterPNL() {
             ]}
           />
         </SecaoCurso>
+
+        <ArtigosDoCurso rota={routes.masterPnl} cor={cor} />
 
         <SecaoCurso cor={cor} sobretitulo="Perguntas" titulo="Dúvidas frequentes">
           <Faq items={perguntas} />

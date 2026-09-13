@@ -1,6 +1,6 @@
 import { Helmet } from '@dr.pogodin/react-helmet';
-import { site } from '../config/site';
-import { grafo } from '../lib/schema';
+import { routes, site } from '../config/site';
+import { fundador, grafo, organizacao, websiteDoInstituto } from '../lib/schema';
 
 /**
  * O `<head>` de uma página, num lugar só.
@@ -30,6 +30,7 @@ export default function Seo({
   tipo = 'website',
   indexar = true,
   dados = [],
+  artigo,
 }: {
   titulo: string;
   descricao: string;
@@ -41,8 +42,21 @@ export default function Seo({
   tipo?: 'website' | 'article' | 'profile';
   /** `false` põe a página fora do índice. Use para telas internas. */
   indexar?: boolean;
-  /** Os nós de dados estruturados desta página. */
+  /**
+   * Os nós de dados estruturados DESTA página.
+   *
+   * A organização, o fundador e o site não entram aqui: são emitidos
+   * sempre, mais abaixo. Ver o comentário do bloco JSON-LD.
+   */
   dados?: object[];
+  /**
+   * Os metadados que o `og:type: article` carrega, quando a página é um
+   * artigo. Existem porque o Open Graph é o que os agregadores, os
+   * leitores de feed e os rastreadores que não executam JavaScript leem —
+   * e para eles, `og:type="article"` sem data nem autor é um artigo sem
+   * procedência. O Google usa o JSON-LD e não depende disto.
+   */
+  artigo?: { publicadoEm: string; revisadoEm?: string; secao: string };
 }) {
   /*
     O canônico precisa ser absoluto, com protocolo e domínio. Um caminho
@@ -83,7 +97,35 @@ export default function Seo({
       <meta property="og:title" content={titulo} />
       <meta property="og:description" content={descricao} />
       <meta property="og:image" content={urlImagem} />
+      {/*
+        Largura e altura declaradas, sempre.
+
+        Sem elas o WhatsApp e o Facebook só desenham o cartão depois de
+        baixar a imagem inteira, e o link fica alguns segundos sem prévia —
+        que é justamente quando a pessoa já rolou a conversa.
+
+        Os números são fixos porque TODA imagem passada em `imagem` é uma
+        peça 1200×630. Não é convenção frouxa: uma arte em retrato é
+        cortada no centro pelo WhatsApp e pelo LinkedIn, e nas capas deste
+        site o centro é a ilustração — o título fica de fora. Cartão social
+        é peça própria, gerada por `scripts/cartoes-sociais.mjs`, e não a
+        capa da página.
+      */}
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       {imagemAlt ? <meta property="og:image:alt" content={imagemAlt} /> : null}
+
+      {artigo ? (
+        <>
+          <meta property="article:published_time" content={artigo.publicadoEm} />
+          <meta
+            property="article:modified_time"
+            content={artigo.revisadoEm ?? artigo.publicadoEm}
+          />
+          <meta property="article:author" content={`${site.url}${routes.sobre}`} />
+          <meta property="article:section" content={artigo.secao} />
+        </>
+      ) : null}
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={titulo} />
@@ -95,9 +137,47 @@ export default function Seo({
         separados fariam a mesma organização ser descrita quatro vezes na
         mesma página, e bastaria um deles ficar para trás numa edição para
         a página passar a se contradizer.
+
+        ┌───────────────────────────────────────────────────────────────────┐
+        │  OS TRÊS NÓS DE IDENTIDADE SAEM DAQUI, E NÃO DAS PÁGINAS          │
+        │                                                                   │
+        │  `organizacao()` referencia o fundador por `@id`, e                │
+        │  `paginaDeContato()` referencia o site. Enquanto cada página       │
+        │  montava a própria lista, dezessete das dezenove emitiam uma       │
+        │  referência a um nó que NÃO estava no grafo — inclusive os sete    │
+        │  artigos, cujo `author` é justamente esse nó.                      │
+        │                                                                   │
+        │  Isso não quebra validador nenhum: o JSON continua válido, o       │
+        │  teste de resultados enriquecidos não reprova a página, e o autor  │
+        │  do artigo simplesmente resolve para um nó sem nome. O site fazia  │
+        │  o trabalho caro — escrever os textos, criar a /sobre como página  │
+        │  de autoria, apontar o `url` do fundador para lá — e perdia o      │
+        │  sinal num detalhe de montagem que ninguém tinha como ver.         │
+        │                                                                   │
+        │  Emitidos daqui, os três existem em toda página que tem JSON-LD, e │
+        │  uma página não tem como esquecer. `dados` passa a ser só o que é  │
+        │  DESTA página. O `prerender.mjs` confere, a cada rota, que não     │
+        │  sobrou referência pendente.                                       │
+        └───────────────────────────────────────────────────────────────────┘
       */}
-      {dados.length > 0 ? (
-        <script type="application/ld+json">{JSON.stringify(grafo(...dados))}</script>
+      {/*
+        O portão é `indexar`, e não "a página trouxe nós próprios".
+
+        Era `dados.length > 0`, o que amarrava a identidade do site a um
+        detalhe de cada página: a /termos e a /privacidade só emitiam
+        JSON-LD porque alguém lembrou de passar `organizacao()` à mão, e
+        no dia em que esse nó saísse das listas — que é exatamente o que
+        esta mudança faz — as duas ficariam sem dados estruturados nenhum,
+        em silêncio.
+
+        Página fora do índice não tem resultado de busca para enriquecer,
+        e por isso continua sem bloco nenhum: o material entregue em troca
+        de contato, o /admin, o 404 e o rascunho de artigo.
+      */}
+      {indexar ? (
+        <script type="application/ld+json">
+          {JSON.stringify(grafo(organizacao(), fundador(), websiteDoInstituto(), ...dados))}
+        </script>
       ) : null}
     </Helmet>
   );

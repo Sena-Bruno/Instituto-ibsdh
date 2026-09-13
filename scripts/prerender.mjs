@@ -90,6 +90,58 @@ for (const rota of rotasParaGerar) {
     throw new Error(`A rota ${rota} não declarou canônico.`);
   }
   /*
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  TODA REFERÊNCIA `@id` TEM DE RESOLVER NO MESMO DOCUMENTO           │
+    │                                                                     │
+    │  Um nó escrito como `{ "@id": "…#bruno-sena" }`, sozinho, é uma     │
+    │  REFERÊNCIA: ele só significa alguma coisa se o nó completo estiver │
+    │  no mesmo `@graph`. Quando não está, nada acusa — o JSON é válido,  │
+    │  o teste de resultados enriquecidos passa, e o `author` do artigo   │
+    │  resolve para uma entidade sem nome.                                │
+    │                                                                     │
+    │  Foi o estado do site por um tempo: dezessete das dezenove páginas  │
+    │  indexáveis referenciavam o fundador sem declará-lo, inclusive os   │
+    │  sete artigos, que existem justamente para sustentar a autoria.     │
+    │                                                                     │
+    │  Esta checagem é a razão de aquilo não poder voltar em silêncio.    │
+    └─────────────────────────────────────────────────────────────────────┘
+  */
+  const blocoLd = cabeca.match(
+    /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/,
+  );
+  if (blocoLd) {
+    const declarados = new Set();
+    const referenciados = [];
+    const percorrer = (no) => {
+      if (Array.isArray(no)) return no.forEach(percorrer);
+      if (!no || typeof no !== 'object') return;
+      const chaves = Object.keys(no);
+      /* Um objeto cuja única chave é `@id` é referência; qualquer outra
+         chave ao lado significa que o nó está sendo DECLARADO aqui. */
+      if (no['@id'] && chaves.length === 1) referenciados.push(no['@id']);
+      else if (no['@id']) declarados.add(no['@id']);
+      for (const c of chaves) percorrer(no[c]);
+    };
+
+    let grafo;
+    try {
+      grafo = JSON.parse(blocoLd[1])['@graph'];
+    } catch (erro) {
+      throw new Error(`O JSON-LD da rota ${rota} não é JSON válido: ${erro.message}`);
+    }
+    percorrer(grafo);
+
+    const pendentes = [...new Set(referenciados)].filter((r) => !declarados.has(r));
+    if (pendentes.length > 0) {
+      throw new Error(
+        `A rota ${rota} referencia nós que não estão no próprio grafo: ` +
+          `${pendentes.join(', ')}. Quem emite os nós de identidade é o ` +
+          '`components/Seo.tsx` — ver o comentário do bloco JSON-LD lá.',
+      );
+    }
+  }
+
+  /*
     O render do servidor é síncrono: um componente que suspenda faz o
     React devolver o fallback sem reclamar, e a página iria para produção
     com o esqueleto de carregamento no lugar do texto — indexável, e
@@ -165,7 +217,11 @@ const urls = rotasDoSitemap
   .map((p) => {
     const linhas = [
       `    <loc>${escaparXml(BASE + p.rota)}</loc>`,
-      `    <lastmod>${ultimaAlteracao(p.fonte)}</lastmod>`,
+      /* A data que a própria rota declara vence a do último commit: para
+         um artigo ela é o `revisadoEm`, que é o que de fato mudou na
+         página. Sem isto, os sete artigos anunciavam a data do commit em
+         `config/artigos.ts` — a mesma para todos. */
+      `    <lastmod>${p.data ?? ultimaAlteracao(p.fonte)}</lastmod>`,
     ];
     if (p.frequencia) linhas.push(`    <changefreq>${p.frequencia}</changefreq>`);
     if (p.prioridade !== undefined) {

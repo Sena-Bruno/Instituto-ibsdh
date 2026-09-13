@@ -10,7 +10,7 @@ import {
   whatsappLink,
   whatsappMessages,
 } from '../config/site';
-import { organizacao, paginaDeContato, trilhaDeNavegacao } from '../lib/schema';
+import { paginaDeContato, trilhaDeNavegacao } from '../lib/schema';
 
 /**
  * Onde falar com o instituto.
@@ -79,7 +79,6 @@ export default function Contato() {
         titulo={`Contato | ${site.name}`}
         descricao={`Fale com o ${site.name}: WhatsApp ${site.whatsapp.display}, ${site.email.contact}, e proposta para treinamentos In Company.`}
         dados={[
-          organizacao(),
           paginaDeContato(),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },

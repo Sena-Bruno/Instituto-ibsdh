@@ -1,4 +1,5 @@
 import { Clock } from 'lucide-react';
+import ArtigosDoCurso from '../components/ArtigosDoCurso';
 import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
 import ListaDeEspera from '../components/ListaDeEspera';
 import { ListaItens } from '../components/PaginaCurso';
@@ -6,7 +7,7 @@ import Secao, { Cabecalho } from '../components/Secao';
 import Seo from '../components/Seo';
 import { courses } from '../config/courses';
 import { routes } from '../config/site';
-import { cursoComoSchema, organizacao, trilhaDeNavegacao } from '../lib/schema';
+import { cursoComoSchema, trilhaDeNavegacao } from '../lib/schema';
 
 const curso = courses.masterCoach;
 
@@ -36,10 +37,9 @@ export default function MasterCoach() {
         rota={routes.masterCoach}
         titulo="Formação Master Coach | Instituto Bruno Sena"
         descricao="Formação Master Coach do Instituto Bruno Sena: coaching executivo, abordagem sistêmica e estruturação de negócio. Entre na lista de espera do lançamento."
-        imagem="/capa-coaching.webp"
+        imagem="/og-coaching.jpg"
         imagemAlt="Arte da formação Master Coach do Instituto Bruno Sena"
         dados={[
-          organizacao(),
           cursoComoSchema(curso),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
@@ -113,12 +113,16 @@ export default function MasterCoach() {
 
           <img
             src="/Certificado-IBSDH-coach.webp"
+            width={2339}
+            height={1653}
             alt="Certificado de Coach Profissional emitido pelo IBSDH"
             className="mt-10 w-full max-w-3xl rounded-[22px] border border-brand-emerald/20"
             loading="lazy"
             decoding="async"
           />
         </Secao>
+
+        <ArtigosDoCurso rota={routes.masterCoach} cor="emerald" variante="largura" />
 
         <Secao elevada>
           <AvaliacoesDoCurso courseId={curso.slug} />

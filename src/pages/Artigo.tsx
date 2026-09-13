@@ -9,9 +9,9 @@ import { artigoPorSlug, artigosRelacionados } from '../config/artigos';
 import { listaCursos } from '../config/courses';
 import { eixos } from '../config/eixos';
 import { materialParaOEixo } from '../config/materiais';
-import { routes, site } from '../config/site';
+import { routes, site, tituloComMarca } from '../config/site';
 import { paletas } from '../lib/cores';
-import { artigoComoSchema, organizacao, trilhaDeNavegacao } from '../lib/schema';
+import { artigoComoSchema, trilhaDeNavegacao } from '../lib/schema';
 import NotFound from './NotFound';
 
 /** `2026-09-07` → `7 de setembro de 2026`, sem passar por fuso horário. */
@@ -57,13 +57,17 @@ export default function Artigo() {
     <>
       <Seo
         rota={rota}
-        titulo={`${artigo.tituloSeo ?? artigo.titulo} | ${site.name}`}
-        descricao={artigo.resumo}
+        titulo={tituloComMarca(artigo.tituloSeo ?? artigo.titulo)}
+        descricao={artigo.descricaoSeo ?? artigo.resumo}
         tipo="article"
+        artigo={{
+          publicadoEm: artigo.publicadoEm,
+          revisadoEm: artigo.revisadoEm,
+          secao: eixos[artigo.eixo].nome,
+        }}
         /* Rascunho não revisado fica fora do índice. Ver `config/artigos.ts`. */
         indexar={artigo.revisado}
         dados={[
-          organizacao(),
           artigoComoSchema(artigo),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },

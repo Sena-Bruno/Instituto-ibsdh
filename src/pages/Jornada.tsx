@@ -5,12 +5,7 @@ import Secao, { Cabecalho } from '../components/Secao';
 import Seo from '../components/Seo';
 import { combos, courses } from '../config/courses';
 import { routes, whatsappLink } from '../config/site';
-import {
-  cursoComoSchema,
-  organizacao,
-  perguntasFrequentes,
-  trilhaDeNavegacao,
-} from '../lib/schema';
+import { cursoComoSchema, perguntasFrequentes, trilhaDeNavegacao } from '../lib/schema';
 import { cn } from '../lib/utils';
 
 /**
@@ -145,7 +140,6 @@ export default function Jornada() {
         descricao="Os quatro caminhos de formação do Instituto Bruno Sena, do Practitioner à Trilogia completa. Compare preço, carga horária e certificados."
         imagemAlt="Os caminhos de formação do Instituto Bruno Sena"
         dados={[
-          organizacao(),
           cursoComoSchema(courses.trilogia),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
