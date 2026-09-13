@@ -29,8 +29,15 @@ interface Cadastro {
   email: string;
   /** O curso esperado, ou o material baixado. */
   referencia: string;
-  /** A rota em que o formulário foi preenchido. Só os leads têm. */
+  /** A rota em que o formulário foi preenchido. */
   origem?: string;
+  /**
+   * A etiqueta `utm_` da entrada — `instagram / cpc / setembro`.
+   *
+   * Vazia para quem chegou sem campanha (a maioria) e para todo cadastro
+   * anterior a setembro de 2026, quando o campo passou a ser gravado.
+   */
+  campanha?: string;
   createdAt?: { toDate: () => Date };
 }
 
@@ -152,6 +159,7 @@ export default function Admin() {
               email: dados.email,
               referencia: dados[lista.campo] ?? '',
               origem: dados.origem,
+              campanha: dados.campanha,
               createdAt: dados.createdAt,
             };
           }),
@@ -169,8 +177,18 @@ export default function Admin() {
     );
   }, [allowed, lista.colecao, lista.campo]);
 
-  const mostraOrigem = aba === 'leads';
+  /*
+    `origem` e `campanha` saem nas DUAS listas.
 
+    A de materiais já tinha origem; a de espera passou a gravá-la junto
+    com a campanha. Enquanto a coluna era exclusiva dos materiais, a
+    lista que interessa mais — quem já escolheu um curso e espera ele
+    abrir — era a única que não dizia de onde a pessoa tinha vindo.
+
+    Cadastro antigo não tem os campos e aparece como "—". É informação
+    verdadeira: não é que a origem fosse desconhecida, é que ela não era
+    perguntada.
+  */
   const csv = useMemo(() => {
     const aspas = (v: string) => `"${String(v ?? '').replace(/"/g, '""')}"`;
     const rows = leads.map((l) =>
@@ -178,7 +196,8 @@ export default function Admin() {
         aspas(l.name),
         aspas(l.email),
         aspas(l.referencia),
-        ...(mostraOrigem ? [aspas(l.origem ?? '')] : []),
+        aspas(l.origem ?? ''),
+        aspas(l.campanha ?? ''),
         aspas(l.createdAt ? l.createdAt.toDate().toLocaleString('pt-BR') : ''),
       ].join(','),
     );
@@ -186,11 +205,12 @@ export default function Admin() {
       'nome',
       'email',
       lista.coluna.toLowerCase(),
-      ...(mostraOrigem ? ['origem'] : []),
+      'origem',
+      'campanha',
       'data',
     ].join(',');
     return [cabecalho, ...rows].join('\n');
-  }, [leads, lista.coluna, mostraOrigem]);
+  }, [leads, lista.coluna]);
 
   const csvHref = useMemo(
     // O BOM faz o Excel abrir o arquivo com a acentuação correta.
@@ -414,11 +434,12 @@ export default function Admin() {
                           <th scope="col" className="p-4 font-bold">
                             {lista.coluna}
                           </th>
-                          {mostraOrigem && (
-                            <th scope="col" className="p-4 font-bold">
-                              Origem
-                            </th>
-                          )}
+                          <th scope="col" className="p-4 font-bold">
+                            Origem
+                          </th>
+                          <th scope="col" className="p-4 font-bold">
+                            Campanha
+                          </th>
                           <th scope="col" className="p-4 font-bold">
                             Data
                           </th>
@@ -437,12 +458,14 @@ export default function Admin() {
                               </a>
                             </td>
                             <td className="p-4">{lead.referencia}</td>
-                            {mostraOrigem && (
-                              /* A rota que trouxe o lead. É o dado que diz
-                                 qual artigo converte — e portanto sobre o
-                                 que vale a pena escrever o próximo. */
-                              <td className="p-4 whitespace-nowrap">{lead.origem ?? '—'}</td>
-                            )}
+                            {/* A rota que trouxe o lead: qual artigo converte,
+                                e portanto sobre o que escrever o próximo. */}
+                            <td className="p-4 whitespace-nowrap">{lead.origem || '—'}</td>
+                            {/* E por qual anúncio essa pessoa chegou ao site.
+                                O GA4 responde isso em agregado; aqui a
+                                resposta vem com nome e e-mail ao lado, que é
+                                o que permite saber a quem ligar primeiro. */}
+                            <td className="p-4 whitespace-nowrap">{lead.campanha || '—'}</td>
                             <td className="p-4 whitespace-nowrap">
                               {lead.createdAt
                                 ? lead.createdAt.toDate().toLocaleString('pt-BR')

@@ -90,6 +90,18 @@ export default function SiteFooter() {
               >
                 Artigos →
               </Link>
+              <Link
+                to={routes.sobre}
+                className="block pt-1 text-[13.5px] font-semibold text-brand-accent transition-colors hover:text-brand-accent-light"
+              >
+                O instituto →
+              </Link>
+              <Link
+                to={routes.contato}
+                className="block pt-1 text-[13.5px] font-semibold text-brand-accent transition-colors hover:text-brand-accent-light"
+              >
+                Contato →
+              </Link>
             </div>
           </nav>
 

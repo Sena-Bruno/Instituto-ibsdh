@@ -35,8 +35,16 @@ const ids = {
   fundador: `${site.url}/#bruno-sena`,
 } as const;
 
-/** `R$ 1.353,00` → `1353.00`. Devolve `undefined` para "Em breve". */
-function precoEmNumero(valor: string): string | undefined {
+/**
+ * `R$ 1.353,00` → `1353.00`. Devolve `undefined` para "Em breve".
+ *
+ * Exportada porque `lib/medir.ts` precisa exatamente do mesmo parse: o
+ * preço que o JSON-LD anuncia ao Google e o valor que o GA4 registra como
+ * intenção de compra saem da mesma string do catálogo, e duas leituras
+ * diferentes da mesma string acabam divergindo no dia em que um preço
+ * ganhar um centavo.
+ */
+export function precoEmNumero(valor: string): string | undefined {
   const limpo = valor
     .replace(/[^\d,.]/g, '')
     .replace(/\./g, '')
@@ -114,13 +122,45 @@ export function fundador() {
     name: 'Bruno Sena',
     jobTitle: 'Fundador e mentor do Instituto Bruno Sena',
     image: `${site.url}/brunosena.webp`,
-    url: `${site.url}/#sobre-mentor`,
+    /*
+      Aponta para a /sobre, e não mais para a âncora `/#sobre-mentor` da
+      home.
+
+      A diferença importa para o E-E-A-T: os sete artigos declaram este
+      nó como `author`, e até aqui o rastreador que seguisse a autoria
+      caía no meio da home — uma página de vendas, com preço e botão de
+      compra, em que a seção do Bruno é um bloco entre dezesseis. Agora
+      cai numa página cujo assunto É a pessoa que assina os textos, que é
+      o que "autoria verificável" quer dizer.
+    */
+    url: `${site.url}${routes.sobre}`,
     worksFor: { '@id': ids.organizacao },
     sameAs: [site.social.instagram],
     memberOf: {
       '@type': 'Organization',
       name: 'NLPEA — NLP Association of Excellence',
     },
+  };
+}
+
+/**
+ * A página de contato.
+ *
+ * `ContactPage` não é decoração: é o tipo que diz ao rastreador que esta
+ * página responde "como falo com eles", e é o que permite ao Google
+ * mostrar o contato sem que a pessoa precise entrar no site. Os meios
+ * declarados aqui são os mesmos de `organizacao()`, por `@id`, então não
+ * há como um dizer um telefone e o outro dizer outro.
+ */
+export function paginaDeContato() {
+  return {
+    '@type': 'ContactPage',
+    '@id': `${site.url}${routes.contato}#pagina`,
+    url: `${site.url}${routes.contato}`,
+    name: `Contato | ${site.name}`,
+    inLanguage: 'pt-BR',
+    about: { '@id': ids.organizacao },
+    isPartOf: { '@id': ids.site },
   };
 }
 

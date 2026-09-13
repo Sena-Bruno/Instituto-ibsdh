@@ -62,6 +62,10 @@ export default defineConfig({
         'src/config/site.ts',
         'src/config/admin.ts',
         'src/config/eixos.ts',
+        /* A derivação dos artigos relacionados: erro aqui não aparece na
+           tela — o bloco continua com três cartões, apontando para o texto
+           errado ou para um rascunho `noindex`. */
+        'src/config/artigos.ts',
         'src/lib/schema.ts',
         'src/lib/useDelayedFlag.ts',
         'src/lib/motion.ts',
@@ -71,6 +75,20 @@ export default defineConfig({
         'src/lib/erroDeLogin.ts',
         'src/lib/erroDeFirestore.ts',
         'src/lib/useConvite.ts',
+        /* A medição entra pelo mesmo critério: são três arquivos que
+           decidem algo e cuja falha é silenciosa. Uma etiqueta de campanha
+           que se perde, um checkout que deixa de ser reconhecido e um lead
+           recusado por campo novo não mudam nada na tela — o site segue
+           funcionando e só o relatório fica errado. */
+        'src/lib/campanha.ts',
+        'src/lib/medir.ts',
+        'src/lib/gravarComExtras.ts',
+        /* O consentimento entra por um motivo à parte: a falha dele não é
+           um relatório errado, é medir quem recusou. Não há sintoma na
+           tela que denuncie, e o custo de descobrir tarde não é um defeito
+           — é uma infração à LGPD. */
+        'src/lib/consentimento.ts',
+        'src/components/AvisoDeCookies.tsx',
       ],
     },
   },

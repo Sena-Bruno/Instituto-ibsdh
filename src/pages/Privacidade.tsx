@@ -1,6 +1,8 @@
 import Seo from '../components/Seo';
 import { routes, site } from '../config/site';
+import { registrarDecisao, useDecisaoDeCookies } from '../lib/consentimento';
 import { organizacao } from '../lib/schema';
+import { useMontado } from '../lib/useMontado';
 
 /**
  * Quando este documento foi revisado pela última vez.
@@ -21,7 +23,56 @@ import { organizacao } from '../lib/schema';
  * AO REVISAR O TEXTO, ATUALIZE ESTA DATA. É a única coisa que precisa
  * ser feita à mão aqui, e é o que dá sentido ao aviso.
  */
-const ULTIMA_REVISAO = '2026-09-07';
+const ULTIMA_REVISAO = '2026-09-12';
+
+/**
+ * O estado do consentimento, e o botão que o desfaz.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE REVOGAR PRECISA MORAR AQUI                                   │
+ * │                                                                       │
+ * │  A LGPD dá o direito de revogar o consentimento a qualquer momento, e │
+ * │  revogar tem de ser tão fácil quanto consentir. Um aviso que aparece  │
+ * │  uma vez e some para sempre cumpre a primeira metade e ignora a       │
+ * │  segunda: depois do clique não há mais nenhuma tela em que a pessoa   │
+ * │  possa mudar de ideia.                                                │
+ * │                                                                       │
+ * │  Esta é essa tela. É também a página que o próprio aviso linka, então │
+ * │  o caminho de volta existe desde o primeiro segundo.                  │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+function EscolhaDeCookies() {
+  const montado = useMontado();
+  const decisao = useDecisaoDeCookies();
+
+  /* Antes de montar, o texto neutro: é o que o servidor pré-renderizou e o
+     que o robô lê. Sem essa igualdade a hidratação descarta o documento. */
+  if (!montado) {
+    return <p>Você pode aceitar ou recusar os cookies de medição a qualquer momento.</p>;
+  }
+
+  return (
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <p className="text-[14.5px]">
+        {decisao === 'aceito'
+          ? 'Hoje você aceita os cookies de medição.'
+          : decisao === 'recusado'
+            ? 'Hoje você recusa os cookies de medição, e nada é medido.'
+            : 'Você ainda não respondeu ao aviso de cookies.'}
+      </p>
+
+      {decisao !== null && (
+        <button
+          type="button"
+          onClick={() => registrarDecisao(null)}
+          className="btn-ghost shrink-0 justify-center"
+        >
+          Rever minha escolha
+        </button>
+      )}
+    </div>
+  );
+}
 
 /** `2026-09-07` → `07/09/2026`, sem passar por fuso horário. */
 function formatarData(iso: string): string {
@@ -120,13 +171,43 @@ export default function Privacidade() {
             <p>
               Usamos o Google Firebase (autenticação e banco de dados) como operador de dados e
               a {site.paymentPlatform} para processar pagamentos. As compras acontecem no
-              ambiente dela: não recebemos nem armazenamos dados de cartão.
+              ambiente dela: não recebemos nem armazenamos dados de cartão. Se você autorizar os
+              cookies de medição, o Google Analytics também recebe dados de navegação — veja a
+              seção seguinte.
             </p>
           </section>
 
           <section>
             <h2 className="mb-3 font-display text-xl font-semibold text-brand-cream">
-              5. Seus direitos
+              5. Cookies e medição de audiência
+            </h2>
+            <p className="mb-4">
+              Usamos o Google Analytics para saber quais páginas são lidas, quais formações
+              despertam interesse e por onde as pessoas chegam até nós. Ele grava cookies no seu
+              navegador e recebe informações como as páginas visitadas, o tipo de aparelho e a
+              origem do acesso. O seu endereço de IP é anonimizado, e não usamos esses dados
+              para identificar você nem para publicidade.
+            </p>
+            <p className="mb-4">
+              <strong className="text-brand-cream">
+                Esses cookies só existem se você autorizar.
+              </strong>{' '}
+              Enquanto você não responder ao aviso — e se responder que não —, nada é carregado
+              e nada é medido. O site funciona igual nos dois casos: a medição não é necessária
+              para navegar, comprar ou se cadastrar.
+            </p>
+            <p className="mb-4">
+              Guardamos também, no seu navegador, a sua própria resposta a esse aviso (para não
+              perguntar de novo) e, durante a visita, a campanha pela qual você chegou — que é
+              enviada junto apenas se você preencher um formulário, e serve para sabermos qual
+              anúncio ou texto foi útil.
+            </p>
+            <EscolhaDeCookies />
+          </section>
+
+          <section>
+            <h2 className="mb-3 font-display text-xl font-semibold text-brand-cream">
+              6. Seus direitos
             </h2>
             <p>
               A LGPD garante a você confirmar a existência de tratamento, acessar, corrigir,
@@ -145,7 +226,7 @@ export default function Privacidade() {
 
           <section>
             <h2 className="mb-3 font-display text-xl font-semibold text-brand-cream">
-              6. Retenção e segurança
+              7. Retenção e segurança
             </h2>
             <p>
               Guardamos os dados pelo tempo necessário às finalidades acima ou até que você peça

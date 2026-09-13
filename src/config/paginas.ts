@@ -203,6 +203,28 @@ export const paginas: Pagina[] = [
     expandirSitemap: () => [],
   },
   {
+    /*
+      A /sobre entra com prioridade alta para o que ela é: os sete artigos
+      declaram o Bruno como autor e apontam para cá, então esta é a página
+      que sustenta a autoria do conteúdo inteiro do site.
+    */
+    rota: routes.sobre,
+    carregar: () => import('../pages/Sobre'),
+    fonte: 'src/pages/Sobre.tsx',
+    publica: true,
+    frequencia: 'monthly',
+    prioridade: 0.7,
+    imagem: '/brunosena.webp',
+  },
+  {
+    rota: routes.contato,
+    carregar: () => import('../pages/Contato'),
+    fonte: 'src/pages/Contato.tsx',
+    publica: true,
+    frequencia: 'yearly',
+    prioridade: 0.6,
+  },
+  {
     rota: routes.privacidade,
     carregar: () => import('../pages/Privacidade'),
     fonte: 'src/pages/Privacidade.tsx',

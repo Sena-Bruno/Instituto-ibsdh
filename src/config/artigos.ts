@@ -984,6 +984,48 @@ export const artigos: Artigo[] = [
 /** Só o que o Bruno já revisou vai ao ar. Ver o aviso no topo do arquivo. */
 export const artigosPublicados = artigos.filter((a) => a.revisado);
 
+/**
+ * Os artigos que valem oferecer a quem acabou de ler este.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE ISTO É DERIVADO, E NÃO UMA LISTA ESCRITA À MÃO               │
+ * │                                                                       │
+ * │  Os sete artigos não se linkavam entre si. Cada um ligava ao CURSO    │
+ * │  relacionado e oferecia o material — e mais nada. Sete textos sobre   │
+ * │  os mesmos três assuntos, e cada um era uma ilha.                     │
+ * │                                                                       │
+ * │  Isso custa dos dois lados. Para quem lê: acabou o texto, acabou o    │
+ * │  site, e a única saída oferecida é uma página de vendas. Para a       │
+ * │  busca: link interno é como o Google mede profundidade de tema, e     │
+ * │  sete páginas sem ligação nenhuma parecem sete assuntos avulsos em    │
+ * │  vez de um instituto que domina três.                                 │
+ * │                                                                       │
+ * │  A lista é DERIVADA do eixo porque lista escrita à mão envelhece: no  │
+ * │  oitavo artigo alguém teria de voltar aos sete anteriores para        │
+ * │  incluí-lo, e não voltaria. Assim, um artigo novo entra na malha no   │
+ * │  instante em que é publicado, sem que ninguém precise lembrar.        │
+ * │                                                                       │
+ * │  A ordem é deliberada: primeiro o mesmo eixo — quem leu sobre transe  │
+ * │  quer ler sobre regressão, não sobre metas —, e só depois os outros,  │
+ * │  para que um eixo com um artigo só não fique sem sugestão nenhuma.    │
+ * │  Dentro de cada grupo, o mais recente primeiro.                       │
+ * └───────────────────────────────────────────────────────────────────────┘
+ *
+ * Rascunho nunca entra: `artigosPublicados` já o exclui, e sugerir um
+ * texto `noindex` seria mandar o leitor a uma página que o próprio site
+ * pediu ao Google para ignorar.
+ */
+export function artigosRelacionados(artigo: Artigo, quantos = 3): Artigo[] {
+  const outros = artigosPublicados.filter((a) => a.slug !== artigo.slug);
+  const maisRecentePrimeiro = (a: Artigo, b: Artigo) =>
+    b.publicadoEm.localeCompare(a.publicadoEm);
+
+  const mesmoEixo = outros.filter((a) => a.eixo === artigo.eixo).sort(maisRecentePrimeiro);
+  const demais = outros.filter((a) => a.eixo !== artigo.eixo).sort(maisRecentePrimeiro);
+
+  return [...mesmoEixo, ...demais].slice(0, quantos);
+}
+
 /** Encontra um artigo pelo slug da URL. */
 export function artigoPorSlug(slug?: string): Artigo | undefined {
   return artigos.find((a) => a.slug === slug);

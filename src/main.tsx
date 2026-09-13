@@ -4,11 +4,33 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { matchPath } from 'react-router-dom';
 import App from './App.tsx';
 import { paginas } from './config/paginas';
+import { registrarCampanha } from './lib/campanha';
+import { decisaoDeCookies } from './lib/consentimento';
+import { iniciarMedicao } from './lib/medir';
 import { initSentry } from './lib/sentry';
 import './index.css';
 
 // Antes de renderizar, para capturar também erros da primeira pintura.
 initSentry();
+
+/*
+  A etiqueta `utm_` é lida da URL de ENTRADA, e por isso antes de tudo:
+  depois da primeira navegação interna essa URL não existe mais, e a
+  origem do lead se perderia.
+
+  Não passa pelo aviso de cookies de propósito — é dado de primeira
+  parte, vive só na aba e só sai do aparelho dentro de um formulário que
+  a própria pessoa envia. Ver o cabeçalho de `lib/consentimento.ts`.
+*/
+registrarCampanha();
+
+/*
+  A medição, ao contrário, SÓ começa com autorização. Quem ainda não
+  respondeu ao aviso e quem recusou não têm nada carregado — nem a fila
+  do Google. O caminho de quem aceita agora está em `AvisoDeCookies`,
+  que chama `iniciarMedicao()` no clique.
+*/
+if (decisaoDeCookies() === 'aceito') iniciarMedicao();
 
 const raiz = document.getElementById('root')!;
 

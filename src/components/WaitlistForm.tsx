@@ -2,6 +2,9 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore/lite';
 import { CheckCircle2 } from 'lucide-react';
 import { db } from '../firebase/banco';
 import { avisarLead } from '../lib/avisarLead';
+import { campanhaDaVisita } from '../lib/campanha';
+import { gravarComExtras } from '../lib/gravarComExtras';
+import { evento } from '../lib/medir';
 import FormularioDeCaptacao from './FormularioDeCaptacao';
 
 /**
@@ -19,14 +22,50 @@ import FormularioDeCaptacao from './FormularioDeCaptacao';
  */
 export default function WaitlistForm({ courseId }: { courseId: string }) {
   const gravar = async ({ name, email }: { name: string; email: string }) => {
-    await addDoc(collection(db, 'waitlist'), {
+    /*
+      ┌───────────────────────────────────────────────────────────────────┐
+      │  ESTA LISTA NÃO DIZIA DE ONDE VINHA NINGUÉM                       │
+      │                                                                   │
+      │  Gravava nome, e-mail e curso. A captação dos artigos já guardava │
+      │  `origem` desde o primeiro dia, e a diferença aparecia no /admin: │
+      │  a lista de materiais dizia qual texto trouxe o lead; a de        │
+      │  espera — que é a de quem está MAIS PERTO DE COMPRAR — chegava    │
+      │  anônima quanto à procedência.                                    │
+      │                                                                   │
+      │  Agora as duas gravam as mesmas duas coisas: `origem`, a página   │
+      │  do formulário, e `campanha`, a etiqueta `utm_` da entrada.       │
+      └───────────────────────────────────────────────────────────────────┘
+    */
+    const origem = typeof window === 'undefined' ? '' : window.location.pathname;
+    const campanha = campanhaDaVisita();
+
+    await gravarComExtras(
+      (extras) =>
+        addDoc(collection(db, 'waitlist'), {
+          name,
+          email,
+          courseId,
+          createdAt: serverTimestamp(),
+          ...extras,
+        }),
+      { origem, campanha },
+    );
+
+    avisarLead({
       name,
       email,
-      courseId,
-      createdAt: serverTimestamp(),
+      tipo: 'lista-de-espera',
+      referencia: courseId,
+      origem,
+      campanha,
     });
 
-    avisarLead({ name, email, tipo: 'lista-de-espera', referencia: courseId });
+    evento('generate_lead', {
+      formulario: 'lista-de-espera',
+      referencia: courseId,
+      origem,
+      campanha,
+    });
   };
 
   return (

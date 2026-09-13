@@ -298,6 +298,205 @@ estático, com uma função serverless — não há trecho distribuído para
 rastrear, e o custo de instrumentação não compraria informação nenhuma que
 o log da função e o Sentry já não deem.
 
+## Medição de conversão
+
+O site vende, capta lead e manda gente para o WhatsApp. Até aqui, não
+contava nada disso.
+
+O que já existia respondia as pontas e deixava o meio vazio:
+
+| Pergunta | Quem responde |
+| --- | --- |
+| Como as pessoas me acham? | Search Console |
+| O que elas fazem depois de chegar? | **nada, até agora** |
+| Quanto virou venda? | Kiwify — sem dizer de onde veio |
+
+O Search Console acaba no instante em que o visitante entra no site, e só
+enxerga busca orgânica do Google: Instagram, WhatsApp e anúncio pago são
+invisíveis para ele. A Kiwify sabe que vendeu e não sabe qual página
+vendeu. Sem a camada do meio não havia como responder se o simulador do
+SENA converte, se o vídeo de boas-vindas é assistido ou qual artigo gera
+matrícula.
+
+### Como ligar
+
+Defina `VITE_GA4_ID` (o fluxo de dados do GA4, `G-XXXXXXXXXX`) em
+*Netlify → Site settings → Environment variables*. **Sem ela o custo é
+zero**: o Vite substitui `import.meta.env` no build, e o Rollup elimina o
+módulo inteiro — a string `googletagmanager` não aparece no pacote.
+
+### O que é medido
+
+| Evento | Quando |
+| --- | --- |
+| `page_view` | troca de rota (a primeira vem do `config`) |
+| `begin_checkout` | clique em qualquer link da Kiwify, com `value` e `currency` |
+| `generate_lead` | cadastro gravado — nunca antes da gravação |
+| `clique_whatsapp` | clique em qualquer `wa.me` |
+| `clique_email` | clique em qualquer `mailto:` |
+| `clique_externo` | saída para outro domínio |
+| `video_play` | play na fachada de vídeo |
+| `sena_respondeu` / `sena_concluido` | a amostra do SENA, no meio e no fim |
+
+Os dois primeiros nomes são **eventos recomendados do GA4**, em inglês de
+propósito: o GA4 os encaixa sozinho nos relatórios de funil e de geração de
+lead. Um nome em português no lugar deles seria mais bonito no código e
+mudo no painel.
+
+### Nenhum botão tem código de medição
+
+Os botões de compra e de WhatsApp estão em quinze pontos do site — cartões
+de curso, trilho de compra, jornada, rodapé, 404, o flutuante. Nenhum deles
+foi tocado.
+
+Quem mede é **um ouvinte só, no documento**, que reconhece o DESTINO em vez
+do botão: `pay.kiwify.com.br` é compra, `wa.me` é WhatsApp, `mailto:` é
+e-mail. O curso e o preço saem da tabela do catálogo, pelo próprio endereço
+do checkout.
+
+O motivo é o dia seguinte: instrumentar quinze botões significaria lembrar
+de instrumentar o décimo sexto. A medição furaria em silêncio no dia em que
+alguém acrescentasse um botão — que é o dia em que ela mais importaria.
+
+### O gtag.js não entra no caminho crítico
+
+O script pesa mais de 100 kB. Ele é buscado no tempo ocioso **depois** do
+`load` (teto de 2s) ou na primeira interação de verdade, o que vier
+primeiro. Os eventos disparados antes disso não se perdem: vão para a fila
+`dataLayer`, que o Google processa quando o script chega.
+
+As duas largadas existem juntas por um motivo: só a interação deixaria de
+contar quem lê parado e vai embora, e a taxa de rejeição apareceria menor
+do que é — o pior tipo de erro, porque é o que agrada.
+
+### Nada é medido sem autorização
+
+O GA4 grava cookie, e sob a LGPD isso pede base legal. O site pede
+consentimento, e **não mede nada antes da resposta** — nem a fila do
+Google existe. O padrão do mercado é o contrário: carregar o rastreio e
+desligá-lo se a pessoa recusar, o que mede todo mundo ao menos uma vez,
+inclusive quem ia dizer não.
+
+Três coisas fazem o aviso valer juridicamente, e cada uma tem teste:
+
+- **Recusar tem o mesmo peso que aceitar.** Dois botões, mesmo tamanho,
+  lado a lado. Não há X no canto nem fechar que funcione como aceite: um
+  aviso em que só uma saída é visível não coleta consentimento, coleta
+  cansaço — e consentimento assim não é livre, o que o invalida.
+- **A escolha é revogável.** A `/privacidade` mostra a decisão atual e tem
+  o botão "Rever minha escolha", que apaga a resposta e traz o aviso de
+  volta. Revogar precisa ser tão fácil quanto consentir.
+- **Não se pergunta de novo.** A resposta vive em `localStorage`. Um aviso
+  que reaparece a cada visita transforma a recusa em pergunta repetida até
+  a pessoa ceder.
+
+A `/privacidade` ganhou a seção 5, que descreve o que o Google Analytics
+recebe, diz que ele só existe com autorização e lista o que mais é
+guardado no navegador (a própria resposta ao aviso e, durante a visita, a
+campanha de origem).
+
+**A etiqueta de campanha não passa por aqui**, e é deliberado: é dado de
+primeira parte, vive só na aba, não identifica ninguém e só sai do
+aparelho dentro de um formulário que a própria pessoa envia. O GA4 é outra
+natureza — um terceiro recebendo cada página vista de quem não pediu nada.
+
+### Uma escolha de produto, para você conferir
+
+Enquanto o aviso espera resposta, **o convite de material não abre**. Os
+dois moram no mesmo canto inferior, e no celular o convite cobriria com
+uma oferta uma pergunta sobre dados pessoais.
+
+O custo: quem ignora o aviso a visita inteira não vê o convite. Achamos a
+troca certa — mas é troca, e você pode preferir o contrário. Está em
+`ConviteDeMaterial.tsx`, numa linha.
+
+## De onde veio cada lead
+
+Medição responde em agregado: "o anúncio A trouxe 40 sessões". Nunca diz
+QUEM — relatório de analytics não identifica pessoa, e isso é projeto, não
+falta.
+
+A outra metade é o cadastro. A Maria, que entrou na lista de espera às 14h,
+veio do anúncio A ou do artigo sobre hipnose? Agora os dois formulários
+gravam dois campos a mais:
+
+- **`origem`** — a rota em que o formulário foi preenchido. A captação de
+  material já tinha; a lista de espera, **não** — e ela é justamente a de
+  quem está mais perto de comprar.
+- **`campanha`** — a etiqueta `utm_` da URL de entrada, na forma
+  `instagram / cpc / setembro`. As faltas viram `-` para que a posição de
+  cada parte não mude no CSV.
+
+As duas colunas aparecem no `/admin`, nas duas abas, e saem no CSV. Também
+entram no aviso por e-mail de lead novo.
+
+A etiqueta é de **primeiro toque** e mora em `sessionStorage`: quem chegou
+pelo anúncio chegou pelo anúncio, mesmo que depois navegue por links sem
+etiqueta. Fechar a aba apaga — o dado não sobrevive semanas no aparelho de
+ninguém, e nada é gravado em servidor enquanto a pessoa não preenche o
+formulário por vontade própria.
+
+### ⚠ Publique as regras junto
+
+`firestore.rules` valida por lista fechada: um campo que a regra não
+conhece faz o Firestore recusar o **documento inteiro**. E publicar regra é
+um passo à PARTE do deploy — o Netlify sobe o site sozinho, no merge; o
+Firestore só muda quando alguém roda:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Entre um e outro há uma janela em que o site já envia `campanha` e as
+regras ainda não a aceitam. Por isso a gravação tem rede: se o Firestore
+recusar por campo desconhecido, o cadastro é gravado **sem** os campos
+novos, e o console diz o comando que resolve. Perder a etiqueta custa um
+dado de análise; perder o cadastro custa o lead.
+
+(Os campos novos são opcionais nas regras, então publicá-las antes do site
+também funciona — e é a ordem preferível.)
+
+## As duas páginas institucionais
+
+`/sobre` e `/contato` não existiam. O Bruno era uma SEÇÃO da home, entre
+dezesseis outras, numa página cujo assunto é vender formação — e os sete
+artigos declaram, nos dados estruturados, que ele é o autor, apontando
+para `/#sobre-mentor`.
+
+Isso era frágil onde o site precisa ser forte. O E-E-A-T pergunta "quem
+escreveu isto, e por que essa pessoa pode escrever sobre isto", e a
+resposta era uma âncora no meio de uma página de vendas. Conteúdo sobre
+saúde e comportamento é onde o Google mais pesa autoria. Agora
+`fundador()` aponta para `/sobre`, e quem seguir a autoria de um artigo
+cai numa página cujo assunto É a pessoa que assina.
+
+A `/sobre` **não repete** a seção "O seu mentor" da home, de propósito: a
+home responde "por que confiar em quem vende isto" no meio de uma decisão
+de compra; a `/sobre` responde quem é, o que o instituto defende e o que
+ele recusa fazer. Texto igual nas duas seria conteúdo duplicado, e o
+Google escolheria uma — provavelmente não esta.
+
+A `/contato` existe porque "instituto bruno sena contato" é uma busca que
+não tinha onde cair, e porque o botão flutuante oferece um caminho só. Quem
+prefere e-mail, quem escreve de dentro de uma empresa com WhatsApp
+bloqueado e quem quer proposta In Company são justamente os contatos de
+maior valor.
+
+As duas entraram em `config/paginas.ts`, e com isso ganharam rota, HTML
+pré-renderizado e linha no sitemap de uma vez. Estão no cabeçalho (onde "O
+instituto" deixou de ser âncora), no menu do celular e no rodapé.
+
+### O `<h1>` que o smoke pegou
+
+`Cabecalho` gerava `<h2>` fixo, então a `/contato` — cuja primeira seção é
+o título da página — nasceu **sem `<h1>` nenhum**. Passou em lint, em tipo
+e em teste de unidade; quem reprovou foi o `npm run smoke`, que conta
+títulos no HTML montado.
+
+O componente ganhou a propriedade `como`, que aceita `h1` para a seção que
+abre uma página. Não é detalhe de semântica: o `<h1>` é o que diz ao leitor
+de tela e ao rastreador qual é o assunto do documento.
+
 ## Busca e indexação
 
 O site é pré-renderizado: `npm run build` gera **um arquivo HTML por
@@ -403,6 +602,48 @@ nenhuma, e quem responde hoje são os concorrentes que estão no ar há anos.
 | Listagem | `/artigos` |
 | Artigo | `/artigos/<slug>` |
 | Renderização dos blocos | `src/components/CorpoArtigo.tsx` |
+| Sugestão de leitura | `artigosRelacionados()`, no mesmo arquivo |
+
+### A malha entre os textos
+
+Os sete artigos não se linkavam entre si. Cada um ligava ao **curso**
+relacionado e oferecia o material — e a mais nada. Sete textos sobre os
+mesmos três assuntos, e cada um era uma ilha.
+
+Isso custava dos dois lados. Para quem lê: acabou o texto, acabou o site, e
+a única saída oferecida era uma página de vendas. Para a busca: link
+interno é como o Google mede profundidade de tema, e sete páginas sem
+ligação nenhuma parecem sete assuntos avulsos em vez de um instituto que
+domina três.
+
+Agora cada artigo termina com **"Leia também"**, com três sugestões. A
+lista é **derivada**, não escrita à mão: primeiro o mesmo eixo — quem leu
+sobre transe quer ler sobre regressão, não sobre metas —, depois os demais,
+e o mais recente primeiro dentro de cada grupo.
+
+Derivada porque lista manual envelhece: no oitavo artigo alguém teria de
+voltar aos sete anteriores para incluí-lo, e não voltaria. Assim o artigo
+novo entra na malha no instante em que é publicado. Rascunho nunca entra —
+sugerir um texto `noindex` seria mandar o leitor a uma página que o próprio
+site pediu ao Google para ignorar.
+
+O bloco vem **depois** da caixa de material, e antes da formação
+relacionada. As duas posições são deliberadas: o e-mail vale mais que o
+clique para o próximo texto (três links atraentes acima da caixa a
+esvaziariam), e quem acabou de ler um artigo está lendo, não comprando.
+
+`src/config/artigos.test.ts` guarda as regras, inclusive a que justifica o
+recurso: **todo artigo publicado é alcançável a partir de outro**.
+
+### O filtro por eixo
+
+`/artigos` ganhou filtro por eixo, com a contagem em cada botão. Só
+aparecem eixos que têm artigo publicado: um filtro que devolve lista vazia
+é uma promessa quebrada em um clique.
+
+Ele começa em "Todos", e isso não é só o padrão óbvio — a página é
+pré-renderizada, e é essa primeira renderização que vira o HTML que o
+rastreador lê. Nascendo filtrada, o robô encontraria os links de um eixo só.
 
 ### Como escrever um artigo
 
@@ -865,6 +1106,19 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
 
 ### Precisam de decisão sua
 
+- **Ligar o GA4.** A medição está pronta e desligada: crie `VITE_GA4_ID`
+  no Netlify e ela começa a contar (ver
+  [Medição de conversão](#medição-de-conversão)). O aviso de cookies e a
+  seção de privacidade já estão no ar, então não falta nada além da
+  variável. Confira a escolha de produto descrita em
+  [Uma escolha de produto](#uma-escolha-de-produto-para-você-conferir):
+  enquanto o aviso espera resposta, o convite de material não abre.
+- **Etiquetar os links que você divulga.** A coluna `campanha` do `/admin`
+  só se preenche se o link levar `utm_`. Um link de anúncio útil é
+  `institutobrunosena.com.br/pnl-practitioner?utm_source=instagram&utm_medium=cpc&utm_campaign=setembro`
+  — e o `utm_content` distingue uma arte da outra, que é a pergunta de quem
+  testa três criativos. Link sem etiqueta continua funcionando; só chega
+  anônimo quanto à origem.
 - **Gravar os dois vídeos.** O de boas-vindas é o espaço mais valioso da
   home: em 60 a 90 segundos, quem você é, por que o instituto existe e o que
   a pessoa leva ao final. A amostra do SENA é uma gravação de tela de uma
