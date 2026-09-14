@@ -21,6 +21,7 @@ npm run dev        # http://localhost:3000
 | `npm run check:fix` | Corrige lint e formatação automaticamente |
 | `npm run knip` | Procura código e dependências sem uso |
 | `npm run smoke` | Teste de navegador nas rotas públicas (com o preview no ar) |
+| `npm run imagens` | Regera os cartões de compartilhamento e as variantes da imagem de LCP |
 
 O `smoke` percorre as rotas públicas e falha se encontrar imagem quebrada,
 CTA de compra sem destino, título duplicado ou ausente, erro de console —
@@ -805,6 +806,25 @@ O que o host precisa fazer, e já vai configurado nos três:
 | endereço inexistente | `404.html`, status 404 | idem | idem |
 | `/admin` | rewrite explícito | padrão | rewrite explícito |
 | HSTS, cache, cabeçalhos | sim | sim | sim |
+| `www` → ápice, 301 | `[[redirects]]` | `redirects` | **pelo domínio conectado** |
+
+> ### ⚠ A canonicalização de `www` não é igual nos três
+>
+> O mesmo site em `www.` e sem `www.` são dois sites para o rastreador, e a
+> autoridade que os links externos trazem se divide entre os dois.
+>
+> No Netlify e na Vercel o 301 está no arquivo de configuração. **No Firebase
+> Hosting ele não é configurável pelo `firebase.json`**: quem decide é o
+> domínio conectado no painel. Numa migração para lá, confira isso à mão —
+> é o tipo de regressão que não aparece em teste nenhum e leva semanas para
+> alguém notar.
+>
+> Em qualquer host, o teste é um comando:
+>
+> ```bash
+> curl -sI https://www.institutobrunosena.com.br/hipnoterapia | head -2
+> # espera-se: HTTP/2 301  +  location: https://institutobrunosena.com.br/hipnoterapia
+> ```
 
 **Ao trocar de host, confira duas coisas:** que `/formacoes` responde com o
 conteúdo de `formacoes/index.html` (e não com a home), e que um endereço
