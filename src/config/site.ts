@@ -101,6 +101,40 @@ export function mailtoLink(email: string, subject?: string): string {
   return subject ? `${base}?subject=${encodeURIComponent(subject)}` : base;
 }
 
+/**
+ * O limite de caracteres de um `<title>`, usado por `tituloComMarca` e
+ * pelos testes que guardam os títulos do site.
+ */
+export const TETO_DO_TITULO = 62;
+
+/**
+ * Acrescenta " | Instituto Bruno Sena" ao título — quando couber.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE A MARCA PODE FICAR DE FORA                                   │
+ * │                                                                       │
+ * │  O Google corta o título por LARGURA, perto de 580 px, o que em       │
+ * │  português dá cerca de 60 caracteres. Passou disso, ele trunca — e    │
+ * │  muitas vezes reescreve o título inteiro por conta própria.           │
+ * │                                                                       │
+ * │  Os sete `tituloSeo` dos artigos respeitam o próprio contrato do      │
+ * │  `config/artigos.ts` ("até ~60 caracteres"). Só que a página anexava  │
+ * │  a marca DEPOIS — mais 22 caracteres — e os sete saíam entre 77 e 92. │
+ * │  O orçamento era gasto duas vezes porque quem escreve o texto e quem  │
+ * │  monta o título não olhavam para o mesmo número.                      │
+ * │                                                                       │
+ * │  Entre a marca e a promessa, a promessa fica. Quem busca "o que é     │
+ * │  PNL" ainda não conhece o instituto: é a segunda metade do título     │
+ * │  que o faz clicar, e era ela que estava sendo cortada. A marca        │
+ * │  continua no `og:site_name`, no JSON-LD e no domínio exibido no       │
+ * │  próprio resultado.                                                   │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+export function tituloComMarca(titulo: string, teto = TETO_DO_TITULO): string {
+  const comMarca = `${titulo} | ${site.name}`;
+  return comMarca.length <= teto ? comMarca : titulo;
+}
+
 /** Assuntos dos contatos por e-mail, para o pedido já chegar identificado. */
 export const emailSubjects = {
   inCompany: 'Proposta para treinamento In Company',

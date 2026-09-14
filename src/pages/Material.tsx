@@ -5,7 +5,7 @@ import Secao, { Cabecalho } from '../components/Secao';
 import Seo from '../components/Seo';
 import { eixos } from '../config/eixos';
 import { materialPorId } from '../config/materiais';
-import { routes, site } from '../config/site';
+import { routes, site, tituloComMarca } from '../config/site';
 import { paletas } from '../lib/cores';
 import NotFound from './NotFound';
 
@@ -46,7 +46,7 @@ export default function Material() {
     <>
       <Seo
         rota={`${routes.materiais}/${material.id}`}
-        titulo={`${material.tituloSeo ?? material.titulo} | ${site.name}`}
+        titulo={tituloComMarca(material.tituloSeo ?? material.titulo)}
         descricao={material.promessa}
         indexar={false}
       />
