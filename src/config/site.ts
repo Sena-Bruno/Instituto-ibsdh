@@ -11,8 +11,14 @@ export const site = {
   shortName: 'IBSDH',
   legalName: 'Instituto Bruno Sena de Desenvolvimento Humano',
   url: 'https://institutobrunosena.com.br',
+  /**
+   * Aparece no rodapé de todas as páginas e na descrição da organização
+   * nos dados estruturados. Diz o que o instituto FAZ de diferente, não o
+   * que promete: "transforme sua vida com métodos comprovados" é a frase
+   * de qualquer curso online, e quem lê o rodapé já leu a página inteira.
+   */
   description:
-    'Formações em PNL, Hipnoterapia e Coaching. Transforme sua vida e a de outras pessoas com métodos comprovados.',
+    'Formações em PNL, Hipnoterapia e Coaching com prática supervisionada no simulador clínico SENA e certificação por competência demonstrada — não por presença.',
 
   whatsapp: {
     /** Formato E.164 sem símbolos, exigido pela API do wa.me */

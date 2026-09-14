@@ -24,8 +24,8 @@ const arsenal = [
     nota: 'Como estruturar, precificar e vender processos de alto valor.',
   },
   {
-    titulo: 'Resultados acelerados',
-    nota: 'Técnicas de intervenção rápida para gerar mudança profunda.',
+    titulo: 'Intervenção breve',
+    nota: 'Protocolos com começo, meio e fim definidos — para processos que não se arrastam por meses.',
   },
 ];
 
@@ -66,9 +66,9 @@ export default function MasterCoach() {
                 <h1 className="titulo-hero max-w-2xl">Formação Master Coach</h1>
 
                 <p className="mt-6 max-w-2xl text-[17px] leading-relaxed md:text-lg">
-                  Eleve seus atendimentos ao nível de excelência: ferramentas sistêmicas,
-                  liderança e estruturação de negócio. Estamos preparando a formação para
-                  coaches que querem se destacar e gerar resultado consistente para os clientes.
+                  Coaching executivo, abordagem sistêmica e estruturação de negócio. A formação
+                  está em produção e segue o mesmo formato das outras três: prática no SENA,
+                  avaliação por competência e critérios de aprovação publicados.
                 </p>
 
                 <p className="mt-6 max-w-2xl text-[14px] leading-relaxed text-brand-quiet">
@@ -96,9 +96,14 @@ export default function MasterCoach() {
         </Secao>
 
         <Secao cor="emerald" brilho brilhoEm="direita">
-          <Cabecalho sobretitulo="Certificação" cor="emerald" titulo="A mais alta titulação">
-            A certificação de Coach Profissional atesta a capacidade de conduzir processos de
-            transformação profunda com segurança, método e resultado verificável.
+          <Cabecalho
+            sobretitulo="Certificação"
+            cor="emerald"
+            titulo="O que o certificado atesta"
+          >
+            A certificação de Coach Profissional atesta a condução de um processo completo de
+            coaching — do contrato inicial ao fechamento — demonstrada em avaliação, não
+            presumida pela presença nas aulas.
           </Cabecalho>
 
           <ListaItens
