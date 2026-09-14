@@ -35,6 +35,30 @@ import type { Video } from './midia';
  * mostra o primeiro quadro.
  */
 
+/*
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  ⚠  PARA O BRUNO: ESTES SEIS TEXTOS PRECISAM VIRAR DEPOIMENTOS REAIS  │
+ * │                                                                       │
+ * │  Os seis abaixo têm o formato de depoimento-modelo: nome comum +      │
+ * │  profissão + elogio sem número, sem turma e sem situação datada. É    │
+ * │  exatamente o padrão que o leitor de 2026 reconhece como "seção de    │
+ * │  depoimentos preenchida para o site não ficar vazia" — e que o        │
+ * │  Google trata como sinal negativo de confiança (Fake E-E-A-T).        │
+ * │                                                                       │
+ * │  Com 2.500+ alunos formados, existe depoimento real melhor do que     │
+ * │  qualquer texto escrito aqui. O que pedir a cada aluno:               │
+ * │                                                                       │
+ * │   · Nome completo (ou nome + inicial), profissão e cidade;            │
+ * │   · UM resultado concreto: "gravei minha primeira sessão paga em      │
+ * │     março", "passei de 2 para 9 atendimentos por semana";             │
+ * │   · Autorização por escrito para publicar (LGPD);                     │
+ * │   · Se topar, os 30–60s de vídeo descritos acima — vale mais que      │
+ * │     dez citações.                                                     │
+ * │                                                                       │
+ * │  Ao substituir, apague este aviso.                                    │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+
 export interface Depoimento {
   id: string;
   nome: string;
