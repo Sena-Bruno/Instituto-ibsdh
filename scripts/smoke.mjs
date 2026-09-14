@@ -501,6 +501,53 @@ const environmental =
     }
   }
 
+  /* ── O teto do pedaço de ENTRADA ───────────────────────────────────────
+     ┌───────────────────────────────────────────────────────────────────┐
+     │  ESTA VERIFICAÇÃO EXISTE PELA MESMA RAZÃO QUE A DO FIREBASE       │
+     │                                                                   │
+     │  O `index-*.js` é o único JavaScript que TODA página baixa e      │
+     │  executa antes de ficar interativa. Ele chegou a 145 kB           │
+     │  comprimidos porque a biblioteca de animação inteira estava       │
+     │  dentro — 42 kB medidos, cobrados até de um artigo que é texto    │
+     │  corrido.                                                         │
+     │                                                                   │
+     │  Hoje o motor desce por `import()` depois da hidratação, e o que  │
+     │  sustenta essa separação é frágil de um jeito específico: basta   │
+     │  UMA linha importando `lib/animacao` de forma estática, ou um     │
+     │  `motion.div` no lugar de `m.div`, para o empacotador desistir de │
+     │  separar e devolver tudo para cá. Nada disso dá erro. O build     │
+     │  passa, o site funciona, e a conta chega em quem abre a página no │
+     │  celular.                                                         │
+     │                                                                   │
+     │  O teto é folgado de propósito: ele não existe para perseguir     │
+     │  bytes, e sim para acusar quando um pacote inteiro reaparece.     │
+     └───────────────────────────────────────────────────────────────────┘ */
+  {
+    console.log('\n=== pedaço de entrada ===');
+    const pasta = path.resolve('dist/assets');
+    const entrada = readdirSync(pasta).find((n) => /^index-.*\.js$/.test(n));
+
+    if (!entrada) {
+      console.log('      ✗ não achei o pedaço de entrada em dist/assets');
+      failures++;
+    } else {
+      const comprimido = gzipSync(readFileSync(path.join(pasta, entrada)), { level: 9 }).length;
+      console.log(`  ${entrada}: ${Math.round(comprimido / 1024)} kB comprimidos`);
+
+      /* Hoje são ~122 kB. O motor de animação sozinho são 42 kB, então
+         qualquer volta dele para cá estoura o teto com folga. */
+      const TETO = 132 * 1024;
+      if (comprimido > TETO) {
+        console.log(
+          `      ✗ ${comprimido} B comprimidos, acima do teto de ${TETO} B — ` +
+            'provavelmente algo que devia ser adiado voltou para o caminho crítico. ' +
+            'Ver o cabeçalho de `src/lib/animacao.ts`.',
+        );
+        failures++;
+      }
+    }
+  }
+
   // Um endereço que não existe tem de responder 404 de verdade. Servido
   // com 200, ele vira "soft 404": o Google indexa endereços inventados,
   // todos com o mesmo conteúdo, e gasta neles o rastreio das páginas reais.

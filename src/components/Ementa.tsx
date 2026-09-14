@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useState } from 'react';
 import { contarAulas, type ModuloCurriculo, somarCarga } from '../config/curriculos';
 import { type NomeCor, paletas } from '../lib/cores';
@@ -79,20 +80,20 @@ export default function Ementa({
                       {modulo.carga}
                     </span>
                   )}
-                  <motion.span
+                  <m.span
                     aria-hidden="true"
                     animate={{ rotate: isOpen ? 180 : 0 }}
                     transition={{ duration: duration.fast, ease: ease.out }}
                     className="shrink-0 text-brand-accent"
                   >
                     <ChevronDown size={19} />
-                  </motion.span>
+                  </m.span>
                 </button>
               </h3>
 
               <AnimatePresence initial={false}>
                 {isOpen && (
-                  <motion.div
+                  <m.div
                     id={painelId}
                     role="region"
                     aria-labelledby={botaoId}
@@ -113,7 +114,7 @@ export default function Ementa({
                         a certificação.
                       </p>
                     )}
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
             </div>

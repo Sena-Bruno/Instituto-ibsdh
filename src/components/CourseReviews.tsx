@@ -10,7 +10,8 @@ import {
   where,
 } from 'firebase/firestore/lite';
 import { LogIn, Star, Trash2, UserCircle2 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { db } from '../firebase/banco';
@@ -298,7 +299,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
             Ainda não há avaliações para esta formação. Seja o primeiro a avaliar!
           </p>
         ) : (
-          <motion.div
+          <m.div
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
@@ -306,7 +307,7 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
           >
             <AnimatePresence initial={false}>
               {reviews.map((review) => (
-                <motion.div
+                <m.div
                   key={review.id}
                   layout
                   variants={revealUp}
@@ -362,10 +363,10 @@ export const CourseReviews = ({ courseId }: { courseId: string }) => {
                   <p className="text-brand-platinum leading-relaxed whitespace-pre-wrap">
                     {review.comment}
                   </p>
-                </motion.div>
+                </m.div>
               ))}
             </AnimatePresence>
-          </motion.div>
+          </m.div>
         )}
       </div>
     </div>

@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { Link } from 'react-router-dom';
 import { routes } from '../config/site';
 import { registrarDecisao, useDecisaoDeCookies } from '../lib/consentimento';
@@ -71,7 +72,7 @@ export default function AvisoDeCookies() {
 
   return (
     <AnimatePresence>
-      <motion.div
+      <m.div
         role="region"
         aria-label="Aviso sobre cookies"
         initial={{ opacity: 0, y: 20 }}
@@ -105,7 +106,7 @@ export default function AvisoDeCookies() {
             Recusar
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 }

@@ -1,5 +1,6 @@
 import { ArrowRight, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { lazy, Suspense, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { materiais } from '../config/materiais';
@@ -118,7 +119,7 @@ export default function ConviteDeMaterial() {
             seria a própria cobertura de conteúdo que este componente evita,
             e sem ele a página continua legível e rolável atrás da faixa.
           */}
-          <motion.div
+          <m.div
             aria-hidden="true"
             onClick={fechar}
             initial={{ opacity: 0 }}
@@ -128,7 +129,7 @@ export default function ConviteDeMaterial() {
             className="fixed inset-0 z-[80] hidden bg-black/70 backdrop-blur-[2px] sm:block"
           />
 
-          <motion.div
+          <m.div
             ref={caixaRef}
             role="dialog"
             aria-modal="false"
@@ -184,7 +185,7 @@ export default function ConviteDeMaterial() {
               Agora não
               <ArrowRight size={13} aria-hidden="true" />
             </button>
-          </motion.div>
+          </m.div>
         </>
       )}
     </AnimatePresence>

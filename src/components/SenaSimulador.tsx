@@ -1,5 +1,6 @@
 import { ArrowRight, Check, ExternalLink, Lock, RotateCcw } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useId, useState } from 'react';
 import { sena } from '../config/sena';
 import { evento } from '../lib/medir';
@@ -169,7 +170,7 @@ export default function SenaSimulador() {
         {/* ── Etapa 2: autoavaliação ─────────────────────────────────── */}
         <AnimatePresence initial={false}>
           {etapa !== 'escrever' && (
-            <motion.div
+            <m.div
               variants={collapse}
               initial="hidden"
               animate="visible"
@@ -241,14 +242,14 @@ export default function SenaSimulador() {
                   </button>
                 )}
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
 
         {/* ── Etapa 3: a devolutiva de referência ────────────────────── */}
         <AnimatePresence initial={false}>
           {etapa === 'referencia' && (
-            <motion.div
+            <m.div
               variants={collapse}
               initial="hidden"
               animate="visible"
@@ -332,7 +333,7 @@ export default function SenaSimulador() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useState } from 'react';
 import { collapse, duration, ease } from '../lib/motion';
 import { cn } from '../lib/utils';
@@ -49,14 +50,14 @@ export default function Faq({
                 <span className="flex-1 font-display text-[16.5px] font-bold text-brand-cream">
                   {item.q}
                 </span>
-                <motion.span
+                <m.span
                   aria-hidden="true"
                   animate={{ rotate: isOpen ? 180 : 0 }}
                   transition={{ duration: duration.fast, ease: ease.out }}
                   className="shrink-0 text-brand-accent"
                 >
                   <ChevronDown size={20} />
-                </motion.span>
+                </m.span>
               </button>
             </h3>
 
@@ -65,7 +66,7 @@ export default function Faq({
                 fechamento parecer falha. */}
             <AnimatePresence initial={false}>
               {isOpen && (
-                <motion.div
+                <m.div
                   id={panelId}
                   role="region"
                   aria-labelledby={buttonId}
@@ -76,7 +77,7 @@ export default function Faq({
                   className="overflow-hidden"
                 >
                   <div className="px-6 pb-6 text-[14.5px] leading-relaxed">{item.a}</div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>

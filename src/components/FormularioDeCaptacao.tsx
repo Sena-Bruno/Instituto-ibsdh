@@ -1,5 +1,6 @@
 import { Loader2 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import type React from 'react';
 import { type ReactNode, useState } from 'react';
 import { diagnosticoDeGravacao, mensagemDeGravacao } from '../lib/erroDeFirestore';
@@ -178,7 +179,7 @@ export default function FormularioDeCaptacao({
                 novo, o que gera cadastro duplicado. */}
             <AnimatePresence initial={false}>
               {status === 'error' && (
-                <motion.div
+                <m.div
                   variants={collapse}
                   initial="hidden"
                   animate="visible"
@@ -192,7 +193,7 @@ export default function FormularioDeCaptacao({
                   >
                     {error}
                   </p>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
 
