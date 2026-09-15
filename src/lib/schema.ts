@@ -1,4 +1,5 @@
 import type { Artigo } from '../config/artigos';
+import { bruno } from '../config/bruno';
 import type { Course } from '../config/courses';
 import { routes, site } from '../config/site';
 
@@ -107,21 +108,48 @@ export function organizacao() {
 }
 
 /**
- * O fundador.
+ * O fundador — a pessoa, como entidade.
  *
  * Existe por causa do "Quem" das diretrizes de conteúdo útil: uma escola
  * cujo site não diz quem assina o método é uma escola sem autoria
- * verificável, e é isso que o E-E-A-T mede. Os dois fatos declarados —
- * fundador e credencial da NLPEA — são os mesmos que a seção "O seu
- * mentor" mostra na home, com o selo ao lado.
+ * verificável, e é isso que o E-E-A-T mede.
+ *
+ * Todo fato declarado aqui está na tela da `/sobre`, que é a página que
+ * este nó aponta como sua: o cargo e o resumo sob o `<h1>`, o retrato no
+ * alto, a credencial da NLPEA na faixa com o selo, os três assuntos na
+ * lista de formações e o perfil do Instagram no botão. Os dados vêm de
+ * `config/bruno.ts`, lido pelas duas pontas.
  */
 export function fundador() {
   return {
     '@type': 'Person',
     '@id': ids.fundador,
-    name: 'Bruno Sena',
-    jobTitle: 'Fundador e mentor do Instituto Bruno Sena',
-    image: `${site.url}/brunosena.webp`,
+    name: bruno.nome,
+    jobTitle: bruno.cargo,
+    /*
+      O resumo de uma frase, que é o texto candidato a aparecer ao lado do
+      retrato num painel de entidade. Sai de `config/bruno.ts`, que é a
+      mesma fonte que a /sobre imprime sob o `<h1>` — as duas pontas não
+      podem divergir porque são o mesmo dado. Ver o bloco de aviso de lá
+      antes de editar a frase.
+    */
+    description: bruno.resumo,
+    /*
+      O retrato como `ImageObject`, e não como URL solta.
+
+      Uma URL diz "há uma imagem aqui". O objeto diz qual é o tamanho e o
+      que ela mostra — e é o que permite ao buscador decidir se a foto
+      serve para o recorte que ele precisa desenhar. A recomendação do
+      Google para imagem de entidade é justamente essa: arquivo grande,
+      dimensões declaradas, rastreável e usado na própria página.
+    */
+    image: {
+      '@type': 'ImageObject',
+      url: `${site.url}${bruno.retrato.arquivo}`,
+      width: bruno.retrato.largura,
+      height: bruno.retrato.altura,
+      caption: bruno.retrato.descricao,
+    },
     /*
       Aponta para a /sobre, e não mais para a âncora `/#sobre-mentor` da
       home.
@@ -133,7 +161,18 @@ export function fundador() {
       cai numa página cujo assunto É a pessoa que assina os textos, que é
       o que "autoria verificável" quer dizer.
     */
-    url: `${site.url}${routes.sobre}`,
+    url: bruno.pagina,
+    /*
+      Qual página É sobre esta pessoa — dito em URL literal, e não como
+      referência `@id` ao nó `ProfilePage`.
+
+      O motivo é de montagem: este nó é emitido em TODA página do site
+      (ver `components/Seo.tsx`), enquanto o `ProfilePage` só existe na
+      /sobre. Uma referência por `@id` ficaria pendente nas outras
+      dezoito rotas, e o `scripts/prerender.mjs` — com razão — quebraria
+      o build. A URL literal diz a mesma coisa e vale em qualquer página.
+    */
+    mainEntityOfPage: bruno.pagina,
     worksFor: { '@id': ids.organizacao },
     /*
       `sameAs` é como o buscador liga esta declaração à pessoa que ele já
@@ -141,18 +180,22 @@ export function fundador() {
       afirmação isolada; com vários, vira entidade corroborada — que é o
       que o E-E-A-T mede num assunto que toca saúde e comportamento.
 
-      PARA AMPLIAR: acrescente aqui todo perfil público e verificável que
-      seja mesmo dele — YouTube, LinkedIn, o diretório da própria NLPEA.
-      Só perfil que abre sem login e que uma pessoa conseguiria conferir;
-      link que não abre é pior do que link que não existe.
+      A lista mora em `config/bruno.ts`, com as duas regras de quem entra
+      nela. É o campo que mais falta preencher para o retrato aparecer na
+      busca, e o único que não se resolve mexendo em código.
     */
-    sameAs: [site.social.instagram],
+    sameAs: [...bruno.perfis],
     /*
       Os assuntos que ele ensina. São os três eixos do catálogo, e nada
       além — declarar especialidade que o site não sustenta é afirmar algo
       que a primeira conferência derruba.
     */
     knowsAbout: ['Programação Neurolinguística', 'Hipnoterapia clínica', 'Coaching'],
+    /* Só o que a própria página sustenta: o site inteiro é em português,
+       e nada na /sobre afirma nacionalidade, data de nascimento ou cidade
+       — então nada disso é declarado aqui. Um fato a mais no schema é um
+       fato a mais que a página precisa mostrar. */
+    knowsLanguage: 'pt-BR',
     /*
       A credencial, declarada como credencial e não só como filiação.
 
@@ -173,6 +216,49 @@ export function fundador() {
     memberOf: {
       '@type': 'Organization',
       name: 'NLPEA — NLP Association of Excellence',
+    },
+  };
+}
+
+/**
+ * A página que é a casa da entidade "Bruno Sena".
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  O QUE `ProfilePage` FAZ QUE `WebPage` NÃO FAZ                        │
+ * │                                                                       │
+ * │  O site já declarava a pessoa em todas as páginas, o que responde     │
+ * │  "quem assina isto". Faltava responder a outra pergunta, que é a que  │
+ * │  o buscador usa para montar painel de entidade: DE QUEM é esta        │
+ * │  página. Sem isso, a /sobre era mais uma página que menciona o Bruno  │
+ * │  — como a home, como os sete artigos, como as três formações.        │
+ * │                                                                       │
+ * │  `ProfilePage` com `mainEntity` apontando para o nó da pessoa diz que │
+ * │  esta página não fala DELE entre outros assuntos: ela É sobre ele.    │
+ * │  É o tipo que o Google documenta para perfil de autor e criador, e o  │
+ * │  que faz o conjunto — retrato, resumo, credencial, perfis externos e  │
+ * │  os textos assinados — ser lido como uma ficha só.                    │
+ * │                                                                       │
+ * │  As duas referências por `@id` resolvem em qualquer rota: quem emite  │
+ * │  a pessoa e o site é o `components/Seo.tsx`, sempre.                  │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+export function paginaDoFundador() {
+  return {
+    '@type': 'ProfilePage',
+    '@id': `${bruno.pagina}#pagina`,
+    url: bruno.pagina,
+    name: `Sobre ${bruno.nome}`,
+    description: bruno.resumo,
+    inLanguage: 'pt-BR',
+    mainEntity: { '@id': ids.fundador },
+    about: { '@id': ids.fundador },
+    isPartOf: { '@id': ids.site },
+    primaryImageOfPage: {
+      '@type': 'ImageObject',
+      url: `${site.url}${bruno.retrato.arquivo}`,
+      width: bruno.retrato.largura,
+      height: bruno.retrato.altura,
+      caption: bruno.retrato.descricao,
     },
   };
 }

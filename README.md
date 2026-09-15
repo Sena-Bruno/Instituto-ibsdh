@@ -598,8 +598,9 @@ verdade num endereço inventado.
 
 Em JSON-LD, num bloco só por página, com os nós amarrados por `@id`:
 `EducationalOrganization` e `Person` (o fundador) em todas; `Course` com
-oferta, carga e certificado nas páginas de formação; `BreadcrumbList`,
-`FAQPage` e `ItemList` onde há o conteúdo correspondente **visível**.
+oferta, carga e certificado nas páginas de formação; `ProfilePage` na
+`/sobre`; `BreadcrumbList`, `FAQPage` e `ItemList` onde há o conteúdo
+correspondente **visível**.
 
 ⚠ **Tudo o que o schema declara tem de estar na tela.** Preço no schema
 diferente do preço exibido, ou nota de avaliação que a página não mostra,
@@ -607,6 +608,64 @@ não custa o resultado enriquecido daquela página: custa a elegibilidade do
 **domínio inteiro**. É por isso que nada em `schema.ts` é escrito à mão —
 preço, carga, certificado e checkout vêm de `config/courses.ts`, a mesma
 fonte que desenha o card e a coluna de compra.
+
+### Quem busca "Bruno Sena": retrato e descrição no resultado
+
+O que se quer aqui é a ficha que o Google desenha ao lado do resultado —
+retrato, uma linha dizendo quem a pessoa é, os perfis dela. Google chama
+isso de **painel de conhecimento**, e ele não se liga marcando uma caixa:
+é a conclusão a que o buscador chega quando "Bruno Sena" deixa de ser
+duas palavras no domínio e passa a ser uma **entidade** que ele reconhece.
+
+**O que o site já faz** — a parte que depende de código, e que está
+pronta:
+
+| Sinal | Onde |
+|---|---|
+| A página que é a casa da entidade | `/sobre`, com `ProfilePage` e `mainEntity` apontando para a pessoa |
+| Nome, cargo, resumo de uma frase | `config/bruno.ts`, lido pela página **e** pelo schema |
+| Retrato com dimensões e legenda | `ImageObject` no nó `Person`, o mesmo arquivo que a página abre |
+| Credencial da NLPEA | `hasCredential`, com o selo visível na mesma página |
+| Autoria dos sete artigos | `author` de cada `Article` aponta para o mesmo `@id` |
+| A ligação com o instituto | `founder` na organização, `worksFor` na pessoa |
+
+A frase do `resumo` é a mesma na tela e no schema de propósito: é o texto
+candidato a aparecer sob o retrato, e uma versão na página diferente da
+declarada é o tipo de divergência que custa a elegibilidade do domínio.
+
+**O que falta, e não se resolve em código.** O buscador não promove a
+entidade só porque o dono do site afirmou quem ele é — qualquer site
+afirma. Ele promove quando os mesmos fatos aparecem em lugares que não
+são seus. Por ordem de efeito:
+
+1. **Perfis públicos em `config/bruno.ts`.** Hoje a lista tem um item, o
+   Instagram. YouTube, LinkedIn e a ficha no diretório da NLPEA entram
+   ali, e cada um deles precisa ter o link do site na bio — a ligação
+   vale nos dois sentidos. Mesmo nome, mesma foto, mesma descrição em
+   todos; foto diferente em cada lugar produz o efeito contrário.
+2. **Search Console**, com a propriedade de domínio verificada. A `/sobre`
+   é reenviada sozinha a cada deploy em que ela muda — o `lastmod` dela no
+   sitemap sai do último commit que tocou `src/pages/Sobre.tsx`, e o
+   `npm run indexacao` notifica o que mudou (ver *Indexação automática no
+   Google*).
+3. **Menções fora do domínio**: entrevista, podcast, matéria, perfil em
+   diretório profissional. É o sinal mais lento e o que mais pesa, porque
+   é o único que não está sob controle de quem publica o site.
+4. **Wikidata**, se e quando houver material para sustentar uma ficha. É
+   o parente do Wikipédia que os buscadores leem de fato, e é de onde sai
+   boa parte do que o painel mostra. Vale o aviso: tanto o Wikipédia
+   quanto o Wikidata exigem **fontes independentes** — ficha criada pelo
+   próprio biografado, sem cobertura de terceiros, costuma ser apagada
+   por curador, e a tentativa não ajuda em nada.
+5. **Reivindicar o painel**, quando ele aparecer. O Google abre um botão
+   *"Reivindicar este painel de conhecimento"* para quem prova ser a
+   pessoa com um perfil oficial verificado. Só existe depois que o painel
+   existe — não é o caminho para criá-lo.
+
+Prazo honesto: nada disso é imediato. O bloco de dados estruturados o
+Google lê no próximo rastreio, mas a decisão de montar um painel vem de
+acumular corroboração externa, e leva meses. O que o site controla está
+feito; o resto é o item 1 e o item 3.
 
 ## Artigos
 
@@ -778,6 +837,7 @@ src/
 | Arquivo | O que guarda |
 |---|---|
 | `site.ts` | Contatos, redes, plataforma de pagamento, aviso legal, rotas |
+| `bruno.ts` | A pessoa como entidade: nome, cargo, resumo, retrato e perfis |
 | `eixos.ts` | Os eixos de formação e a cor de cada um |
 | `courses.ts` | O catálogo: preço, checkout, eixo, situação e os pacotes |
 | `curriculos.ts` | As ementas das três formações, módulo e aula |

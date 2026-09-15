@@ -1,7 +1,15 @@
 import { describe, expect, it } from 'vitest';
+import { bruno } from '../config/bruno';
 import { courses, listaCursos } from '../config/courses';
-import { site } from '../config/site';
-import { cursoComoSchema, grafo, organizacao, perguntasFrequentes } from './schema';
+import { routes, site } from '../config/site';
+import {
+  cursoComoSchema,
+  fundador,
+  grafo,
+  organizacao,
+  paginaDoFundador,
+  perguntasFrequentes,
+} from './schema';
 
 /**
  * Testes dos dados estruturados.
@@ -107,6 +115,102 @@ describe('organizacao', () => {
     const schema = JSON.stringify(organizacao());
     expect(schema).toContain(site.legalName);
     expect(schema).toContain(site.email.contact);
+  });
+});
+
+describe('fundador', () => {
+  /*
+    ┌───────────────────────────────────────────────────────────────────────┐
+    │  ESTE NÓ É O QUE PODE VIRAR RETRATO E DESCRIÇÃO NA BUSCA              │
+    │                                                                       │
+    │  É a declaração de que "Bruno Sena" é uma pessoa, e não duas palavras │
+    │  que calham de estar no domínio. O que ele precisa ter para o         │
+    │  buscador conseguir montar uma ficha: nome, resumo, retrato com       │
+    │  dimensões, uma página que é a casa da entidade e pelo menos um       │
+    │  perfil externo que corrobore tudo isso.                              │
+    │                                                                       │
+    │  Cada teste aqui guarda um desses campos contra o sumiço silencioso:  │
+    │  nenhum deles aparece na tela, nenhum quebra layout, e a falta de     │
+    │  qualquer um só se notaria meses depois — na ficha que não aparece.   │
+    └───────────────────────────────────────────────────────────────────────┘
+  */
+  const pessoa = fundador() as {
+    name: string;
+    description: string;
+    url: string;
+    mainEntityOfPage: string;
+    sameAs: string[];
+    image: { url: string; width: number; height: number; caption: string };
+  };
+
+  it('declara o mesmo resumo que a /sobre imprime na tela', () => {
+    /* Se estes dois deixarem de ser o mesmo dado, o site passa a afirmar
+       ao Google uma descrição que a página não mostra — que é a regra do
+       topo de `schema.ts`, e a que custa o domínio inteiro. */
+    expect(pessoa.description).toBe(bruno.resumo);
+    expect(pessoa.name).toBe(bruno.nome);
+  });
+
+  it('aponta a /sobre como a página da pessoa', () => {
+    expect(pessoa.url).toBe(`${site.url}${routes.sobre}`);
+    expect(pessoa.mainEntityOfPage).toBe(`${site.url}${routes.sobre}`);
+  });
+
+  it('o retrato é absoluto e traz as dimensões', () => {
+    /* URL relativa num nó de imagem é URL que o rastreador de imagens
+       resolve contra a página em que encontrou o bloco — e o bloco é
+       emitido em todas. Sem largura e altura, o buscador não sabe se a
+       foto serve para o recorte que ele precisa desenhar. */
+    expect(pessoa.image.url).toBe(`${site.url}${bruno.retrato.arquivo}`);
+    expect(pessoa.image.url).toMatch(/^https:\/\//);
+    expect(pessoa.image.width).toBeGreaterThan(0);
+    expect(pessoa.image.height).toBeGreaterThan(0);
+  });
+
+  it('tem ao menos um perfil externo, e todos abertos em https', () => {
+    /*
+      O `sameAs` é o único campo desta ficha que não se resolve mexendo em
+      código: ele depende de existirem perfis públicos do Bruno para
+      apontar. Com a lista vazia, o site afirma quem ele é sem nada fora
+      do próprio domínio corroborando — e é exatamente aí que o buscador
+      não promove a afirmação a entidade. Ver `config/bruno.ts`.
+    */
+    expect(pessoa.sameAs.length).toBeGreaterThan(0);
+    for (const perfil of pessoa.sameAs) {
+      expect(perfil, `${perfil} não é uma URL pública em https`).toMatch(/^https:\/\/\S+$/);
+    }
+  });
+});
+
+describe('paginaDoFundador', () => {
+  it('declara a /sobre como página CUJO assunto é a pessoa', () => {
+    const pagina = paginaDoFundador() as {
+      '@type': string;
+      mainEntity: { '@id': string };
+      url: string;
+    };
+    expect(pagina['@type']).toBe('ProfilePage');
+    expect(pagina.url).toBe(`${site.url}${routes.sobre}`);
+    /* `mainEntity` é o que separa "página que menciona o Bruno" de
+       "página que é sobre o Bruno". Sem isto, a /sobre é só mais uma das
+       dezenove que o citam. */
+    expect(pagina.mainEntity['@id']).toBe((fundador() as { '@id': string })['@id']);
+  });
+
+  it('a referência à pessoa resolve dentro do próprio grafo', () => {
+    /*
+      A mesma checagem que o `scripts/prerender.mjs` faz em cada rota, feita
+      aqui na unidade: um `{ "@id": … }` sozinho é REFERÊNCIA, e só
+      significa alguma coisa se o nó completo estiver no mesmo `@graph`.
+      Quando não está, nada acusa — o JSON continua válido e a entidade
+      resolve para um nó sem nome.
+    */
+    const g = grafo(organizacao(), fundador(), paginaDoFundador()) as {
+      '@graph': { '@id': string; '@type': string }[];
+    };
+    const declarados = new Set(g['@graph'].map((no) => no['@id']));
+    const pagina = paginaDoFundador() as { mainEntity: { '@id': string } };
+    expect(declarados.has(pagina.mainEntity['@id'])).toBe(true);
   });
 });
 

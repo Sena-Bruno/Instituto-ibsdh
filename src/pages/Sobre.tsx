@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import Seo from '../components/Seo';
 import { artigosPublicados } from '../config/artigos';
+import { bruno } from '../config/bruno';
 import { listaCursos } from '../config/courses';
 import { eixos } from '../config/eixos';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
-import { trilhaDeNavegacao } from '../lib/schema';
+import { paginaDoFundador, trilhaDeNavegacao } from '../lib/schema';
 
 /**
  * Quem assina o método.
@@ -78,9 +79,15 @@ export default function Sobre() {
         titulo={`Sobre Bruno Sena e o Instituto | ${site.name}`}
         descricao="Quem é Bruno Sena, como nasceu o Instituto e o que ele defende — e recusa — no ensino de PNL, Hipnoterapia e Coaching."
         imagem="/og-sobre.jpg"
-        imagemAlt="Bruno Sena, fundador do Instituto Bruno Sena"
+        imagemAlt={bruno.retrato.descricao}
         tipo="profile"
+        /*
+          `paginaDoFundador()` é o que diferencia esta página de todas as
+          outras que mencionam o Bruno: ela não fala dele, ela É sobre
+          ele. Ver o bloco do `ProfilePage` em `lib/schema.ts`.
+        */
         dados={[
+          paginaDoFundador(),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
             { nome: 'Sobre', rota: routes.sobre },
@@ -94,7 +101,7 @@ export default function Sobre() {
             <Revela>
               <div className="overflow-hidden rounded-[22px] border border-white/10">
                 <img
-                  src="/brunosena.webp"
+                  src={bruno.retrato.arquivo}
                   srcSet="/brunosena-600.webp 600w, /brunosena.webp 900w"
                   /* O retrato ocupa quase a largura da tela no celular e uma
                      coluna estreita no desktop. Sem esta linha o navegador
@@ -102,8 +109,8 @@ export default function Sobre() {
                      que acontecia, e num aparelho de 360 px significava
                      baixar 143 kB para desenhar 340. */
                   sizes="(max-width: 1024px) 92vw, 460px"
-                  width={900}
-                  height={1206}
+                  width={bruno.retrato.largura}
+                  height={bruno.retrato.altura}
                   /* A imagem que abre a página: `eager` e prioridade alta,
                      porque é ela que o navegador deve buscar primeiro. Ver
                      o comentário de `capaPrioritaria` em Video.tsx. */
@@ -111,7 +118,7 @@ export default function Sobre() {
                   fetchPriority="high"
                   decoding="async"
                   className="w-full object-cover"
-                  alt="Bruno Sena, fundador do Instituto Bruno Sena"
+                  alt={bruno.retrato.descricao}
                 />
               </div>
             </Revela>
@@ -119,11 +126,18 @@ export default function Sobre() {
             <div>
               <p className="sobretitulo mb-4 text-brand-accent">Sobre</p>
               <h1 className="font-display text-4xl leading-[1.1] font-semibold tracking-tight text-brand-cream md:text-5xl">
-                Bruno Sena
+                {bruno.nome}
               </h1>
+              {/*
+                Esta frase é a MESMA que os dados estruturados declaram
+                como `description` da pessoa — o texto candidato a
+                aparecer ao lado do retrato num resultado de busca. Sai de
+                `config/bruno.ts` justamente para não haver uma versão na
+                tela e outra no schema; ver o aviso de lá antes de mexer
+                na redação.
+              */}
               <p className="mt-4 text-[17px] leading-relaxed text-brand-cream">
-                Fundador do {site.legalName} e responsável pelo método que sustenta as três
-                formações.
+                {bruno.resumo}
               </p>
 
               <div className="mt-7 space-y-5 leading-relaxed">
