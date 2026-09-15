@@ -1,5 +1,6 @@
 import { ChevronDown, Menu, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cursosDoEixo, eixosComCurso } from '../config/courses';
@@ -139,14 +140,14 @@ export default function SiteHeader() {
                 )}
               >
                 Formações
-                <motion.span
+                <m.span
                   aria-hidden="true"
                   animate={{ rotate: isPainelOpen ? 180 : 0 }}
                   transition={{ duration: duration.fast, ease: ease.out }}
                   className="block"
                 >
                   <ChevronDown size={16} />
-                </motion.span>
+                </m.span>
               </button>
             </li>
             <li>
@@ -188,7 +189,7 @@ export default function SiteHeader() {
             aria-controls="menu-mobile"
             className="rounded-xl p-2 text-brand-cream transition-colors hover:bg-white/5 lg:hidden"
           >
-            <motion.span
+            <m.span
               key={isMenuOpen ? 'fechar' : 'abrir'}
               initial={{ opacity: 0, rotate: -90 }}
               animate={{ opacity: 1, rotate: 0 }}
@@ -196,7 +197,7 @@ export default function SiteHeader() {
               className="block"
             >
               {isMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-            </motion.span>
+            </m.span>
           </button>
         </div>
       </nav>
@@ -205,7 +206,7 @@ export default function SiteHeader() {
           instituto ganha eixos, sem virar uma lista de vinte links. */}
       <AnimatePresence initial={false}>
         {isPainelOpen && (
-          <motion.div
+          <m.div
             id="painel-formacoes"
             variants={collapse}
             initial="hidden"
@@ -252,14 +253,14 @@ export default function SiteHeader() {
                 Ver o catálogo completo →
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Menu do celular: a mesma lista, empilhada e agrupada. */}
       <AnimatePresence initial={false}>
         {isMenuOpen && (
-          <motion.div
+          <m.div
             id="menu-mobile"
             variants={collapse}
             initial="hidden"
@@ -318,7 +319,7 @@ export default function SiteHeader() {
                 Ver o catálogo completo
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </header>

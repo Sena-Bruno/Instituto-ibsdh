@@ -7,7 +7,7 @@ import { artigosPublicados } from '../config/artigos';
 import { eixos } from '../config/eixos';
 import { routes } from '../config/site';
 import { paletas } from '../lib/cores';
-import { listaDeArtigos, organizacao, trilhaDeNavegacao } from '../lib/schema';
+import { listaDeArtigos, trilhaDeNavegacao } from '../lib/schema';
 
 /**
  * Um botão do filtro por eixo.
@@ -91,7 +91,6 @@ export default function Artigos() {
         descricao="Textos sobre PNL, hipnoterapia e desenvolvimento humano — o que as técnicas fazem, o que não fazem e onde ficam os limites éticos de cada uma."
         imagemAlt="Artigos do Instituto Bruno Sena"
         dados={[
-          organizacao(),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
             { nome: 'Artigos', rota: routes.artigos },

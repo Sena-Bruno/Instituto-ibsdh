@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ArtigosDoCurso from '../components/ArtigosDoCurso';
 import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
 import Ementa from '../components/Ementa';
 import Faq from '../components/Faq';
@@ -8,12 +9,7 @@ import Seo from '../components/Seo';
 import { corDoCurso, courses } from '../config/courses';
 import { contarAulas, curriculoHipnoterapia, somarCarga } from '../config/curriculos';
 import { routes } from '../config/site';
-import {
-  cursoComoSchema,
-  organizacao,
-  perguntasFrequentes,
-  trilhaDeNavegacao,
-} from '../lib/schema';
+import { cursoComoSchema, perguntasFrequentes, trilhaDeNavegacao } from '../lib/schema';
 
 const curso = courses.hipnoterapia;
 /* A cor da página vem do eixo do curso, nunca do curso em si. */
@@ -75,10 +71,9 @@ export default function Hipnoterapia() {
         rota={routes.hipnoterapia}
         titulo="Formação Hipnoterapia Clínica | Instituto Bruno Sena"
         descricao="Formação em Hipnoterapia Clínica: induções, protocolos terapêuticos, regressão e hipnose ericksoniana, com prática supervisionada no simulador SENA."
-        imagem="/capa-hipnoterapia.webp"
+        imagem="/og-hipnoterapia.jpg"
         imagemAlt="Arte da formação Hipnoterapia Clínica do Instituto Bruno Sena"
         dados={[
-          organizacao(),
           cursoComoSchema(curso),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
@@ -248,6 +243,8 @@ export default function Hipnoterapia() {
 
           <img
             src="/Certificado-IBSDH-hipnoterapia.webp"
+            width={2339}
+            height={1653}
             alt="Certificado de Hipnoterapeuta Clínico emitido pelo IBSDH"
             className="mt-10 w-full border border-white/10"
             loading="lazy"
@@ -357,6 +354,8 @@ export default function Hipnoterapia() {
             </div>
           </div>
         </SecaoCurso>
+
+        <ArtigosDoCurso rota={routes.hipnoterapia} cor={cor} />
 
         <SecaoCurso cor={cor} sobretitulo="Perguntas" titulo="Dúvidas frequentes">
           <Faq items={perguntas} />

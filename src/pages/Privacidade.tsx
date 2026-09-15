@@ -1,7 +1,6 @@
 import Seo from '../components/Seo';
 import { routes, site } from '../config/site';
 import { registrarDecisao, useDecisaoDeCookies } from '../lib/consentimento';
-import { organizacao } from '../lib/schema';
 import { useMontado } from '../lib/useMontado';
 
 /**
@@ -93,7 +92,6 @@ export default function Privacidade() {
         rota={routes.privacidade}
         titulo={`Política de Privacidade | ${site.name}`}
         descricao="Como o Instituto Bruno Sena coleta, usa e protege seus dados pessoais, conforme a LGPD."
-        dados={[organizacao()]}
       />
 
       <main className="max-w-3xl mx-auto px-6 pt-36 pb-24 prose-institucional">

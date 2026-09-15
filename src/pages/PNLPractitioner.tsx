@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ArtigosDoCurso from '../components/ArtigosDoCurso';
 import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
 import Ementa from '../components/Ementa';
 import Faq from '../components/Faq';
@@ -8,12 +9,7 @@ import Seo from '../components/Seo';
 import { corDoCurso, courses } from '../config/courses';
 import { contarAulas, curriculoPnlPractitioner, somarCarga } from '../config/curriculos';
 import { routes } from '../config/site';
-import {
-  cursoComoSchema,
-  organizacao,
-  perguntasFrequentes,
-  trilhaDeNavegacao,
-} from '../lib/schema';
+import { cursoComoSchema, perguntasFrequentes, trilhaDeNavegacao } from '../lib/schema';
 
 const curso = courses.pnlPractitioner;
 /* A cor da página vem do eixo do curso, nunca do curso em si. */
@@ -112,10 +108,9 @@ export default function PNLPractitioner() {
         rota={routes.pnlPractitioner}
         titulo="Formação PNL Practitioner | Instituto Bruno Sena"
         descricao="Formação PNL Practitioner: VAKOG, rapport, ancoragem, metamodelo e submodalidades, com prática ilimitada no simulador SENA e certificação por competência."
-        imagem="/capa-practitioner.webp"
+        imagem="/og-practitioner.jpg"
         imagemAlt="Arte da formação PNL Practitioner do Instituto Bruno Sena"
         dados={[
-          organizacao(),
           cursoComoSchema(curso),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
@@ -317,6 +312,8 @@ export default function PNLPractitioner() {
             </p>
           </div>
         </SecaoCurso>
+
+        <ArtigosDoCurso rota={routes.pnlPractitioner} cor={cor} />
 
         <SecaoCurso cor={cor} sobretitulo="Perguntas" titulo="Dúvidas frequentes">
           <Faq items={perguntas} />

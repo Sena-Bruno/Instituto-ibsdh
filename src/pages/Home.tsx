@@ -46,13 +46,7 @@ import {
   whatsappMessages,
 } from '../config/site';
 import { paletas } from '../lib/cores';
-import {
-  fundador,
-  listaDeCursos,
-  organizacao,
-  perguntasFrequentes,
-  websiteDoInstituto,
-} from '../lib/schema';
+import { listaDeCursos, perguntasFrequentes } from '../lib/schema';
 import { cn } from '../lib/utils';
 
 /**
@@ -207,6 +201,13 @@ function Hero() {
             ) : (
               <img
                 src="/brunosena.webp"
+                srcSet="/brunosena-600.webp 600w, /brunosena.webp 900w"
+                /* O retrato ocupa quase a largura da tela no celular e uma
+                   coluna estreita no desktop. Sem esta linha o navegador
+                   supõe 100vw e escolhe sempre o arquivo maior — que era o
+                   que acontecia, e num aparelho de 360 px significava
+                   baixar 143 kB para desenhar 340. */
+                sizes="(max-width: 1024px) 92vw, 460px"
                 alt="Bruno Sena, fundador do Instituto"
                 width={900}
                 height={1206}
@@ -1327,16 +1328,14 @@ export default function Home() {
     <>
       <Seo
         rota="/"
-        titulo="Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching"
+        /* 62 caracteres, que é o que a busca mostra antes de cortar. Era
+           "Formações em PNL…", com 64, e o corte caía dentro de "Coaching".
+           Os dois pontos no lugar do "em" devolveram os dois caracteres sem
+           tirar nem a marca nem nenhum dos três eixos. */
+        titulo="Instituto Bruno Sena | Formações: PNL, Hipnoterapia e Coaching"
         descricao="Formações em PNL, Hipnoterapia e Coaching com prática clínica supervisionada no simulador SENA. Certificação NLPEA e IBSDH, acesso vitalício."
         imagemAlt="Instituto Bruno Sena — formações em PNL, Hipnoterapia e Coaching"
-        dados={[
-          organizacao(),
-          fundador(),
-          websiteDoInstituto(),
-          listaDeCursos(listaCursos),
-          perguntasFrequentes(perguntas),
-        ]}
+        dados={[listaDeCursos(listaCursos), perguntasFrequentes(perguntas)]}
       />
 
       <main>

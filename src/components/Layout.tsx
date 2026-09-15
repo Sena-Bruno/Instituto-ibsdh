@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { pageTransition } from '../lib/motion';
@@ -61,7 +61,7 @@ export default function Layout() {
         está no HTML que o rastreador lê, e é ele que decide qual bloco é
         o conteúdo principal da página.
       */}
-      <motion.div
+      <m.div
         id="conteudo"
         key={pathname}
         variants={pageTransition}
@@ -69,7 +69,7 @@ export default function Layout() {
         animate="visible"
       >
         <Outlet />
-      </motion.div>
+      </m.div>
       <SiteFooter />
       <FixedWhatsApp />
       {/* O convite de material. Mora aqui porque precisa valer para o site

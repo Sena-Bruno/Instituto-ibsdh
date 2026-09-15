@@ -115,6 +115,34 @@
     # dela leva meses.
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
+    # O site não usa câmera, microfone, localização nem pagamento no
+    # navegador. Declarar isso fecha a porta antes de alguém precisar
+    # lembrar de fechá-la: um script de terceiro que um dia peça qualquer
+    # uma dessas permissões é recusado pelo navegador, sem depender de
+    # revisão de código.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+    # ┌─────────────────────────────────────────────────────────────────────┐
+    # │  ⚠  REPORT-ONLY DE PROPÓSITO — NÃO TROQUE O NOME SEM OBSERVAR       │
+    # │                                                                     │
+    # │  Esta política NÃO bloqueia nada. Ela relata.                       │
+    # │                                                                     │
+    # │  Uma CSP em imposição com uma origem faltando derruba o Firestore,  │
+    # │  a medição ou o vídeo EM SILÊNCIO: o site continua desenhando, os   │
+    # │  formulários param de gravar, e nada no build acusa. É a mesma      │
+    # │  classe de falha das regras do Firestore, que já derrubou toda a    │
+    # │  captação uma vez.                                                  │
+    # │                                                                     │
+    # │  Para promover:                                                     │
+    # │   1. deixe uma ou duas semanas coletando;                           │
+    # │   2. abra o console nas rotas com formulário, avaliações e vídeo,   │
+    # │      e confira que não há violação;                                 │
+    # │   3. só então troque o nome para `Content-Security-Policy`;         │
+    # │   4. e aí `frame-ancestors` substitui o `X-Frame-Options` acima,    │
+    # │      que é a versão obsoleta da mesma regra.                        │
+    # └─────────────────────────────────────────────────────────────────────┘
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com https://www.google-analytics.com https://*.ingest.sentry.io; frame-src https://www.youtube-nocookie.com https://www.youtube.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+
 [[headers]]
   for = "/sitemap.xml"
   [headers.values]

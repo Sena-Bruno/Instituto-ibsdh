@@ -55,6 +55,21 @@ export interface Artigo {
   tituloSeo?: string;
   /** A meta descrição e o resumo do card. Entre 120 e 158 caracteres. */
   resumo: string;
+  /**
+   * A meta descrição, quando o `resumo` é longo demais para ela.
+   *
+   * O `resumo` faz TRÊS trabalhos — meta descrição, texto do card na
+   * listagem e parágrafo de abertura do artigo — e os três têm orçamentos
+   * diferentes. A abertura precisa respirar; a busca corta perto de 158
+   * caracteres. Três artigos ficaram entre 189 e 233 porque a abertura
+   * venceu, e a descrição deles era truncada ou descartada, com o Google
+   * montando o trecho a partir do corpo do texto.
+   *
+   * Preencha SÓ quando o `resumo` passar de 158. Quem já cabe não muda —
+   * é por isso que o campo é opcional em vez de obrigatório.
+   */
+  descricaoSeo?: string;
+
   /** A pergunta que este artigo responde. Só documentação, não vai ao ar. */
   buscaAlvo: string;
   /** ISO 8601. `datePublished` do schema e ordem da listagem. */
@@ -86,9 +101,11 @@ export const artigos: Artigo[] = [
   {
     slug: 'o-que-e-pnl',
     titulo: 'O que é PNL, e o que ela não é',
-    tituloSeo: 'O que é PNL: o que a Programação Neurolinguística faz e o que não faz',
+    tituloSeo: 'O que é PNL: o que ela faz, e o que ela não faz',
     resumo:
       'A PNL estuda como a linguagem organiza a experiência e como padrões de comportamento podem ser mudados. Não é terapia nem ciência médica, e entender essa fronteira é o que separa o profissional sério do charlatão.',
+    descricaoSeo:
+      'A PNL estuda como a linguagem organiza a experiência e como padrões de comportamento mudam. Não é terapia nem ciência médica — e a fronteira importa.',
     buscaAlvo: 'o que é PNL / PNL funciona / para que serve a PNL',
     publicadoEm: '2026-09-07',
     revisadoEm: '2026-09-07',
@@ -200,9 +217,11 @@ export const artigos: Artigo[] = [
   {
     slug: 'metamodelo-da-linguagem',
     titulo: 'Metamodelo: as três formas como a fala esconde o problema',
-    tituloSeo: 'Metamodelo da linguagem na PNL: omissão, distorção e generalização',
+    tituloSeo: 'Metamodelo da PNL: omissão, distorção, generalização',
     resumo:
       'Omissão, distorção e generalização são os três modos como a linguagem encolhe a experiência. O metamodelo é o conjunto de perguntas que recupera o que ficou de fora, e a razão de "eu nunca consigo" ser uma frase incompleta.',
+    descricaoSeo:
+      'Omissão, distorção e generalização: as três formas como a fala esconde o problema, e as perguntas do metamodelo que devolvem o que sumiu.',
     buscaAlvo: 'metamodelo PNL / omissão distorção generalização / perguntas do metamodelo',
     publicadoEm: '2026-09-07',
     revisadoEm: '2026-09-07',
@@ -327,9 +346,11 @@ export const artigos: Artigo[] = [
   {
     slug: 'hipnose-clinica-o-que-e-o-transe',
     titulo: 'Hipnose clínica: o que o transe é, e o que ele não é',
-    tituloSeo: 'Hipnose clínica: o que é o transe, como funciona e quando não usar',
+    tituloSeo: 'Hipnose clínica: o que é o transe e quando não usar',
     resumo:
       'Transe não é sono, não é perda de controle e não é palco. É um estado de atenção concentrada com o senso crítico afrouxado, e saber quando não induzi-lo importa mais do que saber induzi-lo.',
+    descricaoSeo:
+      'O transe é um estado de atenção concentrada, não perda de controle. O que a hipnose clínica faz, o que não faz, e quando ela não deve ser usada.',
     buscaAlvo: 'o que é hipnose clínica / hipnose funciona / o que se sente na hipnose',
     publicadoEm: '2026-09-07',
     revisadoEm: '2026-09-07',
@@ -1027,6 +1048,33 @@ export function artigosRelacionados(artigo: Artigo, quantos = 3): Artigo[] {
 }
 
 /** Encontra um artigo pelo slug da URL. */
+/**
+ * Os artigos publicados que levam a uma formação.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  A RELAÇÃO EXISTIA, MAS SÓ NUMA DIREÇÃO                               │
+ * │                                                                       │
+ * │  O artigo declara `cursoRelacionado` e linka o curso. O curso não     │
+ * │  sabia que havia artigo sobre o assunto dele.                         │
+ * │                                                                       │
+ * │  Medido no HTML pré-renderizado, o resultado era este: cada artigo    │
+ * │  recebia de 2 a 7 links de entrada — todos vindos da própria listagem │
+ * │  e dos outros artigos — enquanto as sete páginas de curso recebiam 19 │
+ * │  cada, do cabeçalho e do rodapé, e não devolviam nenhum. O conteúdo   │
+ * │  editorial, que é o que traz gente da busca, era um bairro isolado do │
+ * │  site.                                                                │
+ * │                                                                       │
+ * │  A ligação inversa resolve as duas pontas de uma vez: distribui       │
+ * │  autoridade para quem precisa ranquear, e dá a quem está na página de │
+ * │  venda e ainda não decidiu algo para ler em vez de ir embora.         │
+ * └───────────────────────────────────────────────────────────────────────┘
+ *
+ * Rascunho fica de fora: é `noindex` e não aparece em superfície pública.
+ */
+export function artigosDoCurso(rotaDoCurso: string): Artigo[] {
+  return artigosPublicados.filter((a) => a.cursoRelacionado === rotaDoCurso);
+}
+
 export function artigoPorSlug(slug?: string): Artigo | undefined {
   return artigos.find((a) => a.slug === slug);
 }

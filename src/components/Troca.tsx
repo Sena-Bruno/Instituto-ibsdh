@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import type { ReactNode } from 'react';
 import { troca } from '../lib/motion';
 
@@ -49,7 +50,7 @@ export default function Troca({
 }) {
   return (
     <AnimatePresence mode="wait" initial={false}>
-      <motion.div
+      <m.div
         key={chave}
         variants={troca}
         initial="hidden"
@@ -58,7 +59,7 @@ export default function Troca({
         className={className}
       >
         {children}
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 }
