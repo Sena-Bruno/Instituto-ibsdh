@@ -2,7 +2,7 @@ import { readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import notificarLead, { diagnostico } from '../functions/notificar-lead.mjs';
+import notificarLead, { diagnostico, origemPermitida } from '../functions/notificar-lead.mjs';
 
 const pastaDeFuncoes = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -150,6 +150,52 @@ describe('diagnostico', () => {
 });
 
 /**
+ * A guarda de origem.
+ *
+ * Ela não impede um script fora do navegador — esse não manda `Origin`
+ * nenhum, e contra ele o controle é limite de taxa na infraestrutura. O que
+ * ela impede é a página de terceiro que dispara este endpoint usando o
+ * navegador de quem a visita.
+ */
+describe('origemPermitida', () => {
+  afterEach(() => {
+    process.env.URL = undefined;
+    process.env.DEPLOY_PRIME_URL = undefined;
+  });
+
+  it('aceita as duas formas do domínio do instituto', () => {
+    expect(origemPermitida('https://institutobrunosena.com.br')).toBe(true);
+    expect(origemPermitida('https://www.institutobrunosena.com.br')).toBe(true);
+  });
+
+  it('aceita o deploy de preview que o próprio Netlify anuncia', () => {
+    process.env.DEPLOY_PRIME_URL = 'https://deploy-preview-42--instituto.netlify.app';
+    expect(origemPermitida('https://deploy-preview-42--instituto.netlify.app')).toBe(true);
+  });
+
+  it('recusa outro site no netlify.app', () => {
+    /* Liberar `*.netlify.app` inteiro autorizaria qualquer pessoa com uma
+       conta gratuita; só o endereço deste site passa. */
+    process.env.URL = 'https://instituto.netlify.app';
+    expect(origemPermitida('https://site-de-terceiro.netlify.app')).toBe(false);
+  });
+
+  it('recusa domínio parecido, http e origem opaca', () => {
+    expect(origemPermitida('https://institutobrunosena.com.br.evil.example')).toBe(false);
+    expect(origemPermitida('http://institutobrunosena.com.br')).toBe(false);
+    // `null` é o que o navegador manda de um iframe em sandbox.
+    expect(origemPermitida('null')).toBe(false);
+  });
+
+  it('deixa passar o pedido sem Origin, e o localhost do desenvolvimento', () => {
+    /* Safari antigo omite o cabeçalho em requisição de mesma origem;
+       recusar ali custaria avisos de leads reais. */
+    expect(origemPermitida(undefined)).toBe(true);
+    expect(origemPermitida('http://localhost:8888')).toBe(true);
+  });
+});
+
+/**
  * Testes da validação do pedido.
  *
  * ┌───────────────────────────────────────────────────────────────────────┐
@@ -273,6 +319,22 @@ describe('notificar-lead', () => {
     const res = await notificarLead(pedido(leadValido));
 
     expect(res.status).toBe(204);
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it('recusa a chamada vinda de outra origem antes de tocar no Resend', async () => {
+    const res = await notificarLead(
+      new Request('https://exemplo/.netlify/functions/notificar-lead', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: 'https://site-de-terceiro.example',
+        },
+        body: JSON.stringify(leadValido),
+      }),
+    );
+
+    expect(res.status).toBe(403);
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 

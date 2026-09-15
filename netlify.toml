@@ -115,6 +115,47 @@
     # dela leva meses.
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
 
+    # ── Política de conteúdo ───────────────────────────────────────────────
+    #
+    # DUAS políticas, e é de propósito.
+    #
+    # A que VALE (`Content-Security-Policy`) traz só as diretivas que não
+    # dependem de inventário de terceiros e por isso não têm como quebrar
+    # uma página: nenhum <base> injetado pode reescrever o destino dos links
+    # relativos, nenhum <object>/<embed> roda, nenhum formulário posta para
+    # fora do site, e o site só pode ser emoldurado por ele mesmo.
+    #
+    # A segunda (`-Report-Only`) é a política INTEIRA — a que de fato
+    # transforma um XSS em nada, restringindo de onde o navegador aceita
+    # script. Ela ainda não bloqueia: o site fala com GA4, Firebase Auth,
+    # Firestore, Sentry, YouTube e Vimeo, e uma origem esquecida na lista
+    # derruba em produção justamente a parte que capta lead. Em modo de
+    # relatório o navegador só REGISTRA a violação no console.
+    #
+    # COMO PROMOVER, depois de alguns dias de tráfego real: abra o site,
+    # aceite os cookies, entre no /admin, envie um formulário e assista a um
+    # vídeo com o console aberto. Se nenhuma linha "Report Only" aparecer,
+    # apague a política curta acima, tire o sufixo `-Report-Only` desta e
+    # devolva a ela o `upgrade-insecure-requests` (a diretiva é ignorada
+    # em modo de relatório, e deixá-la aqui só encheria o console de um
+    # aviso permanente que esconderia os relatórios de verdade).
+    # Se aparecer, a linha diz a origem que falta.
+    Content-Security-Policy = "base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.googleusercontent.com https://img.youtube.com https://i.ytimg.com https://i.vimeocdn.com https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://*.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://gen-lang-client-0868573644.firebaseapp.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io; frame-src https://www.youtube-nocookie.com https://player.vimeo.com https://accounts.google.com https://gen-lang-client-0868573644.firebaseapp.com; media-src 'self'; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'self'"
+
+    # O que o navegador NÃO pode pedir em nome deste site. Câmera,
+    # microfone e localização nunca são usados aqui: declarar isso fecha
+    # a porta para um script injetado que tentasse pedi-los, e tira o
+    # susto do visitante que veria a permissão aparecer. As capacidades
+    # que sobram são as que os players de vídeo precisam — e só para as
+    # duas origens que os servem.
+    Permissions-Policy = "accelerometer=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), autoplay=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), encrypted-media=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), fullscreen=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), gyroscope=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), picture-in-picture=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), browsing-topics=(), camera=(), display-capture=(), geolocation=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=()"
+
+    # Isola a janela de outras abas que tenham sido abertas a partir
+    # dela. `allow-popups` em vez de `same-origin` puro porque o login
+    # com Google é um popup, e o modo estrito cortaria a comunicação
+    # entre ele e a página que o abriu — o /admin deixaria de entrar.
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     # O site não usa câmera, microfone, localização nem pagamento no
     # navegador. Declarar isso fecha a porta antes de alguém precisar
     # lembrar de fechá-la: um script de terceiro que um dia peça qualquer

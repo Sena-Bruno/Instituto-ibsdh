@@ -14,6 +14,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "smoke": "node scripts/smoke.mjs",
+    "cabecalhos": "node scripts/cabecalhos.mjs",
+    "regras": "firebase emulators:exec --only firestore --project regras-teste 'node scripts/regras.mjs'",
     "imagens": "node scripts/imagens.mjs",
     "indexacao": "node scripts/notificar-indexacao.mjs",
     "check": "biome check",

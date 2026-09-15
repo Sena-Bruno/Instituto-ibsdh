@@ -44,6 +44,32 @@ jobs:
           --to ${{ github.event.pull_request.head.sha }}
           --verbose
 
+  # As regras do Firestore são a única coisa que separa a lista de leads —
+  # nome e e-mail sob a LGPD — do resto da internet, e nenhum outro
+  # verificador as lê: são uma linguagem à parte, avaliada pelo servidor do
+  # Google. Job próprio porque depende do emulador, que é Java e leva alguns
+  # segundos para subir; não faz sentido atrasar o lint por causa disso.
+  regras:
+    name: Regras do Firestore
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # Fora do package.json pelo mesmo motivo do Playwright: o emulador
+      # baixa um .jar de dezenas de MB, inútil no build de produção.
+      - name: Instalar o emulador
+        run: npm install --no-save firebase-tools @firebase/rules-unit-testing
+
+      - name: Testar as regras
+        run: npm run regras
+
   qualidade:
     name: Tipos, lint e build
     runs-on: ubuntu-latest
@@ -140,3 +166,11 @@ jobs:
           done
           curl -sf -o /dev/null http://127.0.0.1:4173/ || { echo "servidor não subiu"; exit 1; }
           SMOKE_URL=http://127.0.0.1:4173 node scripts/smoke.mjs
+
+      # Os cabeçalhos de segurança não passam pelo `vite preview`: ele não
+      # conhece o netlify.toml. Este passo sobe o `dist` com os cabeçalhos
+      # lidos de lá e falha se o navegador recusar qualquer recurso — que é
+      # a única forma de uma política de conteúdo errada ser pega ANTES do
+      # deploy, e não por um formulário que parou de gravar em produção.
+      - name: Cabeçalhos de segurança
+        run: node scripts/cabecalhos.mjs

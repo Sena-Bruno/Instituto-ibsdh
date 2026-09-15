@@ -25,6 +25,19 @@ service cloud.firestore {
       return request.resource.data.keys().hasOnly(fields);
     }
 
+    // O `createdAt` tem de ser o relógio do SERVIDOR, e não um valor
+    // qualquer vindo do cliente.
+    //
+    // As três coleções são ordenadas por ele: o /admin lista por
+    // `createdAt desc` e as avaliações de um curso também. Sem esta
+    // amarra, um documento criado com a data no ano 3000 fica em primeiro
+    // lugar para sempre — e um cadastro com data no passado entra no meio
+    // da lista, onde ninguém olha. É o que `serverTimestamp()` já manda
+    // do site; aqui a regra passa a EXIGIR.
+    function carimbadoPeloServidor() {
+      return request.resource.data.createdAt == request.time;
+    }
+
     function areImmutableFieldsUnchanged(fields) {
       return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
     }
@@ -35,7 +48,13 @@ service cloud.firestore {
              data.courseId is string && data.courseId.size() > 0 && data.courseId.size() < 100 &&
              data.userId is string && data.userId.size() > 0 && data.userId.size() < 100 &&
              data.userName is string && data.userName.size() > 0 && data.userName.size() < 100 &&
-             (!('userPhoto' in data) || (data.userPhoto is string && data.userPhoto.size() < 500)) &&
+             // Só https, e só isso. O campo é escrito pelo cliente e sai
+             // depois no `src` de um <img> visível a todo visitante: sem a
+             // âncora, uma avaliação pode apontar a foto para um endereço
+             // controlado por quem escreveu, que passa a registrar o IP e o
+             // horário de cada pessoa que abre a página do curso.
+             (!('userPhoto' in data) || (data.userPhoto is string && data.userPhoto.size() < 500 &&
+                                         data.userPhoto.matches('^https://.*'))) &&
              data.rating is number && data.rating >= 1 && data.rating <= 5 &&
              data.comment is string && data.comment.size() > 0 && data.comment.size() <= 2000 &&
              data.createdAt is timestamp;
@@ -48,6 +67,7 @@ service cloud.firestore {
       // Only authenticated users can create reviews, and they must be the author
       allow create: if isAuthenticated() && 
                     isValidCourseReview(request.resource.data) && 
+                    carimbadoPeloServidor() &&
                     uidUnchanged();
                     
       // Only the author can update their review, and they can't change the author ID or creation date
@@ -99,7 +119,7 @@ service cloud.firestore {
     match /waitlist/{entryId} {
       // Leitura restrita: nome e e-mail são dados pessoais sob a LGPD.
       allow read: if isAdmin();
-      allow create: if isValidWaitlistEntry(request.resource.data);
+      allow create: if isValidWaitlistEntry(request.resource.data) && carimbadoPeloServidor();
       // Ninguém edita nem apaga pelo site; use o console do Firebase.
       allow update, delete: if false;
     }
@@ -135,7 +155,7 @@ service cloud.firestore {
     match /leads/{entryId} {
       // Mesma regra da lista de espera: nome e e-mail são dados pessoais.
       allow read: if isAdmin();
-      allow create: if isValidLead(request.resource.data);
+      allow create: if isValidLead(request.resource.data) && carimbadoPeloServidor();
       allow update, delete: if false;
     }
   }

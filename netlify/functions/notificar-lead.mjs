@@ -109,9 +109,74 @@ export const ASSUNTOS = {
   },
 };
 
+/**
+ * De onde este endereço aceita ser chamado.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  O QUE ESTA GUARDA FAZ — E O QUE ELA NÃO FAZ                          │
+ * │                                                                       │
+ * │  A função é um endereço público que dispara e-mail. O destinatário    │
+ * │  nunca vem do pedido, então ela não serve de relé de spam para        │
+ * │  terceiros; o que ela ainda permite é ENCHER A CAIXA DO INSTITUTO —   │
+ * │  e gastar a cota do Resend — com cadastros inventados em laço.        │
+ * │                                                                       │
+ * │  Barrar por `Origin` corta o caso barato: uma página de terceiro que  │
+ * │  dispare este endpoint a partir do navegador de quem a visita. O      │
+ * │  navegador carimba o cabeçalho e não deixa o script mentir nele.      │
+ * │                                                                       │
+ * │  NÃO corta um script fora do navegador, que simplesmente não manda    │
+ * │  `Origin` nenhum. Contra esse caso o controle é de infraestrutura, e  │
+ * │  não de código: limite de taxa no Netlify e Firebase App Check nas    │
+ * │  gravações do Firestore, que é a porta que precede esta.              │
+ * │                                                                       │
+ * │  Um pedido SEM `Origin` continua passando de propósito: Safari antigo │
+ * │  omite o cabeçalho em requisição de mesma origem, e recusar ali faria │
+ * │  o instituto deixar de ser avisado de leads reais — que é o custo     │
+ * │  mais caro dos dois.                                                  │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+const ORIGENS = ['institutobrunosena.com.br', 'www.institutobrunosena.com.br'];
+
+/** Hospedeiro de uma URL, ou `undefined` se ela não for uma URL. */
+function hospedeiro(url) {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return undefined;
+  }
+}
+
+export function origemPermitida(origem) {
+  if (!origem) return true;
+
+  const { protocol, hostname } = new URL(origem, 'https://invalido.invalido');
+
+  /* Desenvolvimento local (`netlify dev`) fala http com a própria máquina.
+     É a única exceção ao https, e ela não vale em lugar nenhum publicado. */
+  if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
+  if (protocol !== 'https:') return false;
+
+  /*
+    `URL` e `DEPLOY_PRIME_URL` são postas pelo próprio Netlify no ambiente
+    da função: a primeira é o endereço do site, a segunda o do deploy de
+    preview deste PR. Usá-las, em vez de liberar `*.netlify.app` inteiro,
+    é a diferença entre autorizar ESTE site e autorizar qualquer pessoa
+    com uma conta gratuita no Netlify.
+  */
+  const proprios = [process.env.URL, process.env.DEPLOY_PRIME_URL]
+    .map(hospedeiro)
+    .filter(Boolean);
+
+  return ORIGENS.includes(hostname) || proprios.includes(hostname);
+}
+
 export default async (request) => {
   if (request.method !== 'POST') {
     return new Response('Método não permitido', { status: 405 });
+  }
+
+  if (!origemPermitida(request.headers.get('origin'))) {
+    return new Response('Origem não permitida', { status: 403 });
   }
 
   const apiKey = process.env.RESEND_API_KEY;
