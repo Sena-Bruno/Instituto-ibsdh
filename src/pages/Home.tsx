@@ -378,6 +378,15 @@ function Sena() {
 
 /* ── Para quem é ──────────────────────────────────────────────────────────── */
 
+/*
+  Os itens de cada card são situações, não promessas. "Desbloqueie seu
+  potencial oculto" e "vença a ansiedade" são as frases que qualquer
+  curso online escreve — e que nenhuma pessoa usa para descrever o
+  próprio problema. A pessoa se reconhece no exemplo específico
+  ("adio a conversa há três semanas"), não no substantivo abstrato
+  ("procrastinação"). Se um item novo entrar aqui, o teste é: dá para
+  imaginar a cena? Se não dá, é slogan.
+*/
 const publicos = [
   {
     cor: 'accent' as const,
@@ -385,12 +394,12 @@ const publicos = [
     selo: 'Para você',
     titulo: 'Desenvolvimento pessoal',
     texto:
-      'Quebre ciclos de autossabotagem, elimine crenças limitantes e assuma o controle da sua mente e das suas emoções. Uma jornada de autoconhecimento — sem nenhuma intenção de atender ninguém, e isso é um caminho legítimo aqui.',
+      'Uma jornada de autoconhecimento — e está tudo bem se você nunca quiser atender ninguém. Muitos alunos fazem a formação só para si, e é um uso legítimo do método. As ferramentas são as mesmas do uso profissional; o que muda é onde você aplica.',
     itens: [
-      'Desbloqueie seu potencial oculto',
-      'Vença a ansiedade e a procrastinação',
-      'Melhore seus relacionamentos pessoais',
-      'Tenha mais foco, disciplina e inteligência emocional',
+      'Para quem adia há semanas uma conversa que já ensaiou de cabeça',
+      'Para quem conhece o próprio padrão de sabotagem — e o repete assim mesmo',
+      'Para quem quer técnica com passo a passo, não conselho motivacional',
+      'Para quem prefere testar tudo em si antes de indicar a alguém',
     ],
   },
   {
@@ -399,12 +408,12 @@ const publicos = [
     selo: 'Para profissionais',
     titulo: 'Carreira e negócios',
     texto:
-      'Construa uma carreira como terapeuta ou coach. Ferramentas avançadas de transformação humana para aplicar em pacientes, clientes ou na sua equipe — com certificação que permite atuação imediata.',
+      'Construa uma carreira como terapeuta ou coach, com certificação que permite atuação imediata. No SENA você conduz sessões completas com pacientes virtuais — e chega ao primeiro atendimento real já tendo errado e corrigido no simulador.',
     itens: [
-      'Certificação reconhecida nacionalmente',
-      'Nova fonte de renda ajudando pessoas',
-      'Ferramentas para terapeutas e psicólogos',
-      'Comunicação persuasiva e liderança',
+      'Para quem adia as primeiras sessões por medo de não estar “pronto”',
+      'Para quem trava no atendimento e muda de técnica no meio da sessão',
+      'Para quem não sabe quanto cobrar — nem como dizer o preço ao cliente',
+      'Para terapeutas, psicólogos e líderes que querem somar PNL à prática',
     ],
   },
 ];
@@ -487,10 +496,10 @@ function Cursos() {
 
   return (
     <Secao id="cursos" cor="accent" brilho brilhoEm="topo">
-      <Cabecalho
-        sobretitulo="Nossas formações"
-        titulo="Escolha sua ferramenta de transformação"
-      >
+      {/* O título anterior era "Escolha sua ferramenta de transformação" —
+          a frase que qualquer catálogo de curso online escreve. Este diz o
+          que a seção de fato pede: uma decisão de ponto de partida. */}
+      <Cabecalho sobretitulo="Nossas formações" titulo="Escolha por onde começar">
         Cada eixo tem a sua cor, e ela acompanha você do card até a página do curso. Se está
         começando, comece pelo Practitioner — é a base que torna todo o resto mais fácil.
       </Cabecalho>
@@ -1122,30 +1131,37 @@ function InCompany() {
             In Company
           </p>
 
+          {/* "Alto impacto" e "cultura de alta performance" são o jargão
+              que toda página de treinamento corporativo repete — e que não
+              descreve nada. O texto agora nomeia as situações que fazem um
+              RH procurar treinamento, porque é nelas que o leitor se
+              reconhece. */}
           <h2 className="titulo-secao">
-            Treinamentos corporativos de{' '}
-            <span className="text-brand-emerald">alto impacto</span>
+            O método das formações,{' '}
+            <span className="text-brand-emerald">dentro da sua empresa</span>
           </h2>
 
           <p className="mt-6 leading-relaxed">
-            A mesma metodologia que transforma vidas, formatada para os desafios da sua empresa.
-            Aumente o engajamento, desenvolva líderes e crie uma cultura de alta performance com
-            inteligência emocional.
+            As mesmas ferramentas das formações abertas, aplicadas aos problemas concretos do
+            seu time: o gestor que adia a conversa de feedback, a reunião que termina sem
+            decisão, o vendedor que desiste na primeira objeção. O programa é desenhado com o
+            RH, caso a caso — de workshop de um dia a trilha completa.
           </p>
 
           <ul className="mt-9 space-y-5">
             {[
               {
-                titulo: 'Liderança humanizada',
-                texto: 'Ferramentas de Coaching e PNL para gestão de equipes.',
+                titulo: 'Liderança',
+                texto: 'Feedback difícil, delegação e 1:1 que sai do roteiro genérico.',
               },
               {
-                titulo: 'Comunicação assertiva',
-                texto: 'Resolução de conflitos e negociação avançada.',
+                titulo: 'Comunicação',
+                texto: 'Conflito de prazo e escopo resolvido na conversa, não no e-mail.',
               },
               {
-                titulo: 'Inteligência emocional',
-                texto: 'Controle do estresse e produtividade sob pressão.',
+                titulo: 'Regulação emocional',
+                texto:
+                  'Pressão de meta sem queimar o time: estado sob controle antes da reunião crítica.',
               },
             ].map((item) => (
               <li key={item.titulo} className="flex items-start gap-4">
@@ -1264,8 +1280,12 @@ function AcaoFinal() {
           <p className="sobretitulo">Pronto para começar?</p>
         </div>
 
+        {/* Era "Sua transformação começa hoje" — a frase de fechamento de
+            qualquer página de vendas. Esta é específica do instituto: a
+            primeira sessão simulada no SENA é imediata, e é verificável
+            duas seções acima. */}
         <h2 className="titulo-secao">
-          Sua transformação começa <span className="texto-gradiente">hoje.</span>
+          Sua primeira sessão simulada pode ser <span className="texto-gradiente">hoje.</span>
         </h2>
 
         <p className="mx-auto mt-6 max-w-xl text-[17px] leading-relaxed md:text-lg">

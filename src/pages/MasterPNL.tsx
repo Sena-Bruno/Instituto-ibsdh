@@ -43,7 +43,14 @@ const arsenal = [
   },
 ];
 
-/** Depoimentos específicos desta formação, mantidos como estavam. */
+/**
+ * Depoimentos específicos desta formação, mantidos como estavam.
+ *
+ * ⚠ Vale aqui o mesmo aviso de `config/depoimentos.ts`: enquanto não forem
+ * depoimentos reais, com nome verificável e autorização, eles são o elo
+ * mais frágil da página — e a página inteira é julgada pelo elo mais
+ * frágil.
+ */
 const depoimentos = [
   {
     nome: 'Carlos M.',

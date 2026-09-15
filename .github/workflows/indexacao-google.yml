@@ -1,0 +1,81 @@
+name: Indexação no Google
+
+# Só dispara quando um arquivo que pode mudar o sitemap muda de verdade —
+# `paginas.ts` (rotas), `artigos.ts` (conteúdo e revisão dos artigos) ou
+# `materiais.ts`. Um commit de estilo ou de texto de rodapé não teria
+# nenhuma URL nova para notificar, e rodaria o job à toa.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/config/paginas.ts'
+      - 'src/config/artigos.ts'
+      - 'src/config/materiais.ts'
+  # Permite disparar manualmente pela aba Actions, sem precisar de um commit
+  # vazio — útil para reprocessar depois de configurar a credencial pela
+  # primeira vez.
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+# Duas notificações em paralelo poderiam ler o mesmo estado antigo e as
+# duas tentarem escrevê-lo de volta — não cancela a anterior (ela já pode
+# ter avisado o Google, o que não dá pra desfazer), só evita rodar em
+# paralelo.
+concurrency:
+  group: indexacao-google
+  cancel-in-progress: false
+
+jobs:
+  notificar:
+    name: Notificar o Google sobre páginas novas ou revisadas
+    runs-on: ubuntu-latest
+    steps:
+      # fetch-depth: 0 traz o histórico completo. Sem isto o checkout raso
+      # (padrão da action, um commit só) quebra o `git log` que
+      # scripts/prerender.mjs usa para calcular o `lastmod` de cada
+      # página — toda URL sai com a mesma data (a hora do build), o
+      # sitemap mente, e este workflow notifica as mesmas 19 URLs de novo
+      # a cada execução, para sempre, porque a comparação nunca estabiliza.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # O sitemap.xml só existe depois do build — é ele quem diz, com
+      # `lastmod` de verdade, quais URLs existem e quando cada uma mudou
+      # pela última vez. Ver scripts/prerender.mjs.
+      - name: Build (gera o sitemap.xml atual)
+        run: npm run build
+
+      # Sem a credencial configurada, este passo avisa e sai sem erro —
+      # ver o comentário no topo do script. Isto NÃO falha o build normal
+      # do site: é um job à parte, disparado só por mudança de conteúdo.
+      - name: Avisar o Google das URLs novas ou revisadas
+        env:
+          GOOGLE_INDEXACAO_CREDENCIAIS: ${{ secrets.GOOGLE_INDEXACAO_CREDENCIAIS }}
+          GOOGLE_SEARCH_CONSOLE_PROPRIEDADE: ${{ vars.GOOGLE_SEARCH_CONSOLE_PROPRIEDADE }}
+        run: node scripts/notificar-indexacao.mjs
+
+      # O registro de URLs já notificadas mora no repositório — é o que
+      # permite ao próximo run saber o que já foi avisado sem precisar de
+      # nenhum armazenamento externo. Só commita quando o script de fato
+      # mudou o arquivo (URL nova, revisão, ou uma removida do sitemap).
+      - name: Registrar o que foi notificado
+        run: |
+          if git diff --quiet -- scripts/indexacao-notificadas.json; then
+            echo "Nada para registrar."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add scripts/indexacao-notificadas.json
+          git commit -m "chore: registra as urls notificadas ao Google"
+          git push

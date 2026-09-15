@@ -294,20 +294,21 @@ export default function PNLPractitioner() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso
-          cor={cor}
-          sobretitulo="Garantia"
-          titulo="Você não arrisca nada. Exceto continuar do jeito que está."
-        >
+        {/* O título anterior era "Você não arrisca nada. Exceto continuar
+            do jeito que está." — a fórmula de confirmshaming que envergonha
+            quem hesita. Garantia é cláusula de contrato, não pressão: o
+            texto agora diz o que testar nos 7 dias e como o dinheiro
+            volta, e para. */}
+        <SecaoCurso cor={cor} sobretitulo="Garantia" titulo="7 dias para decidir por dentro">
           <div className="max-w-2xl space-y-4 text-[15.5px] leading-relaxed">
-            <p>Acesse o curso, assista às primeiras aulas, tente as técnicas.</p>
             <p>
-              Se em 7 dias você não sentir que é exatamente o que precisava — seja para uso
-              pessoal ou profissional — devolvemos 100% do seu investimento. Sem perguntas, sem
-              burocracia.
+              Acesse o curso, assista às primeiras aulas e conduza uma sessão no SENA — a
+              devolutiva da primeira simulação já mostra como o método funciona.
             </p>
-            <p className="font-display text-lg text-brand-cream">
-              O risco é todo nosso. A transformação pode ser sua.
+            <p>
+              Se em 7 dias você concluir que não é o que precisava, seja para uso pessoal ou
+              profissional, devolvemos 100% do valor pago. Basta um e-mail; não pedimos
+              justificativa.
             </p>
           </div>
         </SecaoCurso>

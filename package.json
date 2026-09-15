@@ -15,6 +15,7 @@
     "test:coverage": "vitest run --coverage",
     "smoke": "node scripts/smoke.mjs",
     "imagens": "node scripts/imagens.mjs",
+    "indexacao": "node scripts/notificar-indexacao.mjs",
     "check": "biome check",
     "check:fix": "biome check --write",
     "knip": "knip --no-config-hints",

@@ -22,6 +22,7 @@ npm run dev        # http://localhost:3000
 | `npm run knip` | Procura código e dependências sem uso |
 | `npm run smoke` | Teste de navegador nas rotas públicas (com o preview no ar) |
 | `npm run imagens` | Regera os cartões de compartilhamento e as variantes da imagem de LCP |
+| `npm run indexacao` | Avisa o Google das páginas novas/revisadas (com o build feito e a credencial configurada — ver [Indexação automática no Google](#indexação-automática-no-google)) |
 
 O `smoke` percorre as rotas públicas e falha se encontrar imagem quebrada,
 CTA de compra sem destino, título duplicado ou ausente, erro de console —
@@ -699,16 +700,69 @@ publicar.
 
 ### Depois de publicar
 
-1. **Search Console** → *Inspeção de URL* em cada rota. O "HTML renderizado"
-   e o "HTML de origem" agora devem trazer o mesmo conteúdo.
-2. **Enviar o sitemap** (`/sitemap.xml`) uma vez. O `lastmod` sai do último
-   commit que tocou o arquivo da página, então passa a se atualizar sozinho.
+1. ~~Search Console → Inspeção de URL em cada rota, pedindo indexação à
+   mão.~~ **Automático** — ver
+   [Indexação automática no Google](#indexação-automática-no-google) logo
+   abaixo. Continua valendo abrir a *Inspeção de URL* se quiser **conferir**
+   que o Google já buscou a página, só deixou de ser preciso para pedir.
+2. ~~Enviar o sitemap uma vez.~~ **Automático**, pelo mesmo mecanismo: toda
+   publicação ou revisão resubmete o `/sitemap.xml` pela Search Console API.
 3. **Teste de resultados aprimorados** do Google em uma página de formação,
    para validar o `Course`.
 4. **HSTS preload:** o cabeçalho já declara `preload`, mas só vale depois de
    submeter o domínio em [hstspreload.org](https://hstspreload.org).
    Confirme antes que **todos** os subdomínios servem HTTPS — a lista é
    embutida nos navegadores e sair dela leva meses.
+
+### Indexação automática no Google
+
+Publicar um artigo (ou qualquer página nova) não exige mais abrir o Search
+Console. `.github/workflows/indexacao-google.yml` roda a cada push em `main`
+que toca `paginas.ts`, `artigos.ts` ou `materiais.ts`: builda o site, olha o
+`sitemap.xml` gerado e, para toda URL nova ou com `lastmod` diferente do
+último aviso, chama a **Indexing API** do Google — a mesma chamada que o
+botão "Solicitar indexação" faz — e resubmete o sitemap pela **Search
+Console API**. O que já foi avisado fica registrado em
+`scripts/indexacao-notificadas.json`, versionado no repositório, para o
+próximo run só notificar o que de fato mudou.
+
+⚠ A Indexing API só tem suporte **oficial** do Google para páginas de vaga
+de emprego ou transmissão ao vivo — não é o caso deste site. Usá-la para
+uma página comum é prática comum entre quem trabalha com SEO e, na
+prática, acelera a fila de rastreio, mas o Google pode simplesmente
+ignorar a notificação: nada aqui garante indexação, só pede que o
+rastreador olhe mais cedo. É por isso que o script também resubmete o
+sitemap — esse é o mecanismo oficial, mais lento, mas sem esse "pode não
+funcionar".
+
+**Configuração única** (feita fora deste repositório, uma vez):
+
+1. No [Google Cloud Console](https://console.cloud.google.com/), crie um
+   projeto (ou use um existente) e ative duas APIs: **Web Search Indexing
+   API** e **Search Console API**.
+2. Crie uma **conta de serviço** nesse projeto (*IAM e administrador* →
+   *Contas de serviço*), gere uma **chave JSON** e baixe o arquivo — não
+   precisa de nenhum papel/role do IAM, o acesso vem do passo 3.
+3. No [Search Console](https://search.google.com/search-console), abra a
+   propriedade `institutobrunosena.com.br` → *Configurações* →
+   *Usuários e permissões* → adicione o e-mail da conta de serviço
+   (`...@...iam.gserviceaccount.com`, dentro do JSON) como **Proprietário**.
+   As duas APIs exigem esse nível — "Completo" não basta para a Indexing
+   API.
+4. No GitHub, em *Settings → Secrets and variables → Actions* do
+   repositório, crie o secret `GOOGLE_INDEXACAO_CREDENCIAIS` com o
+   **conteúdo inteiro** do arquivo JSON baixado no passo 2.
+5. Só se a propriedade do Search Console for do tipo **domínio** (começa
+   com `sc-domain:`, e não com `https://`): crie também a variável de
+   repositório (não secret) `GOOGLE_SEARCH_CONSOLE_PROPRIEDADE` com o valor
+   `sc-domain:institutobrunosena.com.br`. Sem essa variável o script assume
+   uma propriedade de prefixo de URL (`https://institutobrunosena.com.br/`),
+   que é o tipo mais comum.
+
+Depois de configurado, dispare uma vez pela aba **Actions → Indexação no
+Google → Run workflow** para conferir que passa, sem precisar esperar o
+próximo artigo. Sem a credencial configurada, o workflow roda e sai
+silenciosamente sem notificar nada — não é considerado falha.
 
 ## Estrutura
 
