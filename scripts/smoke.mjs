@@ -61,29 +61,6 @@ const executablePath =
   process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const browser = await chromium.launch(existsSync(executablePath) ? { executablePath } : {});
 
-/*
-  O convite de material abre depois de meia página rolada, e o Playwright rola
-  sozinho para clicar em qualquer coisa. Nos testes de INTERAÇÃO ele passaria a
-  interceptar os cliques, e o smoke falharia por um motivo que não é defeito do
-  site. Aqui ele é calado antes de a página carregar, com a mesma marca que o
-  navegador de uma pessoa que já deixou o contato usaria.
-
-  O comportamento do convite não deixa de ser testado por isso: ele tem um
-  bloco só dele mais abaixo, e é lá que se verifica o que importa de verdade,
-  que é ele NÃO estar na tela na chegada.
-*/
-async function paginaSemConvite() {
-  const pagina = await browser.newPage();
-  await pagina.addInitScript(() => {
-    try {
-      localStorage.setItem('ibsdh:convite', JSON.stringify({ convertido: true }));
-    } catch {
-      // Sem armazenamento, o convite pode aparecer; o teste de interação
-      // abaixo falharia, e falhar alto é melhor que passar por acaso.
-    }
-  });
-  return pagina;
-}
 const page = await browser.newPage();
 const consoleErrors = [];
 page.on('console', (m) => m.type() === 'error' && consoleErrors.push(m.text()));
@@ -161,7 +138,7 @@ const environmental =
 // abrir num corte seco, e a preferência de menos movimento sendo ignorada
 // pelas animações em JavaScript (que a regra de CSS não alcança).
 {
-  const p2 = await paginaSemConvite();
+  const p2 = await browser.newPage();
   await p2.goto(`${base}/hipnoterapia`, { waitUntil: 'domcontentloaded' });
   await p2.waitForSelector('h1', { timeout: 20000 });
   await p2.waitForTimeout(700);
@@ -187,13 +164,6 @@ const environmental =
 
   const ctx = await browser.newContext({ reducedMotion: 'reduce' });
   const p3 = await ctx.newPage();
-  await p3.addInitScript(() => {
-    try {
-      localStorage.setItem('ibsdh:convite', JSON.stringify({ convertido: true }));
-    } catch {
-      /* ver paginaSemConvite */
-    }
-  });
   await p3.goto(`${base}/hipnoterapia`, { waitUntil: 'domcontentloaded' });
   await p3.waitForSelector('h1', { timeout: 20000 });
   await p3.waitForTimeout(700);
@@ -220,7 +190,7 @@ const environmental =
     estaria no caminho — e é justamente esse caminho que se perde ao voltar a
     escrever dois `return` separados, cada um com sua própria instância.
   */
-  const p5 = await paginaSemConvite();
+  const p5 = await browser.newPage();
   await p5.goto(base, { waitUntil: 'domcontentloaded' });
   await p5.waitForSelector('h1', { timeout: 20000 });
   await p5.waitForTimeout(700);
@@ -369,59 +339,38 @@ const environmental =
     failures += problemas.length;
   }
 
-  /* ── O convite de material ─────────────────────────────────────────────
+  /* ── O guia gratuito na home ────────────────────────────────────────────
      ┌───────────────────────────────────────────────────────────────────┐
      │  O QUE ESTE BLOCO PROTEGE                                          │
      │                                                                    │
-     │  Desde 2017 o Google rebaixa página cujo conteúdo principal é       │
-     │  coberto por um interstício quando a pessoa chega DA BUSCA. Os      │
-     │  sete artigos do site existem para trazer gente da busca orgânica.  │
-     │                                                                    │
-     │  "O convite não está na tela na chegada" é a linha que separa uma   │
-     │  captação boa de uma perda de posição, e é invisível no código: um  │
-     │  gatilho trocado passa em lint, em tipo e em teste de unidade, e    │
-     │  cobra a conta semanas depois, em ranking.                          │
-     │                                                                    │
-     │  `lib/useConvite.test.ts` já guarda a lógica. Aqui a verificação é  │
-     │  no produto montado, num navegador de verdade.                     │
+     │  O convite que abria sozinho por cima da página virou uma seção    │
+     │  fixa da home (ver `MaterialGratuito` em `pages/Home.tsx`): sem     │
+     │  interstício, mas também sem o gatilho que garantia que ela         │
+     │  aparecesse. Esta verificação prova que a seção e o formulário      │
+     │  dentro dela existem no HTML montado, e não só no código-fonte.     │
      └───────────────────────────────────────────────────────────────────┘ */
   {
-    console.log('\n=== convite de material ===');
+    console.log('\n=== guia gratuito na home ===');
     const p6 = await browser.newPage();
-    await p6.goto(`${base}/hipnoterapia`, { waitUntil: 'domcontentloaded' });
+    await p6.goto(base, { waitUntil: 'domcontentloaded' });
     await p6.waitForSelector('h1', { timeout: 20000 });
-
-    /*
-      Responder o aviso de cookies primeiro, porque é o que um visitante
-      faz — e porque o convite espera essa resposta de propósito: os dois
-      moram no mesmo canto inferior, e o convite cobriria no celular uma
-      pergunta sobre dados pessoais com uma oferta.
-
-      "Recusar", e não "aceitar": assim este teste também prova que o
-      convite não depende de consentimento para funcionar. Quem recusa
-      medição continua vendo o site inteiro.
-    */
     await p6.getByRole('button', { name: /^recusar$/i }).click({ timeout: 10000 });
-    await p6.waitForTimeout(2500);
 
-    const caixa = p6.locator('[aria-labelledby="convite-titulo"]');
-    const naChegada = await caixa.count();
-    console.log(`  na chegada: ${naChegada === 0 ? 'ausente' : 'PRESENTE'}`);
-    if (naChegada !== 0) {
-      console.log('      ✗ o convite abriu sozinho na chegada (interstício intrusivo)');
-      failures++;
-    }
+    const secao = p6.locator('#guia-gratuito');
+    const existeSecao = (await secao.count()) > 0;
+    console.log(`  seção na página: ${existeSecao ? 'sim' : 'NÃO'}`);
+    if (!existeSecao) failures++;
 
-    // E aparece depois de a pessoa rolar metade da página, que é o sinal
-    // de que ela está lendo em vez de passando.
-    await p6.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight * 0.6));
-    await p6.waitForTimeout(1200);
-    const aposRolar = await caixa.count();
-    console.log(`  depois de rolar: ${aposRolar > 0 ? 'presente' : 'AUSENTE'}`);
-    if (aposRolar === 0) {
-      console.log('      ✗ o convite não apareceu nem depois de meia página rolada');
-      failures++;
-    }
+    // O formulário chega por `lazy()` (o mesmo motivo de `OfertaDeMaterial`),
+    // então precisa de um instante para montar depois do JS carregar.
+    const formulario = secao.locator('form');
+    const existeFormulario = await formulario
+      .waitFor({ state: 'attached', timeout: 10000 })
+      .then(() => true)
+      .catch(() => false);
+    console.log(`  formulário dentro da seção: ${existeFormulario ? 'sim' : 'NÃO'}`);
+    if (!existeFormulario) failures++;
+
     await p6.close();
   }
 
@@ -496,6 +445,53 @@ const environmental =
       const TETO = 48 * 1024;
       if (comprimido > TETO) {
         console.log(`      ✗ ${comprimido} B comprimidos, acima do teto de ${TETO} B`);
+        failures++;
+      }
+    }
+  }
+
+  /* ── O teto do pedaço de ENTRADA ───────────────────────────────────────
+     ┌───────────────────────────────────────────────────────────────────┐
+     │  ESTA VERIFICAÇÃO EXISTE PELA MESMA RAZÃO QUE A DO FIREBASE       │
+     │                                                                   │
+     │  O `index-*.js` é o único JavaScript que TODA página baixa e      │
+     │  executa antes de ficar interativa. Ele chegou a 145 kB           │
+     │  comprimidos porque a biblioteca de animação inteira estava       │
+     │  dentro — 42 kB medidos, cobrados até de um artigo que é texto    │
+     │  corrido.                                                         │
+     │                                                                   │
+     │  Hoje o motor desce por `import()` depois da hidratação, e o que  │
+     │  sustenta essa separação é frágil de um jeito específico: basta   │
+     │  UMA linha importando `lib/animacao` de forma estática, ou um     │
+     │  `motion.div` no lugar de `m.div`, para o empacotador desistir de │
+     │  separar e devolver tudo para cá. Nada disso dá erro. O build     │
+     │  passa, o site funciona, e a conta chega em quem abre a página no │
+     │  celular.                                                         │
+     │                                                                   │
+     │  O teto é folgado de propósito: ele não existe para perseguir     │
+     │  bytes, e sim para acusar quando um pacote inteiro reaparece.     │
+     └───────────────────────────────────────────────────────────────────┘ */
+  {
+    console.log('\n=== pedaço de entrada ===');
+    const pasta = path.resolve('dist/assets');
+    const entrada = readdirSync(pasta).find((n) => /^index-.*\.js$/.test(n));
+
+    if (!entrada) {
+      console.log('      ✗ não achei o pedaço de entrada em dist/assets');
+      failures++;
+    } else {
+      const comprimido = gzipSync(readFileSync(path.join(pasta, entrada)), { level: 9 }).length;
+      console.log(`  ${entrada}: ${Math.round(comprimido / 1024)} kB comprimidos`);
+
+      /* Hoje são ~122 kB. O motor de animação sozinho são 42 kB, então
+         qualquer volta dele para cá estoura o teto com folga. */
+      const TETO = 132 * 1024;
+      if (comprimido > TETO) {
+        console.log(
+          `      ✗ ${comprimido} B comprimidos, acima do teto de ${TETO} B — ` +
+            'provavelmente algo que devia ser adiado voltou para o caminho crítico. ' +
+            'Ver o cabeçalho de `src/lib/animacao.ts`.',
+        );
         failures++;
       }
     }

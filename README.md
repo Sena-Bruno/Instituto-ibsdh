@@ -21,6 +21,8 @@ npm run dev        # http://localhost:3000
 | `npm run check:fix` | Corrige lint e formatação automaticamente |
 | `npm run knip` | Procura código e dependências sem uso |
 | `npm run smoke` | Teste de navegador nas rotas públicas (com o preview no ar) |
+| `npm run imagens` | Regera os cartões de compartilhamento e as variantes da imagem de LCP |
+| `npm run indexacao` | Avisa o Google das páginas novas/revisadas (com o build feito e a credencial configurada — ver [Indexação automática no Google](#indexação-automática-no-google)) |
 
 O `smoke` percorre as rotas públicas e falha se encontrar imagem quebrada,
 CTA de compra sem destino, título duplicado ou ausente, erro de console —
@@ -156,7 +158,7 @@ arte, então essa reserva não aparece em lugar nenhum.
 |---|---|
 | `BarraAviso` | A faixa dourada no topo — conteúdo em `site.ts`, chave `aviso` |
 | `Secao` + `Cabecalho` | Seção com régua, sobretítulo, título grande e brilho opcional |
-| `CardCurso` | O card de formação, dono de uma cor |
+| `CardCurso` | O card de formação, na cor de acento da marca |
 | `Numeros` | A faixa de números grandes |
 | `PaginaCurso` / `SecaoCurso` | Página de formação, com a coluna de compra fixa |
 | `Comparativo` | Tabela de duas colunas |
@@ -417,16 +419,6 @@ campanha de origem).
 primeira parte, vive só na aba, não identifica ninguém e só sai do
 aparelho dentro de um formulário que a própria pessoa envia. O GA4 é outra
 natureza — um terceiro recebendo cada página vista de quem não pediu nada.
-
-### Uma escolha de produto, para você conferir
-
-Enquanto o aviso espera resposta, **o convite de material não abre**. Os
-dois moram no mesmo canto inferior, e no celular o convite cobriria com
-uma oferta uma pergunta sobre dados pessoais.
-
-O custo: quem ignora o aviso a visita inteira não vê o convite. Achamos a
-troca certa — mas é troca, e você pode preferir o contrário. Está em
-`ConviteDeMaterial.tsx`, numa linha.
 
 ## De onde veio cada lead
 
@@ -698,16 +690,69 @@ publicar.
 
 ### Depois de publicar
 
-1. **Search Console** → *Inspeção de URL* em cada rota. O "HTML renderizado"
-   e o "HTML de origem" agora devem trazer o mesmo conteúdo.
-2. **Enviar o sitemap** (`/sitemap.xml`) uma vez. O `lastmod` sai do último
-   commit que tocou o arquivo da página, então passa a se atualizar sozinho.
+1. ~~Search Console → Inspeção de URL em cada rota, pedindo indexação à
+   mão.~~ **Automático** — ver
+   [Indexação automática no Google](#indexação-automática-no-google) logo
+   abaixo. Continua valendo abrir a *Inspeção de URL* se quiser **conferir**
+   que o Google já buscou a página, só deixou de ser preciso para pedir.
+2. ~~Enviar o sitemap uma vez.~~ **Automático**, pelo mesmo mecanismo: toda
+   publicação ou revisão resubmete o `/sitemap.xml` pela Search Console API.
 3. **Teste de resultados aprimorados** do Google em uma página de formação,
    para validar o `Course`.
 4. **HSTS preload:** o cabeçalho já declara `preload`, mas só vale depois de
    submeter o domínio em [hstspreload.org](https://hstspreload.org).
    Confirme antes que **todos** os subdomínios servem HTTPS — a lista é
    embutida nos navegadores e sair dela leva meses.
+
+### Indexação automática no Google
+
+Publicar um artigo (ou qualquer página nova) não exige mais abrir o Search
+Console. `.github/workflows/indexacao-google.yml` roda a cada push em `main`
+que toca `paginas.ts`, `artigos.ts` ou `materiais.ts`: builda o site, olha o
+`sitemap.xml` gerado e, para toda URL nova ou com `lastmod` diferente do
+último aviso, chama a **Indexing API** do Google — a mesma chamada que o
+botão "Solicitar indexação" faz — e resubmete o sitemap pela **Search
+Console API**. O que já foi avisado fica registrado em
+`scripts/indexacao-notificadas.json`, versionado no repositório, para o
+próximo run só notificar o que de fato mudou.
+
+⚠ A Indexing API só tem suporte **oficial** do Google para páginas de vaga
+de emprego ou transmissão ao vivo — não é o caso deste site. Usá-la para
+uma página comum é prática comum entre quem trabalha com SEO e, na
+prática, acelera a fila de rastreio, mas o Google pode simplesmente
+ignorar a notificação: nada aqui garante indexação, só pede que o
+rastreador olhe mais cedo. É por isso que o script também resubmete o
+sitemap — esse é o mecanismo oficial, mais lento, mas sem esse "pode não
+funcionar".
+
+**Configuração única** (feita fora deste repositório, uma vez):
+
+1. No [Google Cloud Console](https://console.cloud.google.com/), crie um
+   projeto (ou use um existente) e ative duas APIs: **Web Search Indexing
+   API** e **Search Console API**.
+2. Crie uma **conta de serviço** nesse projeto (*IAM e administrador* →
+   *Contas de serviço*), gere uma **chave JSON** e baixe o arquivo — não
+   precisa de nenhum papel/role do IAM, o acesso vem do passo 3.
+3. No [Search Console](https://search.google.com/search-console), abra a
+   propriedade `institutobrunosena.com.br` → *Configurações* →
+   *Usuários e permissões* → adicione o e-mail da conta de serviço
+   (`...@...iam.gserviceaccount.com`, dentro do JSON) como **Proprietário**.
+   As duas APIs exigem esse nível — "Completo" não basta para a Indexing
+   API.
+4. No GitHub, em *Settings → Secrets and variables → Actions* do
+   repositório, crie o secret `GOOGLE_INDEXACAO_CREDENCIAIS` com o
+   **conteúdo inteiro** do arquivo JSON baixado no passo 2.
+5. Só se a propriedade do Search Console for do tipo **domínio** (começa
+   com `sc-domain:`, e não com `https://`): crie também a variável de
+   repositório (não secret) `GOOGLE_SEARCH_CONSOLE_PROPRIEDADE` com o valor
+   `sc-domain:institutobrunosena.com.br`. Sem essa variável o script assume
+   uma propriedade de prefixo de URL (`https://institutobrunosena.com.br/`),
+   que é o tipo mais comum.
+
+Depois de configurado, dispare uma vez pela aba **Actions → Indexação no
+Google → Run workflow** para conferir que passa, sem precisar esperar o
+próximo artigo. Sem a credencial configurada, o workflow roda e sai
+silenciosamente sem notificar nada — não é considerado falha.
 
 ## Estrutura
 
@@ -805,6 +850,25 @@ O que o host precisa fazer, e já vai configurado nos três:
 | endereço inexistente | `404.html`, status 404 | idem | idem |
 | `/admin` | rewrite explícito | padrão | rewrite explícito |
 | HSTS, cache, cabeçalhos | sim | sim | sim |
+| `www` → ápice, 301 | `[[redirects]]` | `redirects` | **pelo domínio conectado** |
+
+> ### ⚠ A canonicalização de `www` não é igual nos três
+>
+> O mesmo site em `www.` e sem `www.` são dois sites para o rastreador, e a
+> autoridade que os links externos trazem se divide entre os dois.
+>
+> No Netlify e na Vercel o 301 está no arquivo de configuração. **No Firebase
+> Hosting ele não é configurável pelo `firebase.json`**: quem decide é o
+> domínio conectado no painel. Numa migração para lá, confira isso à mão —
+> é o tipo de regressão que não aparece em teste nenhum e leva semanas para
+> alguém notar.
+>
+> Em qualquer host, o teste é um comando:
+>
+> ```bash
+> curl -sI https://www.institutobrunosena.com.br/hipnoterapia | head -2
+> # espera-se: HTTP/2 301  +  location: https://institutobrunosena.com.br/hipnoterapia
+> ```
 
 **Ao trocar de host, confira duas coisas:** que `/formacoes` responde com o
 conteúdo de `formacoes/index.html` (e não com a home), e que um endereço
@@ -1128,9 +1192,7 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
   no Netlify e ela começa a contar (ver
   [Medição de conversão](#medição-de-conversão)). O aviso de cookies e a
   seção de privacidade já estão no ar, então não falta nada além da
-  variável. Confira a escolha de produto descrita em
-  [Uma escolha de produto](#uma-escolha-de-produto-para-você-conferir):
-  enquanto o aviso espera resposta, o convite de material não abre.
+  variável.
 - **Etiquetar os links que você divulga.** A coluna `campanha` do `/admin`
   só se preenche se o link levar `utm_`. Um link de anúncio útil é
   `institutobrunosena.com.br/pnl-practitioner?utm_source=instagram&utm_medium=cpc&utm_campaign=setembro`

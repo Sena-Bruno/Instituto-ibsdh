@@ -21,7 +21,7 @@ import {
   User,
   Users,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { lazy, type ReactNode, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import CardCurso from '../components/CardCurso';
 import CourseImage from '../components/CourseImage';
@@ -35,6 +35,7 @@ import Seo from '../components/Seo';
 import VideoPlayer from '../components/Video';
 import { courses, economiaDe, eixosComCurso, listaCursos } from '../config/courses';
 import { depoimentos } from '../config/depoimentos';
+import { materiais } from '../config/materiais';
 import { midia } from '../config/midia';
 import { meiosPagamento } from '../config/pagamento';
 import {
@@ -46,13 +47,8 @@ import {
   whatsappMessages,
 } from '../config/site';
 import { paletas } from '../lib/cores';
-import {
-  fundador,
-  listaDeCursos,
-  organizacao,
-  perguntasFrequentes,
-  websiteDoInstituto,
-} from '../lib/schema';
+import { listaDeCursos, perguntasFrequentes } from '../lib/schema';
+import { useMontado } from '../lib/useMontado';
 import { cn } from '../lib/utils';
 
 /**
@@ -207,6 +203,13 @@ function Hero() {
             ) : (
               <img
                 src="/brunosena.webp"
+                srcSet="/brunosena-600.webp 600w, /brunosena.webp 900w"
+                /* O retrato ocupa quase a largura da tela no celular e uma
+                   coluna estreita no desktop. Sem esta linha o navegador
+                   supõe 100vw e escolhe sempre o arquivo maior — que era o
+                   que acontecia, e num aparelho de 360 px significava
+                   baixar 143 kB para desenhar 340. */
+                sizes="(max-width: 1024px) 92vw, 460px"
                 alt="Bruno Sena, fundador do Instituto"
                 width={900}
                 height={1206}
@@ -377,6 +380,15 @@ function Sena() {
 
 /* ── Para quem é ──────────────────────────────────────────────────────────── */
 
+/*
+  Os itens de cada card são situações, não promessas. "Desbloqueie seu
+  potencial oculto" e "vença a ansiedade" são as frases que qualquer
+  curso online escreve — e que nenhuma pessoa usa para descrever o
+  próprio problema. A pessoa se reconhece no exemplo específico
+  ("adio a conversa há três semanas"), não no substantivo abstrato
+  ("procrastinação"). Se um item novo entrar aqui, o teste é: dá para
+  imaginar a cena? Se não dá, é slogan.
+*/
 const publicos = [
   {
     cor: 'accent' as const,
@@ -384,12 +396,12 @@ const publicos = [
     selo: 'Para você',
     titulo: 'Desenvolvimento pessoal',
     texto:
-      'Quebre ciclos de autossabotagem, elimine crenças limitantes e assuma o controle da sua mente e das suas emoções. Uma jornada de autoconhecimento — sem nenhuma intenção de atender ninguém, e isso é um caminho legítimo aqui.',
+      'Uma jornada de autoconhecimento — e está tudo bem se você nunca quiser atender ninguém. Muitos alunos fazem a formação só para si, e é um uso legítimo do método. As ferramentas são as mesmas do uso profissional; o que muda é onde você aplica.',
     itens: [
-      'Desbloqueie seu potencial oculto',
-      'Vença a ansiedade e a procrastinação',
-      'Melhore seus relacionamentos pessoais',
-      'Tenha mais foco, disciplina e inteligência emocional',
+      'Para quem adia há semanas uma conversa que já ensaiou de cabeça',
+      'Para quem conhece o próprio padrão de sabotagem — e o repete assim mesmo',
+      'Para quem quer técnica com passo a passo, não conselho motivacional',
+      'Para quem prefere testar tudo em si antes de indicar a alguém',
     ],
   },
   {
@@ -398,12 +410,12 @@ const publicos = [
     selo: 'Para profissionais',
     titulo: 'Carreira e negócios',
     texto:
-      'Construa uma carreira como terapeuta ou coach. Ferramentas avançadas de transformação humana para aplicar em pacientes, clientes ou na sua equipe — com certificação que permite atuação imediata.',
+      'Construa uma carreira como terapeuta ou coach, com certificação que permite atuação imediata. No SENA você conduz sessões completas com pacientes virtuais — e chega ao primeiro atendimento real já tendo errado e corrigido no simulador.',
     itens: [
-      'Certificação reconhecida nacionalmente',
-      'Nova fonte de renda ajudando pessoas',
-      'Ferramentas para terapeutas e psicólogos',
-      'Comunicação persuasiva e liderança',
+      'Para quem adia as primeiras sessões por medo de não estar “pronto”',
+      'Para quem trava no atendimento e muda de técnica no meio da sessão',
+      'Para quem não sabe quanto cobrar — nem como dizer o preço ao cliente',
+      'Para terapeutas, psicólogos e líderes que querem somar PNL à prática',
     ],
   },
 ];
@@ -486,10 +498,10 @@ function Cursos() {
 
   return (
     <Secao id="cursos" cor="accent" brilho brilhoEm="topo">
-      <Cabecalho
-        sobretitulo="Nossas formações"
-        titulo="Escolha sua ferramenta de transformação"
-      >
+      {/* O título anterior era "Escolha sua ferramenta de transformação" —
+          a frase que qualquer catálogo de curso online escreve. Este diz o
+          que a seção de fato pede: uma decisão de ponto de partida. */}
+      <Cabecalho sobretitulo="Nossas formações" titulo="Escolha por onde começar">
         Cada eixo tem a sua cor, e ela acompanha você do card até a página do curso. Se está
         começando, comece pelo Practitioner — é a base que torna todo o resto mais fácil.
       </Cabecalho>
@@ -1121,30 +1133,37 @@ function InCompany() {
             In Company
           </p>
 
+          {/* "Alto impacto" e "cultura de alta performance" são o jargão
+              que toda página de treinamento corporativo repete — e que não
+              descreve nada. O texto agora nomeia as situações que fazem um
+              RH procurar treinamento, porque é nelas que o leitor se
+              reconhece. */}
           <h2 className="titulo-secao">
-            Treinamentos corporativos de{' '}
-            <span className="text-brand-emerald">alto impacto</span>
+            O método das formações,{' '}
+            <span className="text-brand-emerald">dentro da sua empresa</span>
           </h2>
 
           <p className="mt-6 leading-relaxed">
-            A mesma metodologia que transforma vidas, formatada para os desafios da sua empresa.
-            Aumente o engajamento, desenvolva líderes e crie uma cultura de alta performance com
-            inteligência emocional.
+            As mesmas ferramentas das formações abertas, aplicadas aos problemas concretos do
+            seu time: o gestor que adia a conversa de feedback, a reunião que termina sem
+            decisão, o vendedor que desiste na primeira objeção. O programa é desenhado com o
+            RH, caso a caso — de workshop de um dia a trilha completa.
           </p>
 
           <ul className="mt-9 space-y-5">
             {[
               {
-                titulo: 'Liderança humanizada',
-                texto: 'Ferramentas de Coaching e PNL para gestão de equipes.',
+                titulo: 'Liderança',
+                texto: 'Feedback difícil, delegação e 1:1 que sai do roteiro genérico.',
               },
               {
-                titulo: 'Comunicação assertiva',
-                texto: 'Resolução de conflitos e negociação avançada.',
+                titulo: 'Comunicação',
+                texto: 'Conflito de prazo e escopo resolvido na conversa, não no e-mail.',
               },
               {
-                titulo: 'Inteligência emocional',
-                texto: 'Controle do estresse e produtividade sob pressão.',
+                titulo: 'Regulação emocional',
+                texto:
+                  'Pressão de meta sem queimar o time: estado sob controle antes da reunião crítica.',
               },
             ].map((item) => (
               <li key={item.titulo} className="flex items-start gap-4">
@@ -1199,6 +1218,101 @@ function InCompany() {
               width={1120}
               height={611}
             />
+          </div>
+        </Revela>
+      </div>
+    </Secao>
+  );
+}
+
+/* ── Guia gratuito ────────────────────────────────────────────────────────── */
+
+/**
+ * O que antes era o convite que abria sozinho por cima da página.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE VIROU SEÇÃO, E NÃO CONTINUOU POP-UP                          │
+ * │                                                                       │
+ * │  O convite (`ConviteDeMaterial`, removido) media metade da rolagem ou │
+ * │  40 segundos na página antes de abrir por cima do conteúdo — mesmo    │
+ * │  ficando fora da regra de interstício intrusivo do Google por nunca   │
+ * │  abrir na chegada, ainda era uma caixa cobrindo a tela para pedir um  │
+ * │  e-mail. Aqui o mesmo material — o guia gratuito de sete perguntas —  │
+ * │  vira uma seção fixa da home: quem quer, preenche; quem não quer,     │
+ * │  rola por cima sem nada tomar a tela dele.                            │
+ * │                                                                       │
+ * │  A troca é o gatilho, não a oferta nem o material — os dois seguem os │
+ * │  mesmos que os artigos usam, em `config/materiais.ts`.                │
+ * └───────────────────────────────────────────────────────────────────────┘
+ *
+ * O formulário entra por `lazy()`, como em `OfertaDeMaterial`: ele importa
+ * o SDK do Firebase, que não sobrevive à pré-renderização em Node.
+ */
+const FormularioDeMaterial = lazy(() => import('../components/FormularioDeMaterial'));
+
+const materialGratuito = materiais[0];
+
+const promessasDoGuia = [
+  'Sete perguntas verificáveis, para usar antes de pagar por qualquer formação',
+  'Vale para comparar qualquer escola de PNL, hipnoterapia ou coaching — inclusive a nossa',
+  'Abre na hora, no mesmo clique: sem espera e sem confirmação por e-mail',
+];
+
+function ReservaDoFormulario() {
+  return <div aria-hidden="true" className="h-[236px] animate-pulse rounded-lg bg-white/5" />;
+}
+
+function GuiaGratuito() {
+  const montado = useMontado();
+
+  if (!materialGratuito) return null;
+
+  return (
+    <Secao id="guia-gratuito" cor="accent" brilho brilhoEm="esquerda">
+      <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:gap-16">
+        <div>
+          <Cabecalho
+            sobretitulo={materialGratuito.formato}
+            cor="accent"
+            titulo={materialGratuito.titulo}
+          >
+            {materialGratuito.promessa}
+          </Cabecalho>
+
+          <ul className="mt-8 space-y-3.5">
+            {promessasDoGuia.map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <CheckCircle2
+                  className="mt-0.5 shrink-0 text-brand-accent"
+                  size={19}
+                  aria-hidden="true"
+                />
+                <span className="text-[15px] leading-relaxed text-brand-cream">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <Revela>
+          <div className="cartao p-7 md:p-8">
+            {montado ? (
+              <Suspense fallback={<ReservaDoFormulario />}>
+                <FormularioDeMaterial material={materialGratuito} origem="secao:/" />
+              </Suspense>
+            ) : (
+              /* O que o servidor desenha precisa ser igual ao primeiro passe
+                 do cliente, senão a hidratação descarta o HTML pré-renderizado
+                 inteiro. Ver `lib/useMontado.ts`. */
+              <>
+                <h3 className="mb-3 font-display text-xl font-semibold text-brand-cream">
+                  {materialGratuito.titulo}
+                </h3>
+                <p className="mb-6 text-[14.5px] leading-relaxed">
+                  {materialGratuito.promessa}
+                </p>
+                <ReservaDoFormulario />
+              </>
+            )}
           </div>
         </Revela>
       </div>
@@ -1263,8 +1377,12 @@ function AcaoFinal() {
           <p className="sobretitulo">Pronto para começar?</p>
         </div>
 
+        {/* Era "Sua transformação começa hoje" — a frase de fechamento de
+            qualquer página de vendas. Esta é específica do instituto: a
+            primeira sessão simulada no SENA é imediata, e é verificável
+            duas seções acima. */}
         <h2 className="titulo-secao">
-          Sua transformação começa <span className="texto-gradiente">hoje.</span>
+          Sua primeira sessão simulada pode ser <span className="texto-gradiente">hoje.</span>
         </h2>
 
         <p className="mx-auto mt-6 max-w-xl text-[17px] leading-relaxed md:text-lg">
@@ -1307,16 +1425,14 @@ export default function Home() {
     <>
       <Seo
         rota="/"
-        titulo="Instituto Bruno Sena | Formações em PNL, Hipnoterapia e Coaching"
+        /* 62 caracteres, que é o que a busca mostra antes de cortar. Era
+           "Formações em PNL…", com 64, e o corte caía dentro de "Coaching".
+           Os dois pontos no lugar do "em" devolveram os dois caracteres sem
+           tirar nem a marca nem nenhum dos três eixos. */
+        titulo="Instituto Bruno Sena | Formações: PNL, Hipnoterapia e Coaching"
         descricao="Formações em PNL, Hipnoterapia e Coaching com prática clínica supervisionada no simulador SENA. Certificação NLPEA e IBSDH, acesso vitalício."
         imagemAlt="Instituto Bruno Sena — formações em PNL, Hipnoterapia e Coaching"
-        dados={[
-          organizacao(),
-          fundador(),
-          websiteDoInstituto(),
-          listaDeCursos(listaCursos),
-          perguntasFrequentes(perguntas),
-        ]}
+        dados={[listaDeCursos(listaCursos), perguntasFrequentes(perguntas)]}
       />
 
       <main>
@@ -1334,6 +1450,7 @@ export default function Home() {
         <Mentor />
         <OndeAtuam />
         <InCompany />
+        <GuiaGratuito />
         <PerguntasFrequentes />
         <AcaoFinal />
       </main>

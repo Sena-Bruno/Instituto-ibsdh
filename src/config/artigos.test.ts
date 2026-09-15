@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { artigoPorSlug, artigosPublicados, artigosRelacionados } from './artigos';
+import { artigoPorSlug, artigos, artigosPublicados, artigosRelacionados } from './artigos';
+import { TETO_DO_TITULO, tituloComMarca } from './site';
 
 /**
  * Testes da malha entre os artigos.
@@ -99,6 +100,54 @@ describe('artigosRelacionados', () => {
     for (const artigo of artigosPublicados) {
       for (const sugerido of artigosRelacionados(artigo)) {
         expect(artigoPorSlug(sugerido.slug)).toBeDefined();
+      }
+    }
+  });
+});
+
+/*
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  OS DOIS LIMITES QUE A BUSCA IMPÕE, E QUE NINGUÉM VÊ AO EDITAR          │
+  │                                                                        │
+  │  Título e descrição são cortados no resultado de busca, e o corte não   │
+  │  aparece em lugar nenhum durante a escrita: o texto fica bonito no      │
+  │  editor, passa em lint, em tipo e em build, e a conta chega semanas     │
+  │  depois — em CTR, que é o número que ninguém liga ao commit que o       │
+  │  causou.                                                               │
+  │                                                                        │
+  │  O contrato já estava escrito nos comentários da interface `Artigo`.    │
+  │  Aqui ele passa a ser executável.                                      │
+  └─────────────────────────────────────────────────────────────────────────┘
+*/
+describe('os artigos cabem no resultado de busca', () => {
+  it('nenhum título passa da largura que o Google mostra', () => {
+    for (const artigo of artigos) {
+      const titulo = tituloComMarca(artigo.tituloSeo ?? artigo.titulo);
+      expect(titulo.length, `${artigo.slug}: "${titulo}"`).toBeLessThanOrEqual(TETO_DO_TITULO);
+    }
+  });
+
+  it('nenhuma descrição é cortada, nem é curta demais para ocupar a linha', () => {
+    for (const artigo of artigos) {
+      const descricao = artigo.descricaoSeo ?? artigo.resumo;
+      const onde = `${artigo.slug}: ${descricao.length} caracteres`;
+      expect(descricao.length, onde).toBeLessThanOrEqual(158);
+      expect(descricao.length, onde).toBeGreaterThanOrEqual(110);
+    }
+  });
+
+  it('descricaoSeo só existe onde o resumo não cabia', () => {
+    /*
+      Um `descricaoSeo` ao lado de um `resumo` que já cabia é duplicação
+      sem motivo: dois textos para manter, e no dia em que divergirem a
+      página mostra um e a busca mostra outro.
+    */
+    for (const artigo of artigos) {
+      if (artigo.descricaoSeo) {
+        expect(
+          artigo.resumo.length,
+          `${artigo.slug} não precisava de descricaoSeo`,
+        ).toBeGreaterThan(158);
       }
     }
   });

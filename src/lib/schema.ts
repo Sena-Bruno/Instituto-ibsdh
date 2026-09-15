@@ -135,7 +135,41 @@ export function fundador() {
     */
     url: `${site.url}${routes.sobre}`,
     worksFor: { '@id': ids.organizacao },
+    /*
+      `sameAs` é como o buscador liga esta declaração à pessoa que ele já
+      conhece em outros lugares. Com um perfil só, a ligação é uma
+      afirmação isolada; com vários, vira entidade corroborada — que é o
+      que o E-E-A-T mede num assunto que toca saúde e comportamento.
+
+      PARA AMPLIAR: acrescente aqui todo perfil público e verificável que
+      seja mesmo dele — YouTube, LinkedIn, o diretório da própria NLPEA.
+      Só perfil que abre sem login e que uma pessoa conseguiria conferir;
+      link que não abre é pior do que link que não existe.
+    */
     sameAs: [site.social.instagram],
+    /*
+      Os assuntos que ele ensina. São os três eixos do catálogo, e nada
+      além — declarar especialidade que o site não sustenta é afirmar algo
+      que a primeira conferência derruba.
+    */
+    knowsAbout: ['Programação Neurolinguística', 'Hipnoterapia clínica', 'Coaching'],
+    /*
+      A credencial, declarada como credencial e não só como filiação.
+
+      É a mesma que a /sobre mostra com o selo ao lado e que a home repete
+      — a regra do topo deste arquivo vale aqui como em todo o resto: o
+      que o schema afirma, a página mostra. Uma segunda entrada só entra
+      quando existir um segundo documento conferível.
+    */
+    hasCredential: {
+      '@type': 'EducationalOccupationalCredential',
+      name: 'Membro vitalício e Practitioner — NLPEA',
+      credentialCategory: 'Certificação profissional',
+      recognizedBy: {
+        '@type': 'Organization',
+        name: 'NLPEA — NLP Association of Excellence',
+      },
+    },
     memberOf: {
       '@type': 'Organization',
       name: 'NLPEA — NLP Association of Excellence',

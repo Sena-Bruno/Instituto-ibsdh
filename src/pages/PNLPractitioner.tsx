@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ArtigosDoCurso from '../components/ArtigosDoCurso';
 import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
 import Ementa from '../components/Ementa';
 import Faq from '../components/Faq';
@@ -8,12 +9,7 @@ import Seo from '../components/Seo';
 import { corDoCurso, courses } from '../config/courses';
 import { contarAulas, curriculoPnlPractitioner, somarCarga } from '../config/curriculos';
 import { routes } from '../config/site';
-import {
-  cursoComoSchema,
-  organizacao,
-  perguntasFrequentes,
-  trilhaDeNavegacao,
-} from '../lib/schema';
+import { cursoComoSchema, perguntasFrequentes, trilhaDeNavegacao } from '../lib/schema';
 
 const curso = courses.pnlPractitioner;
 /* A cor da página vem do eixo do curso, nunca do curso em si. */
@@ -112,10 +108,9 @@ export default function PNLPractitioner() {
         rota={routes.pnlPractitioner}
         titulo="Formação PNL Practitioner | Instituto Bruno Sena"
         descricao="Formação PNL Practitioner: VAKOG, rapport, ancoragem, metamodelo e submodalidades, com prática ilimitada no simulador SENA e certificação por competência."
-        imagem="/capa-practitioner.webp"
+        imagem="/og-practitioner.jpg"
         imagemAlt="Arte da formação PNL Practitioner do Instituto Bruno Sena"
         dados={[
-          organizacao(),
           cursoComoSchema(curso),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
@@ -299,23 +294,26 @@ export default function PNLPractitioner() {
           </div>
         </SecaoCurso>
 
-        <SecaoCurso
-          cor={cor}
-          sobretitulo="Garantia"
-          titulo="Você não arrisca nada. Exceto continuar do jeito que está."
-        >
+        {/* O título anterior era "Você não arrisca nada. Exceto continuar
+            do jeito que está." — a fórmula de confirmshaming que envergonha
+            quem hesita. Garantia é cláusula de contrato, não pressão: o
+            texto agora diz o que testar nos 7 dias e como o dinheiro
+            volta, e para. */}
+        <SecaoCurso cor={cor} sobretitulo="Garantia" titulo="7 dias para decidir por dentro">
           <div className="max-w-2xl space-y-4 text-[15.5px] leading-relaxed">
-            <p>Acesse o curso, assista às primeiras aulas, tente as técnicas.</p>
             <p>
-              Se em 7 dias você não sentir que é exatamente o que precisava — seja para uso
-              pessoal ou profissional — devolvemos 100% do seu investimento. Sem perguntas, sem
-              burocracia.
+              Acesse o curso, assista às primeiras aulas e conduza uma sessão no SENA — a
+              devolutiva da primeira simulação já mostra como o método funciona.
             </p>
-            <p className="font-display text-lg text-brand-cream">
-              O risco é todo nosso. A transformação pode ser sua.
+            <p>
+              Se em 7 dias você concluir que não é o que precisava, seja para uso pessoal ou
+              profissional, devolvemos 100% do valor pago. Basta um e-mail; não pedimos
+              justificativa.
             </p>
           </div>
         </SecaoCurso>
+
+        <ArtigosDoCurso rota={routes.pnlPractitioner} cor={cor} />
 
         <SecaoCurso cor={cor} sobretitulo="Perguntas" titulo="Dúvidas frequentes">
           <Faq items={perguntas} />

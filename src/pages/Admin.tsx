@@ -1,7 +1,8 @@
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { Copy, Download, Loader2, LogIn, ShieldAlert } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useEffect, useMemo, useState } from 'react';
 import Seo from '../components/Seo';
 import { SkeletonRow } from '../components/Skeleton';
@@ -267,7 +268,7 @@ export default function Admin() {
 
               <AnimatePresence initial={false}>
                 {erroLogin && (
-                  <motion.div
+                  <m.div
                     variants={collapse}
                     initial="hidden"
                     animate="visible"
@@ -280,7 +281,7 @@ export default function Admin() {
                     >
                       {erroLogin}
                     </p>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
             </div>
@@ -377,7 +378,7 @@ export default function Admin() {
 
               <AnimatePresence initial={false}>
                 {error && (
-                  <motion.div
+                  <m.div
                     variants={collapse}
                     initial="hidden"
                     animate="visible"
@@ -390,7 +391,7 @@ export default function Admin() {
                     >
                       {error}
                     </p>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
 

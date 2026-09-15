@@ -11,8 +11,14 @@ export const site = {
   shortName: 'IBSDH',
   legalName: 'Instituto Bruno Sena de Desenvolvimento Humano',
   url: 'https://institutobrunosena.com.br',
+  /**
+   * Aparece no rodapé de todas as páginas e na descrição da organização
+   * nos dados estruturados. Diz o que o instituto FAZ de diferente, não o
+   * que promete: "transforme sua vida com métodos comprovados" é a frase
+   * de qualquer curso online, e quem lê o rodapé já leu a página inteira.
+   */
   description:
-    'Formações em PNL, Hipnoterapia e Coaching. Transforme sua vida e a de outras pessoas com métodos comprovados.',
+    'Formações em PNL, Hipnoterapia e Coaching com prática supervisionada no simulador clínico SENA e certificação por competência demonstrada — não por presença.',
 
   whatsapp: {
     /** Formato E.164 sem símbolos, exigido pela API do wa.me */
@@ -99,6 +105,40 @@ export function whatsappLink(message?: string): string {
 export function mailtoLink(email: string, subject?: string): string {
   const base = `mailto:${email}`;
   return subject ? `${base}?subject=${encodeURIComponent(subject)}` : base;
+}
+
+/**
+ * O limite de caracteres de um `<title>`, usado por `tituloComMarca` e
+ * pelos testes que guardam os títulos do site.
+ */
+export const TETO_DO_TITULO = 62;
+
+/**
+ * Acrescenta " | Instituto Bruno Sena" ao título — quando couber.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE A MARCA PODE FICAR DE FORA                                   │
+ * │                                                                       │
+ * │  O Google corta o título por LARGURA, perto de 580 px, o que em       │
+ * │  português dá cerca de 60 caracteres. Passou disso, ele trunca — e    │
+ * │  muitas vezes reescreve o título inteiro por conta própria.           │
+ * │                                                                       │
+ * │  Os sete `tituloSeo` dos artigos respeitam o próprio contrato do      │
+ * │  `config/artigos.ts` ("até ~60 caracteres"). Só que a página anexava  │
+ * │  a marca DEPOIS — mais 22 caracteres — e os sete saíam entre 77 e 92. │
+ * │  O orçamento era gasto duas vezes porque quem escreve o texto e quem  │
+ * │  monta o título não olhavam para o mesmo número.                      │
+ * │                                                                       │
+ * │  Entre a marca e a promessa, a promessa fica. Quem busca "o que é     │
+ * │  PNL" ainda não conhece o instituto: é a segunda metade do título     │
+ * │  que o faz clicar, e era ela que estava sendo cortada. A marca        │
+ * │  continua no `og:site_name`, no JSON-LD e no domínio exibido no       │
+ * │  próprio resultado.                                                   │
+ * └───────────────────────────────────────────────────────────────────────┘
+ */
+export function tituloComMarca(titulo: string, teto = TETO_DO_TITULO): string {
+  const comMarca = `${titulo} | ${site.name}`;
+  return comMarca.length <= teto ? comMarca : titulo;
 }
 
 /** Assuntos dos contatos por e-mail, para o pedido já chegar identificado. */

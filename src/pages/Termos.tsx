@@ -1,6 +1,5 @@
 import Seo from '../components/Seo';
 import { routes, site } from '../config/site';
-import { organizacao } from '../lib/schema';
 
 /**
  * Quando este documento foi revisado pela última vez.
@@ -36,7 +35,6 @@ export default function Termos() {
         rota={routes.termos}
         titulo={`Termos de Uso | ${site.name}`}
         descricao="Condições de uso do site e das formações do Instituto Bruno Sena."
-        dados={[organizacao()]}
       />
 
       <main className="max-w-3xl mx-auto px-6 pt-36 pb-24">

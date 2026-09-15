@@ -55,6 +55,21 @@ export interface Artigo {
   tituloSeo?: string;
   /** A meta descrição e o resumo do card. Entre 120 e 158 caracteres. */
   resumo: string;
+  /**
+   * A meta descrição, quando o `resumo` é longo demais para ela.
+   *
+   * O `resumo` faz TRÊS trabalhos — meta descrição, texto do card na
+   * listagem e parágrafo de abertura do artigo — e os três têm orçamentos
+   * diferentes. A abertura precisa respirar; a busca corta perto de 158
+   * caracteres. Três artigos ficaram entre 189 e 233 porque a abertura
+   * venceu, e a descrição deles era truncada ou descartada, com o Google
+   * montando o trecho a partir do corpo do texto.
+   *
+   * Preencha SÓ quando o `resumo` passar de 158. Quem já cabe não muda —
+   * é por isso que o campo é opcional em vez de obrigatório.
+   */
+  descricaoSeo?: string;
+
   /** A pergunta que este artigo responde. Só documentação, não vai ao ar. */
   buscaAlvo: string;
   /** ISO 8601. `datePublished` do schema e ordem da listagem. */
@@ -86,9 +101,11 @@ export const artigos: Artigo[] = [
   {
     slug: 'o-que-e-pnl',
     titulo: 'O que é PNL, e o que ela não é',
-    tituloSeo: 'O que é PNL: o que a Programação Neurolinguística faz e o que não faz',
+    tituloSeo: 'O que é PNL: o que ela faz, e o que ela não faz',
     resumo:
       'A PNL estuda como a linguagem organiza a experiência e como padrões de comportamento podem ser mudados. Não é terapia nem ciência médica, e entender essa fronteira é o que separa o profissional sério do charlatão.',
+    descricaoSeo:
+      'A PNL estuda como a linguagem organiza a experiência e como padrões de comportamento mudam. Não é terapia nem ciência médica — e a fronteira importa.',
     buscaAlvo: 'o que é PNL / PNL funciona / para que serve a PNL',
     publicadoEm: '2026-09-07',
     revisadoEm: '2026-09-07',
@@ -200,9 +217,11 @@ export const artigos: Artigo[] = [
   {
     slug: 'metamodelo-da-linguagem',
     titulo: 'Metamodelo: as três formas como a fala esconde o problema',
-    tituloSeo: 'Metamodelo da linguagem na PNL: omissão, distorção e generalização',
+    tituloSeo: 'Metamodelo da PNL: omissão, distorção, generalização',
     resumo:
       'Omissão, distorção e generalização são os três modos como a linguagem encolhe a experiência. O metamodelo é o conjunto de perguntas que recupera o que ficou de fora, e a razão de "eu nunca consigo" ser uma frase incompleta.',
+    descricaoSeo:
+      'Omissão, distorção e generalização: as três formas como a fala esconde o problema, e as perguntas do metamodelo que devolvem o que sumiu.',
     buscaAlvo: 'metamodelo PNL / omissão distorção generalização / perguntas do metamodelo',
     publicadoEm: '2026-09-07',
     revisadoEm: '2026-09-07',
@@ -327,9 +346,11 @@ export const artigos: Artigo[] = [
   {
     slug: 'hipnose-clinica-o-que-e-o-transe',
     titulo: 'Hipnose clínica: o que o transe é, e o que ele não é',
-    tituloSeo: 'Hipnose clínica: o que é o transe, como funciona e quando não usar',
+    tituloSeo: 'Hipnose clínica: o que é o transe e quando não usar',
     resumo:
       'Transe não é sono, não é perda de controle e não é palco. É um estado de atenção concentrada com o senso crítico afrouxado, e saber quando não induzi-lo importa mais do que saber induzi-lo.',
+    descricaoSeo:
+      'O transe é um estado de atenção concentrada, não perda de controle. O que a hipnose clínica faz, o que não faz, e quando ela não deve ser usada.',
     buscaAlvo: 'o que é hipnose clínica / hipnose funciona / o que se sente na hipnose',
     publicadoEm: '2026-09-07',
     revisadoEm: '2026-09-07',
@@ -979,6 +1000,324 @@ export const artigos: Artigo[] = [
       },
     ],
   },
+
+  /* ──────────────────────────────────────────────────────────────────────
+     OS TRÊS DE SETEMBRO (RASCUNHO → REVISADOS)
+
+     Escritos a partir das ementas em `curriculos.ts`, seguindo o padrão de
+     escrita definido acima, e publicados como rascunho com `revisado:
+     false` enquanto faltava o que só o Bruno podia escrever: um
+     atendimento real em cada um, em primeira pessoa. Nenhum caso foi
+     inventado para preencher esse espaço enquanto ele não chegou — só
+     depois de o Bruno mandar os três é que passaram por revisão.
+     ────────────────────────────────────────────────────────────────────── */
+
+  {
+    slug: 'rapport-como-criar-conexao',
+    titulo: 'Rapport: como duas pessoas entram no mesmo ritmo',
+    tituloSeo: 'Rapport: o que é e como se cria de propósito',
+    resumo:
+      'Rapport não é truque de vendedor nem imitação óbvia. É o estado de sincronia que permite duas pessoas se ouvirem de verdade, e dá para criar de propósito.',
+    buscaAlvo: 'o que é rapport / como criar rapport / rapport na comunicação',
+    publicadoEm: '2026-09-15',
+    revisadoEm: '2026-09-15',
+    eixo: 'pnl',
+    cursoRelacionado: '/pnl-practitioner',
+    revisado: true,
+    corpo: [
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Tem gente com quem a conversa flui sem esforço, e gente com quem cada frase parece precisar de tradução. A diferença raramente está no assunto. Está numa coisa que acontece antes de qualquer palavra: rapport.',
+      },
+      { tipo: 'subtitulo', texto: 'O que é, de fato' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Rapport é o estado de confiança e sincronia entre duas pessoas, o solo em que qualquer conversa de verdade acontece. Não é simpatia superficial, e não é um truque de vendedor. É a sensação, mútua, de estar no mesmo compasso, e dá para perceber quando ela falta: a conversa continua, mas cada resposta chega um pouco fora do tempo certo.',
+      },
+      { tipo: 'subtitulo', texto: 'O corpo mostra antes da fala' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Observe duas pessoas que se dão bem numa mesa de bar. A postura de uma tende a ecoar a da outra, o ritmo da fala se aproxima, até a respiração se alinha. Ninguém combinou isso, e acontece porque as duas estão, de fato, em sintonia. A pergunta prática por trás da técnica é simples: se isso acontece sozinho quando existe conexão, o que acontece quando alguém reproduz o padrão de propósito, antes de a conexão existir?',
+      },
+      { tipo: 'subtitulo', texto: 'Matching e pacing: reproduzir o que já acontece sozinho' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Matching é acompanhar, com discrição, elementos do outro: postura, ritmo da fala, tom de voz, respiração, as palavras que a pessoa já usa para descrever a própria experiência. Pacing é sustentar esse acompanhamento por um tempo antes de tentar conduzir qualquer coisa, porque rapport que ainda não se firmou não aguenta ser puxado para lugar nenhum.',
+      },
+      {
+        tipo: 'lista',
+        itens: [
+          'Postura e gesto: sentar num ângulo parecido, sem copiar cada movimento, que é o que vira imitação.',
+          'Ritmo da fala: quem fala rápido e alto raramente confia em quem responde devagar e baixo, e o contrário também vale.',
+          'Respiração: acompanhar o ritmo da respiração alheia é uma das formas mais rápidas de sincronia, e uma das menos percebidas por quem a recebe.',
+          'Predicados: quem diz "não estou vendo saída" responde melhor a quem devolve em termos visuais do que a quem troca a metáfora para "isso não soa bem".',
+        ],
+      },
+      { tipo: 'subtitulo', texto: 'Onde isso vira imitação, e por que a imitação quebra tudo' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Copiar cada gesto da outra pessoa, no mesmo instante, não é rapport. É paródia, e qualquer um percebe, mesmo sem saber nomear o que percebeu. A técnica funciona quando fica discreta o bastante para passar abaixo do radar consciente: uma aproximação, não uma cópia. Um caminho mais seguro é o cruzamento: acompanhar o ritmo da respiração da pessoa com um leve toque de mão, por exemplo, em vez de respirar de forma visível no mesmo compasso dela.',
+      },
+      { tipo: 'subtitulo', texto: 'O que rapport não resolve' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Rapport abre a porta. Não decide o que passa por ela. Duas pessoas em sincronia perfeita ainda podem discordar sobre o que fazer, e alguém com ótimo rapport ainda pode estar propondo a coisa errada. Confundir os dois é onde a técnica vira desonestidade: usar sincronia para empurrar uma decisão que não é da outra pessoa é manipulação, mesmo que o gesto pareça inofensivo.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'A régua que separa as duas coisas',
+        texto:
+          'A pergunta que separa rapport de manipulação é fácil de fazer e difícil de responder com honestidade: a sincronia está a serviço de a pessoa se sentir ouvida, ou está a serviço de eu conseguir o que quero dela? A técnica é a mesma nos dois casos. A intenção não.',
+      },
+      { tipo: 'subtitulo', texto: 'A vez em que o espelho ficou óbvio demais' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Ele chegou com os braços cruzados, falando rápido, olhando pra porta de vez em quando. Respondia tudo em frases curtas. Sem pensar muito, comecei a espelhar: igualei a postura, o ritmo, o tom. Ele falou por uns dois minutos e travou de repente. Me olhou torto e falou: "você tá fazendo aquela coisa de me imitar?". Ali percebi o tamanho do erro. Tinha espelhado o pacote inteiro, gesto por gesto, do jeito mais visível possível, e ele sentiu. Técnica visível em rapport é o oposto de rapport.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Parei na hora e ri. Falei que sim, que tinha exagerado, que tinha aprendido a fazer aquilo e às vezes escorregava. Ele riu também, meio desconfiado. Disse que ia parar de fingir e só escutar, e a conversa andou dali. Ele contou que tinha sido mandado pra sessão pelo chefe, que não acreditava muito naquilo, que só queria que acabasse logo. Passei a responder mais devagar, com menos gesto, deixando ele escolher o ritmo. Ele desacelerou junto. Falou de uma separação recente, coisa que não tinha mencionado antes. No fim disse que não sabia por que tinha contado aquilo. Eu sabia. Foi porque parei de atuar.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'O que ficou dessa sessão',
+        texto:
+          'Rapport não é espelhar, é ajustar. Espelhar é o atalho que se aprende primeiro, e só funciona quando fica invisível, com alguém já minimamente disponível. Com quem chega desconfiado, o espelho vira muro. Naquele dia o que destravou o cliente não foi a técnica. Foi eu assumir, na frente dele, que a técnica tinha atrapalhado.',
+      },
+      { tipo: 'subtitulo', texto: 'Por que isso é ensinado com prática, e não com leitura' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Ler sobre matching e pacing é simples. Perceber o ritmo de respiração de alguém, ao vivo, sem ficar mecânico ou óbvio, exige repetição. Por isso, na formação, rapport aparece em dois blocos, um básico e um avançado, com exercício em par a cada aula, antes de qualquer prática com cliente real.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A [ementa do PNL Practitioner](/pnl-practitioner) mostra como os dois módulos de rapport se distribuem, aula por aula, com o exercício correspondente a cada uma.',
+      },
+      {
+        tipo: 'citacao',
+        texto:
+          'Rapport não é fazer a pessoa gostar de você. É fazer a pessoa sentir que pode ser ouvida.',
+      },
+    ],
+  },
+
+  {
+    slug: 'autohipnose-o-que-e',
+    titulo: 'Autohipnose: o mesmo transe, sem ninguém guiando',
+    tituloSeo: 'Autohipnose: o que é e para que ela serve',
+    resumo:
+      'Toda hipnose é, no fundo, autoinduzida: quem guia apenas facilita o caminho. Sem esse guia, o que dá para fazer com segurança encolhe, e vale saber onde.',
+    buscaAlvo: 'o que é autohipnose / como fazer autohipnose / autohipnose funciona',
+    publicadoEm: '2026-09-15',
+    revisadoEm: '2026-09-15',
+    eixo: 'hipnoterapia',
+    cursoRelacionado: '/hipnoterapia',
+    revisado: true,
+    corpo: [
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Existe uma confusão comum sobre autohipnose: a ideia de que é uma versão menor da hipnose de verdade, sem a força que só alguém guiando conseguiria produzir. Não é bem assim. Tecnicamente, toda hipnose é autoinduzida. O hipnoterapeuta não entra na cabeça de ninguém e não faz nada acontecer à força. Ele cria as condições, guia a atenção e propõe sugestões, e é a pessoa quem entra em transe, sozinha, com ou sem ajuda.',
+      },
+      { tipo: 'subtitulo', texto: 'Então o que muda quando não há guia' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'O que muda não é o mecanismo. É a calibração. Um hipnoterapeuta observa o corpo do cliente, ajusta o ritmo da indução ao que vê, percebe resistência antes que ela vire um "não funcionou" e decide, na hora, aprofundar ou recuar. Sozinho, você perde esse par de olhos de fora. Fica sem quem calibra por você, e isso limita, com segurança, o que dá para fazer.',
+      },
+      { tipo: 'subtitulo', texto: 'Os passos básicos, sem enfeite' },
+      {
+        tipo: 'lista',
+        itens: [
+          '**Ambiente.** Um lugar em que ninguém vai te interromper nos próximos quinze ou vinte minutos. Barulho de fundo não impede o transe, mas interrupção sim.',
+          '**Foco.** Escolha um ponto fixo, físico ou mental, e sustente a atenção nele por um minuto antes de começar qualquer indução.',
+          '**Indução simples.** Uma contagem regressiva de dez a um, associando cada número a uma sensação de peso ou de calor que aumenta, é a mais fácil de sustentar sozinho.',
+          '**Aprofundamento.** Uma imagem repetida, como descer uma escada ou afundar numa poltrona, cumpre esse papel sem exigir esforço de atenção.',
+          '**Sugestão.** Curta, no presente, no positivo. "Eu durmo com facilidade" funciona melhor que "eu não vou mais ter insônia", pela mesma razão que um objetivo mal formulado falha: a mente que processa a frase precisa primeiro pensar no que ela nega.',
+          '**Emergência.** Uma contagem de um a cinco, dizendo a si mesmo que a cada número volta mais alerta, encerra o transe sem susto.',
+        ],
+      },
+      { tipo: 'subtitulo', texto: 'O que dá para trabalhar sozinho' },
+      {
+        tipo: 'lista',
+        itens: [
+          'Relaxamento e sono.',
+          'Preparação para um desempenho: uma apresentação, uma prova, uma competição.',
+          'Foco antes de uma tarefa que exige concentração sustentada.',
+          'Reforço de um hábito simples que você já decidiu mudar, sem grande carga emocional por trás dele.',
+        ],
+      },
+      {
+        tipo: 'subtitulo',
+        texto: 'O que não dá, e por que insistir sozinho é onde o risco mora',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Regressão, trabalho de trauma, fobia incapacitante e qualquer situação em que uma emoção forte pode emergir sem aviso não são território de autohipnose. Sem ninguém observando de fora, não existe quem interrompa se algo sair do combinado. Isso já apareceu [neste texto sobre regressão e falsas memórias](/artigos/regressao-e-falsas-memorias): o risco não está no transe, está no que se faz com o que aparece dentro dele, e sozinho não há quem cuide disso por você.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'O espelho cego',
+        texto:
+          'Sozinho, você não consegue observar o que muda na própria fisiologia, porque o instrumento que observaria é o mesmo que está em transe. A consequência mais comum não é perigo, é decepção: a pessoa espera uma experiência intensa, cochila de leve, e conclui que "não funcionou" quando só faltou profundidade, não resultado.',
+      },
+      { tipo: 'subtitulo', texto: 'A cliente que tentou sozinha, e o que faltou pra ela' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Uma cliente chegou dizendo que tinha feito uma regressão sozinha. Tinha visto vídeos no YouTube, achado uma gravação que prometia "acessar memórias de infância" e feito à noite, no quarto, de fone de ouvido. Deu errado. Lembrava de ter entrado num estado em que não conseguia mexer o corpo, e ficou com a sensação de que havia alguém no quarto. Depois disso, três noites sem dormir direito, com medo de fechar os olhos. Isso tinha acontecido dois meses antes, e o medo ainda estava ali.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Na anamnese ficou claro o que faltava. Ela não tinha como perceber o que estava acontecendo naquele momento: sem referência de estado hipnótico, sem saber voltar, sem recurso instalado, sem ninguém por perto. A gravação conduzia uma coisa pesada e terminava de forma abrupta. Sem alguém observando o corpo dela, não havia como saber que aquilo era profundo demais pra um primeiro contato, sozinha, à noite, sem preparo nenhum. O problema não era a técnica. Era ter feito sem ter o que fazer quando alguma coisa aparecesse.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'O trabalho começou bem básico. Instalei um recurso simples, ensinei uma respiração para voltar sempre que ela quisesse, e deixei ela experimentar em sessão, várias vezes, um estado leve. Só depois disso passou a usar em casa, e só para dormir: áudio simples, dez minutos, com uma regra clara, se sentisse que estava indo fundo demais, interrompia. Semanas depois voltou dizendo que tinha dormido a noite inteira pela primeira vez em meses.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'O que ela levou pra casa',
+        texto:
+          'Não foi uma técnica nova. Foi um jeito de perceber o próprio estado, e de saber que dava pra parar. É exatamente isso que falta quando alguém tenta sozinho sem ter passado por isso guiado antes.',
+      },
+      {
+        tipo: 'subtitulo',
+        texto: 'Quando autohipnose e sessão com profissional se complementam',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Um caminho comum e produtivo é aprender a indução numa sessão guiada, com alguém calibrando o processo, e depois levar essa mesma indução para uso próprio, dentro do que ela suporta com segurança. É o que se ensina no módulo de autohipnose da formação: não uma técnica isolada, mas a continuação de um trabalho que começou com supervisão.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'A [ementa da formação em Hipnoterapia Clínica](/hipnoterapia) mostra onde a autohipnose entra no percurso, e o que vem antes dela.',
+      },
+      {
+        tipo: 'citacao',
+        texto:
+          'Autohipnose não é hipnose sem regra. É hipnose sem quem cuida da regra por você.',
+      },
+    ],
+  },
+
+  {
+    slug: 'perguntas-poderosas-em-coaching',
+    titulo: 'A pergunta que faz o trabalho que o conselho não faz',
+    tituloSeo: 'Perguntas poderosas em coaching: o que são',
+    resumo:
+      'Dar conselho é o instinto mais comum e o mais inútil num processo de coaching. A ferramenta de verdade é a pergunta certa, feita na hora certa.',
+    buscaAlvo:
+      'perguntas poderosas em coaching / como fazer boas perguntas / pergunta poderosa exemplos',
+    publicadoEm: '2026-09-15',
+    revisadoEm: '2026-09-15',
+    eixo: 'coaching',
+    cursoRelacionado: '/master-coach',
+    revisado: true,
+    corpo: [
+      {
+        tipo: 'paragrafo',
+        texto:
+          'O instinto mais forte de quem começa a atender é dar conselho. Alguém descreve um problema, a solução parece óbvia, e a vontade de dizer "faz assim" é quase impossível de segurar. É também o jeito mais rápido de tirar a pessoa do próprio processo.',
+      },
+      { tipo: 'subtitulo', texto: 'Por que o conselho, mesmo bom, atrapalha' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Um conselho resolve o problema de hoje e não ensina nada sobre o próximo. Pior: coloca a responsabilidade da solução em quem aconselhou, não em quem precisa agir. Se der certo, o crédito é de quem sugeriu. Se der errado, a pessoa não aprende por que errou, só que a sugestão falhou. A pergunta faz o oposto: devolve a responsabilidade, e junto com ela o aprendizado.',
+      },
+      { tipo: 'subtitulo', texto: 'O que torna uma pergunta poderosa' },
+      {
+        tipo: 'lista',
+        itens: [
+          '**Aberta, não fechada.** "Você já pensou em pedir ajuda?" aceita sim ou não, e a conversa para ali. "O que te impede de pedir ajuda?" exige uma resposta que revela alguma coisa.',
+          '**Pressupõe capacidade.** "Por que você não consegue decidir?" carrega a suposição de um defeito. "O que você precisa saber para decidir?" pressupõe que a decisão está ao alcance.',
+          '**Aponta para ação, não para justificativa.** Perguntas que começam com "o quê" e "como" levam a um passo. As que começam com "por quê" levam a uma explicação, e explicação sozinha não move nada.',
+          '**Cabe numa frase.** Pergunta longa, com contexto embutido, já entrega a resposta que quem pergunta queria ouvir. Isso é sugestão disfarçada de pergunta.',
+        ],
+      },
+      { tipo: 'subtitulo', texto: 'Por que "por quê" trava mais do que ajuda' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Perguntar "por que você fez isso" quase sempre produz defesa, porque a mente ouve acusação onde só havia curiosidade. A pessoa para de pensar no problema e passa a justificar a própria conduta. O mesmo conteúdo, perguntado como "o que estava em jogo quando você decidiu isso", pede a mesma informação sem pedir defesa nenhuma. É o [mesmo mecanismo do metamodelo](/artigos/metamodelo-da-linguagem): a forma da pergunta decide se a informação que falta vem à tona ou se esconde ainda mais.',
+      },
+      { tipo: 'subtitulo', texto: 'O silêncio depois da pergunta' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Uma pergunta boa, seguida de silêncio, incomoda. O impulso de quem pergunta é preencher esse vazio com outra pergunta, uma explicação, um exemplo, qualquer coisa que alivie o desconforto de esperar. É exatamente esse desconforto que produz a resposta que vale a pena. Quem interrompe o próprio silêncio está protegendo a si mesmo, não ajudando quem responde.',
+      },
+      { tipo: 'subtitulo', texto: 'Perguntar demais é o erro oposto' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Uma pergunta atrás da outra, sem dar tempo de a primeira resposta assentar, vira interrogatório. Cada pergunta nova, feita cedo demais, comunica que a resposta anterior não bastou, e a pessoa se fecha. A pergunta certa depende de ter ouvido de verdade a resposta anterior, não de ter uma lista pronta na cabeça para disparar.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'A pergunta não é neutra',
+        texto:
+          'Toda pergunta carrega um pressuposto embutido, e o pressuposto ensina tanto quanto a resposta. Perguntar "o que já funcionou antes, mesmo que em parte" pressupõe que alguma coisa funcionou. É outro jeito de fazer o que o metamodelo faz com o quantificador universal: uma exceção derruba a regra de que "nada funciona".',
+      },
+      { tipo: 'subtitulo', texto: 'A manhã que ele já tinha esquecido como era' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Um cliente estava decidindo se saía ou não do emprego. Já tinha contado a mesma história três vezes, com os mesmos argumentos, do mesmo jeito. Perguntei por que ele não pedia demissão, e ele respondeu na lata, num tom quase mecânico: porque tinha contas, porque o mercado estava ruim, porque a idade, porque a família. Cada resposta vinha pronta. Ele não estava pensando, estava defendendo. Depois de três perguntas assim, os dois já estávamos cansados, e a conversa tinha morrido num ringue que ele conhecia de cor.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Parei e troquei a pergunta: "o que você faria amanhã, na hora de acordar, se já tivesse pedido a demissão?" Ele ficou parado um tempo, a primeira pausa real da sessão. Aí disse, devagar, que ia fazer café com calma. Que ia levar os filhos na escola. Que ia sentar na varanda sem olhar o celular. Disse que fazia tempo que não lembrava como era uma manhã sem aquele peso. Não tinha nada de grandioso na resposta, mas ela abriu a porta que o "por quê" tinha fechado. Ele começou a falar do que queria, não do que temia.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Trabalhamos o resto da sessão em cima disso. Não era caso de pedir demissão na segunda seguinte. Ele saiu com uma tarefa simples: escolher uma manhã da semana para fazer exatamente aquilo, mesmo trabalhando. Dois meses depois pediu demissão, mas já com um plano, e o plano tinha nascido dessa conversa.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'Por quê puxa justificativa',
+        texto:
+          '"Por quê" puxa justificativa. "O quê" e "como" puxam cena. Quando o cliente está preso num discurso ensaiado, a saída costuma ser trocar a pergunta por uma que ele ainda não tenha resposta pronta.',
+      },
+      {
+        tipo: 'subtitulo',
+        texto: 'Quando a pergunta certa também é: isso é caso de coaching?',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Nem toda pergunta poderosa serve para todo momento. Diante de alguém em sofrimento clínico, a pergunta certa não é sobre meta nenhuma, e insistir nela é usar a ferramenta certa no lugar errado, do jeito que [este outro texto já detalha](/artigos/coaching-ou-terapia).',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Formular a pergunta certa, no tempo certo, é treino, não talento. É conteúdo próprio na formação, com prática em par a cada módulo. A lista de espera do [Master Coach](/master-coach) traz mais sobre como o curso trabalha isso.',
+      },
+      {
+        tipo: 'citacao',
+        texto:
+          'Quem só sabe dar conselho tem uma ferramenta. Quem sabe perguntar tem um método.',
+      },
+    ],
+  },
 ];
 
 /** Só o que o Bruno já revisou vai ao ar. Ver o aviso no topo do arquivo. */
@@ -1027,6 +1366,33 @@ export function artigosRelacionados(artigo: Artigo, quantos = 3): Artigo[] {
 }
 
 /** Encontra um artigo pelo slug da URL. */
+/**
+ * Os artigos publicados que levam a uma formação.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  A RELAÇÃO EXISTIA, MAS SÓ NUMA DIREÇÃO                               │
+ * │                                                                       │
+ * │  O artigo declara `cursoRelacionado` e linka o curso. O curso não     │
+ * │  sabia que havia artigo sobre o assunto dele.                         │
+ * │                                                                       │
+ * │  Medido no HTML pré-renderizado, o resultado era este: cada artigo    │
+ * │  recebia de 2 a 7 links de entrada — todos vindos da própria listagem │
+ * │  e dos outros artigos — enquanto as sete páginas de curso recebiam 19 │
+ * │  cada, do cabeçalho e do rodapé, e não devolviam nenhum. O conteúdo   │
+ * │  editorial, que é o que traz gente da busca, era um bairro isolado do │
+ * │  site.                                                                │
+ * │                                                                       │
+ * │  A ligação inversa resolve as duas pontas de uma vez: distribui       │
+ * │  autoridade para quem precisa ranquear, e dá a quem está na página de │
+ * │  venda e ainda não decidiu algo para ler em vez de ir embora.         │
+ * └───────────────────────────────────────────────────────────────────────┘
+ *
+ * Rascunho fica de fora: é `noindex` e não aparece em superfície pública.
+ */
+export function artigosDoCurso(rotaDoCurso: string): Artigo[] {
+  return artigosPublicados.filter((a) => a.cursoRelacionado === rotaDoCurso);
+}
+
 export function artigoPorSlug(slug?: string): Artigo | undefined {
   return artigos.find((a) => a.slug === slug);
 }

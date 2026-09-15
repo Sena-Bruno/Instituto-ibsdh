@@ -63,6 +63,25 @@ export interface Pagina {
    */
   fonte?: string;
   /**
+   * A data de modificação de UMA rota expandida, em W3C Datetime.
+   *
+   * Existe porque `fonte` não serve a rota com parâmetro. Os sete artigos
+   * moram no mesmo `config/artigos.ts`, então o `lastmod` derivado do
+   * último commit daquele arquivo saía IDÊNTICO nos sete — e corrigir uma
+   * vírgula num artigo reescrevia a data dos outros seis.
+   *
+   * É o sinal falso que o `prerender.mjs` diz querer evitar, e o custo é
+   * concreto: o Google enfileira seis páginas intocadas, não encontra
+   * mudança nenhuma, e aprende a descontar o arquivo — inclusive na vez
+   * em que o artigo REALMENTE foi revisado, que é quando o sinal
+   * precisaria funcionar.
+   *
+   * Quem tem `dataDe` responde pela própria data; o resto continua no
+   * `fonte`.
+   */
+  dataDe?: (rota: string) => string | undefined;
+
+  /**
    * Para rotas com parâmetro (`/artigos/:slug`), os caminhos concretos
    * que ela representa.
    *
@@ -176,6 +195,18 @@ export const paginas: Pagina[] = [
        a ausência dele no sitemap, logo abaixo. */
     expandir: () => artigos.map((a) => `${routes.artigos}/${a.slug}`),
     expandirSitemap: () => artigosPublicados.map((a) => `${routes.artigos}/${a.slug}`),
+    /* A MESMA data que o `dateModified` do Article já declara e que a
+       página imprime ao lado da assinatura. Não a do commit — um ajuste
+       de código no arquivo não é uma revisão do texto — e nunca a de
+       hoje: data que avança sozinha é sinal falso de frescor, e o Google
+       desconta o site que o emite. Meio-dia UTC porque o campo é uma data
+       e o sitemap pede hora; qualquer hora fixa serve, desde que não mude
+       sozinha. */
+    dataDe: (rota) => {
+      const slug = rota.slice(`${routes.artigos}/`.length);
+      const artigo = artigos.find((a) => a.slug === slug);
+      return artigo && `${artigo.revisadoEm ?? artigo.publicadoEm}T12:00:00+00:00`;
+    },
   },
   /*
     Os materiais entregues em troca de contato.

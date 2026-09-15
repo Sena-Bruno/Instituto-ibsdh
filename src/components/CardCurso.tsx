@@ -1,7 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { type Course, corDoCurso } from '../config/courses';
+import type { Course } from '../config/courses';
 import { paletas } from '../lib/cores';
 import { cn } from '../lib/utils';
 import CourseImage from './CourseImage';
@@ -9,14 +9,17 @@ import CourseImage from './CourseImage';
 /**
  * O card de formação.
  *
- * Recebe só o curso: cor, selo, resumo, preço, dados e situação saem todos
- * de `config/courses.ts`. É o que permite acrescentar um curso novo sem
- * tocar em componente nenhum — e o que garante que o card da home, o do
- * catálogo e o da página 404 nunca discordem entre si.
+ * Recebe só o curso: selo, resumo, preço, dados e situação saem todos de
+ * `config/courses.ts`. É o que permite acrescentar um curso novo sem tocar
+ * em componente nenhum — e o que garante que o card da home, o do catálogo
+ * e o da página 404 nunca discordem entre si.
  *
- * A cor vem do EIXO do curso, não dele próprio: com vinte formações, uma
- * cor por curso esgotaria as cores distinguíveis e viraria uma tabela para
- * decorar, em vez de uma pista de reconhecimento.
+ * A cor é uma só — a de acento da marca — para todos os cards. Antes cada
+ * um herdava a cor do EIXO do curso, e com quatro cores lado a lado a
+ * vitrine lia como quatro produtos concorrentes, não como um catálogo de
+ * um instituto só. A cor do eixo continua orientando em outros lugares
+ * (o rail de compra, o brilho da página do curso, o menu) — só o card
+ * parou de variar.
  *
  * ┌───────────────────────────────────────────────────────────────────────┐
  * │  A ARTE VOLTOU AO TOPO DO CARD                                        │
@@ -52,7 +55,7 @@ export default function CardCurso({
   /** Ícone do card, exibido junto ao selo. */
   icone?: ReactNode;
 }) {
-  const p = paletas[corDoCurso(curso)];
+  const p = paletas.accent;
   const emBreve = curso.situacao === 'emBreve';
   const dados = [curso.carga, curso.aulas, curso.certificado].filter(Boolean);
 

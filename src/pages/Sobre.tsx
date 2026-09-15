@@ -2,9 +2,11 @@ import { ArrowRight, Instagram, Mail, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Secao, { Cabecalho, Revela } from '../components/Secao';
 import Seo from '../components/Seo';
+import { artigosPublicados } from '../config/artigos';
 import { listaCursos } from '../config/courses';
+import { eixos } from '../config/eixos';
 import { routes, site, whatsappLink, whatsappMessages } from '../config/site';
-import { fundador, organizacao, trilhaDeNavegacao } from '../lib/schema';
+import { trilhaDeNavegacao } from '../lib/schema';
 
 /**
  * Quem assina o método.
@@ -75,12 +77,10 @@ export default function Sobre() {
         rota={routes.sobre}
         titulo={`Sobre Bruno Sena e o Instituto | ${site.name}`}
         descricao="Quem é Bruno Sena, como nasceu o Instituto e o que ele defende — e recusa — no ensino de PNL, Hipnoterapia e Coaching."
-        imagem="/brunosena.webp"
+        imagem="/og-sobre.jpg"
         imagemAlt="Bruno Sena, fundador do Instituto Bruno Sena"
         tipo="profile"
         dados={[
-          organizacao(),
-          fundador(),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
             { nome: 'Sobre', rota: routes.sobre },
@@ -95,6 +95,13 @@ export default function Sobre() {
               <div className="overflow-hidden rounded-[22px] border border-white/10">
                 <img
                   src="/brunosena.webp"
+                  srcSet="/brunosena-600.webp 600w, /brunosena.webp 900w"
+                  /* O retrato ocupa quase a largura da tela no celular e uma
+                     coluna estreita no desktop. Sem esta linha o navegador
+                     supõe 100vw e escolhe sempre o arquivo maior — que era o
+                     que acontecia, e num aparelho de 360 px significava
+                     baixar 143 kB para desenhar 340. */
+                  sizes="(max-width: 1024px) 92vw, 460px"
                   width={900}
                   height={1206}
                   /* A imagem que abre a página: `eager` e prioridade alta,
@@ -211,6 +218,63 @@ export default function Sobre() {
             ))}
           </div>
         </Secao>
+
+        {/* ── O que ele assina ──────────────────────────────────────────── */}
+        {/*
+          ┌───────────────────────────────────────────────────────────────┐
+          │  ESTA SEÇÃO NÃO É VITRINE DE CONTEÚDO                         │
+          │                                                               │
+          │  Os sete artigos declaram esta página como autoria nos dados  │
+          │  estruturados — o `url` do nó `Person`, em `lib/schema.ts`,   │
+          │  aponta para cá. Até aqui, quem seguisse essa declaração      │
+          │  chegava a uma página que falava DELE e não mostrava nada do  │
+          │  que ele escreveu: a autoria era afirmada numa ponta e não    │
+          │  confirmada na outra.                                         │
+          │                                                               │
+          │  A lista fecha o circuito, e é o que o Google chama de        │
+          │  página de autor. Num assunto que toca saúde e comportamento, │
+          │  é o sinal que separa conselho com responsável de conselho    │
+          │  anônimo.                                                     │
+          │                                                               │
+          │  De quebra, resolve um problema de link: os artigos recebiam  │
+          │  link só da listagem e uns dos outros. Esta página recebe 19  │
+          │  links internos — todo cabeçalho e todo rodapé do site.       │
+          └───────────────────────────────────────────────────────────────┘
+        */}
+        {artigosPublicados.length > 0 && (
+          <Secao cor="blue">
+            <Cabecalho
+              sobretitulo="Textos"
+              cor="blue"
+              titulo={`O que ele já escreveu sobre o método`}
+            >
+              Cada um traz o mesmo critério das formações: o que a técnica faz, o que ela não
+              faz, e onde ela não deve ser usada.
+            </Cabecalho>
+
+            <ul className="mt-9 grid gap-3 md:grid-cols-2">
+              {artigosPublicados.map((artigo) => (
+                <li key={artigo.slug}>
+                  <Link
+                    to={`${routes.artigos}/${artigo.slug}`}
+                    className="cartao flex h-full flex-col p-5 transition-colors hover:border-brand-accent/40"
+                  >
+                    <span className="sobretitulo mb-2 text-brand-quiet">
+                      {eixos[artigo.eixo].nome}
+                    </span>
+                    <span className="font-display text-[16px] leading-snug font-bold text-brand-cream">
+                      {artigo.titulo}
+                    </span>
+                    <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-[13px] font-semibold text-brand-accent">
+                      Ler o artigo
+                      <ArrowRight size={13} aria-hidden="true" />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Secao>
+        )}
 
         {/* ── Para onde ir daqui ────────────────────────────────────────── */}
         <Secao cor="accent" brilho brilhoEm="centro">

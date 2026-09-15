@@ -1,5 +1,5 @@
 import { HelmetProvider, type HelmetServerState } from '@dr.pogodin/react-helmet';
-import { MotionConfig } from 'motion/react';
+import { domMax, LazyMotion, MotionConfig } from 'motion/react';
 import type { ComponentType } from 'react';
 import { renderToString } from 'react-dom/server';
 import { matchPath, StaticRouter } from 'react-router-dom';
@@ -91,9 +91,24 @@ export async function renderizar(rota: string): Promise<Renderizacao> {
       }}
     >
       <MotionConfig reducedMotion="user">
-        <StaticRouter location={rota}>
-          <Rotas resolvidos={resolvidos} />
-        </StaticRouter>
+        {/*
+          A MESMA fronteira que o App monta no navegador — ver o comentário
+          longo lá. Ela precisa existir dos dois lados: o React marca
+          fronteiras no HTML e conta com elas para hidratar, e um lado a
+          mais ou a menos faz a hidratação concluir que a árvore não
+          corresponde e redesenhar o documento inteiro, descartando
+          justamente o HTML que este arquivo existe para produzir.
+
+          Aqui os recursos entram DIRETO, e não por import(): o
+          `renderToString` é síncrono e não espera promessa nenhuma. No
+          servidor isso não custa nada — o pacote roda em Node, no build, e
+          não é baixado por ninguém.
+        */}
+        <LazyMotion strict features={domMax}>
+          <StaticRouter location={rota}>
+            <Rotas resolvidos={resolvidos} />
+          </StaticRouter>
+        </LazyMotion>
       </MotionConfig>
     </HelmetProvider>,
   );
@@ -158,12 +173,15 @@ export const rotasPrivadas: string[] = paginas.filter((p) => !p.publica).map((p)
  */
 export const rotasDoSitemap = paginas
   .filter((p) => p.publica)
-  .flatMap(({ rota, frequencia, prioridade, imagem, fonte, expandir, expandirSitemap }) =>
-    (expandirSitemap?.() ?? expandir?.() ?? [rota]).map((concreta) => ({
-      rota: concreta,
-      frequencia,
-      prioridade,
-      imagem,
-      fonte,
-    })),
+  .flatMap(
+    ({ rota, frequencia, prioridade, imagem, fonte, dataDe, expandir, expandirSitemap }) =>
+      (expandirSitemap?.() ?? expandir?.() ?? [rota]).map((concreta) => ({
+        rota: concreta,
+        frequencia,
+        prioridade,
+        imagem,
+        fonte,
+        /* Quando a rota sabe a própria data, ela vence a do commit. */
+        data: dataDe?.(concreta),
+      })),
   );

@@ -1,4 +1,5 @@
 import { Clock } from 'lucide-react';
+import ArtigosDoCurso from '../components/ArtigosDoCurso';
 import AvaliacoesDoCurso from '../components/AvaliacoesDoCurso';
 import ListaDeEspera from '../components/ListaDeEspera';
 import { ListaItens } from '../components/PaginaCurso';
@@ -6,7 +7,7 @@ import Secao, { Cabecalho } from '../components/Secao';
 import Seo from '../components/Seo';
 import { courses } from '../config/courses';
 import { routes } from '../config/site';
-import { cursoComoSchema, organizacao, trilhaDeNavegacao } from '../lib/schema';
+import { cursoComoSchema, trilhaDeNavegacao } from '../lib/schema';
 
 const curso = courses.masterCoach;
 
@@ -24,8 +25,8 @@ const arsenal = [
     nota: 'Como estruturar, precificar e vender processos de alto valor.',
   },
   {
-    titulo: 'Resultados acelerados',
-    nota: 'Técnicas de intervenção rápida para gerar mudança profunda.',
+    titulo: 'Intervenção breve',
+    nota: 'Protocolos com começo, meio e fim definidos — para processos que não se arrastam por meses.',
   },
 ];
 
@@ -36,10 +37,9 @@ export default function MasterCoach() {
         rota={routes.masterCoach}
         titulo="Formação Master Coach | Instituto Bruno Sena"
         descricao="Formação Master Coach do Instituto Bruno Sena: coaching executivo, abordagem sistêmica e estruturação de negócio. Entre na lista de espera do lançamento."
-        imagem="/capa-coaching.webp"
+        imagem="/og-coaching.jpg"
         imagemAlt="Arte da formação Master Coach do Instituto Bruno Sena"
         dados={[
-          organizacao(),
           cursoComoSchema(curso),
           trilhaDeNavegacao([
             { nome: 'Início', rota: routes.home },
@@ -66,9 +66,9 @@ export default function MasterCoach() {
                 <h1 className="titulo-hero max-w-2xl">Formação Master Coach</h1>
 
                 <p className="mt-6 max-w-2xl text-[17px] leading-relaxed md:text-lg">
-                  Eleve seus atendimentos ao nível de excelência: ferramentas sistêmicas,
-                  liderança e estruturação de negócio. Estamos preparando a formação para
-                  coaches que querem se destacar e gerar resultado consistente para os clientes.
+                  Coaching executivo, abordagem sistêmica e estruturação de negócio. A formação
+                  está em produção e segue o mesmo formato das outras três: prática no SENA,
+                  avaliação por competência e critérios de aprovação publicados.
                 </p>
 
                 <p className="mt-6 max-w-2xl text-[14px] leading-relaxed text-brand-quiet">
@@ -96,9 +96,14 @@ export default function MasterCoach() {
         </Secao>
 
         <Secao cor="emerald" brilho brilhoEm="direita">
-          <Cabecalho sobretitulo="Certificação" cor="emerald" titulo="A mais alta titulação">
-            A certificação de Coach Profissional atesta a capacidade de conduzir processos de
-            transformação profunda com segurança, método e resultado verificável.
+          <Cabecalho
+            sobretitulo="Certificação"
+            cor="emerald"
+            titulo="O que o certificado atesta"
+          >
+            A certificação de Coach Profissional atesta a condução de um processo completo de
+            coaching — do contrato inicial ao fechamento — demonstrada em avaliação, não
+            presumida pela presença nas aulas.
           </Cabecalho>
 
           <ListaItens
@@ -113,12 +118,16 @@ export default function MasterCoach() {
 
           <img
             src="/Certificado-IBSDH-coach.webp"
+            width={2339}
+            height={1653}
             alt="Certificado de Coach Profissional emitido pelo IBSDH"
             className="mt-10 w-full max-w-3xl rounded-[22px] border border-brand-emerald/20"
             loading="lazy"
             decoding="async"
           />
         </Secao>
+
+        <ArtigosDoCurso rota={routes.masterCoach} cor="emerald" variante="largura" />
 
         <Secao elevada>
           <AvaliacoesDoCurso courseId={curso.slug} />

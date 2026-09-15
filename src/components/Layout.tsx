@@ -1,10 +1,9 @@
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { pageTransition } from '../lib/motion';
 import AvisoDeCookies from './AvisoDeCookies';
 import BarraAviso from './BarraAviso';
-import ConviteDeMaterial from './ConviteDeMaterial';
 import FixedWhatsApp from './FixedWhatsApp';
 import Medicao from './Medicao';
 import ScrollToTop from './ScrollToTop';
@@ -61,7 +60,7 @@ export default function Layout() {
         está no HTML que o rastreador lê, e é ele que decide qual bloco é
         o conteúdo principal da página.
       */}
-      <motion.div
+      <m.div
         id="conteudo"
         key={pathname}
         variants={pageTransition}
@@ -69,14 +68,9 @@ export default function Layout() {
         animate="visible"
       >
         <Outlet />
-      </motion.div>
+      </m.div>
       <SiteFooter />
       <FixedWhatsApp />
-      {/* O convite de material. Mora aqui porque precisa valer para o site
-          inteiro, e ele mesmo decide onde não aparecer e quando abrir. Não
-          renderiza nada no HTML pré-renderizado: quem chega da busca, e o
-          robô que rastreia, recebem só a página. */}
-      <ConviteDeMaterial />
       {/* O aviso de cookies mora no fim, e é o que decide se a medição
           existe nesta visita. Não desenha nada no HTML pré-renderizado. */}
       <AvisoDeCookies />

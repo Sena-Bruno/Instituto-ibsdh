@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { Link } from 'react-router-dom';
 import { routes } from '../config/site';
 import { registrarDecisao, useDecisaoDeCookies } from '../lib/consentimento';
@@ -31,8 +32,7 @@ import { useMontado } from '../lib/useMontado';
  * │  O Google penaliza interstício que cobre o conteúdo no celular, e     │
  * │  abre exceção justamente para aviso exigido por lei — mas a exceção   │
  * │  vale para o que é proporcionado, não para o que toma a tela. Uma     │
- * │  faixa embaixo deixa a página inteira legível e rolando atrás, que é  │
- * │  a mesma escolha já feita em `ConviteDeMaterial`.                     │
+ * │  faixa embaixo deixa a página inteira legível e rolando atrás.        │
  * │                                                                       │
  * │  E ela é `fixed`: não empurra nada, então não desloca o layout — o    │
  * │  deslocamento que o Core Web Vitals mede e que o Search Console       │
@@ -43,10 +43,10 @@ export default function AvisoDeCookies() {
   const montado = useMontado();
   const decisao = useDecisaoDeCookies();
 
-  /* Como o `ConviteDeMaterial`: nada é desenhado na pré-renderização nem na
-     primeira pintura. Sem isso, quem já respondeu veria a faixa piscar por
-     um quadro antes de o navegador ler a escolha guardada — e o robô
-     indexaria um aviso de cookie no meio do HTML de toda página. */
+  /* Nada é desenhado na pré-renderização nem na primeira pintura. Sem
+     isso, quem já respondeu veria a faixa piscar por um quadro antes de o
+     navegador ler a escolha guardada — e o robô indexaria um aviso de
+     cookie no meio do HTML de toda página. */
   if (!montado || decisao !== null) return null;
 
   const aceitar = () => {
@@ -71,7 +71,7 @@ export default function AvisoDeCookies() {
 
   return (
     <AnimatePresence>
-      <motion.div
+      <m.div
         role="region"
         aria-label="Aviso sobre cookies"
         initial={{ opacity: 0, y: 20 }}
@@ -105,7 +105,7 @@ export default function AvisoDeCookies() {
             Recusar
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </AnimatePresence>
   );
 }
