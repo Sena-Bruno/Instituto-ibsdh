@@ -158,7 +158,7 @@ arte, então essa reserva não aparece em lugar nenhum.
 |---|---|
 | `BarraAviso` | A faixa dourada no topo — conteúdo em `site.ts`, chave `aviso` |
 | `Secao` + `Cabecalho` | Seção com régua, sobretítulo, título grande e brilho opcional |
-| `CardCurso` | O card de formação, dono de uma cor |
+| `CardCurso` | O card de formação, na cor de acento da marca |
 | `Numeros` | A faixa de números grandes |
 | `PaginaCurso` / `SecaoCurso` | Página de formação, com a coluna de compra fixa |
 | `Comparativo` | Tabela de duas colunas |
@@ -419,16 +419,6 @@ campanha de origem).
 primeira parte, vive só na aba, não identifica ninguém e só sai do
 aparelho dentro de um formulário que a própria pessoa envia. O GA4 é outra
 natureza — um terceiro recebendo cada página vista de quem não pediu nada.
-
-### Uma escolha de produto, para você conferir
-
-Enquanto o aviso espera resposta, **o convite de material não abre**. Os
-dois moram no mesmo canto inferior, e no celular o convite cobriria com
-uma oferta uma pergunta sobre dados pessoais.
-
-O custo: quem ignora o aviso a visita inteira não vê o convite. Achamos a
-troca certa — mas é troca, e você pode preferir o contrário. Está em
-`ConviteDeMaterial.tsx`, numa linha.
 
 ## De onde veio cada lead
 
@@ -1202,9 +1192,7 @@ cairia justamente no primeiro carregamento — o que decide se a pessoa fica.
   no Netlify e ela começa a contar (ver
   [Medição de conversão](#medição-de-conversão)). O aviso de cookies e a
   seção de privacidade já estão no ar, então não falta nada além da
-  variável. Confira a escolha de produto descrita em
-  [Uma escolha de produto](#uma-escolha-de-produto-para-você-conferir):
-  enquanto o aviso espera resposta, o convite de material não abre.
+  variável.
 - **Etiquetar os links que você divulga.** A coluna `campanha` do `/admin`
   só se preenche se o link levar `utm_`. Um link de anúncio útil é
   `institutobrunosena.com.br/pnl-practitioner?utm_source=instagram&utm_medium=cpc&utm_campaign=setembro`

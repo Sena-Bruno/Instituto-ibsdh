@@ -4,7 +4,6 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { pageTransition } from '../lib/motion';
 import AvisoDeCookies from './AvisoDeCookies';
 import BarraAviso from './BarraAviso';
-import ConviteDeMaterial from './ConviteDeMaterial';
 import FixedWhatsApp from './FixedWhatsApp';
 import Medicao from './Medicao';
 import ScrollToTop from './ScrollToTop';
@@ -72,11 +71,6 @@ export default function Layout() {
       </m.div>
       <SiteFooter />
       <FixedWhatsApp />
-      {/* O convite de material. Mora aqui porque precisa valer para o site
-          inteiro, e ele mesmo decide onde não aparecer e quando abrir. Não
-          renderiza nada no HTML pré-renderizado: quem chega da busca, e o
-          robô que rastreia, recebem só a página. */}
-      <ConviteDeMaterial />
       {/* O aviso de cookies mora no fim, e é o que decide se a medição
           existe nesta visita. Não desenha nada no HTML pré-renderizado. */}
       <AvisoDeCookies />
