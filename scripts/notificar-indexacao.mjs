@@ -52,8 +52,15 @@ const CAMINHO_ESTADO = path.join(raiz, 'scripts', 'indexacao-notificadas.json');
  * há como adivinhar qual o Bruno verificou — por isso é configurável, e
  * não fixo no código.
  */
+/*
+  `||`, e não `??`: quando a variável de repositório não existe, o GitHub
+  Actions define a variável de ambiente como STRING VAZIA (não como
+  ausente) — e `??` só troca por `null`/`undefined`, nunca por vazio. Com
+  `??` a propriedade virava "", e a Search Console API recusava a chamada
+  inteira. Verificado na execução real do workflow.
+*/
 const PROPRIEDADE =
-  process.env.GOOGLE_SEARCH_CONSOLE_PROPRIEDADE ?? 'https://institutobrunosena.com.br/';
+  process.env.GOOGLE_SEARCH_CONSOLE_PROPRIEDADE || 'https://institutobrunosena.com.br/';
 
 const URL_SITEMAP = 'https://institutobrunosena.com.br/sitemap.xml';
 
@@ -171,7 +178,18 @@ async function main() {
   const sitemap = analisarSitemap(await readFile(CAMINHO_SITEMAP, 'utf8'));
   const estadoAnterior = await lerEstado();
 
-  const mudou = sitemap.filter((p) => estadoAnterior[p.loc] !== p.lastmod);
+  /*
+    Compara o INSTANTE, não o texto. `git log --format=%cI` não escreve o
+    mesmo texto em toda máquina para o mesmo instante — o runner do GitHub
+    grava UTC como "...Z", este ambiente grava "...+00:00". Comparar as
+    strings direto fazia toda URL parecer "mudada" a cada execução, mesmo
+    sem nenhuma mudança de verdade. Verificado na execução real do workflow.
+  */
+  const mudou = sitemap.filter((p) => {
+    const anterior = estadoAnterior[p.loc];
+    if (anterior === undefined) return true;
+    return new Date(anterior).getTime() !== new Date(p.lastmod).getTime();
+  });
 
   if (mudou.length === 0) {
     console.log('Nenhuma URL nova ou revisada desde o último aviso ao Google.');
