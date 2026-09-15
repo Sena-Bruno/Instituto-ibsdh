@@ -32,7 +32,15 @@ jobs:
     name: Notificar o Google sobre páginas novas ou revisadas
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 traz o histórico completo. Sem isto o checkout raso
+      # (padrão da action, um commit só) quebra o `git log` que
+      # scripts/prerender.mjs usa para calcular o `lastmod` de cada
+      # página — toda URL sai com a mesma data (a hora do build), o
+      # sitemap mente, e este workflow notifica as mesmas 19 URLs de novo
+      # a cada execução, para sempre, porque a comparação nunca estabiliza.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
