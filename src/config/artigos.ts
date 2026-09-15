@@ -1002,28 +1002,16 @@ export const artigos: Artigo[] = [
   },
 
   /* ──────────────────────────────────────────────────────────────────────
-     OS TRÊS DE SETEMBRO (RASCUNHO)
+     OS TRÊS DE SETEMBRO (RASCUNHO → REVISADOS)
 
      Escritos a partir das ementas em `curriculos.ts`, seguindo o padrão de
-     escrita definido acima. Marcados como não revisados pelo mesmo motivo
-     dos primeiros sete: falta o que só o Bruno pode escrever.
-
-     Nos sete artigos anteriores isso era um atendimento real contado em
-     primeira pessoa. Aqui NENHUM caso foi inventado para preencher esse
-     espaço — inventar um atendimento e assiná-lo como se fosse do Bruno
-     seria fabricar a própria prova de expertise que este site usa para se
-     diferenciar, e é o oposto do que a seção inteira defende. Cada um dos
-     três tem, no comentário logo acima do artigo, uma nota do que falta e
-     onde entraria.
+     escrita definido acima, e publicados como rascunho com `revisado:
+     false` enquanto faltava o que só o Bruno podia escrever: um
+     atendimento real em cada um, em primeira pessoa. Nenhum caso foi
+     inventado para preencher esse espaço enquanto ele não chegou — só
+     depois de o Bruno mandar os três é que passaram por revisão.
      ────────────────────────────────────────────────────────────────────── */
 
-  /*
-    FALTA: um atendimento real em que o rapport (ou a ausência dele) mudou
-    o rumo da conversa — por exemplo um cliente que só se abriu depois de
-    o Bruno ajustar ritmo de fala ou postura, ou um caso em que "espelhar
-    demais" quase quebrou a sessão. Entraria como novo `subtitulo` antes de
-    "Por que isso é ensinado com prática, e não com leitura".
-  */
   {
     slug: 'rapport-como-criar-conexao',
     titulo: 'Rapport: como duas pessoas entram no mesmo ritmo',
@@ -1032,9 +1020,10 @@ export const artigos: Artigo[] = [
       'Rapport não é truque de vendedor nem imitação óbvia. É o estado de sincronia que permite duas pessoas se ouvirem de verdade, e dá para criar de propósito.',
     buscaAlvo: 'o que é rapport / como criar rapport / rapport na comunicação',
     publicadoEm: '2026-09-15',
+    revisadoEm: '2026-09-15',
     eixo: 'pnl',
     cursoRelacionado: '/pnl-practitioner',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
@@ -1086,6 +1075,23 @@ export const artigos: Artigo[] = [
         texto:
           'A pergunta que separa rapport de manipulação é fácil de fazer e difícil de responder com honestidade: a sincronia está a serviço de a pessoa se sentir ouvida, ou está a serviço de eu conseguir o que quero dela? A técnica é a mesma nos dois casos. A intenção não.',
       },
+      { tipo: 'subtitulo', texto: 'A vez em que o espelho ficou óbvio demais' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Ele chegou com os braços cruzados, falando rápido, olhando pra porta de vez em quando. Respondia tudo em frases curtas. Sem pensar muito, comecei a espelhar: igualei a postura, o ritmo, o tom. Ele falou por uns dois minutos e travou de repente. Me olhou torto e falou: "você tá fazendo aquela coisa de me imitar?". Ali percebi o tamanho do erro. Tinha espelhado o pacote inteiro, gesto por gesto, do jeito mais visível possível, e ele sentiu. Técnica visível em rapport é o oposto de rapport.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Parei na hora e ri. Falei que sim, que tinha exagerado, que tinha aprendido a fazer aquilo e às vezes escorregava. Ele riu também, meio desconfiado. Disse que ia parar de fingir e só escutar, e a conversa andou dali. Ele contou que tinha sido mandado pra sessão pelo chefe, que não acreditava muito naquilo, que só queria que acabasse logo. Passei a responder mais devagar, com menos gesto, deixando ele escolher o ritmo. Ele desacelerou junto. Falou de uma separação recente, coisa que não tinha mencionado antes. No fim disse que não sabia por que tinha contado aquilo. Eu sabia. Foi porque parei de atuar.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'O que ficou dessa sessão',
+        texto:
+          'Rapport não é espelhar, é ajustar. Espelhar é o atalho que se aprende primeiro, e só funciona quando fica invisível, com alguém já minimamente disponível. Com quem chega desconfiado, o espelho vira muro. Naquele dia o que destravou o cliente não foi a técnica. Foi eu assumir, na frente dele, que a técnica tinha atrapalhado.',
+      },
       { tipo: 'subtitulo', texto: 'Por que isso é ensinado com prática, e não com leitura' },
       {
         tipo: 'paragrafo',
@@ -1105,14 +1111,6 @@ export const artigos: Artigo[] = [
     ],
   },
 
-  /*
-    FALTA: um atendimento real em que o limite da autohipnose apareceu na
-    prática — por exemplo alguém que tentou trabalhar sozinho algo que não
-    devia e chegou ao Bruno depois disso, ou um caso de indução ensinada em
-    sessão e depois levada para uso próprio com segurança. Entraria como
-    novo `subtitulo` antes de "Quando autohipnose e sessão com profissional
-    se complementam".
-  */
   {
     slug: 'autohipnose-o-que-e',
     titulo: 'Autohipnose: o mesmo transe, sem ninguém guiando',
@@ -1121,9 +1119,10 @@ export const artigos: Artigo[] = [
       'Toda hipnose é, no fundo, autoinduzida: quem guia apenas facilita o caminho. Sem esse guia, o que dá para fazer com segurança encolhe, e vale saber onde.',
     buscaAlvo: 'o que é autohipnose / como fazer autohipnose / autohipnose funciona',
     publicadoEm: '2026-09-15',
+    revisadoEm: '2026-09-15',
     eixo: 'hipnoterapia',
     cursoRelacionado: '/hipnoterapia',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
@@ -1173,6 +1172,28 @@ export const artigos: Artigo[] = [
         texto:
           'Sozinho, você não consegue observar o que muda na própria fisiologia, porque o instrumento que observaria é o mesmo que está em transe. A consequência mais comum não é perigo, é decepção: a pessoa espera uma experiência intensa, cochila de leve, e conclui que "não funcionou" quando só faltou profundidade, não resultado.',
       },
+      { tipo: 'subtitulo', texto: 'A cliente que tentou sozinha, e o que faltou pra ela' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Uma cliente chegou dizendo que tinha feito uma regressão sozinha. Tinha visto vídeos no YouTube, achado uma gravação que prometia "acessar memórias de infância" e feito à noite, no quarto, de fone de ouvido. Deu errado. Lembrava de ter entrado num estado em que não conseguia mexer o corpo, e ficou com a sensação de que havia alguém no quarto. Depois disso, três noites sem dormir direito, com medo de fechar os olhos. Isso tinha acontecido dois meses antes, e o medo ainda estava ali.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Na anamnese ficou claro o que faltava. Ela não tinha como perceber o que estava acontecendo naquele momento: sem referência de estado hipnótico, sem saber voltar, sem recurso instalado, sem ninguém por perto. A gravação conduzia uma coisa pesada e terminava de forma abrupta. Sem alguém observando o corpo dela, não havia como saber que aquilo era profundo demais pra um primeiro contato, sozinha, à noite, sem preparo nenhum. O problema não era a técnica. Era ter feito sem ter o que fazer quando alguma coisa aparecesse.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'O trabalho começou bem básico. Instalei um recurso simples, ensinei uma respiração para voltar sempre que ela quisesse, e deixei ela experimentar em sessão, várias vezes, um estado leve. Só depois disso passou a usar em casa, e só para dormir: áudio simples, dez minutos, com uma regra clara, se sentisse que estava indo fundo demais, interrompia. Semanas depois voltou dizendo que tinha dormido a noite inteira pela primeira vez em meses.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'O que ela levou pra casa',
+        texto:
+          'Não foi uma técnica nova. Foi um jeito de perceber o próprio estado, e de saber que dava pra parar. É exatamente isso que falta quando alguém tenta sozinho sem ter passado por isso guiado antes.',
+      },
       {
         tipo: 'subtitulo',
         texto: 'Quando autohipnose e sessão com profissional se complementam',
@@ -1195,14 +1216,6 @@ export const artigos: Artigo[] = [
     ],
   },
 
-  /*
-    FALTA: um atendimento real em que a pergunta certa (ou uma sequência de
-    perguntas erradas) decidiu o rumo de uma sessão de coaching — por
-    exemplo um cliente que só destravou depois de uma pergunta que trocou
-    "por quê" por "o quê", ou um caso em que perguntar demais fechou a
-    pessoa. Entraria como novo `subtitulo` antes de "Quando a pergunta
-    certa também é: isso é caso de coaching?".
-  */
   {
     slug: 'perguntas-poderosas-em-coaching',
     titulo: 'A pergunta que faz o trabalho que o conselho não faz',
@@ -1212,9 +1225,10 @@ export const artigos: Artigo[] = [
     buscaAlvo:
       'perguntas poderosas em coaching / como fazer boas perguntas / pergunta poderosa exemplos',
     publicadoEm: '2026-09-15',
+    revisadoEm: '2026-09-15',
     eixo: 'coaching',
     cursoRelacionado: '/master-coach',
-    revisado: false,
+    revisado: true,
     corpo: [
       {
         tipo: 'paragrafo',
@@ -1260,6 +1274,28 @@ export const artigos: Artigo[] = [
         titulo: 'A pergunta não é neutra',
         texto:
           'Toda pergunta carrega um pressuposto embutido, e o pressuposto ensina tanto quanto a resposta. Perguntar "o que já funcionou antes, mesmo que em parte" pressupõe que alguma coisa funcionou. É outro jeito de fazer o que o metamodelo faz com o quantificador universal: uma exceção derruba a regra de que "nada funciona".',
+      },
+      { tipo: 'subtitulo', texto: 'A manhã que ele já tinha esquecido como era' },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Um cliente estava decidindo se saía ou não do emprego. Já tinha contado a mesma história três vezes, com os mesmos argumentos, do mesmo jeito. Perguntei por que ele não pedia demissão, e ele respondeu na lata, num tom quase mecânico: porque tinha contas, porque o mercado estava ruim, porque a idade, porque a família. Cada resposta vinha pronta. Ele não estava pensando, estava defendendo. Depois de três perguntas assim, os dois já estávamos cansados, e a conversa tinha morrido num ringue que ele conhecia de cor.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Parei e troquei a pergunta: "o que você faria amanhã, na hora de acordar, se já tivesse pedido a demissão?" Ele ficou parado um tempo, a primeira pausa real da sessão. Aí disse, devagar, que ia fazer café com calma. Que ia levar os filhos na escola. Que ia sentar na varanda sem olhar o celular. Disse que fazia tempo que não lembrava como era uma manhã sem aquele peso. Não tinha nada de grandioso na resposta, mas ela abriu a porta que o "por quê" tinha fechado. Ele começou a falar do que queria, não do que temia.',
+      },
+      {
+        tipo: 'paragrafo',
+        texto:
+          'Trabalhamos o resto da sessão em cima disso. Não era caso de pedir demissão na segunda seguinte. Ele saiu com uma tarefa simples: escolher uma manhã da semana para fazer exatamente aquilo, mesmo trabalhando. Dois meses depois pediu demissão, mas já com um plano, e o plano tinha nascido dessa conversa.',
+      },
+      {
+        tipo: 'destaque',
+        titulo: 'Por quê puxa justificativa',
+        texto:
+          '"Por quê" puxa justificativa. "O quê" e "como" puxam cena. Quando o cliente está preso num discurso ensaiado, a saída costuma ser trocar a pergunta por uma que ele ainda não tenha resposta pronta.',
       },
       {
         tipo: 'subtitulo',
