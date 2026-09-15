@@ -74,7 +74,6 @@ export default defineConfig({
         'src/components/FormularioDeMaterial.tsx',
         'src/lib/erroDeLogin.ts',
         'src/lib/erroDeFirestore.ts',
-        'src/lib/useConvite.ts',
         /* A medição entra pelo mesmo critério: são três arquivos que
            decidem algo e cuja falha é silenciosa. Uma etiqueta de campanha
            que se perde, um checkout que deixa de ser reconhecido e um lead

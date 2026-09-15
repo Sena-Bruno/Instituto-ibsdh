@@ -21,7 +21,7 @@ import {
   User,
   Users,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { lazy, type ReactNode, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import CardCurso from '../components/CardCurso';
 import CourseImage from '../components/CourseImage';
@@ -35,6 +35,7 @@ import Seo from '../components/Seo';
 import VideoPlayer from '../components/Video';
 import { courses, economiaDe, eixosComCurso, listaCursos } from '../config/courses';
 import { depoimentos } from '../config/depoimentos';
+import { materiais } from '../config/materiais';
 import { midia } from '../config/midia';
 import { meiosPagamento } from '../config/pagamento';
 import {
@@ -47,6 +48,7 @@ import {
 } from '../config/site';
 import { paletas } from '../lib/cores';
 import { listaDeCursos, perguntasFrequentes } from '../lib/schema';
+import { useMontado } from '../lib/useMontado';
 import { cn } from '../lib/utils';
 
 /**
@@ -1223,6 +1225,101 @@ function InCompany() {
   );
 }
 
+/* ── Guia gratuito ────────────────────────────────────────────────────────── */
+
+/**
+ * O que antes era o convite que abria sozinho por cima da página.
+ *
+ * ┌───────────────────────────────────────────────────────────────────────┐
+ * │  POR QUE VIROU SEÇÃO, E NÃO CONTINUOU POP-UP                          │
+ * │                                                                       │
+ * │  O convite (`ConviteDeMaterial`, removido) media metade da rolagem ou │
+ * │  40 segundos na página antes de abrir por cima do conteúdo — mesmo    │
+ * │  ficando fora da regra de interstício intrusivo do Google por nunca   │
+ * │  abrir na chegada, ainda era uma caixa cobrindo a tela para pedir um  │
+ * │  e-mail. Aqui o mesmo material — o guia gratuito de sete perguntas —  │
+ * │  vira uma seção fixa da home: quem quer, preenche; quem não quer,     │
+ * │  rola por cima sem nada tomar a tela dele.                            │
+ * │                                                                       │
+ * │  A troca é o gatilho, não a oferta nem o material — os dois seguem os │
+ * │  mesmos que os artigos usam, em `config/materiais.ts`.                │
+ * └───────────────────────────────────────────────────────────────────────┘
+ *
+ * O formulário entra por `lazy()`, como em `OfertaDeMaterial`: ele importa
+ * o SDK do Firebase, que não sobrevive à pré-renderização em Node.
+ */
+const FormularioDeMaterial = lazy(() => import('../components/FormularioDeMaterial'));
+
+const materialGratuito = materiais[0];
+
+const promessasDoGuia = [
+  'Sete perguntas verificáveis, para usar antes de pagar por qualquer formação',
+  'Vale para comparar qualquer escola de PNL, hipnoterapia ou coaching — inclusive a nossa',
+  'Abre na hora, no mesmo clique: sem espera e sem confirmação por e-mail',
+];
+
+function ReservaDoFormulario() {
+  return <div aria-hidden="true" className="h-[236px] animate-pulse rounded-lg bg-white/5" />;
+}
+
+function GuiaGratuito() {
+  const montado = useMontado();
+
+  if (!materialGratuito) return null;
+
+  return (
+    <Secao id="guia-gratuito" cor="accent" brilho brilhoEm="esquerda">
+      <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:gap-16">
+        <div>
+          <Cabecalho
+            sobretitulo={materialGratuito.formato}
+            cor="accent"
+            titulo={materialGratuito.titulo}
+          >
+            {materialGratuito.promessa}
+          </Cabecalho>
+
+          <ul className="mt-8 space-y-3.5">
+            {promessasDoGuia.map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <CheckCircle2
+                  className="mt-0.5 shrink-0 text-brand-accent"
+                  size={19}
+                  aria-hidden="true"
+                />
+                <span className="text-[15px] leading-relaxed text-brand-cream">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <Revela>
+          <div className="cartao p-7 md:p-8">
+            {montado ? (
+              <Suspense fallback={<ReservaDoFormulario />}>
+                <FormularioDeMaterial material={materialGratuito} origem="secao:/" />
+              </Suspense>
+            ) : (
+              /* O que o servidor desenha precisa ser igual ao primeiro passe
+                 do cliente, senão a hidratação descarta o HTML pré-renderizado
+                 inteiro. Ver `lib/useMontado.ts`. */
+              <>
+                <h3 className="mb-3 font-display text-xl font-semibold text-brand-cream">
+                  {materialGratuito.titulo}
+                </h3>
+                <p className="mb-6 text-[14.5px] leading-relaxed">
+                  {materialGratuito.promessa}
+                </p>
+                <ReservaDoFormulario />
+              </>
+            )}
+          </div>
+        </Revela>
+      </div>
+    </Secao>
+  );
+}
+
 /* ── FAQ ──────────────────────────────────────────────────────────────────── */
 
 const perguntas = [
@@ -1353,6 +1450,7 @@ export default function Home() {
         <Mentor />
         <OndeAtuam />
         <InCompany />
+        <GuiaGratuito />
         <PerguntasFrequentes />
         <AcaoFinal />
       </main>
