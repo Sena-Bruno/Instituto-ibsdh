@@ -4,123 +4,91 @@ import type { Video } from './midia';
  * Os depoimentos de alunos.
  *
  * ┌───────────────────────────────────────────────────────────────────────┐
- * │  COMO A SEÇÃO SE COMPORTA                                             │
+ * │  PRINT REAL, NÃO CITAÇÃO DIGITADA                                     │
  * │                                                                       │
- * │  Todos aparecem numa moldura de celular, no formato da referência do  │
- * │  Instituto Mix que o Bruno apontou. O que muda é o conteúdo dela:     │
+ * │  Estes cinco vieram de conversas reais no WhatsApp e no Instagram —   │
+ * │  o Bruno recortou e mandou. É por isso que cada um traz `print`: a    │
+ * │  captura de tela entra como veio, sem editar o texto dentro dela, e o │
+ * │  cartão mostra a imagem como prova, não como citação reescrita.       │
  * │                                                                       │
- * │  · SEM `video` — a citação ocupa a tela do celular, como um post.     │
- * │  · COM `video` — entra o quadro de abertura e o botão de play, e a    │
- * │    citação desce para baixo da moldura, como legenda.                 │
+ * │  `texto` aqui NÃO aparece na tela: ele é a transcrição da mensagem,   │
+ * │  usada como `alt` da imagem. Sem isso, quem usa leitor de tela não    │
+ * │  recebe nada — o depoimento inteiro é texto dentro de um bitmap.      │
  * │                                                                       │
- * │  A troca é por aluno: preencher `video` em um deles muda só aquele.   │
+ * │  `curso` é o selo mostrado sobre o print. Nome e profissão do aluno   │
+ * │  não aparecem: a conversa não trouxe isso, e não é para inventar.     │
  * └───────────────────────────────────────────────────────────────────────┘
  *
- * ── Por que vídeo, e não mais citações ──────────────────────────────────
+ * ── Para adicionar um novo print ─────────────────────────────────────────
  *
- * Citação em texto é a forma de prova social mais fácil de escrever e a
- * mais fácil de duvidar: não custa nada digitar um nome e uma frase entre
- * aspas, e o visitante sabe disso. Vídeo com rosto, nome e profissão custa
- * a disposição de uma pessoa real em aparecer, e é por isso que convence.
+ * Salve a captura em `public/`, em WebP, recortada para fora a barra de
+ * status, a caixa de mensagem e o teclado — só a conversa importa. Depois
+ * é só um item novo aqui embaixo, com `width`/`height` do arquivo salvo
+ * (evita o layout pulando enquanto a imagem carrega).
  *
- * ── Como gravar, se for pedir a um aluno ────────────────────────────────
+ * ── Se um aluno topar gravar vídeo ──────────────────────────────────────
  *
- * Vertical, filmado no celular mesmo, de 30 a 60 segundos. Três perguntas
- * dão a estrutura toda: como você estava antes, o que mudou, e o que você
- * faz hoje com isso. Sem roteiro decorado — hesitação lida como verdade,
- * e depoimento decorado lida como anúncio.
- *
- * O `poster` é o quadro que aparece antes do play. Se não vier, o vídeo do
- * YouTube ou do Vimeo usa a miniatura dele; um arquivo próprio sem poster
- * mostra o primeiro quadro.
- */
-
-/*
- * ┌───────────────────────────────────────────────────────────────────────┐
- * │  ⚠  PARA O BRUNO: ESTES SEIS TEXTOS PRECISAM VIRAR DEPOIMENTOS REAIS  │
- * │                                                                       │
- * │  Os seis abaixo têm o formato de depoimento-modelo: nome comum +      │
- * │  profissão + elogio sem número, sem turma e sem situação datada. É    │
- * │  exatamente o padrão que o leitor de 2026 reconhece como "seção de    │
- * │  depoimentos preenchida para o site não ficar vazia" — e que o        │
- * │  Google trata como sinal negativo de confiança (Fake E-E-A-T).        │
- * │                                                                       │
- * │  Com 2.500+ alunos formados, existe depoimento real melhor do que     │
- * │  qualquer texto escrito aqui. O que pedir a cada aluno:               │
- * │                                                                       │
- * │   · Nome completo (ou nome + inicial), profissão e cidade;            │
- * │   · UM resultado concreto: "gravei minha primeira sessão paga em      │
- * │     março", "passei de 2 para 9 atendimentos por semana";             │
- * │   · Autorização por escrito para publicar (LGPD);                     │
- * │   · Se topar, os 30–60s de vídeo descritos acima — vale mais que      │
- * │     dez citações.                                                     │
- * │                                                                       │
- * │  Ao substituir, apague este aviso.                                    │
- * └───────────────────────────────────────────────────────────────────────┘
+ * O campo `video` continua existindo para isso — vale mais que qualquer
+ * quantidade de prints, porque rosto, nome e voz não dá para fingir. Ao
+ * preencher `video` num item, ele troca o print pelo quadro de abertura e
+ * o botão de play; nesse caso `nome`, `papel` e `iniciais` passam a valer
+ * (é o rodapé do vídeo), e devem vir preenchidos com autorização do aluno.
  */
 
 export interface Depoimento {
   id: string;
-  nome: string;
-  /** Profissão ou área, como aparece embaixo do nome */
-  papel: string;
-  /** Iniciais, usadas na versão em texto */
-  iniciais: string;
-  /** A citação. Continua servindo de legenda embaixo do vídeo. */
+  /** A formação ou produto a que a conversa se refere. Vira o selo do cartão. */
+  curso: string;
+  /** Transcrição da mensagem — não aparece na tela, é o `alt` do print. */
   texto: string;
-  /** Preencha para esta pessoa entrar como vídeo. Formato em `midia.ts`. */
+  /** A captura de tela em si, salva em `public/`. */
+  print?: { src: string; width: number; height: number };
+  /** Nome do aluno, só usado (e só exigido) quando há `video` preenchido. */
+  nome?: string;
+  /** Profissão ou área, mostrada embaixo do nome no rodapé do vídeo. */
+  papel?: string;
+  /** Iniciais do monograma, atrás do vídeo. */
+  iniciais?: string;
+  /** Preencha para este aluno entrar como vídeo em vez de print. */
   video?: Video;
-  /** Imagem do quadro de abertura, quando o vídeo não traz uma */
+  /** Imagem do quadro de abertura do vídeo, quando ele não traz uma. */
   poster?: string;
 }
 
 export const depoimentos: Depoimento[] = [
   {
-    id: 'ana-silva',
-    nome: 'Ana Silva',
-    papel: 'Psicóloga Clínica',
-    iniciais: 'AS',
+    id: 'print-coaching',
+    curso: 'Coaching',
     texto:
-      'A formação em Master PNL transformou completamente a minha abordagem clínica. Hoje consigo acessar a raiz dos problemas dos meus pacientes de forma muito mais rápida e profunda.',
+      'Mano, esse curso de coaching foi life-changing pra mim 🤯 A forma como vc estrutura os módulos faz a gente assimilar de verdade. Tô cobrando já pelas sessões. Valeu mesmo! 💪',
+    print: { src: '/depoimento-coaching.webp', width: 700, height: 791 },
   },
   {
-    id: 'carlos-mendes',
-    nome: 'Carlos Mendes',
-    papel: 'Empresário',
-    iniciais: 'CM',
+    id: 'print-hipnoterapia',
+    curso: 'Hipnoterapia',
     texto:
-      'O curso me deu ferramentas práticas para liderar minha equipe com mais empatia e assertividade. Os resultados na empresa foram imediatos após aplicar as técnicas de ancoragem.',
+      'Bruno, finalizei o curso ontem e só tenho a agradecer! Conteúdo muito bom, pratico. Pra quem tava com receio de aprender hipnose, vc desmistificou tudo. Já to ansioso pra começar com os primeiros clientes 😊',
+    print: { src: '/depoimento-hipnoterapia.webp', width: 700, height: 512 },
   },
   {
-    id: 'juliana-costa',
-    nome: 'Juliana Costa',
-    papel: 'Coach de Carreira',
-    iniciais: 'JC',
+    id: 'print-pnl',
+    curso: 'PNL',
     texto:
-      'Fiz a formação em Hipnoterapia e foi um divisor de águas. A didática do Instituto Bruno Sena é excepcional, e o suporte pós-curso faz toda a diferença na nossa segurança profissional.',
+      'Bruno, a apostila é sensacional! Muito bem organizada, letra clara, exemplos práticos. Pra quem tá começando é perfeito. Recomendo demais pra qualquer um que quer aprender PNL de verdade 📚✨',
+    print: { src: '/depoimento-pnl.webp', width: 700, height: 512 },
   },
   {
-    id: 'roberto-almeida',
-    nome: 'Roberto Almeida',
-    papel: 'Terapeuta Holístico',
-    iniciais: 'RA',
+    id: 'print-sena',
+    curso: 'Simulador SENA',
     texto:
-      'A Jornada do Herói me ajudou a ressignificar traumas que eu nem sabia que estavam me travando. É uma experiência intensa e profundamente curadora.',
+      'Adorei a plataforma! Muito intuitiva, os casos clínicos são bem realistas. Ajudou bastante na minha prática. Só uma sugestão: poderia ter mais exemplos de atendimento com fobia? Mas no geral 10/10 🎯',
+    print: { src: '/depoimento-sena.webp', width: 700, height: 752 },
   },
   {
-    id: 'mariana-souza',
-    nome: 'Mariana Souza',
-    papel: 'Professora',
-    iniciais: 'MS',
+    id: 'print-geral',
+    curso: 'Feedback de aluno',
     texto:
-      'Sempre tive muito medo de falar em público. Com as técnicas de PNL Practitioner, consegui superar esse bloqueio e hoje dou palestras para centenas de pessoas com tranquilidade.',
-  },
-  {
-    id: 'fernando-dias',
-    nome: 'Fernando Dias',
-    papel: 'Gestor Comercial',
-    iniciais: 'FD',
-    texto:
-      'O método A.P.L.I.C.A.R mudou o jogo para mim. Não é só teoria vazia. Consegui dobrar os resultados do meu time de vendas usando as estratégias de comunicação e rapport avançado que aprendi aqui.',
+      'Oi! Fiz o curso mês passado e tô amando aplicar tudo que aprendi. Mas acho que faltou um pouco mais de exemplos de como usar em grupos né? Mesmo assim, tá de parabéns! Muito bom mesmo 👏',
+    print: { src: '/depoimento-geral.webp', width: 700, height: 509 },
   },
 ];
