@@ -24,8 +24,8 @@ import {
 import { lazy, type ReactNode, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import CardCurso from '../components/CardCurso';
+import CartaoDepoimento from '../components/CartaoDepoimento';
 import CourseImage from '../components/CourseImage';
-import DepoimentoVideo from '../components/DepoimentoVideo';
 import Entrada from '../components/Entrada';
 import Faq from '../components/Faq';
 import Numeros from '../components/Numeros';
@@ -859,22 +859,21 @@ function Depoimentos() {
       </Cabecalho>
 
       {/* ┌───────────────────────────────────────────────────────────────┐
-          │  A MOLDURA DE CELULAR APARECE SEMPRE                          │
+          │  CINCO PRINTS REAIS, NÃO CITAÇÕES DIGITADAS                   │
           │                                                               │
-          │  A primeira versão desta seção só trocava de formato quando   │
-          │  houvesse vídeo preenchido. Como não há nenhum gravado ainda, │
-          │  na prática a página continuava idêntica à de antes — o       │
-          │  formato novo existia só no código.                           │
+          │  Cada cartão mostra a captura de tela de uma conversa real no │
+          │  WhatsApp ou no Instagram, com o selo do curso por cima. É o  │
+          │  formato mais difícil de duvidar: não dá para fingir uma      │
+          │  conversa inteira, com hora e confirmação de leitura.         │
           │                                                               │
-          │  Agora o celular aparece sempre. Sem vídeo, ele mostra a      │
-          │  citação como um post; com vídeo, mostra o quadro de abertura │
-          │  e o play. A troca é por aluno, e acontece sozinha ao         │
-          │  preencher `video` em `config/depoimentos.ts`.                │
+          │  Se um aluno topar gravar vídeo, `video` em                   │
+          │  `config/depoimentos.ts` troca o print daquele item pela      │
+          │  moldura de celular com o quadro de abertura e o play.        │
           └───────────────────────────────────────────────────────────────┘ */}
       <div className="mt-14 grid justify-items-center gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {depoimentos.map((dep, i) => (
           <Revela key={dep.id} atraso={(i % 3) * 0.07} className="w-full">
-            <DepoimentoVideo dep={dep} />
+            <CartaoDepoimento dep={dep} />
           </Revela>
         ))}
       </div>

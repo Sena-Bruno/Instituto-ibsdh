@@ -1,35 +1,27 @@
-import { Play } from 'lucide-react';
+import { MessageCircle, Play } from 'lucide-react';
 import { useState } from 'react';
 import type { Depoimento } from '../config/depoimentos';
 import Troca from './Troca';
 
 /**
- * Um depoimento dentro de uma moldura de celular.
- *
- * O formato veio da referência do Instituto Mix que o Bruno apontou, e a
- * moldura não é enfeite: ela diz, antes de qualquer leitura, que aquilo foi
- * gravado por uma pessoa no celular dela, e não produzido por uma agência.
- * Depoimento com cara de produção publicitária levanta a suspeita que o
- * depoimento existe para desfazer.
+ * Um depoimento, num de três formatos possíveis.
  *
  * ┌───────────────────────────────────────────────────────────────────────┐
- * │  A MOLDURA APARECE SEMPRE — COM OU SEM VÍDEO                          │
+ * │  TRÊS FORMATOS, NA ORDEM DE FORÇA DA PROVA                            │
  * │                                                                       │
- * │  Na primeira versão a seção só trocava de formato quando houvesse um  │
- * │  vídeo preenchido. Na prática isso queria dizer que nada mudava: sem  │
- * │  vídeo gravado, a página continuava idêntica à de antes, e o formato  │
- * │  novo existia só no código.                                           │
+ * │  · COM `print`  — a captura de tela da conversa real, com o selo do   │
+ * │                    curso por cima. É o formato de hoje: cinco prints  │
+ * │                    de WhatsApp e Instagram que o Bruno mandou.        │
+ * │  · COM `video`  — dentro da moldura de celular que veio da referência │
+ * │                    do Instituto Mix: quadro de abertura, botão de     │
+ * │                    play, e a citação como legenda embaixo.            │
+ * │  · SEM nenhum   — a citação ocupa a tela do celular, como texto.      │
+ * │                    É reserva para um depoimento ainda sem print nem   │
+ * │                    vídeo; não há nenhum assim hoje.                   │
  * │                                                                       │
- * │  Agora o celular aparece sempre, e o que muda é o conteúdo dele:      │
- * │                                                                       │
- * │  · COM vídeo   — quadro de abertura, botão de play, e o vídeo toca    │
- * │                  ali dentro.                                          │
- * │  · SEM vídeo   — a citação ocupa a tela do celular, como um post, com │
- * │                  o monograma do aluno ao fundo. E não há botão de     │
- * │                  play: botão que não toca nada é promessa quebrada.   │
- * │                                                                       │
- * │  Preencher `video` em `config/depoimentos.ts` faz a troca acontecer   │
- * │  sozinha, um aluno de cada vez.                                       │
+ * │  O print NÃO entra dentro da moldura de celular: ele já É a captura   │
+ * │  de uma tela de celular. Colocar uma moldura de celular ao redor de   │
+ * │  um print de celular duplicaria o enquadramento por enfeite.          │
  * └───────────────────────────────────────────────────────────────────────┘
  *
  * Com vídeo, o reprodutor usa fachada: a imagem e o botão são estáticos, e o
@@ -37,7 +29,50 @@ import Troca from './Troca';
  * YouTube de saída custaria perto de três megabytes antes de alguém decidir
  * assistir a um.
  */
-export default function DepoimentoVideo({ dep }: { dep: Depoimento }) {
+export default function CartaoDepoimento({ dep }: { dep: Depoimento }) {
+  if (dep.print) {
+    return <CartaoPrint dep={dep} print={dep.print} />;
+  }
+  return <CartaoVideo dep={dep} />;
+}
+
+/** A captura de tela real, com o selo do curso por cima. */
+function CartaoPrint({
+  dep,
+  print,
+}: {
+  dep: Depoimento;
+  print: NonNullable<Depoimento['print']>;
+}) {
+  return (
+    <figure className="w-full max-w-[340px] overflow-hidden rounded-[22px] border border-white/10 bg-brand-elevated/60 shadow-[0_18px_45px_rgba(0,0,0,0.35)] transition-colors hover:border-white/20">
+      <figcaption className="flex items-center justify-between gap-3 border-b border-white/8 px-5 py-3.5">
+        <span className="selo border-brand-blue/25 bg-brand-blue/10 text-brand-blue">
+          {dep.curso}
+        </span>
+        <span className="flex items-center gap-1.5 text-[11px] font-medium tracking-wide text-white/40 uppercase">
+          <MessageCircle size={13} aria-hidden="true" />
+          Print real
+        </span>
+      </figcaption>
+      {/* O `alt` carrega a transcrição inteira: sem ele, o depoimento — que
+          é texto dentro de uma imagem — não existe para quem usa leitor de
+          tela. */}
+      <img
+        src={print.src}
+        width={print.width}
+        height={print.height}
+        loading="lazy"
+        decoding="async"
+        alt={dep.texto}
+        className="block w-full"
+      />
+    </figure>
+  );
+}
+
+/** O formato anterior: moldura de celular, com vídeo ou citação em texto. */
+function CartaoVideo({ dep }: { dep: Depoimento }) {
   const [tocando, setTocando] = useState(false);
   /* Miniatura que não carrega cai para o monograma. O endereço do YouTube
      abaixo é derivado, não conferido: se o vídeo for privado ou o id estiver
@@ -54,11 +89,7 @@ export default function DepoimentoVideo({ dep }: { dep: Depoimento }) {
 
      Mesmo assim vale derivar a miniatura quando não há poster: ela é ruim, e
      um celular preto é pior. `hqdefault` existe para todo vídeo —
-     `maxresdefault` só para alguns, e falha em silêncio.
-
-     É o único endereço de terceiro que o site carrega, e é justificável: vem
-     do mesmo serviço que hospeda o vídeo, então se ele cair o vídeo já não
-     tocaria de qualquer forma. */
+     `maxresdefault` só para alguns, e falha em silêncio. */
   const posterEscolhido =
     video?.poster ??
     dep.poster ??
