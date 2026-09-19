@@ -149,40 +149,17 @@
     # susto do visitante que veria a permissão aparecer. As capacidades
     # que sobram são as que os players de vídeo precisam — e só para as
     # duas origens que os servem.
-    Permissions-Policy = "accelerometer=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), autoplay=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), encrypted-media=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), fullscreen=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), gyroscope=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), picture-in-picture=(self "https://www.youtube-nocookie.com" "https://player.vimeo.com"), browsing-topics=(), camera=(), display-capture=(), geolocation=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=()"
+    # As aspas em volta de cada origem são da sintaxe do próprio cabeçalho
+    # Permissions-Policy, e por isso precisam vir escapadas (`\"`) dentro da
+    # string do TOML — sem o escape, o TOML lia a primeira aspa da origem
+    # como o fim do valor.
+    Permissions-Policy = "accelerometer=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), autoplay=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), encrypted-media=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), fullscreen=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), gyroscope=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), picture-in-picture=(self \"https://www.youtube-nocookie.com\" \"https://player.vimeo.com\"), browsing-topics=(), camera=(), display-capture=(), geolocation=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=()"
 
     # Isola a janela de outras abas que tenham sido abertas a partir
     # dela. `allow-popups` em vez de `same-origin` puro porque o login
     # com Google é um popup, e o modo estrito cortaria a comunicação
     # entre ele e a página que o abriu — o /admin deixaria de entrar.
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
-    # O site não usa câmera, microfone, localização nem pagamento no
-    # navegador. Declarar isso fecha a porta antes de alguém precisar
-    # lembrar de fechá-la: um script de terceiro que um dia peça qualquer
-    # uma dessas permissões é recusado pelo navegador, sem depender de
-    # revisão de código.
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
-
-    # ┌─────────────────────────────────────────────────────────────────────┐
-    # │  ⚠  REPORT-ONLY DE PROPÓSITO — NÃO TROQUE O NOME SEM OBSERVAR       │
-    # │                                                                     │
-    # │  Esta política NÃO bloqueia nada. Ela relata.                       │
-    # │                                                                     │
-    # │  Uma CSP em imposição com uma origem faltando derruba o Firestore,  │
-    # │  a medição ou o vídeo EM SILÊNCIO: o site continua desenhando, os   │
-    # │  formulários param de gravar, e nada no build acusa. É a mesma      │
-    # │  classe de falha das regras do Firestore, que já derrubou toda a    │
-    # │  captação uma vez.                                                  │
-    # │                                                                     │
-    # │  Para promover:                                                     │
-    # │   1. deixe uma ou duas semanas coletando;                           │
-    # │   2. abra o console nas rotas com formulário, avaliações e vídeo,   │
-    # │      e confira que não há violação;                                 │
-    # │   3. só então troque o nome para `Content-Security-Policy`;         │
-    # │   4. e aí `frame-ancestors` substitui o `X-Frame-Options` acima,    │
-    # │      que é a versão obsoleta da mesma regra.                        │
-    # └─────────────────────────────────────────────────────────────────────┘
-    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com https://www.google-analytics.com https://*.ingest.sentry.io; frame-src https://www.youtube-nocookie.com https://www.youtube.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
 
 [[headers]]
   for = "/sitemap.xml"

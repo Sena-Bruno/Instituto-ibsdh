@@ -39,7 +39,11 @@ async function cabecalhosDoNetlify() {
     /* As quatro casas de indentação são as do bloco `[headers.values]`;
        linha comentada começa com `#` e não casa. */
     const m = linha.match(/^ {4}([A-Za-z-]+) *= *"(.*)" *$/);
-    if (m && m[1] !== 'Cache-Control') cabecalhos[m[1]] = m[2];
+    /* O Permissions-Policy tem aspas dentro do valor — as da origem do
+       YouTube e do Vimeo — escapadas com `\"` para o TOML aceitar a linha.
+       Sem desfazer o escape aqui, o cabeçalho vai ao ar com a barra
+       invertida dentro, e o navegador recusa por sintaxe. */
+    if (m && m[1] !== 'Cache-Control') cabecalhos[m[1]] = m[2].replaceAll('\\"', '"');
   }
   return cabecalhos;
 }
