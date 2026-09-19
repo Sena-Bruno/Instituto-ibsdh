@@ -60,6 +60,16 @@ jobs:
           node-version: '22'
           cache: npm
 
+      # O emulador do Firestore roda em cima de uma JVM, e as versões
+      # recentes do firebase-tools passaram a exigir JDK 21+. A imagem do
+      # runner nem sempre tem uma versão compatível no PATH por padrão —
+      # sem este passo, o emulador recusa subir com "no longer supports
+      # Java version before 21", antes mesmo de tentar ler uma regra.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
       - run: npm ci
 
       # Fora do package.json pelo mesmo motivo do Playwright: o emulador
