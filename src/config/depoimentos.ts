@@ -6,7 +6,7 @@ import type { Video } from './midia';
  * ┌───────────────────────────────────────────────────────────────────────┐
  * │  PRINT REAL, NÃO CITAÇÃO DIGITADA                                     │
  * │                                                                       │
- * │  Estes cinco vieram de conversas reais no WhatsApp e no Instagram —   │
+ * │  Estes vieram de conversas reais no WhatsApp e no Instagram —         │
  * │  o Bruno recortou e mandou. É por isso que cada um traz `print`: a    │
  * │  captura de tela entra como veio, sem editar o texto dentro dela, e o │
  * │  cartão mostra a imagem como prova, não como citação reescrita.       │
@@ -90,5 +90,12 @@ export const depoimentos: Depoimento[] = [
     texto:
       'Oi! Fiz o curso mês passado e tô amando aplicar tudo que aprendi. Mas acho que faltou um pouco mais de exemplos de como usar em grupos né? Mesmo assim, tá de parabéns! Muito bom mesmo 👏',
     print: { src: '/depoimento-geral.webp', width: 700, height: 509 },
+  },
+  {
+    id: 'print-iniciante',
+    curso: 'Primeiros passos',
+    texto:
+      'Sou iniciante e estava morrendo de medo de começar. Seu curso desmistificou tudo. Agora tô confiante! Muito obrigado pela paciência em ensinar',
+    print: { src: '/depoimento-iniciante.webp', width: 700, height: 444 },
   },
 ];
